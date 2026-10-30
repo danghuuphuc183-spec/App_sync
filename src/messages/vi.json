@@ -1,0 +1,93 @@
+{
+  "app": {
+    "name": "Khế Ước Kỷ Luật Thể Thao",
+    "tagline": "Nền tảng kết nối đối tác tập luyện & cam kết bằng Điểm Uy Tín",
+    "description": "Ghép cặp bạn tập cùng trình độ, cam kết kỷ luật, số hóa áp lực đồng trang lứa quanh các cụm đô thị."
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "sports": "Môn thể thao",
+    "bounties": "Bảng kèo",
+    "myBounties": "Kèo của tôi",
+    "clubs": "Câu lạc bộ",
+    "venues": "Địa điểm",
+    "profile": "Hồ sơ",
+    "trustWallet": "Ví Điểm Uy Tín",
+    "admin": "Quản trị",
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "register": "Đăng ký"
+  },
+  "common": {
+    "loading": "Đang tải dữ liệu...",
+    "empty": "Không có dữ liệu",
+    "retry": "Thử lại",
+    "back": "Quay lại",
+    "continue": "Tiếp tục",
+    "confirm": "Xác nhận",
+    "cancel": "Hủy bỏ",
+    "save": "Lưu thay đổi",
+    "close": "Đóng",
+    "success": "Thành công",
+    "error": "Đã xảy ra lỗi",
+    "comingSoon": "Sắp ra mắt",
+    "required": "Bắt buộc"
+  },
+  "tiers": {
+    "bronze": "Đồng",
+    "silver": "Bạc",
+    "gold": "Vàng",
+    "diamond": "Kim Cương",
+    "rookieBadge": "Tân binh",
+    "mentorBadge": "Mentor"
+  },
+  "auth": {
+    "loginTitle": "Đăng nhập",
+    "loginSubtitle": "Nhập email của bạn để nhận liên kết đăng nhập nhanh",
+    "emailLabel": "Địa chỉ Email",
+    "emailPlaceholder": "ban@example.com",
+    "sendOtp": "Gửi mã đăng nhập",
+    "underageError": "Bạn chưa đủ 18 tuổi. Nền tảng chỉ dành cho người từ đủ 18 tuổi trở lên.",
+    "consentTerms": "Tôi đồng ý với Điều khoản dịch vụ",
+    "consentPrivacy": "Tôi đồng ý với Chính sách bảo vệ dữ liệu cá nhân"
+  },
+  "trust": {
+    "title": "Điểm Uy Tín (Trust Score)",
+    "currentScore": "Điểm hiện tại",
+    "availableScore": "Điểm khả dụng",
+    "heldScore": "Điểm đang giữ (Hold)",
+    "ledgerTitle": "Lịch sử biến động uy tín",
+    "reasonInitial": "Điểm khởi tạo tài khoản (+100)",
+    "reasonCompleted": "Hoàn thành buổi tập đúng hẹn (+2)",
+    "reasonLate": "Đến trễ buổi tập (-5)",
+    "reasonCancelledEarly": "Hủy kèo trước trên 2 giờ (-3)",
+    "reasonCancelledLate": "Hủy kèo sát giờ dưới 2 giờ (-15)",
+    "reasonNoShow": "Bùng kèo hoặc trễ quá 15 phút (-30)",
+    "reasonGracePass": "Sử dụng thẻ ân hạn hủy kèo (0 TS)"
+  },
+  "bounty": {
+    "title": "Bảng Kèo Thể Thao",
+    "createTitle": "Tạo Kèo Mới",
+    "accept": "Nhận kèo",
+    "cancel": "Hủy kèo",
+    "stake": "Điểm cọc cam kết",
+    "beginnerOnly": "Chỉ dành cho Tân binh (Beginner)",
+    "ghostMode": "Chế độ Hướng nội (Ghost Mode)",
+    "normalMode": "Chế độ Tiêu chuẩn",
+    "openStatus": "Đang mở",
+    "matchedStatus": "Đã ghép cặp",
+    "completedStatus": "Đã hoàn thành",
+    "cancelledStatus": "Đã hủy",
+    "expiredStatus": "Đã hết hạn"
+  },
+  "errors": {
+    "unauthorized": "Vui lòng đăng nhập để thực hiện hành động này.",
+    "forbidden": "Bạn không có quyền truy cập vào khu vực này.",
+    "notFound": "Không tìm thấy nội dung yêu cầu.",
+    "network": "Lỗi kết nối mạng, vui lòng kiểm tra lại đường truyền.",
+    "server": "Máy chủ đang bận, vui lòng thử lại sau.",
+    "alreadyMatched": "Kèo này đã có người nhận trước bạn.",
+    "insufficientPoints": "Điểm khả dụng của bạn không đủ để đặt cọc kèo này.",
+    "timeConflict": "Bạn đã có lịch tập khác trùng với khung giờ này."
+  }
+}
