@@ -22,7 +22,7 @@ export function PublicHeader() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+        <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
           <Link
             href="/mon-the-thao"
             className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
@@ -38,10 +38,34 @@ export function PublicHeader() {
             <span>Bảng kèo</span>
           </Link>
           <Link
-            href="/design-system"
-            className="text-muted-foreground hover:text-foreground transition-colors text-xs border border-border px-2 py-1 rounded"
+            href="/cau-lac-bo"
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
-            Design System (Dev)
+            Câu lạc bộ
+          </Link>
+          <Link
+            href="/dia-diem"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Điểm tập
+          </Link>
+          <Link
+            href="/vi-uy-tin"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Ví TS
+          </Link>
+          <Link
+            href="/admin"
+            className="text-muted-foreground hover:text-foreground transition-colors text-xs border border-muted px-2 py-0.5 rounded"
+          >
+            Admin
+          </Link>
+          <Link
+            href="/design-system"
+            className="text-muted-foreground hover:text-foreground transition-colors text-xs bg-muted/50 px-2 py-0.5 rounded"
+          >
+            Design System
           </Link>
         </nav>
 
