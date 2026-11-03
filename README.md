@@ -78,3 +78,46 @@ docs/
 
 - Mọi thay đổi Trust Score được ghi bất biến vào `trust_ledger` thông qua hàm bảo mật Postgres `apply_trust_delta`.
 - Tuân thủ Luật Bảo vệ dữ liệu cá nhân 2026: Không thu thập dữ liệu nhạy cảm dạng nhập tự do, không lưu GPS liên tục, bảo đảm quyền xuất/xóa dữ liệu.
+
+## 6. Hướng dẫn làm việc nhóm & Đồng bộ từ xa (Git Collaboration Workflow)
+
+Dự án được lưu trữ tại GitHub repository: [danghuuphuc183-spec/App_sync](https://github.com/danghuuphuc183-spec/App_sync)
+
+### Dành cho bạn bè / Cộng tác viên (Contributors):
+1. **Clone mã nguồn về máy:**
+   ```bash
+   git clone https://github.com/danghuuphuc183-spec/App_sync.git
+   cd App_sync
+   pnpm install
+   cp .env.example .env.local
+   pnpm dev
+   ```
+
+2. **Tạo nhánh tính năng mới (Branch) trước khi sửa đổi:**
+   ```bash
+   git checkout -b feature/ten-tinh-nang-moi
+   ```
+
+3. **Kiểm tra không có lỗi trước khi đẩy code:**
+   ```bash
+   pnpm typecheck
+   pnpm test
+   pnpm build
+   ```
+
+4. **Commit và đẩy lên GitHub:**
+   ```bash
+   git add .
+   git commit -m "feat: mô tả tính năng vừa làm"
+   git push origin feature/ten-tinh-nang-moi
+   ```
+   Sau đó tạo Pull Request trên GitHub để merge vào nhánh `main`.
+
+### Dành cho bạn (Chủ dự án - Cập nhật tự động về máy khi bạn bè push code):
+Mỗi khi bạn bè merge tính năng mới lên GitHub, bạn chỉ cần chạy lệnh sau tại thư mục dự án để cập nhật toàn bộ:
+```bash
+git checkout main
+git pull origin main
+pnpm install
+```
+Ứng dụng trên máy của bạn sẽ ngay lập tức được đồng bộ các tính năng mới nhất từ xa!

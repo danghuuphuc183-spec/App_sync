@@ -6,11 +6,26 @@ export interface SportTraits {
   beginner_friendly: number; // 0-3
 }
 
+export type SportCategory = "endurance" | "strength" | "mind_body" | "racket_team" | "ball_sport";
+
+export type SportKey =
+  | "running"
+  | "gym"
+  | "table_tennis"
+  | "pickleball"
+  | "badminton"
+  | "football"
+  | "basketball"
+  | "cycling";
+
 export interface SportItem {
   id: string;
+  key?: SportKey;
   slug: string;
   nameVi: string;
-  category: "endurance" | "strength" | "mind_body" | "racket_team";
+  englishName?: string;
+  category: SportCategory;
+  requiresVenue?: boolean; // true = cần sân/dụng cụ (hiển thị địa chỉ, rating, map link); false = cung đường mở (Strava route)
   verificationMode: "auto_api" | "qr_only" | "peer_confirm";
   phase: number;
   isActive: boolean;
@@ -22,15 +37,18 @@ export interface SportItem {
 export const SEED_SPORTS: SportItem[] = [
   {
     id: "sp-running",
+    key: "running",
     slug: "chay-bo",
-    nameVi: "Chạy bộ (Running)",
+    nameVi: "Chạy bộ",
+    englishName: "Running",
     category: "endurance",
+    requiresVenue: false,
     verificationMode: "auto_api",
     phase: 1,
     isActive: true,
     sortOrder: 1,
     descriptionVi:
-      "Ghép cặp chạy bộ cự ly 5km - 21km theo dải Pace tương đồng. Tự động đồng bộ bài tập qua API thực chứng.",
+      "Ghép cặp chạy bộ cự ly 5km - 21km theo dải Pace tương đồng. Tự động đồng bộ bài tập qua Strava & Apple Health.",
     traits: {
       endurance: 3,
       strength: 1,
@@ -40,16 +58,41 @@ export const SEED_SPORTS: SportItem[] = [
     },
   },
   {
-    id: "sp-gym",
-    slug: "gym",
-    nameVi: "Tập kháng lực (Gym / Strength)",
-    category: "strength",
+    id: "sp-cycling",
+    key: "cycling",
+    slug: "dap-xe",
+    nameVi: "Đạp xe",
+    englishName: "Cycling",
+    category: "endurance",
+    requiresVenue: false,
     verificationMode: "auto_api",
     phase: 1,
     isActive: true,
     sortOrder: 2,
     descriptionVi:
-      "Tìm bạn đỡ tạ (spotter) cùng khung giờ tại phòng gym cụ thể. Ràng buộc cam kết hoàn thành đủ buổi tập.",
+      "Tập luyện sức bền ngoài trời theo nhóm đôi hoặc đoàn peloton. Khảo sát cung đường an toàn, gió và độ dốc.",
+    traits: {
+      endurance: 3,
+      strength: 2,
+      social: 2,
+      low_cost: 1,
+      beginner_friendly: 2,
+    },
+  },
+  {
+    id: "sp-gym",
+    key: "gym",
+    slug: "gym",
+    nameVi: "Gym & Kháng Lực",
+    englishName: "Gym / Strength",
+    category: "strength",
+    requiresVenue: true,
+    verificationMode: "auto_api",
+    phase: 1,
+    isActive: true,
+    sortOrder: 3,
+    descriptionVi:
+      "Tìm bạn đỡ tạ (spotter) cùng khung giờ tại phòng gym cụ thể. Ràng buộc cam kết hoàn thành buổi tập không bùng kèo.",
     traits: {
       endurance: 1,
       strength: 3,
@@ -59,73 +102,41 @@ export const SEED_SPORTS: SportItem[] = [
     },
   },
   {
-    id: "sp-cycling",
-    slug: "dap-xe",
-    nameVi: "Đạp xe (Cycling)",
-    category: "endurance",
+    id: "sp-pickleball",
+    key: "pickleball",
+    slug: "pickleball",
+    nameVi: "Pickleball",
+    englishName: "Pickleball",
+    category: "racket_team",
+    requiresVenue: true,
     verificationMode: "qr_only",
-    phase: 2,
-    isActive: false,
-    sortOrder: 3,
-    descriptionVi:
-      "Tập luyện sức bền ngoài trời theo đoàn hoặc nhóm đôi. Xác thực điểm hẹn bằng mã QR.",
-    traits: {
-      endurance: 3,
-      strength: 2,
-      social: 2,
-      low_cost: 1,
-      beginner_friendly: 2,
-    },
-  },
-  {
-    id: "sp-walking",
-    slug: "di-bo-nhanh",
-    nameVi: "Đi bộ nhanh (Brisk Walking)",
-    category: "endurance",
-    verificationMode: "peer_confirm",
-    phase: 2,
-    isActive: false,
+    phase: 1,
+    isActive: true,
     sortOrder: 4,
     descriptionVi:
-      "Khởi động thói quen vận động nhẹ nhàng cho Tân binh muốn giảm cân bền vững.",
+      "Môn thể thao bùng nổ cho nhóm 2-4 người. Ghép cặp đánh đơn/đôi theo trình độ DUPR tại các cụm sân chất lượng cao.",
     traits: {
       endurance: 2,
-      strength: 0,
-      social: 2,
-      low_cost: 3,
-      beginner_friendly: 3,
-    },
-  },
-  {
-    id: "sp-yoga",
-    slug: "yoga",
-    nameVi: "Yoga & Giãn cơ",
-    category: "mind_body",
-    verificationMode: "qr_only",
-    phase: 3,
-    isActive: false,
-    sortOrder: 5,
-    descriptionVi:
-      "Phục hồi cơ bắp và rèn luyện tâm trí cùng đối tác tập luyện tĩnh tại.",
-    traits: {
-      endurance: 1,
       strength: 1,
-      social: 1,
+      social: 3,
       low_cost: 2,
       beginner_friendly: 3,
     },
   },
   {
     id: "sp-badminton",
+    key: "badminton",
     slug: "cau-long",
-    nameVi: "Cầu lông (Badminton)",
+    nameVi: "Cầu lông",
+    englishName: "Badminton",
     category: "racket_team",
+    requiresVenue: true,
     verificationMode: "qr_only",
-    phase: 3,
-    isActive: false,
-    sortOrder: 6,
+    phase: 1,
+    isActive: true,
+    sortOrder: 5,
     descriptionVi:
-      "Tìm đối tác đánh đơn hoặc đánh đôi tại các sân cầu lông khu vực Bình Thạnh và Thủ Đức.",
+      "Tìm đối tác đánh đơn, đánh đôi giải phóng calo cực nhanh tại các cụm sân cầu lông tiêu chuẩn thảm chuyên dụng.",
     traits: {
       endurance: 2,
       strength: 2,
@@ -134,4 +145,72 @@ export const SEED_SPORTS: SportItem[] = [
       beginner_friendly: 2,
     },
   },
+  {
+    id: "sp-table-tennis",
+    key: "table_tennis",
+    slug: "bong-ban",
+    nameVi: "Bóng bàn",
+    englishName: "Table Tennis",
+    category: "racket_team",
+    requiresVenue: true,
+    verificationMode: "qr_only",
+    phase: 1,
+    isActive: true,
+    sortOrder: 6,
+    descriptionVi:
+      "Rèn luyện phản xạ nhanh và sự tập trung cao độ cùng đối tác ngang cơ tại các CLB bóng bàn có máy lạnh và sàn thi đấu.",
+    traits: {
+      endurance: 2,
+      strength: 1,
+      social: 2,
+      low_cost: 3,
+      beginner_friendly: 3,
+    },
+  },
+  {
+    id: "sp-football",
+    key: "football",
+    slug: "bong-da",
+    nameVi: "Bóng đá",
+    englishName: "Football / Mini Soccer",
+    category: "ball_sport",
+    requiresVenue: true,
+    verificationMode: "qr_only",
+    phase: 1,
+    isActive: true,
+    sortOrder: 7,
+    descriptionVi:
+      "Tìm slot đá ké hoặc gom người cho đội hình sân 5 và sân 7 cỏ nhân tạo, cam kết đúng giờ và không bỏ vị trí.",
+    traits: {
+      endurance: 3,
+      strength: 2,
+      social: 3,
+      low_cost: 2,
+      beginner_friendly: 2,
+    },
+  },
+  {
+    id: "sp-basketball",
+    key: "basketball",
+    slug: "bong-ro",
+    nameVi: "Bóng rổ",
+    englishName: "Basketball",
+    category: "ball_sport",
+    requiresVenue: true,
+    verificationMode: "qr_only",
+    phase: 1,
+    isActive: true,
+    sortOrder: 8,
+    descriptionVi:
+      "Tìm bạn pick-up game nửa sân 3x3 hoặc đấu giao lưu full-court 5x5 tại các sân bóng rổ ngoài trời & nhà thi đấu trong nhà.",
+    traits: {
+      endurance: 3,
+      strength: 2,
+      social: 3,
+      low_cost: 2,
+      beginner_friendly: 2,
+    },
+  },
 ];
+
+export const POPULAR_GROUP_SPORTS = SEED_SPORTS;

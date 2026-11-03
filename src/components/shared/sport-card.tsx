@@ -10,7 +10,7 @@ export interface SportCardProps {
   id: string;
   slug: string;
   nameVi: string;
-  category: "endurance" | "strength" | "mind_body" | "racket_team";
+  category: "endurance" | "strength" | "mind_body" | "racket_team" | "ball_sport";
   verificationMode: "auto_api" | "qr_only" | "peer_confirm";
   phase: number;
   isActive: boolean;
@@ -31,19 +31,23 @@ export function SportCard({
   const categoryMeta = {
     endurance: {
       name: "Sức bền",
-      icon: <Activity className="h-4 w-4 text-emerald-500" />,
+      icon: <Activity className="h-4 w-4 text-[#1b3554]" />,
     },
     strength: {
       name: "Kháng lực",
-      icon: <Dumbbell className="h-4 w-4 text-indigo-500" />,
+      icon: <Dumbbell className="h-4 w-4 text-[#1b3554]" />,
     },
     mind_body: {
       name: "Thân - Tâm",
-      icon: <Sparkles className="h-4 w-4 text-purple-500" />,
+      icon: <Sparkles className="h-4 w-4 text-[#1b3554]" />,
     },
     racket_team: {
       name: "Vợt & Đội",
-      icon: <Trophy className="h-4 w-4 text-amber-500" />,
+      icon: <Trophy className="h-4 w-4 text-[#1b3554]" />,
+    },
+    ball_sport: {
+      name: "Bóng đồng đội",
+      icon: <Trophy className="h-4 w-4 text-[#1b3554]" />,
     },
   }[category];
 

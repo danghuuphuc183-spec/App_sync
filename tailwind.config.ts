@@ -59,6 +59,16 @@ const config: Config = {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
+        // Bảng màu xanh chủ đạo Image 5
+        syncblue: {
+          50: "#f0f8ff",
+          100: "#c0e6fd",
+          200: "#80aad3",
+          300: "#5b86b6",
+          400: "#3f6593",
+          500: "#1b3554",
+          900: "#000f22",
+        },
         // 4 hạng thể thao theo quy tắc nghiệp vụ TS
         tier: {
           bronze: {

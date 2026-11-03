@@ -36,3 +36,9 @@ test-results/
 
 # Supabase local
 .supabase/
+
+# Knowledge graph and tools output
+graphify-out/
+
+# Temporary test captures in root
+/*.png

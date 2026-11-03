@@ -10,13 +10,20 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen flex flex-col justify-between bg-muted/20 px-4 py-8">
       <div className="flex justify-center">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-            <Shield className="h-5 w-5 stroke-[2.5]" />
+        <Link href="/" className="flex items-center gap-2.5 font-bold text-lg group">
+          <img
+            src="/logo-icon-128.png"
+            alt="SYNESIS Logo"
+            className="h-9 w-9 rounded-xl object-contain shadow-xs group-hover:scale-105 transition-transform"
+          />
+          <div className="flex flex-col text-left">
+            <span className="font-extrabold text-foreground text-sm tracking-tight leading-none uppercase font-mono">
+              SYNC SPORT
+            </span>
+            <span className="text-[8px] font-extrabold text-sky-600 dark:text-sky-400 tracking-[0.16em] uppercase leading-none mt-1">
+              SYN≡SIS
+            </span>
           </div>
-          <span className="font-extrabold text-foreground tracking-tight">
-            Khế Ước Thể Thao
-          </span>
         </Link>
       </div>
 
