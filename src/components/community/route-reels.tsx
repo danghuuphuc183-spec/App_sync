@@ -180,7 +180,7 @@ export function RouteReels() {
     return () => {
       stopSynthesizedAudio();
     };
-  }, [activeReelIndex, isMuted, playSynthesizedBeat, stopSynthesizedAudio]);
+  }, [activeReel, isMuted, playSynthesizedBeat, stopSynthesizedAudio]);
 
   // Navigate to next reel (like swiping up on TikTok)
   const goToNextReel = React.useCallback(() => {

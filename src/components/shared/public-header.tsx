@@ -111,9 +111,11 @@ export function PublicHeader() {
                   title="Tài khoản VĐV"
                   aria-label="Tài khoản"
                 >
-                  <img
+                  <Image
                     src={user?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"}
                     alt={user?.name || "VĐV"}
+                    width={32}
+                    height={32}
                     className="w-full h-full object-cover"
                   />
                   <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 ring-1 ring-white" />
@@ -123,9 +125,11 @@ export function PublicHeader() {
                 {isUserMenuOpen && (
                   <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-card border border-border shadow-xl p-3 z-50 text-left animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="flex items-center gap-2.5 pb-2.5 border-b border-border/60">
-                      <img
+                      <Image
                         src={user?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"}
                         alt={user?.name || "VĐV"}
+                        width={40}
+                        height={40}
                         className="w-10 h-10 rounded-xl object-cover ring-1 ring-border"
                       />
                       <div className="flex-1 min-w-0">
