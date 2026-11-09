@@ -36,18 +36,18 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
       className={cn(
         "rounded-3xl border bg-card p-4 space-y-3.5 transition-all shadow-xs relative overflow-hidden",
         isTopMatch
-          ? "border-[#1b3554]/60 dark:border-[#80aad3]/60 bg-gradient-to-b from-[#f0f8ff]/60 to-card dark:from-[#1b3554]/20 dark:to-card ring-1 ring-[#1b3554]/20"
-          : "border-border hover:border-[#1b3554]/40"
+          ? "border-brand/60 dark:border-brand-sky/60 bg-gradient-to-b from-brand-50/60 to-card dark:from-brand/20 dark:to-card ring-1 ring-brand/20"
+          : "border-border hover:border-brand/40"
       )}
     >
       {/* Top Match Ribbon */}
       {isTopMatch && (
-        <div className="flex items-center justify-between pb-1 border-b border-[#1b3554]/15 dark:border-[#80aad3]/20">
-          <span className="flex items-center gap-1.5 text-[11px] font-black text-[#1b3554] dark:text-[#c0e6fd]">
-            <Sparkles className="h-3.5 w-3.5 fill-[#1b3554] dark:fill-[#c0e6fd]" />
+        <div className="flex items-center justify-between pb-1 border-b border-brand/15 dark:border-brand-sky/20">
+          <span className="flex items-center gap-1.5 text-[11px] font-black text-brand dark:text-brand-sky">
+            <Sparkles className="h-3.5 w-3.5 fill-brand dark:fill-brand-sky" />
             GỢI Ý TỐT NHẤT CHO BẠN
           </span>
-          <Badge className="bg-[#1b3554] text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">
+          <Badge className="bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">
             ⚡ {matchScore}% TƯƠNG THÍCH
           </Badge>
         </div>
@@ -64,10 +64,10 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
             />
             {coach.isVerified && (
               <div
-                className="absolute -bottom-1 -right-1 bg-white dark:bg-[#000f22] p-0.5 rounded-full shadow-xs"
+                className="absolute -bottom-1 -right-1 bg-white dark:bg-black p-0.5 rounded-full shadow-xs"
                 title="HLV Đã Xác Minh Bằng Cấp & Kỷ Luật"
               >
-                <ShieldCheck className="h-4 w-4 text-[#1b3554] dark:text-[#80aad3] fill-[#c0e6fd] dark:fill-[#1b3554]" />
+                <ShieldCheck className="h-4 w-4 text-brand dark:text-brand-sky fill-brand-100 dark:fill-brand" />
               </div>
             )}
           </div>
@@ -77,7 +77,7 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
               <h3 className="text-sm font-black text-foreground">{coach.name}</h3>
               <Badge
                 variant="outline"
-                className="text-[9px] px-1.5 py-0 h-4 font-bold border-[#1b3554]/30 text-[#1b3554] dark:text-[#c0e6fd] bg-[#c0e6fd]/30"
+                className="text-[9px] px-1.5 py-0 h-4 font-bold border-brand/30 text-brand dark:text-brand-sky bg-brand-100/30"
               >
                 {coach.trustScore} TS
               </Badge>
@@ -99,7 +99,7 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
         </div>
 
         {!isTopMatch && (
-          <Badge className="bg-[#c0e6fd]/70 text-[#1b3554] dark:bg-[#1b3554]/40 dark:text-[#c0e6fd] text-[10px] font-black shrink-0">
+          <Badge className="bg-brand-100/70 text-brand dark:bg-brand/40 dark:text-brand-sky text-[10px] font-black shrink-0">
             {matchScore}% Phù hợp
           </Badge>
         )}
@@ -117,7 +117,7 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
         </div>
         <div>
           <div className="text-[9px] text-muted-foreground uppercase font-bold">Kinh nghiệm</div>
-          <div className="font-black text-[#1b3554] dark:text-[#80aad3] text-xs">
+          <div className="font-black text-brand dark:text-brand-sky text-xs">
             {coach.bodyStats.experienceYears} năm
           </div>
         </div>
@@ -130,7 +130,7 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
       {/* Why Matched Badge */}
       <div className="space-y-1">
         <div className="text-[11px] text-foreground font-semibold flex items-center gap-1.5">
-          <Sparkles className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+          <Sparkles className="h-3 w-3 text-brand dark:text-brand-sky" />
           <span>{compatibilityHighlight}:</span>
         </div>
         <div className="flex flex-wrap gap-1">
@@ -146,10 +146,10 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
       </div>
 
       {/* Transparent Pricing Comparison (1:1 vs Nhóm) */}
-      <div className="grid grid-cols-2 gap-2 p-2.5 rounded-2xl bg-[#f0f8ff]/50 dark:bg-muted/40 border border-[#80aad3]/30">
+      <div className="grid grid-cols-2 gap-2 p-2.5 rounded-2xl bg-brand-50/50 dark:bg-muted/40 border border-brand-300/30">
         <div className="space-y-0.5">
           <div className="text-[10px] text-muted-foreground font-bold flex items-center gap-1">
-            <User className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+            <User className="h-3 w-3 text-brand dark:text-brand-sky" />
             Gói Kèm 1:1 Riêng
           </div>
           <div className="text-xs font-black text-foreground">
@@ -157,18 +157,18 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
             <span className="text-[9px] font-normal text-muted-foreground"> /buổi</span>
           </div>
           {coach.pricing.single1on1.trialPrice && (
-            <div className="text-[9px] text-[#1b3554] dark:text-[#80aad3] font-semibold">
+            <div className="text-[9px] text-brand dark:text-brand-sky font-semibold">
               Tập thử: {formatVnd(coach.pricing.single1on1.trialPrice)}
             </div>
           )}
         </div>
 
         <div className="space-y-0.5 border-l border-border/80 pl-2">
-          <div className="text-[10px] text-[#1b3554] dark:text-[#80aad3] font-bold flex items-center gap-1">
-            <Users className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+          <div className="text-[10px] text-brand dark:text-brand-sky font-bold flex items-center gap-1">
+            <Users className="h-3 w-3 text-brand dark:text-brand-sky" />
             Gói Nhóm (Squad 2-4)
           </div>
-          <div className="text-xs font-black text-[#1b3554] dark:text-[#80aad3]">
+          <div className="text-xs font-black text-brand dark:text-brand-sky">
             {formatVnd(coach.pricing.groupCoaching.pricePerPersonPerSession)}
             <span className="text-[9px] font-normal text-muted-foreground"> /người/buổi</span>
           </div>
@@ -194,7 +194,7 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
                 <span className="text-[9px] text-muted-foreground">({firstReview.trainingType === "1:1" ? "Học 1:1" : "Tập nhóm"})</span>
               </div>
               {firstReview.achievementBadge && (
-                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#1b3554]/10 text-[#1b3554] dark:bg-[#c0e6fd]/20 dark:text-[#c0e6fd] font-bold">
+                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-brand/10 text-brand dark:bg-brand-sky/20 dark:text-brand-sky font-bold">
                   🏆 {firstReview.achievementBadge}
                 </span>
               )}
@@ -230,7 +230,7 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
         <Button
           onClick={onBookSession}
           size="sm"
-          className="rounded-full bg-[#1b3554] hover:bg-[#000f22] text-white text-xs font-bold h-8 shadow-xs gap-1"
+          className="rounded-full bg-brand hover:bg-brand-700 text-white text-xs font-bold h-8 shadow-xs gap-1"
         >
           <span>Đặt Lịch Thử</span>
           <ChevronRight className="h-3 w-3" />

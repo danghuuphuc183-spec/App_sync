@@ -53,7 +53,7 @@ export function TrustMeter({
         </div>
 
         <div className="flex gap-4 text-xs">
-          <div className="flex items-center gap-1 text-[#1b3554] dark:text-[#80aad3] font-semibold">
+          <div className="flex items-center gap-1 text-brand dark:text-brand-sky font-semibold">
             <Unlock className="h-3.5 w-3.5" />
             <span>Khả dụng: {availableScore}</span>
           </div>
@@ -78,7 +78,7 @@ export function TrustMeter({
           {/* Thanh điểm đang cọc (hold) nối tiếp */}
           {heldScore > 0 && (
             <div
-              className="absolute top-0 h-full bg-[#80aad3] transition-all duration-300"
+              className="absolute top-0 h-full bg-brand-sky transition-all duration-300"
               style={{
                 left: `${availablePercentage}%`,
                 width: `${currentPercentage - availablePercentage}%`,

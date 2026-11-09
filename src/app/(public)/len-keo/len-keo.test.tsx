@@ -1,69 +1,128 @@
-import { describe, it, expect } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
-import LenKeoPage from "./page";
+import { describe, it, expect, beforeEach } from "vitest";
+import { render, screen, fireEvent, within } from "@testing-library/react";
+import { GroupFlow, PersonalFlow } from "@/components/keo/keo-flows";
+import { BrowseKeos } from "@/components/keo/browse-keos";
 
-describe("LenKeoPage - Athletic Partner Matching (No Tinder)", () => {
-  it("render hồ sơ vận động viên với Khung năng lực, Thói quen, Khu vực và các nút hành động", () => {
-    render(<LenKeoPage />);
+const done = (name: RegExp) => screen.getByRole("button", { name });
 
-    // Kiểm tra tiêu đề trang
-    expect(screen.getByText("Ghép Đôi & Lên Lịch Tập")).toBeInTheDocument();
+describe("Lên kèo cá nhân", () => {
+  beforeEach(() => window.localStorage.clear());
 
-    // Kiểm tra thông tin VĐV đầu tiên: Hoàng Nam, 24 tuổi, Bình Thạnh
-    expect(screen.getAllByText("Hoàng Nam").length).toBeGreaterThan(0);
-    expect(screen.getByText(/24 tuổi • Nam/i)).toBeInTheDocument();
-    expect(screen.getByText(/Bờ Kè Thanh Đa & Khuôn Viên Landmark 81/i)).toBeInTheDocument();
+  it("nút Done bị khoá tới khi chọn địa điểm, sau đó gợi ý tối đa 3 người và cho Chấp nhận", () => {
+    render(<PersonalFlow />);
+    expect(done(/Done · Tìm bạn tập/)).toBeDisabled();
+    expect(screen.getByText(/Còn thiếu: địa điểm/)).toBeInTheDocument();
 
-    // Kiểm tra Khung Năng Lực (Pace, Cự ly, Cấp độ, Điểm thể lực)
-    expect(screen.getByText(/Khung Năng Lực & Thể Lực/i)).toBeInTheDocument();
-    expect(screen.getByText("Pace 5:30 - 5:45/km")).toBeInTheDocument();
-    expect(screen.getByText("21.1 km (Half Marathon)")).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole("button", { name: /Landmark 81/ })[0]!);
+    expect(done(/Done · Tìm bạn tập/)).toBeEnabled();
+    fireEvent.click(done(/Done · Tìm bạn tập/));
 
-    // Kiểm tra Thói quen & Sở thích
-    expect(screen.getByText(/Thói Quen & Sở Thích Tập Luyện/i)).toBeInTheDocument();
-    expect(screen.getByText(/05:30 AM Sáng sớm/i)).toBeInTheDocument();
-    expect(screen.getByText(/Nghe Podcast/i)).toBeInTheDocument();
+    const accepts = screen.getAllByRole("button", { name: /Chấp nhận/ });
+    expect(accepts.length).toBeGreaterThan(0);
+    expect(accepts.length).toBeLessThanOrEqual(3);
+    expect(screen.getAllByText("tương thích").length).toBe(accepts.length);
 
-    // Kiểm tra các nút hành động cốt lõi
-    expect(screen.getByRole("button", { name: /Bắt Đầu Tập Cùng/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Tạo Lịch Hẹn/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Nhắn Tin Instagram/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Lướt Người Khác/i })).toBeInTheDocument();
+    fireEvent.click(accepts[0]!);
+    expect(screen.getByText(/Đã ghép kèo với/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Xem kèo của tôi" })).toHaveAttribute("href", "/ho-so?tab=bounties");
   });
 
-  it("cho phép lướt sang người tiếp theo và hiển thị VĐV tiếp theo", () => {
-    render(<LenKeoPage />);
+  it("đặt làm mặc định → lần sau form tự điền lại", () => {
+    const { unmount } = render(<PersonalFlow />);
+    fireEvent.click(screen.getAllByRole("button", { name: /Landmark 81/ })[0]!);
+    fireEvent.click(screen.getByRole("checkbox"));
+    fireEvent.click(done(/Done · Tìm bạn tập/));
+    unmount();
 
-    // Bấm 'Lướt Người Khác'
-    const nextBtn = screen.getByRole("button", { name: /Lướt Người Khác/i });
-    fireEvent.click(nextBtn);
+    render(<PersonalFlow />);
+    expect(screen.getByText("Đang dùng cài đặt mặc định của bạn")).toBeInTheDocument();
+    expect(done(/Done · Tìm bạn tập/)).toBeEnabled();
+  });
+});
 
-    // Chuyển sang VĐV Thuỳ Dung (Gym, 23 tuổi)
-    expect(screen.getAllByText("Thuỳ Dung").length).toBeGreaterThan(0);
-    expect(screen.getByText(/23 tuổi • Nữ/i)).toBeInTheDocument();
-    expect(screen.getByText(/Pace 6:15 - 6:30\/km/i)).toBeInTheDocument();
+describe("Chọn giờ bằng biểu đồ hoạt động", () => {
+  beforeEach(() => window.localStorage.clear());
+
+  it("có biểu đồ giờ đông nhất và thanh trượt không cho giờ kết thúc <= giờ bắt đầu", () => {
+    render(<PersonalFlow />);
+    expect(screen.getByRole("img", { name: /Mức hoạt động theo giờ, đông nhất lúc/ })).toBeInTheDocument();
+    const start = screen.getByLabelText("Giờ bắt đầu");
+    const end = screen.getByLabelText("Giờ kết thúc");
+    fireEvent.change(end, { target: { value: "8" } }); // 08:00
+    fireEvent.change(start, { target: { value: "20" } }); // cố kéo quá giờ kết thúc
+    expect(screen.getByText("07:30 – 08:00")).toBeInTheDocument();
+  });
+});
+
+describe("Lên kèo nhóm", () => {
+  beforeEach(() => window.localStorage.clear());
+
+  it("Done → danh sách nhóm đang thiếu người → bỏ qua để tự lập nhóm", () => {
+    render(<GroupFlow />);
+    expect(screen.getByText("Hiện diện")).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole("button", { name: /Pickleball Saigon Riverside/ })[0]!);
+    fireEvent.click(screen.getByRole("button", { name: "Hôm nay" }));
+    // Thanh trượt 2 đầu trên biểu đồ hoạt động: 17:00 → 19:00
+    fireEvent.change(screen.getByLabelText("Giờ kết thúc"), { target: { value: "30" } });
+    fireEvent.change(screen.getByLabelText("Giờ bắt đầu"), { target: { value: "26" } });
+    expect(screen.getByText("17:00 – 19:00")).toBeInTheDocument();
+    fireEvent.click(done(/Done · Tìm nhóm/));
+
+    expect(screen.getByText("Nhóm đang thiếu người")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Bỏ qua · Tự lập nhóm/ }));
+    expect(screen.getByText("Nhóm của bạn đã được đăng")).toBeInTheDocument();
+  });
+});
+
+describe("Xem kèo", () => {
+  beforeEach(() => window.localStorage.clear());
+
+  it("hiện kèo có ảnh, lý do gợi ý và cho tham gia", () => {
+    render(<BrowseKeos />);
+    const cards = screen.getAllByRole("article");
+    expect(cards.length).toBeGreaterThan(3);
+    expect(within(cards[0]!).getByRole("img", { name: /tại/ })).toBeInTheDocument();
+
+    const joinBtn = within(cards[0]!).getByRole("button", { name: /cọc/ });
+    fireEvent.click(joinBtn);
+    fireEvent.click(screen.getAllByRole("button", { name: /cọc/ }).at(-1)!);
+    expect(screen.getByText("Đã tham gia kèo")).toBeInTheDocument();
+  });
+});
+
+describe("Buổi tập đề xuất trong gợi ý", () => {
+  beforeEach(() => window.localStorage.clear());
+
+  it("chạy bộ: có bản đồ cung đường, giờ, địa điểm, pace chung và cường độ", () => {
+    render(<PersonalFlow />);
+    fireEvent.click(screen.getAllByRole("button", { name: /Landmark 81/ })[0]!);
+    fireEvent.click(done(/Done · Tìm bạn tập/));
+
+    expect(screen.getAllByRole("img", { name: /Bản đồ quãng đường/ }).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Pace chung/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Cường độ (nhẹ|vừa|cao)/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Ngày mai · \d{2}:\d{2} – \d{2}:\d{2}/).length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getAllByRole("button", { name: /Xem chi tiết cung đường/ })[0]!);
+    expect(screen.getByRole("dialog", { name: "Chi tiết cung đường" })).toBeInTheDocument();
   });
 
-  it("mở modal Tạo Lịch Hẹn và xác nhận trả về thông tin Địa Chỉ và Thời Gian cụ thể", () => {
-    render(<LenKeoPage />);
+  it("gym: có tên phòng tập, ngày tập nhóm cơ, bài tập, giờ và trang đánh giá cho người mới", () => {
+    render(<PersonalFlow />);
+    fireEvent.click(screen.getByRole("button", { name: /Gym/ }));
+    fireEvent.click(screen.getAllByRole("button", { name: /The New Gym - Điện Biên Phủ/ })[0]!);
+    fireEvent.change(screen.getByLabelText("Giờ kết thúc"), { target: { value: "32" } }); // 20:00
+    fireEvent.change(screen.getByLabelText("Giờ bắt đầu"), { target: { value: "28" } }); // 18:00
+    fireEvent.click(done(/Done · Tìm bạn tập/));
 
-    // Bấm nút Tạo Lịch Hẹn
-    const appointmentBtn = screen.getByRole("button", { name: /Tạo Lịch Hẹn/i });
-    fireEvent.click(appointmentBtn);
+    expect(screen.getAllByText(/^Ngày (Chân|Ngực|Lưng|Toàn thân|Boxing|Kéo)/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Nhóm cơ:/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/hiệp/).length).toBeGreaterThan(0);
 
-    // Modal hiển thị trường thời gian & địa chỉ
-    expect(screen.getByText(/Tạo Lịch Hẹn Với Hoàng Nam/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Thời gian & Ngày hẹn cụ thể/i)).toBeInTheDocument();
-    expect(screen.getByText(/Địa chỉ điểm hẹn tập/i)).toBeInTheDocument();
-
-    // Xác nhận hẹn
-    const confirmBtn = screen.getByRole("button", { name: /Xác Nhận Hẹn/i });
-    fireEvent.click(confirmBtn);
-
-    // Banner xác nhận hiển thị địa chỉ & thời gian rõ ràng
-    expect(screen.getByText(/Lịch Hẹn Tập Đã Xác Nhận!/i)).toBeInTheDocument();
-    expect(screen.getByText(/Thời gian:/i)).toBeInTheDocument();
-    expect(screen.getByText(/Địa chỉ:/i)).toBeInTheDocument();
-    expect(screen.getByText(/Mở Chat Instagram Với Hoàng Nam/i)).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole("button", { name: /Xem chi tiết & đánh giá phòng tập/ })[0]!);
+    const sheet = screen.getByRole("dialog", { name: "Chi tiết phòng tập" });
+    expect(within(sheet).getByText(/Chưa đăng ký phòng tập này/)).toBeInTheDocument();
+    expect(within(sheet).getByText(/đánh giá$/)).toBeInTheDocument();
+    expect(within(sheet).getByRole("link", { name: /Chỉ đường/ })).toBeInTheDocument();
   });
 });

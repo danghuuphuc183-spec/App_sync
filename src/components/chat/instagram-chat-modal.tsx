@@ -272,7 +272,7 @@ export function InstagramChatModal({
               className={cn(
                 "px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border",
                 activeConvId === c.id
-                  ? "bg-[#1b3554] text-white border-[#1b3554] shadow-xs"
+                  ? "bg-brand text-white border-brand shadow-xs"
                   : "bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-foreground"
               )}
             >
@@ -296,11 +296,11 @@ export function InstagramChatModal({
             <img
               src={activeConv.partner.avatar}
               alt={activeConv.partner.name}
-              className="w-16 h-16 rounded-full object-cover mx-auto ring-2 ring-[#1b3554]/30 shadow-md"
+              className="w-16 h-16 rounded-full object-cover mx-auto ring-2 ring-brand/30 shadow-md"
             />
             <h4 className="text-xs font-black text-foreground">{activeConv.partner.name}</h4>
             <p className="text-[11px] text-muted-foreground">{activeConv.partner.sportVi}</p>
-            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-[#c0e6fd]/30 dark:bg-[#1b3554]/30 border border-[#80aad3]/40 text-[10px] text-[#1b3554] dark:text-[#c0e6fd] font-bold">
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-brand-100/30 dark:bg-brand/30 border border-brand-300/40 text-[10px] text-brand dark:text-brand-sky font-bold">
               <Shield className="h-3 w-3 stroke-[2]" />
               <span>{activeConv.partner.trustScore} Điểm Uy Tín • Khế Ước Kỷ Luật</span>
             </div>
@@ -324,7 +324,7 @@ export function InstagramChatModal({
                     className={cn(
                       "px-3 py-2 text-xs leading-relaxed select-none relative transition-all shadow-xs",
                       isMe
-                        ? "bg-[#1b3554] text-white rounded-2xl rounded-tr-xs"
+                        ? "bg-brand text-white rounded-2xl rounded-tr-xs"
                         : "bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 border border-neutral-200 dark:border-neutral-700 rounded-2xl rounded-tl-xs"
                     )}
                   >
@@ -341,8 +341,8 @@ export function InstagramChatModal({
 
                 {/* Attachment: Workout Appointment Card */}
                 {msg.attachment && msg.attachment.type === "appointment" && (
-                  <div className="w-full mt-1.5 p-3 rounded-xl bg-white dark:bg-card border border-[#80aad3]/40 shadow-xs space-y-2">
-                    <div className="flex items-center gap-1.5 text-[#1b3554] dark:text-[#c0e6fd] font-bold text-xs">
+                  <div className="w-full mt-1.5 p-3 rounded-xl bg-white dark:bg-card border border-brand-300/40 shadow-xs space-y-2">
+                    <div className="flex items-center gap-1.5 text-brand dark:text-brand-sky font-bold text-xs">
                       <Calendar className="h-3.5 w-3.5 stroke-[2]" />
                       <span>{msg.attachment.title}</span>
                     </div>
@@ -370,7 +370,7 @@ export function InstagramChatModal({
                         <Link
                           href={msg.attachment.actionHref}
                           onClick={onClose}
-                          className="text-[10px] font-bold text-[#1b3554] dark:text-[#c0e6fd] hover:underline flex items-center gap-0.5"
+                          className="text-[10px] font-bold text-brand dark:text-brand-sky hover:underline flex items-center gap-0.5"
                         >
                           <span>{msg.attachment.actionLabel}</span>
                           <ExternalLink className="h-2.5 w-2.5" />
@@ -434,7 +434,7 @@ export function InstagramChatModal({
                 placeholder="Nhắn tin..."
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-3 py-1.5 text-xs text-foreground placeholder:text-neutral-400 focus:outline-hidden focus:ring-1 focus:ring-[#1b3554]"
+                className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-3 py-1.5 text-xs text-foreground placeholder:text-neutral-400 focus:outline-hidden focus:ring-1 focus:ring-brand"
               />
             </div>
 
@@ -442,7 +442,7 @@ export function InstagramChatModal({
             {inputText.trim() ? (
               <button
                 type="submit"
-                className="px-3 py-1.5 bg-[#1b3554] text-white rounded-xl text-xs font-bold hover:bg-[#000f22] transition-colors flex items-center gap-1"
+                className="px-3 py-1.5 bg-brand text-white rounded-xl text-xs font-bold hover:bg-brand-700 transition-colors flex items-center gap-1"
               >
                 <span>Gửi</span>
                 <Send className="h-3 w-3 stroke-[2]" />

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Be_Vietnam_Pro } from "next/font/google";
+import { Be_Vietnam_Pro, Montserrat } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/auth-context";
 
@@ -7,6 +7,14 @@ const beVietnamPro = Be_Vietnam_Pro({
   subsets: ["vietnamese", "latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-be-vietnam-pro",
+  display: "swap",
+});
+
+// Font tiêu đề: thay thế miễn phí, có tiếng Việt, gần với "adineue PRO Bold" trong bộ nhận diện SYNESIS
+const display = Montserrat({
+  subsets: ["vietnamese", "latin"],
+  weight: ["600", "700", "800", "900"],
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -22,7 +30,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#059669",
+  themeColor: "#0567E1",
 };
 
 export default function RootLayout({
@@ -31,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={beVietnamPro.variable}>
+    <html lang="vi" className={`${beVietnamPro.variable} ${display.variable}`}>
       <body className="min-h-screen bg-background font-sans antialiased text-foreground">
         <AuthProvider>{children}</AuthProvider>
       </body>

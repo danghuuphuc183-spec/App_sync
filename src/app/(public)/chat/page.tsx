@@ -146,7 +146,7 @@ export default function ChatPage() {
         <div className="flex items-center gap-1.5">
           <Link
             href="/len-keo"
-            className="px-2.5 py-1 rounded-lg bg-[#1b3554] text-white text-[11px] font-bold flex items-center gap-1 hover:bg-[#000f22]"
+            className="px-2.5 py-1 rounded-lg bg-brand text-white text-[11px] font-bold flex items-center gap-1 hover:bg-brand-700"
           >
             <Plus className="h-3 w-3 stroke-[2]" />
             <span>Tìm Bạn Mới</span>
@@ -169,7 +169,7 @@ export default function ChatPage() {
                   className={cn(
                     "relative p-0.5 rounded-full transition-all",
                     isSelected
-                      ? "ring-2 ring-[#1b3554] dark:ring-[#c0e6fd] scale-105"
+                      ? "ring-2 ring-brand dark:ring-brand-sky scale-105"
                       : "ring-1 ring-neutral-300 dark:ring-neutral-700 opacity-80 group-hover:opacity-100"
                   )}
                 >
@@ -254,7 +254,7 @@ export default function ChatPage() {
                   className={cn(
                     "px-3 py-2 text-xs leading-relaxed select-none relative transition-all shadow-xs",
                     isMe
-                      ? "bg-[#1b3554] text-white rounded-2xl rounded-tr-xs"
+                      ? "bg-brand text-white rounded-2xl rounded-tr-xs"
                       : "bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 border border-neutral-200 dark:border-neutral-700 rounded-2xl rounded-tl-xs"
                   )}
                 >
@@ -269,8 +269,8 @@ export default function ChatPage() {
 
               {/* Workout Appointment Attachment */}
               {msg.attachment && msg.attachment.type === "appointment" && (
-                <div className="w-full mt-1.5 p-3 rounded-xl bg-white dark:bg-card border border-[#80aad3]/40 shadow-xs space-y-2">
-                  <div className="flex items-center gap-1.5 text-[#1b3554] dark:text-[#c0e6fd] font-bold text-xs">
+                <div className="w-full mt-1.5 p-3 rounded-xl bg-white dark:bg-card border border-brand-300/40 shadow-xs space-y-2">
+                  <div className="flex items-center gap-1.5 text-brand dark:text-brand-sky font-bold text-xs">
                     <Calendar className="h-3.5 w-3.5 stroke-[2]" />
                     <span>{msg.attachment.title}</span>
                   </div>
@@ -297,7 +297,7 @@ export default function ChatPage() {
                     {msg.attachment.actionHref && (
                       <Link
                         href={msg.attachment.actionHref}
-                        className="text-[10px] font-bold text-[#1b3554] dark:text-[#c0e6fd] hover:underline flex items-center gap-0.5"
+                        className="text-[10px] font-bold text-brand dark:text-brand-sky hover:underline flex items-center gap-0.5"
                       >
                         <span>{msg.attachment.actionLabel}</span>
                         <ExternalLink className="h-2.5 w-2.5" />
@@ -356,14 +356,14 @@ export default function ChatPage() {
               placeholder="Nhắn tin..."
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-3 py-1.5 text-xs text-foreground placeholder:text-neutral-400 focus:outline-hidden focus:ring-1 focus:ring-[#1b3554]"
+              className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-3 py-1.5 text-xs text-foreground placeholder:text-neutral-400 focus:outline-hidden focus:ring-1 focus:ring-brand"
             />
           </div>
 
           {inputText.trim() ? (
             <button
               type="submit"
-              className="px-3 py-1.5 bg-[#1b3554] text-white rounded-xl text-xs font-bold hover:bg-[#000f22] transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 bg-brand text-white rounded-xl text-xs font-bold hover:bg-brand-700 transition-colors flex items-center gap-1"
             >
               <span>Gửi</span>
               <Send className="h-3 w-3 stroke-[2]" />

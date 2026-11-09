@@ -31,23 +31,23 @@ export function SportCard({
   const categoryMeta = {
     endurance: {
       name: "Sức bền",
-      icon: <Activity className="h-4 w-4 text-[#1b3554]" />,
+      icon: <Activity className="h-4 w-4 text-brand" />,
     },
     strength: {
       name: "Kháng lực",
-      icon: <Dumbbell className="h-4 w-4 text-[#1b3554]" />,
+      icon: <Dumbbell className="h-4 w-4 text-brand" />,
     },
     mind_body: {
       name: "Thân - Tâm",
-      icon: <Sparkles className="h-4 w-4 text-[#1b3554]" />,
+      icon: <Sparkles className="h-4 w-4 text-brand" />,
     },
     racket_team: {
       name: "Vợt & Đội",
-      icon: <Trophy className="h-4 w-4 text-[#1b3554]" />,
+      icon: <Trophy className="h-4 w-4 text-brand" />,
     },
     ball_sport: {
       name: "Bóng đồng đội",
-      icon: <Trophy className="h-4 w-4 text-[#1b3554]" />,
+      icon: <Trophy className="h-4 w-4 text-brand" />,
     },
   }[category];
 

@@ -3,18 +3,27 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import ClubsPage from "./page";
 
 describe("ClubsPage & Coaching Integration", () => {
-  it("renders clubs page and displays the new HLV & Coach tab", () => {
+  it("trang Nhóm chỉ có 2 chức năng: Câu lạc bộ và Huấn luyện viên, không có tạo kèo", () => {
     render(<ClubsPage />);
 
-    expect(screen.getByText("Nhóm & CLB")).toBeInTheDocument();
-    expect(screen.getByText("HLV & Coach")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Nhóm" })).toBeInTheDocument();
+    expect(screen.getAllByRole("tab").map((t) => t.textContent)).toEqual(["Câu lạc bộ", "Huấn luyện viên"]);
+    expect(screen.queryByText(/Tạo kèo/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Lên Kèo Squad/i)).not.toBeInTheDocument();
+    expect(screen.getByText("Khám phá câu lạc bộ")).toBeInTheDocument();
+  });
+
+  it("xin gia nhập CLB chuyển nút sang 'Đã gửi yêu cầu'", () => {
+    render(<ClubsPage />);
+    fireEvent.click(screen.getAllByRole("button", { name: "Xin gia nhập" })[0]!);
+    expect(screen.getByRole("button", { name: "Đã gửi yêu cầu" })).toBeDisabled();
   });
 
   it("switches to HLV & Coach tab and displays personalized matchmaker and coaches", () => {
     render(<ClubsPage />);
 
     // Click on "HLV & Coach" tab
-    const coachTabButton = screen.getByText("HLV & Coach");
+    const coachTabButton = screen.getByRole("tab", { name: "Huấn luyện viên" });
     fireEvent.click(coachTabButton);
 
     // Verify Coaching Section header is rendered
@@ -30,7 +39,7 @@ describe("ClubsPage & Coaching Integration", () => {
     render(<ClubsPage />);
 
     // Switch to coaching tab
-    fireEvent.click(screen.getByText("HLV & Coach"));
+    fireEvent.click(screen.getByRole("tab", { name: "Huấn luyện viên" }));
 
     // Click on "Hỗ trợ Nhóm (Tiết kiệm 60%)" filter button
     const groupFilterBtn = screen.getByText("Hỗ trợ Nhóm (Tiết kiệm 60%)");

@@ -59,15 +59,21 @@ const config: Config = {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
-        // Bảng màu xanh chủ đạo Image 5
-        syncblue: {
-          50: "#f0f8ff",
-          100: "#c0e6fd",
-          200: "#80aad3",
-          300: "#5b86b6",
-          400: "#3f6593",
-          500: "#1b3554",
-          900: "#000f22",
+        // SYNESIS Brand Identity — #0567E1 (Royal Blue), #39A1F4 (Sky Blue), #FFFFFF, #000000
+        brand: {
+          DEFAULT: "#0567E1",
+          sky: "#39A1F4",
+          50: "#EEF6FE",
+          100: "#D8EBFD",
+          200: "#B6DAFB",
+          300: "#82C0F8",
+          400: "#39A1F4",
+          500: "#1A84EC",
+          600: "#0567E1",
+          700: "#0452B4",
+          800: "#07448F",
+          900: "#0A3A74",
+          950: "#072447",
         },
         // 4 hạng thể thao theo quy tắc nghiệp vụ TS
         tier: {
@@ -88,6 +94,10 @@ const config: Config = {
             foreground: "hsl(var(--tier-diamond-foreground))",
           },
         },
+      },
+      fontFamily: {
+        sans: ["var(--font-be-vietnam-pro)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-be-vietnam-pro)", "system-ui", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

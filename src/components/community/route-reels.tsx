@@ -345,7 +345,7 @@ export function RouteReels() {
       {/* Header bar: Title & Upload Reel Button */}
       <div className="flex items-center justify-between px-3">
         <div className="flex items-center gap-1.5">
-          <Film className="h-4 w-4 text-[#1b3554] dark:text-[#c0e6fd] stroke-[2]" />
+          <Film className="h-4 w-4 text-brand dark:text-brand-sky stroke-[2]" />
           <h3 className="text-xs font-black tracking-tight text-foreground uppercase">
             Reels Cung Đường Đẹp
           </h3>
@@ -356,7 +356,7 @@ export function RouteReels() {
 
         <button
           onClick={() => setIsUploadOpen(true)}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#1b3554] hover:bg-[#000f22] text-white text-[11px] font-bold transition-colors shadow-xs"
+          className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-brand hover:bg-brand-700 text-white text-[11px] font-bold transition-colors shadow-xs"
         >
           <Plus className="h-3 w-3 stroke-[2.5]" />
           <span>Đăng Reel</span>
@@ -386,7 +386,7 @@ export function RouteReels() {
 
               {/* Top Distance & Sport Badge */}
               <div className="absolute top-2 left-2 right-2 flex items-center justify-between pointer-events-none">
-                <span className="px-1.5 py-0.5 rounded-md bg-[#000f22]/80 backdrop-blur-xs text-white text-[9px] font-bold">
+                <span className="px-1.5 py-0.5 rounded-md bg-black/80 backdrop-blur-xs text-white text-[9px] font-bold">
                   {reel.distanceKm} km
                 </span>
                 <span className="text-[10px] drop-shadow-md">
@@ -396,7 +396,7 @@ export function RouteReels() {
 
               {/* Soundtrack Tag */}
               <div className="absolute top-8 left-2 right-2 flex items-center gap-1 text-[8.5px] text-white/80 bg-black/40 backdrop-blur-xs px-1.5 py-0.5 rounded pointer-events-none">
-                <Music2 className="h-2.5 w-2.5 text-cyan-300 shrink-0" />
+                <Music2 className="h-2.5 w-2.5 text-brand-300 shrink-0" />
                 <span className="truncate">{reel.soundtrack.title}</span>
               </div>
 
@@ -473,7 +473,7 @@ export function RouteReels() {
                   <div className="flex items-center gap-1.5 text-[10px] text-white/80 font-mono">
                     <span>{activeReel.author.badgeTitle}</span>
                     <span>•</span>
-                    <span className="text-cyan-300">
+                    <span className="text-brand-300">
                       Reel {activeReelIndex + 1}/{reels.length}
                     </span>
                   </div>
@@ -585,10 +585,10 @@ export function RouteReels() {
                 className="flex flex-col items-center gap-1 group"
                 title="Lồng nhạc cho Reel"
               >
-                <div className="p-2.5 rounded-full bg-cyan-600/80 hover:bg-cyan-500 text-white backdrop-blur-md border border-cyan-400/50 shadow-lg shadow-cyan-500/30 group-active:scale-110 transition-transform">
+                <div className="p-2.5 rounded-full bg-brand-600/80 hover:bg-brand-500 text-white backdrop-blur-md border border-brand-400/50 shadow-lg shadow-brand-500/30 group-active:scale-110 transition-transform">
                   <Music2 className="h-5 w-5 stroke-[2.2]" />
                 </div>
-                <span className="text-[9px] font-black tracking-tight text-cyan-300 drop-shadow-md">
+                <span className="text-[9px] font-black tracking-tight text-brand-300 drop-shadow-md">
                   Lồng Nhạc
                 </span>
               </button>
@@ -605,12 +605,12 @@ export function RouteReels() {
                     !isMuted && isPlayingAudio && "animate-[spin_4s_linear_infinite]"
                   )}
                 >
-                  <Disc3 className="h-5 w-5 text-cyan-300" />
+                  <Disc3 className="h-5 w-5 text-brand-300" />
                 </div>
                 {!isMuted && isPlayingAudio && (
                   <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-500"></span>
                   </span>
                 )}
               </button>
@@ -621,19 +621,19 @@ export function RouteReels() {
               {/* Soundtrack Marquee Banner */}
               <div
                 onClick={() => setIsMusicModalOpen(true)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-cyan-500/30 w-fit max-w-[280px] cursor-pointer hover:bg-black/80 transition-colors"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-brand-500/30 w-fit max-w-[280px] cursor-pointer hover:bg-black/80 transition-colors"
               >
-                <Radio className="h-3 w-3 text-cyan-400 animate-pulse shrink-0" />
-                <span className="text-[10px] font-bold text-cyan-200 truncate">
+                <Radio className="h-3 w-3 text-brand-400 animate-pulse shrink-0" />
+                <span className="text-[10px] font-bold text-brand-200 truncate">
                   ♫ {activeReel.soundtrack.title} • {activeReel.soundtrack.bpm} BPM
                 </span>
-                <span className="text-[9px] text-cyan-400 font-mono underline ml-1">Đổi nhạc</span>
+                <span className="text-[9px] text-brand-400 font-mono underline ml-1">Đổi nhạc</span>
               </div>
 
               {/* Route & Surface Meta */}
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-md bg-[#1b3554] text-white text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded-md bg-brand text-white text-[10px] font-bold">
                     {activeReel.distanceKm} km
                   </span>
                   <span className="text-[10px] text-white/90 flex items-center gap-1">
@@ -659,7 +659,7 @@ export function RouteReels() {
                 <Link
                   href="/len-keo"
                   onClick={() => setActiveReelIndex(null)}
-                  className="flex-1 py-2 rounded-xl bg-[#1b3554] hover:bg-[#000f22] text-white font-bold text-xs text-center flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all"
+                  className="flex-1 py-2 rounded-xl bg-brand hover:bg-brand-700 text-white font-bold text-xs text-center flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all"
                 >
                   <Zap className="h-3.5 w-3.5 stroke-[2.2]" />
                   <span>Lên Kèo Cung Này</span>
@@ -693,7 +693,7 @@ export function RouteReels() {
           <div className="w-full sm:max-w-md bg-card rounded-t-3xl sm:rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 space-y-3.5 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-2.5">
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+                <div className="p-2 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400">
                   <Music2 className="h-4 w-4 stroke-[2.2]" />
                 </div>
                 <div>
@@ -724,7 +724,7 @@ export function RouteReels() {
                     className={cn(
                       "flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all active:scale-98",
                       isSelected
-                        ? "bg-cyan-50 dark:bg-cyan-950/40 border-cyan-500 text-cyan-950 dark:text-cyan-100 shadow-xs"
+                        ? "bg-brand-50 dark:bg-brand-950/40 border-brand-500 text-brand-950 dark:text-brand-100 shadow-xs"
                         : "bg-neutral-50/70 dark:bg-neutral-900/60 border-neutral-200 dark:border-neutral-800 hover:border-neutral-300"
                     )}
                   >
@@ -733,7 +733,7 @@ export function RouteReels() {
                         className={cn(
                           "w-9 h-9 rounded-full flex items-center justify-center shrink-0",
                           isSelected
-                            ? "bg-cyan-600 text-white"
+                            ? "bg-brand-600 text-white"
                             : "bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300"
                         )}
                       >
@@ -761,7 +761,7 @@ export function RouteReels() {
 
                     <div className="shrink-0 pl-2">
                       {isSelected ? (
-                        <div className="h-6 w-6 rounded-full bg-cyan-600 text-white flex items-center justify-center">
+                        <div className="h-6 w-6 rounded-full bg-brand-600 text-white flex items-center justify-center">
                           <Check className="h-3.5 w-3.5 stroke-[2.5]" />
                         </div>
                       ) : (
@@ -779,7 +779,7 @@ export function RouteReels() {
               <button
                 type="button"
                 onClick={() => setIsMusicModalOpen(false)}
-                className="w-full py-2 rounded-xl bg-[#1b3554] text-white font-bold text-xs hover:bg-[#000f22] transition-colors"
+                className="w-full py-2 rounded-xl bg-brand text-white font-bold text-xs hover:bg-brand-700 transition-colors"
               >
                 Xác Nhận & Tiếp Tục Xem
               </button>
@@ -796,7 +796,7 @@ export function RouteReels() {
           <div className="w-full max-w-sm rounded-xl bg-card border border-neutral-200 dark:border-neutral-800 p-4 space-y-3 shadow-2xl">
             <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-2.5">
               <div className="flex items-center gap-2">
-                <Film className="h-4 w-4 text-[#1b3554] dark:text-[#c0e6fd] stroke-[2]" />
+                <Film className="h-4 w-4 text-brand dark:text-brand-sky stroke-[2]" />
                 <h3 className="text-sm font-black text-foreground">
                   Chia Sẻ Reel Quãng Đường Đẹp
                 </h3>
@@ -811,7 +811,7 @@ export function RouteReels() {
 
             {uploadSuccess ? (
               <div className="py-6 text-center space-y-2">
-                <Sparkles className="h-10 w-10 text-[#1b3554] dark:text-[#c0e6fd] mx-auto animate-bounce stroke-[2]" />
+                <Sparkles className="h-10 w-10 text-brand dark:text-brand-sky mx-auto animate-bounce stroke-[2]" />
                 <h4 className="text-sm font-bold text-foreground">Đã Đăng Reel Cung Đường!</h4>
                 <p className="text-xs text-muted-foreground">
                   Cung đường của bạn đã được công khai trên feed để cộng đồng cùng trải nghiệm.
@@ -827,7 +827,7 @@ export function RouteReels() {
                     placeholder="VD: Hoàng hôn Bờ Kè Thanh Đa, Bình minh Sala..."
                     value={uploadTitle}
                     onChange={(e) => setUploadTitle(e.target.value)}
-                    className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 py-1.5 text-xs text-foreground placeholder:text-neutral-400 focus:outline-hidden focus:ring-1 focus:ring-[#1b3554]"
+                    className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 py-1.5 text-xs text-foreground placeholder:text-neutral-400 focus:outline-hidden focus:ring-1 focus:ring-brand"
                   />
                 </div>
 
@@ -839,7 +839,7 @@ export function RouteReels() {
                       step="0.1"
                       value={uploadDistance}
                       onChange={(e) => setUploadDistance(e.target.value)}
-                      className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-[#1b3554]"
+                      className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-brand"
                     />
                   </div>
 
@@ -850,7 +850,7 @@ export function RouteReels() {
                       placeholder="VD: 05:30 AM"
                       value={uploadTime}
                       onChange={(e) => setUploadTime(e.target.value)}
-                      className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-[#1b3554]"
+                      className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-brand"
                     />
                   </div>
                 </div>
@@ -862,7 +862,7 @@ export function RouteReels() {
                     placeholder="VD: Cổng bến thuyền Landmark 81 dọc bờ sông"
                     value={uploadLocation}
                     onChange={(e) => setUploadLocation(e.target.value)}
-                    className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-[#1b3554]"
+                    className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-brand"
                   />
                 </div>
 
@@ -873,7 +873,7 @@ export function RouteReels() {
                     placeholder="Mặt đường thế nào? Có trạm nước không? Đèn chiếu sáng thế nào?"
                     value={uploadCaption}
                     onChange={(e) => setUploadCaption(e.target.value)}
-                    className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 py-1.5 text-xs text-foreground placeholder:text-neutral-400 focus:outline-hidden focus:ring-1 focus:ring-[#1b3554]"
+                    className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-3 py-1.5 text-xs text-foreground placeholder:text-neutral-400 focus:outline-hidden focus:ring-1 focus:ring-brand"
                   />
                 </div>
 
@@ -887,7 +887,7 @@ export function RouteReels() {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-1.5 rounded-lg bg-[#1b3554] text-white font-bold hover:bg-[#000f22]"
+                    className="flex-1 py-1.5 rounded-lg bg-brand text-white font-bold hover:bg-brand-700"
                   >
                     Đăng Ngay
                   </button>

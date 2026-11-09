@@ -3,6 +3,11 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { TrainingLog } from "@/components/profile/training-log";
+import { MyConnections, MyPosts, SocialStatsBar, type SocialTab } from "@/components/profile/my-social";
+import { useKeoStore } from "@/features/keo/use-keo-store";
+import { SEED_KEOS, hostOf, hostTrust } from "@/features/keo/keo.data";
+import { PEOPLE } from "@/features/feed/feed.data";
 import {
   Shield,
   ShieldCheck,
@@ -178,8 +183,49 @@ export default function ProfilePage() {
   const { user, logout, updatePermissions, toggleBiometric, toggleAppConnection } = useAuth();
 
   const [metricTab, setMetricTab] = React.useState<"distance" | "duration" | "volume">("distance");
-  const [activeTab, setActiveTab] = React.useState<"snapshot" | "bounties" | "badges" | "privacy">("snapshot");
+  type ProfileTab = "posts" | "friends" | "snapshot" | "bounties" | "badges" | "privacy";
+  const [activeTab, setActiveTab] = React.useState<ProfileTab>("posts");
+  const [socialTab, setSocialTab] = React.useState<SocialTab>("friends");
+  const tabsRef = React.useRef<HTMLDivElement>(null);
+  const openSection = (target: "posts" | SocialTab) => {
+    if (target === "posts") setActiveTab("posts");
+    else {
+      setSocialTab(target);
+      setActiveTab("friends");
+    }
+    requestAnimationFrame(() => tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  };
   const [bountySubTab, setBountySubTab] = React.useState<"upcoming" | "history" | "pending" | "cancelled">("upcoming");
+  const keoStore = useKeoStore();
+
+  // Mở thẳng tab "Kèo của tôi" khi đi từ Lên kèo (?tab=bounties)
+  React.useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("tab") === "bounties") setActiveTab("bounties");
+  }, []);
+
+  // Kèo tạo/tham gia ở mục Lên kèo hiện ở "Sắp tới"
+  const myBounties = React.useMemo(() => {
+    const mine = [...keoStore.mine, ...SEED_KEOS.filter((k) => keoStore.joined.has(k.id))];
+    const upcoming = mine.map((k) => {
+      const partnerId = k.memberIds.find((id) => id !== "me");
+      const guest = partnerId ? k.guestProfiles?.[partnerId] : undefined;
+      const host = hostOf(k.mine ? (partnerId ?? "me") : k.hostId);
+      const partner = guest ?? (host ? { name: host.name, avatar: host.avatar } : { name: "Đang chờ người nhận", avatar: PEOPLE.me!.avatar });
+      return {
+        id: k.id,
+        title: k.title,
+        partner: k.kind === "group" ? `${partner.name} · nhóm ${k.memberIds.length}/${k.capacity}` : partner.name,
+        partnerAvatar: partner.avatar,
+        partnerTs: partnerId ? hostTrust(partnerId) : 0,
+        timeVi: `${k.time.from} – ${k.time.to} • ${k.time.day}`,
+        location: k.place.name,
+        holdTs: k.holdTs,
+        statusVi: k.mine ? (k.memberIds.length >= k.capacity ? "Đã chốt — Đang giữ cọc" : "Đang chờ thêm người") : "Đã tham gia — Đang giữ cọc",
+        canCheckin: true,
+      };
+    });
+    return { ...MY_BOUNTIES, upcoming: [...upcoming, ...MY_BOUNTIES.upcoming] };
+  }, [keoStore.mine, keoStore.joined]);
 
   // Privacy & PDP 2026 settings state
   const [ghostMode, setGhostMode] = React.useState<boolean>(false);
@@ -225,15 +271,15 @@ export default function ProfilePage() {
   return (
     <div className="flex flex-col w-full pb-16 space-y-3.5 px-3 pt-1">
       {/* 1. ATHLETE COVER & STATUS BAR */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#1b3554] via-[#000f22] to-[#122338] text-white p-4 shadow-md border border-[#80aad3]/20">
+      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-brand via-black to-brand-800 text-white p-4 shadow-md border border-brand-300/20">
         {/* Subtle athletic background glow */}
-        <div className="absolute top-0 right-0 w-44 h-44 bg-[#80aad3]/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#c0e6fd]/5 rounded-full blur-xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-44 h-44 bg-brand-sky/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-brand-100/5 rounded-full blur-xl pointer-events-none" />
 
         {/* Top Actions on Card */}
         <div className="flex items-center justify-between relative z-10 pb-3">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-mono font-bold tracking-tight text-[#c0e6fd]">@minhthu_runner</span>
+            <span className="text-xs font-mono font-bold tracking-tight text-brand-200">@minhthu_runner</span>
             <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" title="Đang online sẵn sàng tập" />
           </div>
 
@@ -241,7 +287,7 @@ export default function ProfilePage() {
             <button
               onClick={() => setIsQrModalOpen(true)}
               aria-label="Mã QR Điểm Hẹn"
-              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[#c0e6fd] transition-colors active:scale-95"
+              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-brand-200 transition-colors active:scale-95"
               title="Mã QR Điểm Hẹn"
             >
               <QrCode className="h-4 w-4" />
@@ -284,15 +330,15 @@ export default function ProfilePage() {
         {/* Athlete Core Identity */}
         <div className="flex items-start gap-3.5 relative z-10">
           <div className="relative shrink-0">
-            <div className="w-16 h-16 rounded-2xl p-0.5 bg-gradient-to-tr from-[#80aad3] via-[#c0e6fd] to-white shadow-md">
+            <div className="w-16 h-16 rounded-2xl p-0.5 bg-gradient-to-tr from-brand-sky via-brand-100 to-white shadow-md">
               <img
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&auto=format&fit=crop&q=80"
                 alt="Avatar Minh Thư"
                 className="w-full h-full rounded-2xl object-cover"
               />
             </div>
-            <span className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-[#1b3554] border border-white/60 flex items-center justify-center shadow-xs">
-              <CheckCircle2 className="h-3 w-3 text-[#c0e6fd]" />
+            <span className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-brand border border-white/60 flex items-center justify-center shadow-xs">
+              <CheckCircle2 className="h-3 w-3 text-brand-200" />
             </span>
           </div>
 
@@ -302,15 +348,15 @@ export default function ProfilePage() {
               <TierBadge tier="gold" />
             </div>
 
-            <div className="flex items-center gap-1 text-[11px] text-[#c0e6fd]/80">
-              <MapPin className="h-3 w-3 shrink-0 text-[#80aad3]" />
+            <div className="flex items-center gap-1 text-[11px] text-brand-200/80">
+              <MapPin className="h-3 w-3 shrink-0 text-brand-sky" />
               <span className="truncate">{profileArea}</span>
             </div>
 
             <div className="flex items-center gap-1.5 text-[10px] text-white/70 pt-0.5">
               <span className="px-1.5 py-0.5 rounded-md bg-white/10 font-medium">Bán Chuyên</span>
               <span>•</span>
-              <span className="text-[#c0e6fd] font-medium">CLB FTU2 Run</span>
+              <span className="text-brand-200 font-medium">CLB FTU2 Run</span>
             </div>
           </div>
         </div>
@@ -324,15 +370,15 @@ export default function ProfilePage() {
         <div className="grid grid-cols-4 gap-1 text-center pt-3 mt-2 border-t border-white/10 relative z-10">
           <div className="px-1">
             <div className="text-base font-black text-white">28</div>
-            <div className="text-[10px] text-[#c0e6fd]/80 font-medium whitespace-nowrap">Kèo tập</div>
+            <div className="text-[10px] text-brand-200/80 font-medium whitespace-nowrap">Kèo tập</div>
           </div>
           <div className="px-1 border-l border-white/10">
-            <div className="text-base font-black text-[#c0e6fd]">96%</div>
+            <div className="text-base font-black text-brand-200">96%</div>
             <div className="text-[10px] text-white/70 font-medium whitespace-nowrap">Đúng giờ</div>
           </div>
           <div className="px-1 border-l border-white/10">
             <div className="text-base font-black text-white">125</div>
-            <div className="text-[10px] text-[#c0e6fd]/80 font-medium whitespace-nowrap">Điểm TS</div>
+            <div className="text-[10px] text-brand-200/80 font-medium whitespace-nowrap">Điểm TS</div>
           </div>
           <div className="px-1 border-l border-white/10">
             <div className="text-base font-black text-emerald-300">32.4</div>
@@ -341,11 +387,14 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* 1b. BÀI VIẾT · BẠN BÈ · ĐANG THEO DÕI · NGƯỜI THEO DÕI */}
+      <SocialStatsBar onSelect={openSection} />
+
       {/* 2. VÍ KỶ LUẬT & ĐIỂM UY TÍN (TRUST SCORE CARD) */}
       <div className="rounded-3xl border border-border bg-card p-3.5 space-y-2.5 shadow-xs">
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-1.5 font-bold text-foreground">
-            <ShieldCheck className="h-4 w-4 text-[#1b3554] dark:text-[#80aad3]" />
+            <ShieldCheck className="h-4 w-4 text-brand dark:text-brand-sky" />
             <span>Ví Kỷ Luật & Điểm Uy Tín</span>
           </div>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
@@ -374,19 +423,22 @@ export default function ProfilePage() {
           <span>Khởi điểm 100 TS • Mốc 130 TS lên Kim Cương</span>
           <Link
             href="/vi-uy-tin"
-            className="text-[10px] font-bold text-[#1b3554] dark:text-[#80aad3] hover:underline flex items-center gap-0.5"
+            className="text-[10px] font-bold text-brand dark:text-brand-sky hover:underline flex items-center gap-0.5"
           >
             Chi tiết ví →
           </Link>
         </div>
       </div>
 
+      {/* 2b. GHI NHẬN TẬP LUYỆN THEO NGÀY TRONG TUẦN & THÁNG (BẢN ĐỒ NHIỆT) */}
+      <TrainingLog />
+
       {/* 3. NHỊP ĐIỆU TẬP LUYỆN TUẦN NÀY (7-DAY ACTIVITY RHYTHM CHART) */}
       <div className="rounded-3xl border border-border bg-card p-3.5 space-y-2.5 shadow-xs">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-xs font-black text-foreground flex items-center gap-1.5">
-              <BarChart2 className="h-4 w-4 text-[#1b3554] dark:text-[#80aad3]" />
+              <BarChart2 className="h-4 w-4 text-brand dark:text-brand-sky" />
               <span>Nhịp Điệu Tập Luyện Tuần Này</span>
             </div>
             <div className="text-[10px] text-muted-foreground">
@@ -401,7 +453,7 @@ export default function ProfilePage() {
               className={cn(
                 "px-2 py-0.5 rounded-md transition-all",
                 metricTab === "distance"
-                  ? "bg-[#1b3554] text-white shadow-xs"
+                  ? "bg-brand text-white shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -412,7 +464,7 @@ export default function ProfilePage() {
               className={cn(
                 "px-2 py-0.5 rounded-md transition-all",
                 metricTab === "duration"
-                  ? "bg-[#1b3554] text-white shadow-xs"
+                  ? "bg-brand text-white shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -423,7 +475,7 @@ export default function ProfilePage() {
               className={cn(
                 "px-2 py-0.5 rounded-md transition-all",
                 metricTab === "volume"
-                  ? "bg-[#1b3554] text-white shadow-xs"
+                  ? "bg-brand text-white shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -460,7 +512,7 @@ export default function ProfilePage() {
                     className={cn(
                       "w-full rounded-t-md transition-all duration-300",
                       d.completed
-                        ? "bg-gradient-to-t from-[#1b3554] to-[#80aad3]"
+                        ? "bg-gradient-to-t from-brand to-brand-sky"
                         : "bg-muted-foreground/20"
                     )}
                   />
@@ -469,7 +521,7 @@ export default function ProfilePage() {
                   className={cn(
                     "text-[10px] font-black rounded-full h-5 w-5 flex items-center justify-center transition-all",
                     d.completed
-                      ? "bg-[#1b3554] text-white"
+                      ? "bg-brand text-white"
                       : "text-muted-foreground"
                   )}
                 >
@@ -482,7 +534,7 @@ export default function ProfilePage() {
 
         <div className="flex items-center justify-between text-[10px] text-muted-foreground px-1">
           <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full bg-[#1b3554] inline-block" />
+            <span className="h-2 w-2 rounded-full bg-brand inline-block" />
             <span>Ngày hoàn thành</span>
           </span>
           <span>Tổng tuần: 32.4 km • 14.5 Tấn • 243 Phút</span>
@@ -493,7 +545,7 @@ export default function ProfilePage() {
       <div className="grid grid-cols-2 gap-2">
         <div className="p-3 rounded-2xl bg-card border border-border shadow-xs space-y-1">
           <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-            <Activity className="h-3.5 w-3.5 text-[#1b3554] dark:text-[#80aad3]" />
+            <Activity className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
             <span>Chỉ Số Hình Thể</span>
           </div>
           <div className="text-xs font-black text-foreground">162 cm • 51 kg</div>
@@ -502,7 +554,7 @@ export default function ProfilePage() {
 
         <div className="p-3 rounded-2xl bg-card border border-border shadow-xs space-y-1">
           <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-            <TrendingUp className="h-3.5 w-3.5 text-[#1b3554] dark:text-[#80aad3]" />
+            <TrendingUp className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
             <span>Pace & Kỷ Lục</span>
           </div>
           <div className="text-xs font-black text-foreground">{profilePace}</div>
@@ -511,7 +563,7 @@ export default function ProfilePage() {
 
         <div className="p-3 rounded-2xl bg-card border border-border shadow-xs space-y-1">
           <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-            <Calendar className="h-3.5 w-3.5 text-[#1b3554] dark:text-[#80aad3]" />
+            <Calendar className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
             <span>Lịch Tập Cố Định</span>
           </div>
           <div className="text-xs font-black text-foreground">Sáng 05:30 AM</div>
@@ -520,7 +572,7 @@ export default function ProfilePage() {
 
         <div className="p-3 rounded-2xl bg-card border border-border shadow-xs space-y-1">
           <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-            <MapPin className="h-3.5 w-3.5 text-[#1b3554] dark:text-[#80aad3]" />
+            <MapPin className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
             <span>Cung Đường Quen</span>
           </div>
           <div className="text-xs font-black text-foreground truncate">Công viên Landmark 81</div>
@@ -528,28 +580,35 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* 5. NAVIGATION SEGMENTED TABS (4 TABS MOBILE) */}
-      <div className="grid grid-cols-4 gap-1 p-1 rounded-2xl bg-muted/70 border border-border/80">
-        {[
-          { id: "snapshot", label: "Thể Lực" },
-          { id: "bounties", label: "Kèo (4)" },
-          { id: "badges", label: "Huy Hiệu" },
-          { id: "privacy", label: "Riêng Tư" },
-        ].map((t) => (
+      {/* 5. TABS: Bài viết · Bạn bè · Thể lực · Kèo · Huy hiệu · Riêng tư */}
+      <div ref={tabsRef} className="scroll-mt-16 flex gap-1 p-1 rounded-2xl bg-muted/70 border border-border/80 overflow-x-auto no-scrollbar" role="tablist">
+        {(
+          [
+            { id: "posts", label: "Bài viết" },
+            { id: "friends", label: "Bạn bè" },
+            { id: "snapshot", label: "Thể lực" },
+            { id: "bounties", label: `Kèo (${myBounties.upcoming.length + myBounties.pending.length})` },
+            { id: "badges", label: "Huy hiệu" },
+            { id: "privacy", label: "Riêng tư" },
+          ] as { id: ProfileTab; label: string }[]
+        ).map((t) => (
           <button
             key={t.id}
-            onClick={() => setActiveTab(t.id as "snapshot" | "bounties" | "badges" | "privacy")}
+            role="tab"
+            aria-selected={activeTab === t.id}
+            onClick={() => setActiveTab(t.id)}
             className={cn(
-              "py-1.5 rounded-xl text-[11px] font-bold text-center transition-all",
-              activeTab === t.id
-                ? "bg-[#1b3554] text-white shadow-xs"
-                : "text-muted-foreground hover:text-foreground"
+              "shrink-0 px-3.5 py-1.5 rounded-xl text-[12px] font-bold text-center whitespace-nowrap transition-all",
+              activeTab === t.id ? "bg-brand text-white shadow-xs" : "text-muted-foreground hover:text-foreground"
             )}
           >
             {t.label}
           </button>
         ))}
       </div>
+
+      {activeTab === "posts" && <MyPosts />}
+      {activeTab === "friends" && <MyConnections initialTab={socialTab} />}
 
       {/* =================================================================== */}
       {/* 6. TAB 1: THỂ LỰC & ẢNH KHOẢNH KHẮC */}
@@ -560,10 +619,10 @@ export default function ProfilePage() {
           <div className="p-3 rounded-3xl bg-card border border-border shadow-xs space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-bold text-xs text-foreground">
-                <TrendingUp className="h-4 w-4 text-orange-500 stroke-[2]" />
+                <TrendingUp className="h-4 w-4 text-brand-600 stroke-[2]" />
                 <span>Chạy Bộ (Strava Linked)</span>
               </div>
-              <Badge className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 text-[9px] font-bold">
+              <Badge className="bg-brand-600/10 text-brand-700 dark:text-brand-400 border border-brand-600/20 text-[9px] font-bold">
                 Đồng bộ tự động
               </Badge>
             </div>
@@ -574,7 +633,7 @@ export default function ProfilePage() {
               </div>
               <div className="p-2 rounded-xl bg-muted/40">
                 <div className="text-[9px] text-muted-foreground">Tuần này</div>
-                <div className="font-black text-[#1b3554] dark:text-[#80aad3]">32.4 km</div>
+                <div className="font-black text-brand dark:text-brand-sky">32.4 km</div>
               </div>
               <div className="p-2 rounded-xl bg-muted/40">
                 <div className="text-[9px] text-muted-foreground">Long Run</div>
@@ -587,10 +646,10 @@ export default function ProfilePage() {
           <div className="p-3 rounded-3xl bg-card border border-border shadow-xs space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-bold text-xs text-foreground">
-                <Dumbbell className="h-4 w-4 text-[#1b3554] dark:text-[#80aad3] stroke-[2]" />
+                <Dumbbell className="h-4 w-4 text-brand dark:text-brand-sky stroke-[2]" />
                 <span>Gym & Kháng Lực (Hevy Linked)</span>
               </div>
-              <Badge className="bg-[#c0e6fd]/60 text-[#1b3554] dark:bg-[#1b3554]/50 dark:text-[#c0e6fd] border border-[#1b3554]/20 text-[9px] font-bold">
+              <Badge className="bg-brand-100/60 text-brand dark:bg-brand/50 dark:text-brand-sky border border-brand/20 text-[9px] font-bold">
                 Đồng bộ tự động
               </Badge>
             </div>
@@ -605,7 +664,7 @@ export default function ProfilePage() {
               </div>
               <div className="p-2 rounded-xl bg-muted/40">
                 <div className="text-[9px] text-muted-foreground">Volume Load</div>
-                <div className="font-black text-[#1b3554] dark:text-[#80aad3]">14.5 Tấn</div>
+                <div className="font-black text-brand dark:text-brand-sky">14.5 Tấn</div>
               </div>
             </div>
           </div>
@@ -641,10 +700,10 @@ export default function ProfilePage() {
           {/* Sub-tabs pills */}
           <div className="flex gap-1 overflow-x-auto scrollbar-none pb-0.5">
             {[
-              { id: "upcoming", label: `Sắp tới (${MY_BOUNTIES.upcoming.length})` },
-              { id: "history", label: `Lịch sử (${MY_BOUNTIES.history.length})` },
-              { id: "pending", label: `Đang chờ (${MY_BOUNTIES.pending.length})` },
-              { id: "cancelled", label: `Đã hủy (${MY_BOUNTIES.cancelled.length})` },
+              { id: "upcoming", label: `Sắp tới (${myBounties.upcoming.length})` },
+              { id: "history", label: `Lịch sử (${myBounties.history.length})` },
+              { id: "pending", label: `Đang chờ (${myBounties.pending.length})` },
+              { id: "cancelled", label: `Đã hủy (${myBounties.cancelled.length})` },
             ].map((sub) => (
               <button
                 key={sub.id}
@@ -652,7 +711,7 @@ export default function ProfilePage() {
                 className={cn(
                   "px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap border transition-all",
                   bountySubTab === sub.id
-                    ? "bg-[#1b3554] text-white border-[#1b3554] shadow-xs"
+                    ? "bg-brand text-white border-brand shadow-xs"
                     : "bg-muted/60 text-muted-foreground border-border hover:text-foreground"
                 )}
               >
@@ -663,7 +722,7 @@ export default function ProfilePage() {
 
           {/* List items */}
           <div className="space-y-2">
-            {MY_BOUNTIES[bountySubTab].map((item) => (
+            {myBounties[bountySubTab].map((item) => (
               <div
                 key={item.id}
                 className="p-3.5 rounded-2xl bg-card border border-border shadow-xs space-y-2 text-xs"
@@ -672,7 +731,7 @@ export default function ProfilePage() {
                   <span>{item.title}</span>
                   <Badge
                     variant="outline"
-                    className="shrink-0 text-[9px] font-bold border-[#1b3554]/30 text-[#1b3554] dark:text-[#c0e6fd] bg-[#c0e6fd]/30 dark:bg-[#1b3554]/40"
+                    className="shrink-0 text-[9px] font-bold border-brand/30 text-brand dark:text-brand-sky bg-brand-100/30 dark:bg-brand/40"
                   >
                     {item.statusVi}
                   </Badge>
@@ -700,7 +759,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="flex items-center justify-between pt-1.5 border-t border-border/40">
-                  <span className="text-[10px] text-[#1b3554] dark:text-[#80aad3] font-semibold">
+                  <span className="text-[10px] text-brand dark:text-brand-sky font-semibold">
                     Cọc bảo chứng: {item.holdTs} TS
                   </span>
 
@@ -708,7 +767,7 @@ export default function ProfilePage() {
                     <Button
                       size="sm"
                       onClick={() => setIsQrModalOpen(true)}
-                      className="h-7 px-3 text-[10px] font-bold bg-[#1b3554] text-white rounded-full flex items-center gap-1 shadow-xs"
+                      className="h-7 px-3 text-[10px] font-bold bg-brand text-white rounded-full flex items-center gap-1 shadow-xs"
                     >
                       <QrCode className="h-3 w-3" />
                       <span>Check-in QR Điểm Hẹn</span>
@@ -750,7 +809,7 @@ export default function ProfilePage() {
                       className={cn(
                         "text-[9px] font-bold",
                         badge.unlocked
-                          ? "bg-[#c0e6fd]/60 text-[#1b3554] dark:bg-[#1b3554]/50 dark:text-[#c0e6fd] border border-[#1b3554]/20"
+                          ? "bg-brand-100/60 text-brand dark:bg-brand/50 dark:text-brand-sky border border-brand/20"
                           : "bg-muted text-muted-foreground"
                       )}
                     >
@@ -759,7 +818,7 @@ export default function ProfilePage() {
                   </div>
                   <div className="font-black text-foreground pt-0.5">{badge.title}</div>
                   <div className="text-[10px] text-muted-foreground leading-tight">{badge.desc}</div>
-                  <div className="text-[9px] font-bold text-[#1b3554] dark:text-[#80aad3]">
+                  <div className="text-[9px] font-bold text-brand dark:text-brand-sky">
                     Tiến độ: {badge.progress}
                   </div>
                 </div>
@@ -795,7 +854,7 @@ export default function ProfilePage() {
                 type="checkbox"
                 checked={ghostMode}
                 onChange={(e) => setGhostMode(e.target.checked)}
-                className="h-4 w-4 rounded accent-[#1b3554] cursor-pointer"
+                className="h-4 w-4 rounded accent-brand cursor-pointer"
               />
             </div>
 
@@ -814,7 +873,7 @@ export default function ProfilePage() {
                 type="checkbox"
                 checked={hideExactLocation}
                 onChange={(e) => setHideExactLocation(e.target.checked)}
-                className="h-4 w-4 rounded accent-[#1b3554] cursor-pointer"
+                className="h-4 w-4 rounded accent-brand cursor-pointer"
               />
             </div>
 
@@ -833,7 +892,7 @@ export default function ProfilePage() {
                 type="checkbox"
                 checked={sameGenderOnly}
                 onChange={(e) => setSameGenderOnly(e.target.checked)}
-                className="h-4 w-4 rounded accent-[#1b3554] cursor-pointer"
+                className="h-4 w-4 rounded accent-brand cursor-pointer"
               />
             </div>
 
@@ -852,7 +911,7 @@ export default function ProfilePage() {
                 type="checkbox"
                 checked={hidePace}
                 onChange={(e) => setHidePace(e.target.checked)}
-                className="h-4 w-4 rounded accent-[#1b3554] cursor-pointer"
+                className="h-4 w-4 rounded accent-brand cursor-pointer"
               />
             </div>
 
@@ -871,7 +930,7 @@ export default function ProfilePage() {
                 type="checkbox"
                 checked={clubOnlyBounties}
                 onChange={(e) => setClubOnlyBounties(e.target.checked)}
-                className="h-4 w-4 rounded accent-[#1b3554] cursor-pointer"
+                className="h-4 w-4 rounded accent-brand cursor-pointer"
               />
             </div>
           </div>
@@ -880,7 +939,7 @@ export default function ProfilePage() {
           <div className="p-4 rounded-2xl bg-card border border-border/80 shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-[#80aad3]/15 text-[#1b3554] dark:text-[#c0e6fd]">
+                <div className="p-1.5 rounded-lg bg-brand-sky/15 text-brand dark:text-brand-sky">
                   <Sparkles className="h-4 w-4" />
                 </div>
                 <div>
@@ -897,7 +956,7 @@ export default function ProfilePage() {
               {/* Camera */}
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-muted/40 border border-border/40">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                  <div className="p-1.5 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400">
                     <Camera className="h-4 w-4" />
                   </div>
                   <div>
@@ -972,7 +1031,7 @@ export default function ProfilePage() {
               {/* Biometrics */}
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-muted/40 border border-border/40">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                  <div className="p-1.5 rounded-lg bg-brand-500/10 text-brand-600 dark:text-brand-400">
                     <Fingerprint className="h-4 w-4" />
                   </div>
                   <div>
@@ -986,7 +1045,7 @@ export default function ProfilePage() {
                   className={cn(
                     "px-2.5 py-1 rounded-full text-[10px] font-bold transition-all",
                     user?.biometricEnabled
-                      ? "bg-indigo-500/15 text-indigo-700 dark:text-indigo-400 border border-indigo-500/30"
+                      ? "bg-brand-500/15 text-brand-700 dark:text-brand-400 border border-brand-500/30"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
                   )}
                 >
@@ -1000,7 +1059,7 @@ export default function ProfilePage() {
           <div className="p-4 rounded-3xl bg-card border border-border/80 shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-xl bg-orange-500/10 text-[#FC4C02]">
+                <div className="p-1.5 rounded-xl bg-brand-600/10 text-[#FC4C02]">
                   <Activity className="h-4 w-4" />
                 </div>
                 <div>
@@ -1008,7 +1067,7 @@ export default function ProfilePage() {
                   <p className="text-[10px] text-muted-foreground">Đồng bộ tự động pace, lộ trình, nhịp tim và hoạt động</p>
                 </div>
               </div>
-              <Badge variant="outline" className="text-[9px] font-mono border-orange-500/30 text-orange-600 bg-orange-50 dark:bg-orange-950/30">
+              <Badge variant="outline" className="text-[9px] font-mono border-brand-600/30 text-brand-700 bg-brand-50 dark:bg-brand-950/30">
                 Tự động
               </Badge>
             </div>
@@ -1023,7 +1082,7 @@ export default function ProfilePage() {
                   <div>
                     <div className="font-semibold text-foreground text-[11px] flex items-center gap-1.5">
                       <span>Strava</span>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/10 text-[#FC4C02] font-semibold">Khuyên dùng</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-brand-600/10 text-[#FC4C02] font-semibold">Khuyên dùng</span>
                     </div>
                     <div className="text-[9.5px] text-muted-foreground">Lộ trình bài tập, Pace, Quãng đường chạy bộ</div>
                   </div>
@@ -1148,15 +1207,15 @@ export default function ProfilePage() {
           </div>
 
           {/* AI Onboarding Survey Status & Re-assessment */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-[#1b3554]/10 via-background to-[#80aad3]/10 border border-[#80aad3]/30 shadow-xs space-y-3">
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-brand/10 via-background to-brand-sky/10 border border-brand-300/30 shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[10px] font-mono font-bold text-[#1b3554] dark:text-[#c0e6fd] uppercase tracking-wider">
+                <span className="text-[10px] font-mono font-bold text-brand dark:text-brand-sky uppercase tracking-wider">
                   THUẬT TOÁN CÁ NHÂN HÓA AI
                 </span>
                 <h3 className="text-xs font-bold text-foreground">Hồ Sơ Năng Lực & Thói Quen Thể Thao</h3>
               </div>
-              <Badge className="bg-[#1b3554] text-white text-[9px] font-bold">
+              <Badge className="bg-brand text-white text-[9px] font-bold">
                 {user?.isSurveyCompleted ? "100% Hoàn Tất" : "Chưa Hoàn Tất"}
               </Badge>
             </div>
@@ -1192,8 +1251,8 @@ export default function ProfilePage() {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => router.push("/onboarding")}
-                className="w-full text-xs h-8 rounded-full font-bold border-[#80aad3]/40 hover:bg-[#80aad3]/10 text-[#1b3554] dark:text-[#c0e6fd]"
+                onClick={() => router.push("/bat-dau")}
+                className="w-full text-xs h-8 rounded-full font-bold border-brand-300/40 hover:bg-brand-sky/10 text-brand dark:text-brand-sky"
               >
                 <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
                 Làm Lại Khảo Sát Cá Nhân Hoá AI
@@ -1265,7 +1324,7 @@ export default function ProfilePage() {
             </button>
 
             <div className="space-y-1">
-              <div className="flex items-center justify-center gap-1.5 text-xs font-black text-[#1b3554] dark:text-[#80aad3]">
+              <div className="flex items-center justify-center gap-1.5 text-xs font-black text-brand dark:text-brand-sky">
                 <QrCode className="h-4 w-4" />
                 <span>QUÉT MÃ ĐIỂM HẸN 2 CHIỀU</span>
               </div>
@@ -1276,7 +1335,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Dynamic QR Code Canvas Simulation */}
-            <div className="p-4 rounded-2xl bg-white border-2 border-[#1b3554]/20 flex flex-col items-center justify-center space-y-2 shadow-inner mx-auto w-48 h-48">
+            <div className="p-4 rounded-2xl bg-white border-2 border-brand/20 flex flex-col items-center justify-center space-y-2 shadow-inner mx-auto w-48 h-48">
               <div className="w-36 h-36 border-4 border-slate-900 rounded-xl p-2 flex flex-col justify-between bg-white relative">
                 {/* 4 corner markers */}
                 <div className="w-8 h-8 bg-slate-900 rounded-xs" />
@@ -1295,7 +1354,7 @@ export default function ProfilePage() {
                 </div>
                 {/* Center logo */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-7 h-7 rounded-md bg-[#1b3554] text-white flex items-center justify-center shadow-xs">
+                  <div className="w-7 h-7 rounded-md bg-brand text-white flex items-center justify-center shadow-xs">
                     <Shield className="h-4 w-4" />
                   </div>
                 </div>
@@ -1304,7 +1363,7 @@ export default function ProfilePage() {
 
             <div className="space-y-1">
               <div className="text-xs font-mono font-bold text-foreground">
-                Mã xác thực: <span className="text-[#1b3554] dark:text-[#80aad3]">SYNC-81-MT-2026</span>
+                Mã xác thực: <span className="text-brand dark:text-brand-sky">SYNC-81-MT-2026</span>
               </div>
               <div className="text-[10px] text-muted-foreground">
                 Tự động đổi mã sau: <strong className="text-foreground">{qrCountdown}s</strong>
@@ -1327,7 +1386,7 @@ export default function ProfilePage() {
                   alert("Điểm danh thành công! Cả 2 đã đúng hẹn. Đã hoàn 100% cọc + thưởng 2 TS.");
                   setIsQrModalOpen(false);
                 }}
-                className="flex-1 rounded-full text-xs font-bold bg-[#1b3554] text-white"
+                className="flex-1 rounded-full text-xs font-bold bg-brand text-white"
               >
                 Xác nhận đã gặp
               </Button>
@@ -1411,7 +1470,7 @@ export default function ProfilePage() {
                   setIsEditModalOpen(false);
                   alert("Đã cập nhật hồ sơ cá nhân thành công!");
                 }}
-                className="flex-1 rounded-full text-xs font-bold bg-[#1b3554] text-white"
+                className="flex-1 rounded-full text-xs font-bold bg-brand text-white"
               >
                 Lưu thay đổi
               </Button>
@@ -1444,7 +1503,7 @@ export default function ProfilePage() {
               </div>
               <div className="flex items-center justify-between text-muted-foreground">
                 <span>Điểm TrustScore:</span>
-                <span className="font-bold text-[#1b3554] dark:text-[#80aad3]">{user?.trustScore || 98}/100</span>
+                <span className="font-bold text-brand dark:text-brand-sky">{user?.trustScore || 98}/100</span>
               </div>
               <div className="flex items-center justify-between text-muted-foreground">
                 <span>Bảo mật thiết bị:</span>

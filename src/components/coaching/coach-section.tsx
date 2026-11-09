@@ -84,31 +84,31 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
       )}
 
       {/* Hero Banner Coaching */}
-      <div className="p-4 rounded-3xl bg-gradient-to-r from-[#1b3554] via-[#294c77] to-[#1b3554] text-white shadow-md relative overflow-hidden space-y-2">
+      <div className="p-4 rounded-3xl bg-gradient-to-r from-brand via-brand-800 to-brand text-white shadow-md relative overflow-hidden space-y-2">
         <div className="relative z-10 space-y-1">
-          <div className="flex items-center gap-1.5 text-xs text-[#c0e6fd] font-bold">
-            <Sparkles className="h-3.5 w-3.5 fill-[#c0e6fd]" />
+          <div className="flex items-center gap-1.5 text-xs text-brand-200 font-bold">
+            <Sparkles className="h-3.5 w-3.5 fill-brand-100" />
             <span>MẠNG LƯỚI COACHING BẢO CHỨNG CHUYÊN NGHIỆP</span>
           </div>
           <h2 className="text-base sm:text-lg font-black tracking-tight leading-snug">
             Huấn Luyện Viên 1:1 & Ghép Nhóm Tập Luyện
           </h2>
-          <p className="text-xs text-[#c0e6fd]/90 leading-relaxed max-w-lg">
+          <p className="text-xs text-brand-200/90 leading-relaxed max-w-lg">
             Kèm riêng chuẩn form từng động tác hoặc rủ Micro-Squad tập cùng HLV để chia sẻ chi phí tiết kiệm đến 60%.
           </p>
         </div>
 
         <div className="relative z-10 flex flex-wrap items-center gap-2 pt-1 text-[11px] font-semibold text-white/95">
           <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full backdrop-blur-xs">
-            <ShieldCheck className="h-3.5 w-3.5 text-[#c0e6fd]" />
+            <ShieldCheck className="h-3.5 w-3.5 text-brand-200" />
             100% Bằng cấp xác minh
           </span>
           <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full backdrop-blur-xs">
-            <Users className="h-3.5 w-3.5 text-[#c0e6fd]" />
+            <Users className="h-3.5 w-3.5 text-brand-200" />
             Ghép nhóm từ 140k/bạn
           </span>
           <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full backdrop-blur-xs">
-            <TrendingUp className="h-3.5 w-3.5 text-[#c0e6fd]" />
+            <TrendingUp className="h-3.5 w-3.5 text-brand-200" />
             Đo Inbody & Giáo án số
           </span>
         </div>
@@ -158,7 +158,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
                 className={cn(
                   "px-3 py-1 rounded-full text-[11px] font-bold transition-all border",
                   modeFilter === m.id
-                    ? "bg-[#1b3554] text-white border-[#1b3554] shadow-xs"
+                    ? "bg-brand text-white border-brand shadow-xs"
                     : "bg-muted/50 border-border text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -195,7 +195,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
                 setModeFilter("all");
               }}
               size="sm"
-              className="rounded-full bg-[#1b3554] text-white text-xs font-bold"
+              className="rounded-full bg-brand text-white text-xs font-bold"
             >
               Đặt Lại Toàn Bộ Lọc
             </Button>

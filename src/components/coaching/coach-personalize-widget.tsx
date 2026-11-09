@@ -79,17 +79,17 @@ export function CoachPersonalizeWidget({
   };
 
   return (
-    <div className="p-3.5 rounded-3xl bg-card border border-[#1b3554]/30 dark:border-[#80aad3]/40 shadow-xs space-y-3">
+    <div className="p-3.5 rounded-3xl bg-card border border-brand/30 dark:border-brand-sky/40 shadow-xs space-y-3">
       {/* Widget Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-[#c0e6fd]/60 dark:bg-[#1b3554] flex items-center justify-center text-[#1b3554] dark:text-[#c0e6fd]">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0 flex-1 basis-[220px]">
+          <div className="h-8 w-8 shrink-0 rounded-xl bg-brand-100/60 dark:bg-brand flex items-center justify-center text-brand dark:text-brand-sky">
             <Sparkles className="h-4 w-4" />
           </div>
-          <div>
-            <h3 className="text-xs font-black text-foreground flex items-center gap-1.5">
+          <div className="min-w-0">
+            <h3 className="text-[13px] font-black text-foreground flex flex-wrap items-center gap-1.5">
               Ghép Đôi Huấn Luyện Viên Cá Nhân Hoá
-              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#1b3554] text-white font-bold">
+              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-brand text-white font-bold">
                 AI Match
               </span>
             </h3>
@@ -99,7 +99,7 @@ export function CoachPersonalizeWidget({
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <Button
             type="button"
             variant="ghost"
@@ -116,7 +116,7 @@ export function CoachPersonalizeWidget({
             variant="outline"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="h-7 px-2.5 rounded-full text-[10px] font-bold border-[#1b3554]/30 text-[#1b3554] dark:text-[#c0e6fd]"
+            className="h-7 px-2.5 rounded-full text-[10px] font-bold border-brand/30 text-brand dark:text-brand-sky"
           >
             <SlidersHorizontal className="h-3 w-3 mr-1" />
             {isExpanded ? "Thu gọn" : "Tùy chỉnh sâu"}
@@ -136,7 +136,7 @@ export function CoachPersonalizeWidget({
             className={cn(
               "text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all flex items-center gap-1",
               profile.fitnessGoal === "chinh_dang_posture"
-                ? "bg-[#1b3554] text-white border-[#1b3554]"
+                ? "bg-brand text-white border-brand"
                 : "bg-muted/50 border-border text-foreground hover:bg-muted"
             )}
           >
@@ -148,7 +148,7 @@ export function CoachPersonalizeWidget({
             className={cn(
               "text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all flex items-center gap-1",
               profile.preferredMode === "group" && profile.maxBudgetPerSession <= 200000
-                ? "bg-[#1b3554] text-white border-[#1b3554]"
+                ? "bg-brand text-white border-brand"
                 : "bg-muted/50 border-border text-foreground hover:bg-muted"
             )}
           >
@@ -160,7 +160,7 @@ export function CoachPersonalizeWidget({
             className={cn(
               "text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all flex items-center gap-1",
               profile.fitnessGoal === "chay_marathon"
-                ? "bg-[#1b3554] text-white border-[#1b3554]"
+                ? "bg-brand text-white border-brand"
                 : "bg-muted/50 border-border text-foreground hover:bg-muted"
             )}
           >
@@ -172,7 +172,7 @@ export function CoachPersonalizeWidget({
             className={cn(
               "text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all flex items-center gap-1",
               profile.fitnessGoal === "tang_co"
-                ? "bg-[#1b3554] text-white border-[#1b3554]"
+                ? "bg-brand text-white border-brand"
                 : "bg-muted/50 border-border text-foreground hover:bg-muted"
             )}
           >
@@ -186,7 +186,7 @@ export function CoachPersonalizeWidget({
         {/* Mục tiêu tập luyện */}
         <div className="space-y-1">
           <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-            <Target className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+            <Target className="h-3 w-3 text-brand dark:text-brand-sky" />
             Mục tiêu thể hình của bạn:
           </label>
           <select
@@ -205,7 +205,7 @@ export function CoachPersonalizeWidget({
         {/* Hình thức tập luyện (1:1 vs Nhóm) */}
         <div className="space-y-1">
           <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-            <Users className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+            <Users className="h-3 w-3 text-brand dark:text-brand-sky" />
             Hình thức mong muốn:
           </label>
           <div className="grid grid-cols-3 gap-1">
@@ -221,7 +221,7 @@ export function CoachPersonalizeWidget({
                 className={cn(
                   "h-8 rounded-xl text-[11px] font-bold transition-all border",
                   profile.preferredMode === mode.id
-                    ? "bg-[#1b3554] text-white border-[#1b3554] shadow-xs"
+                    ? "bg-brand text-white border-brand shadow-xs"
                     : "bg-background border-border text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -240,7 +240,7 @@ export function CoachPersonalizeWidget({
             <div className="space-y-1">
               <div className="flex justify-between text-[10px] font-bold text-foreground">
                 <span>Chiều cao của bạn:</span>
-                <span className="text-[#1b3554] dark:text-[#80aad3] font-black">{profile.userHeightCm} cm</span>
+                <span className="text-brand dark:text-brand-sky font-black">{profile.userHeightCm} cm</span>
               </div>
               <input
                 type="range"
@@ -248,7 +248,7 @@ export function CoachPersonalizeWidget({
                 max={200}
                 value={profile.userHeightCm}
                 onChange={(e) => onChangeProfile({ ...profile, userHeightCm: Number(e.target.value) })}
-                className="w-full accent-[#1b3554] cursor-pointer h-1.5 rounded-full"
+                className="w-full accent-brand cursor-pointer h-1.5 rounded-full"
               />
               <div className="flex justify-between text-[9px] text-muted-foreground">
                 <span>145cm</span>
@@ -259,7 +259,7 @@ export function CoachPersonalizeWidget({
             <div className="space-y-1">
               <div className="flex justify-between text-[10px] font-bold text-foreground">
                 <span>Cân nặng hiện tại:</span>
-                <span className="text-[#1b3554] dark:text-[#80aad3] font-black">{profile.userWeightKg} kg</span>
+                <span className="text-brand dark:text-brand-sky font-black">{profile.userWeightKg} kg</span>
               </div>
               <input
                 type="range"
@@ -267,7 +267,7 @@ export function CoachPersonalizeWidget({
                 max={120}
                 value={profile.userWeightKg}
                 onChange={(e) => onChangeProfile({ ...profile, userWeightKg: Number(e.target.value) })}
-                className="w-full accent-[#1b3554] cursor-pointer h-1.5 rounded-full"
+                className="w-full accent-brand cursor-pointer h-1.5 rounded-full"
               />
               <div className="flex justify-between text-[9px] text-muted-foreground">
                 <span>40kg</span>
@@ -280,7 +280,7 @@ export function CoachPersonalizeWidget({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-                <Heart className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+                <Heart className="h-3 w-3 text-brand dark:text-brand-sky" />
                 Phong cách HLV bạn thích:
               </label>
               <select
@@ -304,7 +304,7 @@ export function CoachPersonalizeWidget({
 
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-                <DollarSign className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+                <DollarSign className="h-3 w-3 text-brand dark:text-brand-sky" />
                 Ngân sách tối đa mỗi buổi:
               </label>
               <select
@@ -329,7 +329,7 @@ export function CoachPersonalizeWidget({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-                <Dumbbell className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+                <Dumbbell className="h-3 w-3 text-brand dark:text-brand-sky" />
                 Bộ môn thể thao:
               </label>
               <select
@@ -353,7 +353,7 @@ export function CoachPersonalizeWidget({
 
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-                <Activity className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+                <Activity className="h-3 w-3 text-brand dark:text-brand-sky" />
                 Khu vực tập luyện:
               </label>
               <select

@@ -34,6 +34,32 @@ export default function DesignSystemPage() {
         badge={<Badge variant="outline">Dev Only</Badge>}
       />
 
+      {/* 0. BỘ NHẬN DIỆN SYNESIS */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold border-b pb-2">0. SYNESIS Brand Identity</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[
+            { name: "Royal Blue", hex: "#0567E1", cls: "bg-brand text-white", use: "Màu chính · nút, liên kết, đang chọn" },
+            { name: "Sky Blue", hex: "#39A1F4", cls: "bg-brand-sky text-black", use: "Màu phụ · điểm nhấn, biểu đồ" },
+            { name: "White", hex: "#FFFFFF", cls: "bg-white text-black border", use: "Nền" },
+            { name: "Black", hex: "#000000", cls: "bg-black text-white", use: "Chữ, bề mặt tối" },
+          ].map((c) => (
+            <div key={c.hex} className={`p-4 rounded-xl shadow-sm ${c.cls}`}>
+              <p className="font-display font-extrabold text-sm">{c.name}</p>
+              <p className="text-xs font-mono opacity-90">{c.hex}</p>
+              <p className="text-[11px] opacity-80 mt-1">{c.use}</p>
+            </div>
+          ))}
+        </div>
+        <div className="flex rounded-xl overflow-hidden h-10">
+          {["bg-brand-50", "bg-brand-100", "bg-brand-200", "bg-brand-300", "bg-brand-400", "bg-brand-500", "bg-brand-600", "bg-brand-700", "bg-brand-800", "bg-brand-900", "bg-brand-950"].map((c) => (
+            <div key={c} className={`flex-1 ${c}`} title={c.replace("bg-", "")} />
+          ))}
+        </div>
+        <p className="font-display text-2xl font-extrabold tracking-tight">SYNESIS · Tiêu đề Montserrat</p>
+        <p className="text-sm text-muted-foreground">Nội dung dùng Be Vietnam Pro. Xanh lá / vàng / đỏ chỉ dùng cho trạng thái.</p>
+      </section>
+
       {/* 1. MÀU SẮC & HẠNG THỂ THAO */}
       <section className="space-y-4">
         <h2 className="text-xl font-bold border-b pb-2">1. Design Tokens & 4 Hạng Thể Thao</h2>

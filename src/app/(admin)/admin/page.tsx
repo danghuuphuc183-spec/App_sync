@@ -134,7 +134,7 @@ export default function AdminDashboardPage() {
         <Card className="p-4 space-y-1">
           <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-xs font-semibold">CLB chờ duyệt</span>
-            <Clock className="h-4 w-4 text-indigo-500" />
+            <Clock className="h-4 w-4 text-brand-500" />
           </div>
           <p className="text-2xl font-bold font-mono">{pendingClubs.length}</p>
           <span className="text-[10px] text-amber-600 font-semibold">Cần xử lý</span>

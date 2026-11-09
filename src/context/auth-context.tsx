@@ -16,6 +16,11 @@ export interface ConnectedApps {
   whoop: boolean;
   googleFit: boolean;
   nikeRunClub: boolean;
+  samsungHealth?: boolean;
+  healthConnect?: boolean;
+  hevy?: boolean;
+  huaweiHealth?: boolean;
+  polar?: boolean;
 }
 
 export interface UserSportsProfile {
@@ -61,6 +66,13 @@ interface AuthContextType {
   register: (data: { name: string; email?: string; phone?: string; provider?: "email" | "phone" | "facebook" | "google" | "apple" | "strava" }) => Promise<boolean>;
   logout: () => void;
   updateSurvey: (profile: Partial<UserSportsProfile>) => void;
+  /** Lưu toàn bộ kết quả onboarding trong MỘT lần ghi (tránh ghi đè lẫn nhau) */
+  completeOnboarding: (data: {
+    name?: string;
+    sportsProfile: Partial<UserSportsProfile>;
+    permissions: Partial<UserPermissions>;
+    connectedApps: Partial<ConnectedApps>;
+  }) => void;
   updatePermissions: (perms: Partial<UserPermissions>) => void;
   toggleAppConnection: (app: keyof ConnectedApps, state?: boolean) => void;
   toggleBiometric: () => void;
@@ -297,6 +309,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     saveUser(updatedUser);
   };
 
+  const completeOnboarding: AuthContextType["completeOnboarding"] = (data) => {
+    if (!user) return;
+    saveUser({
+      ...user,
+      name: data.name || user.name,
+      isSurveyCompleted: true,
+      trustScore: user.isSurveyCompleted ? user.trustScore : user.trustScore + 20,
+      sportsProfile: { ...user.sportsProfile, ...data.sportsProfile },
+      permissions: { ...user.permissions, ...data.permissions },
+      connectedApps: { ...(user.connectedApps || DEFAULT_USER.connectedApps), ...data.connectedApps },
+    });
+  };
+
   const updatePermissions = (perms: Partial<UserPermissions>) => {
     if (!user) return;
     const updatedUser: UserProfile = {
@@ -366,6 +391,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         register,
         logout,
         updateSurvey,
+        completeOnboarding,
         updatePermissions,
         toggleAppConnection,
         toggleBiometric,

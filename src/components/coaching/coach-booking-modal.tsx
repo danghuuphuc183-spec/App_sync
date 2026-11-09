@@ -96,7 +96,7 @@ export function CoachBookingModal({
             <div>
               <div className="flex items-center gap-1.5">
                 <h3 className="text-sm font-black text-foreground">Đặt Lịch Coaching</h3>
-                <ShieldCheck className="h-3.5 w-3.5 text-[#1b3554] dark:text-[#80aad3]" />
+                <ShieldCheck className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
               </div>
               <p className="text-[11px] text-muted-foreground">HLV {coach.name} • {coach.sportCategory}</p>
             </div>
@@ -123,7 +123,7 @@ export function CoachBookingModal({
                 className={cn(
                   "p-2.5 rounded-2xl border text-left transition-all space-y-1",
                   mode === "1:1"
-                    ? "bg-[#1b3554] text-white border-[#1b3554] shadow-xs"
+                    ? "bg-brand text-white border-brand shadow-xs"
                     : "bg-card border-border hover:bg-muted/50"
                 )}
               >
@@ -147,7 +147,7 @@ export function CoachBookingModal({
                 className={cn(
                   "p-2.5 rounded-2xl border text-left transition-all space-y-1",
                   mode === "group"
-                    ? "bg-[#1b3554] text-white border-[#1b3554] shadow-xs"
+                    ? "bg-brand text-white border-brand shadow-xs"
                     : "bg-card border-border hover:bg-muted/50"
                 )}
               >
@@ -169,9 +169,9 @@ export function CoachBookingModal({
 
           {/* If Squad: invite friend names */}
           {mode === "group" && (
-            <div className="p-2.5 rounded-2xl bg-[#c0e6fd]/30 dark:bg-[#1b3554]/30 border border-[#80aad3]/40 space-y-1.5 animate-in fade-in">
+            <div className="p-2.5 rounded-2xl bg-brand-100/30 dark:bg-brand/30 border border-brand-300/40 space-y-1.5 animate-in fade-in">
               <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-                <Users className="h-3 w-3 text-[#1b3554] dark:text-[#c0e6fd]" />
+                <Users className="h-3 w-3 text-brand dark:text-brand-sky" />
                 Thành viên trong Micro-Squad cùng tham gia:
               </label>
               <input
@@ -190,7 +190,7 @@ export function CoachBookingModal({
           {/* Date Picker */}
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-              <Calendar className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+              <Calendar className="h-3 w-3 text-brand dark:text-brand-sky" />
               Chọn ngày tập:
             </label>
             <div className="grid grid-cols-3 gap-1.5">
@@ -202,7 +202,7 @@ export function CoachBookingModal({
                   className={cn(
                     "h-8 rounded-xl text-[11px] font-bold border transition-all truncate px-1",
                     selectedDate === d
-                      ? "bg-[#1b3554] text-white border-[#1b3554]"
+                      ? "bg-brand text-white border-brand"
                       : "bg-card border-border text-foreground hover:bg-muted"
                   )}
                 >
@@ -215,7 +215,7 @@ export function CoachBookingModal({
           {/* Time slot */}
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-              <Clock className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+              <Clock className="h-3 w-3 text-brand dark:text-brand-sky" />
               Khung giờ tập luyện:
             </label>
             <select
@@ -233,7 +233,7 @@ export function CoachBookingModal({
           {/* Location */}
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-              <MapPin className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
+              <MapPin className="h-3 w-3 text-brand dark:text-brand-sky" />
               Địa điểm tập:
             </label>
             <select
@@ -271,7 +271,7 @@ export function CoachBookingModal({
               <div className="text-[10px] text-muted-foreground font-semibold">
                 Chi phí cho buổi tập ({mode === "1:1" ? "Kèm riêng 1:1" : "Mỗi bạn trong Squad"}):
               </div>
-              <div className="text-base font-black text-[#1b3554] dark:text-[#80aad3]">
+              <div className="text-base font-black text-brand dark:text-brand-sky">
                 {formatVnd(pricePerSession)}
               </div>
             </div>
@@ -287,7 +287,7 @@ export function CoachBookingModal({
           <Button
             type="submit"
             disabled={isSubmitted}
-            className="w-full rounded-full bg-[#1b3554] hover:bg-[#000f22] text-white font-bold text-xs h-9 shadow-xs"
+            className="w-full rounded-full bg-brand hover:bg-brand-700 text-white font-bold text-xs h-9 shadow-xs"
           >
             {isSubmitted ? (
               <span className="flex items-center gap-1.5">

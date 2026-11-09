@@ -2,704 +2,1061 @@
 
 import * as React from "react";
 import Link from "next/link";
-import type {
-  Map as LeafletMap,
-  Polyline as LeafletPolyline,
-  Marker as LeafletMarker,
-} from "leaflet";
+import type * as Leaflet from "leaflet";
 import {
-  Play,
+  Bookmark,
+  ChevronDown,
+  Clock,
+  ExternalLink,
+  Layers,
+  LocateFixed,
+  MapPin,
   Pause,
+  Play,
+  Radio,
   RotateCcw,
   Search,
-  X,
-  MapPin,
-  Star,
-  ExternalLink,
-  Clock,
   ShieldCheck,
+  SquarePen,
+  Star,
+  X,
   Zap,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import {
-  POPULAR_GROUP_SPORTS,
-  type SportKey,
-} from "@/features/sports/sports.data";
-import {
-  STRAVA_ROUTES,
-  type StravaRoute,
-} from "@/features/venues/routes.data";
+import { POPULAR_GROUP_SPORTS, type SportKey } from "@/features/sports/sports.data";
+import { STRAVA_ROUTES, type StravaRoute } from "@/features/venues/routes.data";
 import {
   SPORTS_VENUES_DATABASE,
   DISTRICT_LIST,
   type SportsVenue,
   type DistrictName,
 } from "@/features/venues/venues.data";
+import { ARRIVAL_RADIUS_M, type LatLng, type LiveSpot } from "@/features/live/live-session";
+import { useLiveSession } from "./use-live-session";
+import { CheckInSheet } from "./check-in-sheet";
+import { LiveSessionPanel } from "./live-session-panel";
+
+type BaseLayer = "map" | "satellite";
+
+const SPORT_EMOJI: Record<string, string> = {
+  running: "🏃",
+  cycling: "🚴",
+  gym: "🏋️",
+  pickleball: "🏓",
+  badminton: "🏸",
+  table_tennis: "🏓",
+  football: "⚽",
+  basketball: "🏀",
+};
+
+const LENGTH_FILTERS = [
+  { id: "all", label: "Độ dài", test: () => true },
+  { id: "short", label: "< 10 km", test: (km: number) => km < 10 },
+  { id: "mid", label: "10–25 km", test: (km: number) => km >= 10 && km <= 25 },
+  { id: "long", label: "> 25 km", test: (km: number) => km > 25 },
+] as const;
+const DIFFICULTY_FILTERS = ["Khó khăn", "Dễ", "Vừa phải", "Thử thách"] as const;
+const SAVED_KEY = "sync.savedSpots.v1";
+
+/** SYNESIS: đường/điểm đang chọn = Royal Blue, còn lại = Sky Blue, vị trí của bạn = đen */
+const BRAND = "#0567E1";
+const BRAND_SKY = "#39A1F4";
+const ME = "#000000";
+
+function loadSaved(): string[] {
+  try {
+    return JSON.parse(window.localStorage.getItem(SAVED_KEY) ?? "[]") as string[];
+  } catch {
+    return [];
+  }
+}
+
+function avatarIcon(L: typeof Leaflet, src: string, opts: { size: number; ring: string; pulse?: boolean; label?: string }) {
+  const { size, ring, pulse, label } = opts;
+  return L.divIcon({
+    className: "sync-avatar-pin",
+    html: `
+      <div style="position:relative;width:${size}px;height:${size}px;">
+        ${pulse ? `<div class="sync-pulse" style="position:absolute;inset:0;border-radius:9999px;background:${ring};"></div>` : ""}
+        <img src="${src}" alt="" style="position:relative;width:${size}px;height:${size}px;border-radius:9999px;object-fit:cover;border:3px solid ${ring};box-shadow:0 4px 10px rgba(0,0,0,.35);background:#fff;" />
+        ${label ? `<div style="position:absolute;left:50%;top:${size + 2}px;transform:translateX(-50%);white-space:nowrap;background:#fff;color:#111;font:700 10px/1.2 system-ui;padding:2px 6px;border-radius:9999px;box-shadow:0 2px 6px rgba(0,0,0,.25);">${label}</div>` : ""}
+      </div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+  });
+}
+
+function ElevationSpark({ points, className }: { points: number[]; className?: string }) {
+  if (points.length < 2) return null;
+  const max = Math.max(...points);
+  const min = Math.min(...points);
+  const span = max - min || 1;
+  const d = points
+    .map((p, i) => `${(i / (points.length - 1)) * 100},${30 - ((p - min) / span) * 26}`)
+    .join(" L ");
+  return (
+    <svg viewBox="0 0 100 32" preserveAspectRatio="none" className={className} aria-hidden>
+      <path d={`M 0,32 L ${d} L 100,32 Z`} fill={BRAND} fillOpacity={0.18} />
+      <path d={`M ${d}`} fill="none" stroke={BRAND} strokeWidth={2} vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
 
 export function InteractiveRouteMap() {
   const mapContainerRef = React.useRef<HTMLDivElement>(null);
-  const leafletMapRef = React.useRef<LeafletMap | null>(null);
-  const routePolylineRef = React.useRef<LeafletPolyline | null>(null);
-  const runnerMarkerRef = React.useRef<LeafletMarker | null>(null);
-  const venueMarkersRef = React.useRef<LeafletMarker[]>([]);
+  const LRef = React.useRef<typeof Leaflet | null>(null);
+  const mapRef = React.useRef<Leaflet.Map | null>(null);
+  const baseLayerRef = React.useRef<Leaflet.Layer[]>([]);
+  const contentGroupRef = React.useRef<Leaflet.LayerGroup | null>(null);
+  const liveGroupRef = React.useRef<Leaflet.LayerGroup | null>(null);
+  const runnerMarkerRef = React.useRef<Leaflet.Marker | null>(null);
+  const carouselRef = React.useRef<HTMLDivElement>(null);
+  const [mapReady, setMapReady] = React.useState(false);
 
-  // 1. Sport Selector State (8 popular sports)
+  // ---- Bộ lọc & lựa chọn ----
   const [selectedSport, setSelectedSport] = React.useState<SportKey>("running");
-
-  // 2. Strava Route State (for running & cycling)
-  const availableRoutes = React.useMemo(() => {
-    return STRAVA_ROUTES.filter((r) => r.sport === selectedSport);
-  }, [selectedSport]);
-
-  const [selectedRoute, setSelectedRoute] = React.useState<StravaRoute>(
-    STRAVA_ROUTES[0]!
-  );
-
-  // Sync selectedRoute when sport changes between running and cycling
-  React.useEffect(() => {
-    if (selectedSport === "running" || selectedSport === "cycling") {
-      const first = STRAVA_ROUTES.find((r) => r.sport === selectedSport);
-      if (first) {
-        setSelectedRoute(first);
-      }
-    }
-  }, [selectedSport]);
-
-  // 3. Venues State (for gym, pickleball, badminton, table_tennis, football, basketball)
+  const [isSportMenuOpen, setIsSportMenuOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedDistrict, setSelectedDistrict] = React.useState<DistrictName>("Tất cả");
-  const [searchQuery, setSearchQuery] = React.useState<string>("");
-  const [selectedVenue, setSelectedVenue] = React.useState<SportsVenue | null>(null);
+  const [lengthIdx, setLengthIdx] = React.useState(0);
+  const [difficultyIdx, setDifficultyIdx] = React.useState(0);
+  const [savedOnly, setSavedOnly] = React.useState(false);
+  const [savedIds, setSavedIds] = React.useState<string[]>([]);
+  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const [isSheetExpanded, setIsSheetExpanded] = React.useState(false);
+  const [baseLayer, setBaseLayer] = React.useState<BaseLayer>("map");
+  const [checkInSpot, setCheckInSpot] = React.useState<LiveSpot | null>(null);
 
-  // Simulation State for GPS Route
+  // ---- Mô phỏng GPS cung đường (tính năng cũ) ----
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [runnerProgress, setRunnerProgress] = React.useState(0);
 
+  const live = useLiveSession(2);
+  const isLive = live.state.phase !== "idle";
+
+  React.useEffect(() => setSavedIds(loadSaved()), []);
+
   const isRouteMode = selectedSport === "running" || selectedSport === "cycling";
+  const sportMeta = POPULAR_GROUP_SPORTS.find((s) => s.key === selectedSport);
 
-  // Filtered Venues
-  const filteredVenues = React.useMemo(() => {
+  const routes = React.useMemo(() => {
+    if (!isRouteMode) return [];
+    const q = searchQuery.trim().toLowerCase();
+    const lengthTest = LENGTH_FILTERS[lengthIdx]!.test;
+    const diff = DIFFICULTY_FILTERS[difficultyIdx];
+    return STRAVA_ROUTES.filter(
+      (r) =>
+        r.sport === selectedSport &&
+        lengthTest(r.distanceKm) &&
+        (difficultyIdx === 0 || r.difficulty === diff) &&
+        (!savedOnly || savedIds.includes(r.id)) &&
+        (!q || `${r.name} ${r.areaVi} ${r.district}`.toLowerCase().includes(q))
+    );
+  }, [isRouteMode, selectedSport, searchQuery, lengthIdx, difficultyIdx, savedOnly, savedIds]);
+
+  const venues = React.useMemo(() => {
     if (isRouteMode) return [];
-    return SPORTS_VENUES_DATABASE.filter((v) => {
-      // Filter by sport
-      if (v.sport !== selectedSport) return false;
-      // Filter by district
-      if (selectedDistrict !== "Tất cả" && v.district !== selectedDistrict) return false;
-      // Filter by query
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchName = v.name.toLowerCase().includes(q);
-        const matchAddress = v.address.toLowerCase().includes(q);
-        if (!matchName && !matchAddress) return false;
+    const q = searchQuery.trim().toLowerCase();
+    return SPORTS_VENUES_DATABASE.filter(
+      (v) =>
+        v.sport === selectedSport &&
+        (selectedDistrict === "Tất cả" || v.district === selectedDistrict) &&
+        (!savedOnly || savedIds.includes(v.id)) &&
+        (!q || `${v.name} ${v.address}`.toLowerCase().includes(q))
+    );
+  }, [isRouteMode, selectedSport, searchQuery, selectedDistrict, savedOnly, savedIds]);
+
+  const itemIds = React.useMemo(() => (isRouteMode ? routes.map((r) => r.id) : venues.map((v) => v.id)), [isRouteMode, routes, venues]);
+
+  // Giữ lựa chọn hợp lệ khi danh sách thay đổi.
+  React.useEffect(() => {
+    if (!selectedId || !itemIds.includes(selectedId)) setSelectedId(itemIds[0] ?? null);
+  }, [itemIds, selectedId]);
+
+  const selectedRoute: StravaRoute | null = isRouteMode ? routes.find((r) => r.id === selectedId) ?? null : null;
+  const selectedVenue: SportsVenue | null = !isRouteMode ? venues.find((v) => v.id === selectedId) ?? null : null;
+
+  const toggleSaved = (id: string) => {
+    setSavedIds((prev) => {
+      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
+      try {
+        window.localStorage.setItem(SAVED_KEY, JSON.stringify(next));
+      } catch {
+        /* bỏ qua */
       }
-      return true;
+      return next;
     });
-  }, [selectedSport, selectedDistrict, searchQuery, isRouteMode]);
+  };
 
-  // Set default selected venue when list changes
+  const spotFromRoute = (r: StravaRoute): LiveSpot => ({
+    id: r.id,
+    name: r.name,
+    kind: "route",
+    sport: r.sport,
+    position: r.coordinates[0] ?? [10.795, 106.721],
+  });
+  const spotFromVenue = (v: SportsVenue): LiveSpot => ({
+    id: v.id,
+    name: v.name,
+    kind: "venue",
+    sport: v.sport,
+    position: [v.lat, v.lng],
+  });
+
+  // =====================================================================
+  // LEAFLET: khởi tạo
+  // =====================================================================
   React.useEffect(() => {
-    if (!isRouteMode && filteredVenues.length > 0) {
-      setSelectedVenue(filteredVenues[0] || null);
-    }
-  }, [filteredVenues, isRouteMode]);
-
-  // Leaflet map initialization & reactive update
-  React.useEffect(() => {
-    if (typeof window === "undefined" || !mapContainerRef.current) return;
-
-    let isMounted = true;
-
-    async function updateMap() {
+    let cancelled = false;
+    (async () => {
       const L = await import("leaflet");
+      if (cancelled || !mapContainerRef.current || mapRef.current) return;
+      LRef.current = L;
+      const map = L.map(mapContainerRef.current, { zoomControl: false, attributionControl: false }).setView(
+        [10.795, 106.721],
+        13
+      );
+      contentGroupRef.current = L.layerGroup().addTo(map);
+      liveGroupRef.current = L.layerGroup().addTo(map);
+      map.on("click", () => setIsSportMenuOpen(false));
+      mapRef.current = map;
+      setMapReady(true);
+      setTimeout(() => map.invalidateSize(), 50);
+    })();
+    return () => {
+      cancelled = true;
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
+  }, []);
 
-      if (!isMounted || !mapContainerRef.current) return;
+  // Lớp nền: bản đồ đường phố / vệ tinh
+  React.useEffect(() => {
+    const L = LRef.current;
+    const map = mapRef.current;
+    if (!mapReady || !L || !map) return;
+    baseLayerRef.current.forEach((l) => map.removeLayer(l));
+    baseLayerRef.current =
+      baseLayer === "satellite"
+        ? [
+            L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19 }),
+            L.tileLayer(
+              "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+              { maxZoom: 19 }
+            ),
+          ]
+        : [L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 })];
+    baseLayerRef.current.forEach((l) => {
+      l.addTo(map);
+      (l as Leaflet.TileLayer).bringToBack();
+    });
+  }, [baseLayer, mapReady]);
 
-      // 1. Initialize map if not yet created
-      if (!leafletMapRef.current) {
-        const initialCenter: [number, number] = [10.795, 106.721]; // Bình Thạnh / Landmark
-        const map = L.map(mapContainerRef.current, {
-          zoomControl: false,
-          attributionControl: false,
-        }).setView(initialCenter, 14);
+  // =====================================================================
+  // LEAFLET: cung đường / sân bãi
+  // =====================================================================
+  React.useEffect(() => {
+    const L = LRef.current;
+    const map = mapRef.current;
+    const group = contentGroupRef.current;
+    if (!mapReady || !L || !map || !group) return;
+    group.clearLayers();
+    runnerMarkerRef.current = null;
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 19,
-        }).addTo(map);
-
-        leafletMapRef.current = map;
-      }
-
-      const map = leafletMapRef.current;
-      if (!map) return;
-
-      // Clean existing venue markers
-      venueMarkersRef.current.forEach((m) => map.removeLayer(m));
-      venueMarkersRef.current = [];
-
-      // Clean route polyline & runner marker
-      if (routePolylineRef.current) {
-        map.removeLayer(routePolylineRef.current);
-        routePolylineRef.current = null;
-      }
-      if (runnerMarkerRef.current) {
-        map.removeLayer(runnerMarkerRef.current);
-        runnerMarkerRef.current = null;
-      }
-
-      // ==========================================
-      // A. ROUTE MODE (Chạy Bộ & Đạp Xe Strava)
-      // ==========================================
-      if (isRouteMode && selectedRoute) {
-        // Draw GPS Polyline with #1b3554 deep navy
-        const polyline = L.polyline(selectedRoute.coordinates, {
-          color: "#1b3554",
-          weight: 5,
-          opacity: 0.95,
+    if (isRouteMode) {
+      routes.forEach((r) => {
+        const selected = r.id === selectedId;
+        if (selected) {
+          L.polyline(r.coordinates, { color: "#ffffff", weight: 10, opacity: 0.9, lineCap: "round" }).addTo(group);
+        }
+        const line = L.polyline(r.coordinates, {
+          color: selected ? BRAND : BRAND_SKY,
+          weight: selected ? 6 : 4,
+          opacity: selected ? 1 : 0.55,
           lineCap: "round",
           lineJoin: "round",
-        }).addTo(map);
-        routePolylineRef.current = polyline;
-
-        // Auto zoom and pan to fit entire route
-        map.fitBounds(polyline.getBounds(), { padding: [30, 30] });
-
-        // Add Live Simulator marker
-        const liveIcon = L.divIcon({
-          className: "custom-live-marker",
-          html: `
-            <div style="position: relative; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;">
-              <div style="position: absolute; width: 28px; height: 28px; border-radius: 50%; background: rgba(192, 230, 253, 0.7); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-              <div style="position: relative; width: 16px; height: 16px; border-radius: 50%; background: #1b3554; border: 3px solid #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"></div>
-            </div>
-          `,
-          iconSize: [28, 28],
-          iconAnchor: [14, 14],
-        });
-
-        const startPos = selectedRoute.coordinates[0] || [10.795, 106.721];
-        const marker = L.marker(startPos, { icon: liveIcon }).addTo(map);
-        runnerMarkerRef.current = marker;
-      }
-
-      // ==========================================
-      // B. VENUE MODE (Gym, Pickleball, Cầu Lông...)
-      // ==========================================
-      if (!isRouteMode && filteredVenues.length > 0) {
-        const bounds = L.latLngBounds([]);
-
-        filteredVenues.forEach((venue) => {
-          bounds.extend([venue.lat, venue.lng]);
-
-          // Category letter badge
-          const letter =
-            venue.sport === "pickleball"
-              ? "PB"
-              : venue.sport === "gym"
-              ? "GYM"
-              : venue.sport === "badminton"
-              ? "CL"
-              : venue.sport === "table_tennis"
-              ? "BB"
-              : venue.sport === "football"
-              ? "FB"
-              : "BK";
-
-          const venueIcon = L.divIcon({
-            className: "custom-venue-pin",
-            html: `
-              <div style="background: #1b3554; color: white; min-width: 32px; height: 26px; padding: 0 6px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); cursor: pointer; white-space: nowrap;">
-                <span>${letter}</span>
-                <span style="margin-left: 2px; font-size: 9px; color: #c0e6fd;">★${venue.rating}</span>
-              </div>
-            `,
-            iconSize: [36, 26],
-            iconAnchor: [18, 13],
-          });
-
-          const vMarker = L.marker([venue.lat, venue.lng], { icon: venueIcon }).addTo(map);
-          vMarker.on("click", () => {
-            setSelectedVenue(venue);
-            map.panTo([venue.lat, venue.lng]);
-          });
-          venueMarkersRef.current.push(vMarker);
-        });
-
-        if (bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+        }).addTo(group);
+        line.on("click", () => setSelectedId(r.id));
+        const start = r.coordinates[0];
+        if (start) {
+          const pin = L.marker(start, {
+            icon: L.divIcon({
+              className: "sync-route-pin",
+              html: `<div style="width:${selected ? 38 : 30}px;height:${selected ? 38 : 30}px;border-radius:9999px 9999px 9999px 2px;transform:rotate(-45deg);background:${selected ? BRAND : "#fff"};border:2px solid ${BRAND};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.3);"><span style="transform:rotate(45deg);font-size:${selected ? 18 : 14}px;">${SPORT_EMOJI[r.sport]}</span></div>`,
+              iconSize: [selected ? 38 : 30, selected ? 38 : 30],
+              iconAnchor: [selected ? 4 : 3, selected ? 38 : 30],
+            }),
+            zIndexOffset: selected ? 500 : 0,
+          }).addTo(group);
+          pin.on("click", () => setSelectedId(r.id));
         }
-      }
+        if (selected && start && !isLive) {
+          runnerMarkerRef.current = L.marker(start, {
+            icon: L.divIcon({
+              className: "sync-runner",
+              html: `<div style="position:relative;width:22px;height:22px"><div class="sync-pulse" style="position:absolute;inset:0;border-radius:9999px;background:${BRAND_SKY}"></div><div style="position:relative;width:22px;height:22px;border-radius:9999px;background:${BRAND_SKY};border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.35)"></div></div>`,
+              iconSize: [22, 22],
+              iconAnchor: [11, 11],
+            }),
+            zIndexOffset: 800,
+          }).addTo(group);
+        }
+      });
+    } else {
+      venues.forEach((v) => {
+        const selected = v.id === selectedId;
+        const marker = L.marker([v.lat, v.lng], {
+          icon: L.divIcon({
+            className: "sync-venue-pin",
+            html: `<div style="display:flex;align-items:center;gap:3px;white-space:nowrap;background:${selected ? BRAND : "#fff"};color:${selected ? "#fff" : "#111"};height:${selected ? 32 : 26}px;padding:0 9px;border-radius:9999px;font:800 ${selected ? 12 : 11}px/1 system-ui;border:2px solid ${selected ? "#fff" : BRAND};box-shadow:0 4px 10px rgba(0,0,0,.3);"><span>${SPORT_EMOJI[v.sport]}</span><span>★${v.rating.toFixed(1)}</span></div>`,
+            iconSize: [70, selected ? 32 : 26],
+            iconAnchor: [35, selected ? 16 : 13],
+          }),
+          zIndexOffset: selected ? 500 : 0,
+        }).addTo(group);
+        marker.on("click", () => setSelectedId(v.id));
+      });
+    }
+  }, [mapReady, isRouteMode, routes, venues, selectedId, isLive]);
+
+  // Khung nhìn: phóng tới mục đang chọn
+  React.useEffect(() => {
+    const L = LRef.current;
+    const map = mapRef.current;
+    if (!mapReady || !L || !map || isLive) return;
+    const pad = { paddingTopLeft: [20, 130] as [number, number], paddingBottomRight: [60, 260] as [number, number] };
+    if (selectedRoute) map.flyToBounds(L.latLngBounds(selectedRoute.coordinates), { ...pad, duration: 0.6 });
+    else if (selectedVenue) map.flyTo([selectedVenue.lat, selectedVenue.lng], 16, { duration: 0.6 });
+  }, [mapReady, selectedRoute, selectedVenue, isLive]);
+
+  // =====================================================================
+  // LEAFLET: phiên tập trực tiếp (bạn, người gần, bạn tập đã ghép)
+  // =====================================================================
+  const fittedMatchRef = React.useRef<string | null>(null);
+  const liveView = React.useMemo(
+    () => ({ state: live.state, nearby: live.nearby, partner: live.partner }),
+    [live.state, live.nearby, live.partner]
+  );
+  React.useEffect(() => {
+    const L = LRef.current;
+    const map = mapRef.current;
+    const group = liveGroupRef.current;
+    if (!mapReady || !L || !map || !group) return;
+    group.clearLayers();
+    const { state, nearby, partner } = liveView;
+    if (state.phase === "idle" || !state.spot || !state.myPos) {
+      fittedMatchRef.current = null;
+      return;
     }
 
-    updateMap();
+    L.circle(state.spot.position, {
+      radius: ARRIVAL_RADIUS_M,
+      color: BRAND,
+      weight: 1,
+      fillColor: BRAND,
+      fillOpacity: 0.08,
+      dashArray: "4 6",
+    }).addTo(group);
 
-    return () => {
-      isMounted = false;
-    };
-  }, [selectedSport, selectedRoute, filteredVenues, isRouteMode]);
+    const matched = (state.phase === "matched" || state.phase === "met") && partner && state.partnerPos;
 
-  // Runner GPS Simulator Progress loop
+    if (!matched) {
+      nearby.forEach((a) => {
+        L.marker(a.position, { icon: avatarIcon(L, a.avatar, { size: 36, ring: BRAND }) })
+          .addTo(group)
+          .bindTooltip(`${a.name} · ${a.focus}`, { direction: "top", offset: [0, -18] });
+      });
+    } else {
+      L.polyline([state.myPos, state.partnerPos!], { color: BRAND, weight: 4, dashArray: "2 10", lineCap: "round" }).addTo(group);
+      L.marker(state.partnerPos!, {
+        icon: avatarIcon(L, partner!.avatar, { size: 46, ring: BRAND, pulse: true, label: partner!.name }),
+        zIndexOffset: 900,
+      }).addTo(group);
+    }
+
+    L.marker(state.myPos, {
+      icon: L.divIcon({
+        className: "sync-me",
+        html: `<div style="position:relative;width:24px;height:24px"><div class="sync-pulse" style="position:absolute;inset:0;border-radius:9999px;background:${ME}"></div><div style="position:relative;width:24px;height:24px;border-radius:9999px;background:${ME};border:4px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.4)"></div></div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      }),
+      zIndexOffset: 1000,
+    }).addTo(group);
+
+    // Phóng khung một lần khi bắt đầu / khi vừa ghép đội
+    const key = `${state.startedAt}-${state.partnerId ?? "none"}`;
+    if (fittedMatchRef.current !== key) {
+      fittedMatchRef.current = key;
+      const pts: LatLng[] = matched ? [state.myPos, state.partnerPos!] : [state.myPos, ...nearby.map((a) => a.position)];
+      map.flyToBounds(L.latLngBounds(pts), { paddingTopLeft: [40, 140], paddingBottomRight: [60, 340], maxZoom: 17, duration: 0.6 });
+    }
+  }, [mapReady, liveView]);
+
+  // =====================================================================
+  // Mô phỏng chạy thử cung đường
+  // =====================================================================
   React.useEffect(() => {
-    if (!isPlaying || !isRouteMode || !selectedRoute) return;
-
-    const interval = setInterval(() => {
+    if (!isPlaying || !selectedRoute) return;
+    const t = setInterval(() => {
       setRunnerProgress((prev) => {
         const next = prev + 1;
         if (next >= selectedRoute.coordinates.length) {
           setIsPlaying(false);
           return 0;
         }
-
-        const currentPos = selectedRoute.coordinates[next];
-        if (currentPos && runnerMarkerRef.current) {
-          runnerMarkerRef.current.setLatLng(currentPos);
-          if (leafletMapRef.current) {
-            leafletMapRef.current.panTo(currentPos, { animate: true });
-          }
+        const pos = selectedRoute.coordinates[next];
+        if (pos) {
+          runnerMarkerRef.current?.setLatLng(pos);
+          mapRef.current?.panTo(pos, { animate: true });
         }
         return next;
       });
     }, 1200);
+    return () => clearInterval(t);
+  }, [isPlaying, selectedRoute]);
 
-    return () => clearInterval(interval);
-  }, [isPlaying, isRouteMode, selectedRoute]);
-
-  const handleResetSimulator = () => {
+  const resetSimulator = () => {
     setIsPlaying(false);
     setRunnerProgress(0);
-    if (selectedRoute && runnerMarkerRef.current && selectedRoute.coordinates[0]) {
-      runnerMarkerRef.current.setLatLng(selectedRoute.coordinates[0]);
-      if (leafletMapRef.current) {
-        leafletMapRef.current.panTo(selectedRoute.coordinates[0]);
-      }
-    }
+    const start = selectedRoute?.coordinates[0];
+    if (start) runnerMarkerRef.current?.setLatLng(start);
   };
 
-  const handleSelectRoute = (route: StravaRoute) => {
-    setSelectedRoute(route);
-    handleResetSimulator();
+  React.useEffect(() => {
+    setIsPlaying(false);
+    setRunnerProgress(0);
+  }, [selectedId]);
+
+  // Đồng bộ carousel khi chọn trên bản đồ
+  React.useEffect(() => {
+    if (!selectedId || isSheetExpanded) return;
+    const el = carouselRef.current?.querySelector<HTMLElement>(`[data-item-id="${selectedId}"]`);
+    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [selectedId, isSheetExpanded]);
+
+  const locateMe = () => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (live.state.myPos) {
+      map.flyTo(live.state.myPos, 17, { duration: 0.5 });
+      return;
+    }
+    navigator.geolocation?.getCurrentPosition(
+      (p) => map.flyTo([p.coords.latitude, p.coords.longitude], 15, { duration: 0.5 }),
+      () => undefined,
+      { timeout: 8000 }
+    );
   };
 
-  const handleSelectVenue = (venue: SportsVenue) => {
-    setSelectedVenue(venue);
-    if (leafletMapRef.current) {
-      leafletMapRef.current.panTo([venue.lat, venue.lng], { animate: true });
-    }
-  };
+  const itemCount = isRouteMode ? routes.length : venues.length;
 
   return (
-    <div className="flex flex-col w-full space-y-3">
-      {/* =================================================================== */}
-      {/* 1. THANH CHỌN MÔN THỂ THAO (8 MÔN PHỔ BIẾN CHO NHÓM NHỎ) */}
-      {/* =================================================================== */}
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between px-0.5">
-          <span className="text-xs font-black uppercase tracking-wider text-muted-foreground">
-            Chọn Bộ Môn Thể Thao ({POPULAR_GROUP_SPORTS.length})
-          </span>
-          <span className="text-[10px] text-[#1b3554] dark:text-[#80aad3] font-bold">
-            {isRouteMode ? "Cung đường Strava" : "Sân bãi & Đánh giá"}
-          </span>
-        </div>
+    <div className="relative w-full h-full overflow-hidden bg-neutral-200 dark:bg-neutral-900">
+      <div ref={mapContainerRef} className="absolute inset-0 z-0" aria-label="Bản đồ" />
 
-        {/* 8 Sports Horizontal Scroll Pills */}
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-1">
-          {POPULAR_GROUP_SPORTS.map((sport) => {
-            const isSelected = selectedSport === sport.key;
-            return (
-              <button
-                key={sport.key || sport.id}
-                onClick={() => {
-                  if (sport.key) setSelectedSport(sport.key);
-                }}
-                className={cn(
-                  "px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all border flex items-center gap-1.5 active:scale-95",
-                  isSelected
-                    ? "bg-[#1b3554] text-white border-[#1b3554] shadow-xs"
-                    : "bg-muted/70 text-foreground border-border hover:bg-muted"
-                )}
-              >
-                <span>{sport.nameVi}</span>
-                {sport.requiresVenue && (
-                  <span className="text-[9px] opacity-70">📍 Sân</span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* =================================================================== */}
-      {/* 2. BỘ LỌC ĐỊA ĐIỂM THEO QUẬN & TÌM KIẾM (KHI CHỌN MÔN CẦN SÂN) */}
-      {/* =================================================================== */}
-      {!isRouteMode && (
-        <div className="space-y-2 rounded-2xl bg-muted/40 p-2.5 border border-border">
-          {/* Search Input */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+      {/* ============================ THANH TRÊN ============================ */}
+      <div className="absolute top-3 inset-x-3 z-[600] space-y-2">
+        <div className="flex items-stretch h-12 rounded-full bg-background/95 backdrop-blur shadow-lg border border-border/60">
+          <button
+            onClick={() => setIsSportMenuOpen((v) => !v)}
+            disabled={isLive}
+            aria-label={`Môn: ${sportMeta?.nameVi ?? ""}`}
+            aria-expanded={isSportMenuOpen}
+            className="flex items-center gap-0.5 pl-4 pr-2.5 border-r border-border disabled:opacity-50"
+          >
+            <span className="text-xl leading-none">{SPORT_EMOJI[selectedSport]}</span>
+            <ChevronDown className="h-4 w-4 text-brand-700" />
+          </button>
+          <div className="relative flex-1 min-w-0 flex items-center">
+            <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
             <input
-              type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm tên sân, phòng tập hoặc tên đường..."
-              className="w-full h-8 pl-8 pr-7 rounded-full bg-background border border-border text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden"
+              placeholder={isRouteMode ? `${sportMeta?.nameVi ?? ""}: tìm cung đường...` : "Tìm sân, phòng tập, tên đường..."}
+              aria-label="Tìm kiếm trên bản đồ"
+              className="w-full h-full bg-transparent pl-9 pr-8 text-[13.5px] text-foreground placeholder:text-muted-foreground outline-none"
             />
             {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-3 w-3" />
+              <button onClick={() => setSearchQuery("")} aria-label="Xoá tìm kiếm" className="absolute right-2 p-1 text-muted-foreground">
+                <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
+          <button
+            onClick={() => setSavedOnly((v) => !v)}
+            aria-pressed={savedOnly}
+            className={cn(
+              "flex items-center gap-1 px-3.5 rounded-r-full text-[12.5px] font-bold border-l border-border",
+              savedOnly ? "bg-brand-600 text-white" : "bg-muted/60 text-foreground"
+            )}
+          >
+            <Bookmark className={cn("h-4 w-4", savedOnly && "fill-current")} />
+            Đã lưu
+          </button>
+        </div>
 
-          {/* District Pills */}
-          <div className="flex gap-1 overflow-x-auto scrollbar-none">
-            {DISTRICT_LIST.map((dist) => (
+        {/* Menu chọn môn */}
+        {isSportMenuOpen && (
+          <div className="rounded-2xl bg-background/98 backdrop-blur shadow-xl border border-border p-2 grid grid-cols-2 gap-1 animate-in fade-in slide-in-from-top-1">
+            {POPULAR_GROUP_SPORTS.filter((s) => s.key).map((s) => (
               <button
-                key={dist}
-                onClick={() => setSelectedDistrict(dist)}
+                key={s.key}
+                onClick={() => {
+                  setSelectedSport(s.key!);
+                  setSelectedId(null);
+                  setSearchQuery("");
+                  setIsSportMenuOpen(false);
+                }}
                 className={cn(
-                  "px-2.5 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition-all border",
-                  selectedDistrict === dist
-                    ? "bg-[#000f22] text-white border-[#000f22]"
-                    : "bg-background text-muted-foreground border-border hover:text-foreground"
+                  "flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-semibold text-left",
+                  selectedSport === s.key ? "bg-brand-600 text-white" : "hover:bg-muted text-foreground"
                 )}
               >
-                {dist}
+                <span>{SPORT_EMOJI[s.key!]}</span>
+                <span className="flex-1">{s.nameVi}</span>
+                <span className="text-[10px] opacity-70">{s.requiresVenue ? "Sân" : "Cung đường"}</span>
               </button>
             ))}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* =================================================================== */}
-      {/* 3. BẢN ĐỒ LEAFLET CHÍNH (INTERACTIVE MAP CANVAS) */}
-      {/* =================================================================== */}
-      <div className="relative w-full h-[320px] rounded-3xl overflow-hidden border border-border shadow-md">
-        {/* Leaflet container */}
-        <div ref={mapContainerRef} className="w-full h-full z-0" />
-
-        {/* Top Info Overlay: Current Mode */}
-        <div className="absolute top-2.5 left-2.5 z-10">
-          <Badge className="bg-[#000f22]/90 backdrop-blur-md text-white border border-[#80aad3]/30 text-[10px] font-bold py-1 px-2.5 shadow-md">
+        {/* Chip lọc */}
+        {!isLive && !isSportMenuOpen && (
+          <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-3 px-3 pb-1">
             {isRouteMode ? (
-              <>Cung đường Strava: {selectedRoute?.name}</>
+              <>
+                <span className="shrink-0 h-9 px-4 rounded-full border-2 border-brand-600 bg-background/95 text-brand-700 text-[13px] font-bold flex items-center gap-1 shadow-sm">
+                  {sportMeta?.nameVi} · {itemCount}
+                </span>
+                <FilterChip
+                  label={LENGTH_FILTERS[lengthIdx]!.label}
+                  active={lengthIdx > 0}
+                  cycles
+                  onClick={() => setLengthIdx((i) => (i + 1) % LENGTH_FILTERS.length)}
+                />
+                <FilterChip
+                  label={DIFFICULTY_FILTERS[difficultyIdx]!}
+                  active={difficultyIdx > 0}
+                  cycles
+                  onClick={() => setDifficultyIdx((i) => (i + 1) % DIFFICULTY_FILTERS.length)}
+                />
+              </>
             ) : (
-              <>Sân bãi: {filteredVenues.length} địa điểm tại TP.HCM</>
+              DISTRICT_LIST.map((d) => (
+                <FilterChip key={d} label={d} active={selectedDistrict === d} onClick={() => setSelectedDistrict(d)} />
+              ))
             )}
-          </Badge>
-        </div>
+          </div>
+        )}
 
-        {/* Bottom HUD: GPS Simulator (Only for Running & Cycling) */}
-        {isRouteMode && selectedRoute && (
-          <div className="absolute bottom-2.5 left-2.5 right-2.5 z-10 rounded-2xl bg-[#000f22]/90 backdrop-blur-md border border-[#80aad3]/30 p-2.5 text-white flex items-center justify-between shadow-lg">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1b3554] hover:bg-[#000f22] border border-[#80aad3]/40 text-white shadow-md active:scale-95 transition-transform"
-                title={isPlaying ? "Tạm dừng mô phỏng" : "Chạy thử cung đường"}
-              >
-                {isPlaying ? (
-                  <Pause className="h-4 w-4" />
-                ) : (
-                  <Play className="h-4 w-4 ml-0.5" />
-                )}
-              </button>
+        {/* Trạng thái chia sẻ */}
+        {isLive && (
+          <div className="inline-flex items-center gap-2 rounded-full bg-brand-600 text-white px-3.5 py-1.5 text-[12px] font-bold shadow-lg">
+            <Radio className="h-3.5 w-3.5 animate-pulse" />
+            Đang chia sẻ vị trí · {live.nearby.length} người tập gần bạn
+          </div>
+        )}
+      </div>
 
-              <button
-                onClick={handleResetSimulator}
-                className="p-1.5 rounded-full hover:bg-white/10 text-white/70 hover:text-white"
-                title="Quay lại điểm xuất phát"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-              </button>
+      {/* ============================ NÚT NỔI BÊN PHẢI ============================ */}
+      <div className={cn("absolute right-3 top-[132px] z-[600] flex flex-col gap-2.5", isSheetExpanded && !isLive && "hidden")}>
+        <FloatBtn
+          label={baseLayer === "map" ? "Chuyển sang vệ tinh" : "Chuyển sang bản đồ đường phố"}
+          onClick={() => setBaseLayer((b) => (b === "map" ? "satellite" : "map"))}
+          active={baseLayer === "satellite"}
+        >
+          <Layers className="h-5 w-5" />
+        </FloatBtn>
+        <FloatBtn label="Vị trí của tôi" onClick={locateMe}>
+          <LocateFixed className="h-5 w-5" />
+        </FloatBtn>
+        {!isLive && (
+          <Link
+            href="/len-keo"
+            aria-label="Lên kèo mới"
+            className="h-12 w-12 rounded-full bg-background/95 shadow-lg border border-border/60 flex items-center justify-center text-foreground active:scale-95"
+          >
+            <SquarePen className="h-5 w-5" />
+          </Link>
+        )}
+      </div>
 
-              <div className="space-y-0.5 pl-1">
-                <div className="flex items-center gap-1.5 text-[10px] text-[#c0e6fd] font-bold">
-                  <span className="flex h-2 w-2 rounded-full bg-[#c0e6fd] animate-pulse" />
-                  Mô phỏng GPS Strava Live
-                </div>
-                <div className="text-xs font-black font-mono">
-                  {(
-                    (runnerProgress / (selectedRoute.coordinates.length || 1)) *
-                    selectedRoute.distanceKm
-                  ).toFixed(1)}{" "}
-                  / {selectedRoute.distanceKm} km
-                </div>
-              </div>
+      <p className="absolute left-2 bottom-[70px] z-[500] text-[9px] text-neutral-600 dark:text-neutral-300 bg-white/60 dark:bg-black/40 px-1 rounded">
+        {baseLayer === "satellite" ? "© Esri, Maxar" : "© OpenStreetMap"}
+      </p>
+
+      {/* ============================ TẤM DƯỚI ============================ */}
+      <div className="absolute inset-x-0 bottom-[72px] z-[700]">
+        {isLive ? (
+          <div className="px-3">
+            <LiveSessionPanel
+              state={live.state}
+              nearby={live.nearby}
+              athletes={live.athletes}
+              partner={live.partner}
+              onInvite={live.invite}
+              onAnswerIncoming={live.answerIncoming}
+              onCancelMatch={live.cancelMatch}
+              onStop={live.stop}
+              onFocusAthlete={(a) => mapRef.current?.flyTo(a.position, 17, { duration: 0.5 })}
+            />
+          </div>
+        ) : isSheetExpanded ? (
+          <div className="mx-0 rounded-t-3xl bg-background shadow-2xl border-t border-border max-h-[62vh] flex flex-col animate-in slide-in-from-bottom-4 duration-200">
+            <button onClick={() => setIsSheetExpanded(false)} className="w-full pt-2.5 pb-1.5 flex flex-col items-center" aria-label="Thu gọn danh sách">
+              <span className="h-1.5 w-10 rounded-full bg-neutral-300 dark:bg-neutral-600" />
+            </button>
+            <div className="px-4 pb-2 flex items-baseline justify-between">
+              <h2 className="text-[17px] font-bold text-foreground">
+                {isRouteMode ? `Cung đường ${sportMeta?.nameVi.toLowerCase()}` : "Sân bãi & phòng tập"}
+              </h2>
+              <span className="text-[12px] text-muted-foreground">{itemCount} kết quả</span>
             </div>
-
-            <div className="text-right text-xs">
-              <div className="text-[10px] text-white/70">Mục tiêu</div>
-              <div className="font-bold text-[#c0e6fd]">
-                {selectedRoute.targetPaceOrSpeed}
-              </div>
+            <div className="overflow-y-auto px-3 pb-4 space-y-2.5">
+              {isRouteMode
+                ? routes.map((r) => (
+                    <RouteDetailCard
+                      key={r.id}
+                      route={r}
+                      selected={r.id === selectedId}
+                      saved={savedIds.includes(r.id)}
+                      onSelect={() => setSelectedId(r.id)}
+                      onToggleSave={() => toggleSaved(r.id)}
+                      onStartLive={() => setCheckInSpot(spotFromRoute(r))}
+                      simulator={
+                        r.id === selectedId
+                          ? { isPlaying, progress: runnerProgress, onToggle: () => setIsPlaying((p) => !p), onReset: resetSimulator }
+                          : null
+                      }
+                    />
+                  ))
+                : venues.map((v) => (
+                    <VenueDetailCard
+                      key={v.id}
+                      venue={v}
+                      selected={v.id === selectedId}
+                      saved={savedIds.includes(v.id)}
+                      onSelect={() => setSelectedId(v.id)}
+                      onToggleSave={() => toggleSaved(v.id)}
+                      onStartLive={() => setCheckInSpot(spotFromVenue(v))}
+                    />
+                  ))}
+              {itemCount === 0 && <EmptyResult />}
+              <SafetyNote />
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div ref={carouselRef} className="flex gap-2.5 overflow-x-auto snap-x snap-mandatory no-scrollbar px-3 pb-2">
+              {isRouteMode
+                ? routes.map((r) => (
+                    <PeekCard
+                      key={r.id}
+                      id={r.id}
+                      selected={r.id === selectedId}
+                      saved={savedIds.includes(r.id)}
+                      onSelect={() => setSelectedId(r.id)}
+                      onToggleSave={() => toggleSaved(r.id)}
+                      onStartLive={() => setCheckInSpot(spotFromRoute(r))}
+                      thumb={<ElevationSpark points={r.elevationPoints} className="w-full h-full" />}
+                      title={r.name}
+                      badge={r.difficulty}
+                      meta={`${r.distanceKm} km · +${r.elevationGainM} m · ${r.estimatedTime}`}
+                      sub={`${r.district} · An toàn ${r.safetyScore}%`}
+                    />
+                  ))
+                : venues.map((v) => (
+                    <PeekCard
+                      key={v.id}
+                      id={v.id}
+                      selected={v.id === selectedId}
+                      saved={savedIds.includes(v.id)}
+                      onSelect={() => setSelectedId(v.id)}
+                      onToggleSave={() => toggleSaved(v.id)}
+                      onStartLive={() => setCheckInSpot(spotFromVenue(v))}
+                      thumb={
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-brand-50 dark:bg-brand-950/40">
+                          <span className="text-2xl">{SPORT_EMOJI[v.sport]}</span>
+                          <span className="text-[11px] font-black text-brand-700 flex items-center gap-0.5">
+                            <Star className="h-3 w-3 fill-current" />
+                            {v.rating.toFixed(1)}
+                          </span>
+                        </div>
+                      }
+                      title={v.name}
+                      badge={v.district}
+                      meta={`${v.priceRange} · ${v.openHours}`}
+                      sub={v.address}
+                    />
+                  ))}
+              {itemCount === 0 && (
+                <div className="w-full rounded-3xl bg-background shadow-xl p-4">
+                  <EmptyResult />
+                </div>
+              )}
+            </div>
+            <div className="bg-background rounded-t-3xl shadow-[0_-4px_20px_rgba(0,0,0,0.12)] border-t border-border">
+              <button
+                onClick={() => setIsSheetExpanded(true)}
+                className="w-full pt-2.5 pb-3 flex flex-col items-center gap-1.5"
+                aria-label="Mở rộng danh sách"
+              >
+                <span className="h-1.5 w-10 rounded-full bg-neutral-300 dark:bg-neutral-600" />
+                <span className="text-[13px] font-bold text-foreground">
+                  {itemCount} {isRouteMode ? "cung đường" : "địa điểm"} · Xem danh sách
+                </span>
+              </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* =================================================================== */}
-      {/* 4. CHẾ ĐỘ CHẠY BỘ / ĐẠP XE: DANH SÁCH CUNG ĐƯỜNG STRAVA ĐỀ XUẤT */}
-      {/* =================================================================== */}
-      {isRouteMode && (
-        <div className="space-y-2.5 pt-1">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-black text-foreground flex items-center gap-1.5">
-              <span>Cung Đường {selectedSport === "running" ? "Chạy Bộ" : "Đạp Xe"} Đề Xuất</span>
-              <Badge className="bg-[#c0e6fd]/60 text-[#1b3554] dark:bg-[#1b3554]/50 dark:text-[#c0e6fd] text-[9px] font-bold">
-                {availableRoutes.length} cung đường
-              </Badge>
-            </h3>
-            <span className="text-[10px] text-muted-foreground font-semibold">
-              Nhấn để soi lộ trình
-            </span>
+      {checkInSpot && (
+        <CheckInSheet
+          spot={checkInSpot}
+          onClose={() => setCheckInSpot(null)}
+          onConfirm={(pos, realGps) => {
+            setIsSheetExpanded(false);
+            setIsPlaying(false);
+            live.start(checkInSpot, pos, realGps);
+            setCheckInSpot(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ====================================================================== */
+
+function FilterChip({
+  label,
+  active,
+  onClick,
+  cycles = false,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  cycles?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "shrink-0 h-9 px-4 rounded-full text-[13px] font-semibold shadow-sm border transition-colors flex items-center gap-1",
+        active ? "bg-brand-600 border-brand-600 text-white" : "bg-background/95 border-border text-foreground"
+      )}
+    >
+      {label}
+      {cycles && <ChevronDown className="h-3.5 w-3.5 opacity-60" />}
+    </button>
+  );
+}
+
+function FloatBtn({
+  label,
+  onClick,
+  active,
+  children,
+}: {
+  label: string;
+  onClick: () => void;
+  active?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className={cn(
+        "h-12 w-12 rounded-full shadow-lg border flex items-center justify-center active:scale-95 transition-colors",
+        active ? "bg-brand-600 border-brand-600 text-white" : "bg-background/95 border-border/60 text-foreground"
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function StartLiveButton({ onClick, compact }: { onClick: () => void; compact?: boolean }) {
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      className={cn(
+        "rounded-full bg-brand-600 hover:bg-brand-700 text-white font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all",
+        compact ? "h-8 px-3 text-[12px]" : "h-9 px-4 text-[13px] flex-1"
+      )}
+    >
+      <Radio className="h-3.5 w-3.5" />
+      Tập tại đây
+    </button>
+  );
+}
+
+function SaveButton({ saved, onClick }: { saved: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      aria-label={saved ? "Bỏ lưu" : "Lưu"}
+      aria-pressed={saved}
+      className="h-8 w-8 shrink-0 rounded-full bg-muted flex items-center justify-center"
+    >
+      <Bookmark className={cn("h-4 w-4", saved ? "fill-brand-600 text-brand-600" : "text-foreground")} />
+    </button>
+  );
+}
+
+function PeekCard(props: {
+  id: string;
+  selected: boolean;
+  saved: boolean;
+  onSelect: () => void;
+  onToggleSave: () => void;
+  onStartLive: () => void;
+  thumb: React.ReactNode;
+  title: string;
+  badge: string;
+  meta: string;
+  sub: string;
+}) {
+  return (
+    <article
+      data-item-id={props.id}
+      onClick={props.onSelect}
+      className={cn(
+        "snap-center shrink-0 w-[88%] rounded-3xl bg-background shadow-xl border flex overflow-hidden cursor-pointer transition-all",
+        props.selected ? "border-brand-600 ring-1 ring-brand-600/40" : "border-border/60"
+      )}
+    >
+      <div className="w-[76px] shrink-0 bg-muted/60 p-2 flex items-end">{props.thumb}</div>
+      <div className="flex-1 min-w-0 p-3 space-y-1">
+        <div className="flex items-start gap-2">
+          <h3 className="flex-1 text-[14px] font-bold text-foreground leading-snug line-clamp-1">{props.title}</h3>
+          <SaveButton saved={props.saved} onClick={props.onToggleSave} />
+        </div>
+        <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+          <span className="shrink-0 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 text-[10.5px] font-bold">
+            {props.badge}
+          </span>
+          <span className="truncate">{props.meta}</span>
+        </div>
+        <div className="flex items-center gap-2 pt-0.5">
+          <p className="flex-1 min-w-0 text-[11.5px] text-muted-foreground truncate flex items-center gap-1">
+            <MapPin className="h-3 w-3 shrink-0" />
+            {props.sub}
+          </p>
+          <StartLiveButton onClick={props.onStartLive} compact />
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function RouteDetailCard({
+  route,
+  selected,
+  saved,
+  onSelect,
+  onToggleSave,
+  onStartLive,
+  simulator,
+}: {
+  route: StravaRoute;
+  selected: boolean;
+  saved: boolean;
+  onSelect: () => void;
+  onToggleSave: () => void;
+  onStartLive: () => void;
+  simulator: { isPlaying: boolean; progress: number; onToggle: () => void; onReset: () => void } | null;
+}) {
+  return (
+    <article
+      onClick={onSelect}
+      className={cn(
+        "rounded-3xl border p-3.5 space-y-2.5 cursor-pointer",
+        selected ? "border-brand-600 bg-card shadow-md" : "border-border bg-card/70"
+      )}
+    >
+      <div className="flex items-start gap-2">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-[14.5px] font-bold text-foreground leading-snug">{route.name}</h3>
+          <p className="text-[11.5px] text-muted-foreground">📍 {route.areaVi} ({route.district})</p>
+        </div>
+        <SaveButton saved={saved} onClick={onToggleSave} />
+      </div>
+      <p className="text-[12px] text-muted-foreground leading-relaxed">{route.subtitle}</p>
+      <ElevationSpark points={route.elevationPoints} className="w-full h-8" />
+      <div className="grid grid-cols-4 gap-1.5 text-center">
+        {[
+          ["Cự ly", `${route.distanceKm} km`],
+          ["Độ cao", `+${route.elevationGainM} m`],
+          ["Độ khó", route.difficulty],
+          ["Mục tiêu", route.targetPaceOrSpeed.replace(/^Pace |^Tốc độ /, "")],
+        ].map(([k, v]) => (
+          <div key={k} className="rounded-xl bg-muted/60 py-1.5 px-1">
+            <p className="text-[9.5px] text-muted-foreground">{k}</p>
+            <p className="text-[11.5px] font-bold text-foreground truncate">{v}</p>
           </div>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {route.highlights.map((h) => (
+          <span key={h} className="px-2 py-0.5 rounded-full bg-muted/60 text-[10.5px] text-muted-foreground">
+            {h}
+          </span>
+        ))}
+      </div>
+      <div className="flex items-center justify-between text-[11px] text-muted-foreground border-t border-border/60 pt-2">
+        <span className="flex items-center gap-1">
+          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+          An toàn {route.safetyScore}% · {route.waterStations} trạm nước · {route.surface}
+        </span>
+      </div>
+      <p className="text-[11px] text-muted-foreground">
+        Kỷ lục: <b className="text-foreground">{route.bestRecord.holder}</b> ({route.bestRecord.time})
+      </p>
 
-          <div className="space-y-2">
-            {availableRoutes.map((route) => {
-              const isSelected = selectedRoute?.id === route.id;
-              return (
-                <div
-                  key={route.id}
-                  onClick={() => handleSelectRoute(route)}
-                  className={cn(
-                    "p-3.5 rounded-3xl border transition-all cursor-pointer space-y-2 text-xs",
-                    isSelected
-                      ? "bg-card border-[#1b3554] shadow-md ring-1 ring-[#1b3554]/30"
-                      : "bg-card/70 border-border hover:bg-card shadow-xs"
-                  )}
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-black text-foreground text-sm">
-                          {route.name}
-                        </span>
-                        {isSelected && (
-                          <Badge className="bg-[#1b3554] text-white text-[9px] font-bold">
-                            Đang xem
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="text-[11px] text-muted-foreground pt-0.5">
-                        📍 {route.areaVi} ({route.district})
-                      </div>
-                    </div>
-
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "text-[9px] font-bold",
-                        route.difficulty === "Dễ"
-                          ? "border-[#1b3554]/30 text-[#1b3554] dark:text-[#c0e6fd] bg-[#c0e6fd]/30"
-                          : route.difficulty === "Vừa phải"
-                          ? "border-amber-400 text-amber-700 bg-amber-500/10"
-                          : "border-rose-400 text-rose-700 bg-rose-500/10"
-                      )}
-                    >
-                      {route.difficulty}
-                    </Badge>
-                  </div>
-
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    {route.subtitle}
-                  </p>
-
-                  {/* 3 Metric Pills: Distance, Elevation, Target Pace */}
-                  <div className="grid grid-cols-3 gap-1.5 text-center text-xs">
-                    <div className="p-1.5 rounded-xl bg-muted/60">
-                      <div className="text-[9px] text-muted-foreground">Cự ly</div>
-                      <div className="font-black text-[#1b3554] dark:text-[#80aad3]">
-                        {route.distanceKm} km
-                      </div>
-                    </div>
-                    <div className="p-1.5 rounded-xl bg-muted/60">
-                      <div className="text-[9px] text-muted-foreground">Độ dốc (Gain)</div>
-                      <div className="font-bold text-foreground">
-                        +{route.elevationGainM}m
-                      </div>
-                    </div>
-                    <div className="p-1.5 rounded-xl bg-muted/60">
-                      <div className="text-[9px] text-muted-foreground">Ước tính</div>
-                      <div className="font-bold text-foreground truncate">
-                        {route.estimatedTime}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Highlights & Record */}
-                  <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-1 border-t border-border/60">
-                    <div className="flex items-center gap-1.5">
-                      <ShieldCheck className="h-3 w-3 text-[#1b3554] dark:text-[#80aad3]" />
-                      <span>An toàn: <strong>{route.safetyScore}%</strong></span>
-                      <span>• {route.waterStations} trạm nước</span>
-                    </div>
-                    <div className="font-semibold text-foreground">
-                      Kỷ lục: {route.bestRecord.holder} ({route.bestRecord.time})
-                    </div>
-                  </div>
-
-                  {/* Action Link to Create Bounty on This Route */}
-                  <div className="pt-1 flex gap-2">
-                    <Button
-                      asChild
-                      size="sm"
-                      className="flex-1 h-7 rounded-full bg-[#1b3554] hover:bg-[#000f22] text-white text-xs font-bold gap-1"
-                    >
-                      <Link href={`/len-keo`}>
-                        <Zap className="h-3 w-3 text-white" />
-                        <span>Lên Kèo Cung Đường Này</span>
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
+      {simulator && (
+        <div className="flex items-center gap-2 rounded-2xl bg-black text-white p-2" onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={simulator.onToggle}
+            aria-label={simulator.isPlaying ? "Tạm dừng mô phỏng" : "Chạy thử cung đường"}
+            className="h-8 w-8 rounded-full bg-white/15 flex items-center justify-center"
+          >
+            {simulator.isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
+          </button>
+          <button onClick={simulator.onReset} aria-label="Về điểm xuất phát" className="h-8 w-8 rounded-full hover:bg-white/10 flex items-center justify-center">
+            <RotateCcw className="h-3.5 w-3.5" />
+          </button>
+          <div className="flex-1">
+            <p className="text-[10px] text-brand-200 font-bold">Mô phỏng GPS cung đường</p>
+            <p className="text-[12px] font-mono font-bold">
+              {((simulator.progress / (route.coordinates.length || 1)) * route.distanceKm).toFixed(1)} / {route.distanceKm} km
+            </p>
           </div>
         </div>
       )}
 
-      {/* =================================================================== */}
-      {/* 5. CHẾ ĐỘ SÂN BÃI (GYM, PICKLEBALL, CẦU LÔNG, BÓNG ĐÁ, BÓNG RỔ, BÓNG BÀN) */}
-      {/* =================================================================== */}
-      {!isRouteMode && (
-        <div className="space-y-3 pt-1">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-black text-foreground flex items-center gap-1.5">
-              <span>Địa Điểm Sân Bãi & Phòng Tập</span>
-              <Badge className="bg-[#c0e6fd]/60 text-[#1b3554] dark:bg-[#1b3554]/50 dark:text-[#c0e6fd] text-[9px] font-bold">
-                {filteredVenues.length} địa điểm
-              </Badge>
-            </h3>
-            <span className="text-[10px] text-muted-foreground font-semibold">
-              Kèm link Google Maps chuẩn
-            </span>
-          </div>
+      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+        <StartLiveButton onClick={onStartLive} />
+        <Link
+          href="/len-keo"
+          className="flex-1 h-9 rounded-full bg-brand hover:bg-brand-700 text-white text-[13px] font-bold flex items-center justify-center gap-1"
+        >
+          <Zap className="h-3.5 w-3.5" /> Lên kèo
+        </Link>
+      </div>
+    </article>
+  );
+}
 
-          {filteredVenues.length === 0 ? (
-            <div className="p-8 text-center rounded-3xl border border-dashed border-border bg-card text-muted-foreground text-xs space-y-2">
-              <div>Không tìm thấy sân bãi phù hợp với từ khóa này.</div>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedDistrict("Tất cả");
-                }}
-                className="rounded-full text-xs"
-              >
-                Đặt lại bộ lọc
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-2.5">
-              {filteredVenues.map((venue) => {
-                const isSelected = selectedVenue?.id === venue.id;
-                return (
-                  <div
-                    key={venue.id}
-                    onClick={() => handleSelectVenue(venue)}
-                    className={cn(
-                      "p-3.5 rounded-3xl border transition-all space-y-2 text-xs",
-                      isSelected
-                        ? "bg-card border-[#1b3554] shadow-md ring-1 ring-[#1b3554]/30"
-                        : "bg-card/70 border-border hover:bg-card shadow-xs"
-                    )}
-                  >
-                    {/* Header: Name & Rating */}
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-0.5 max-w-[70%]">
-                        <div className="flex items-center gap-1.5">
-                          <h4 className="font-black text-foreground text-sm leading-tight">
-                            {venue.name}
-                          </h4>
-                        </div>
-                        <div className="text-[11px] text-muted-foreground flex items-center gap-1">
-                          <MapPin className="h-3 w-3 shrink-0 text-[#1b3554] dark:text-[#80aad3]" />
-                          <span className="truncate">{venue.address}</span>
-                        </div>
-                      </div>
-
-                      {/* Customer Satisfaction Rating Box */}
-                      <div className="flex flex-col items-end">
-                        <div className="flex items-center gap-1 bg-[#1b3554] text-white px-2 py-0.5 rounded-full font-bold text-xs shadow-xs">
-                          <Star className="h-3 w-3 fill-current text-white" />
-                          <span>{venue.rating.toFixed(1)}</span>
-                        </div>
-                        <span className="text-[9px] text-muted-foreground mt-0.5">
-                          ({venue.reviewCount} đánh giá)
-                        </span>
-                      </div>
-                    </div>
-
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">
-                      {venue.highlights}
-                    </p>
-
-                    {/* Price & Hours Info */}
-                    <div className="grid grid-cols-2 gap-1.5 p-2 rounded-2xl bg-muted/60 text-xs">
-                      <div>
-                        <div className="text-[9px] text-muted-foreground">Mức giá tham khảo</div>
-                        <div className="font-bold text-[#1b3554] dark:text-[#80aad3] text-xs">
-                          {venue.priceRange}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-[9px] text-muted-foreground">Giờ hoạt động</div>
-                        <div className="font-semibold text-foreground text-xs flex items-center gap-1">
-                          <Clock className="h-3 w-3 text-muted-foreground" />
-                          <span>{venue.openHours}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Amenities chips */}
-                    <div className="flex flex-wrap gap-1">
-                      {venue.amenities.map((amenity, i) => (
-                        <span
-                          key={i}
-                          className="px-2 py-0.5 rounded-full bg-muted/50 border border-border/60 text-[10px] text-muted-foreground font-medium"
-                        >
-                          {amenity}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Action Buttons: Google Maps link + Lên kèo */}
-                    <div className="flex gap-2 pt-1 border-t border-border/60">
-                      {/* Direct Google Maps link */}
-                      <a
-                        href={venue.googleMapsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 h-8 px-3 rounded-full border border-[#1b3554]/40 bg-background hover:bg-muted text-[#1b3554] dark:text-[#c0e6fd] text-xs font-bold transition-colors"
-                      >
-                        <ExternalLink className="h-3.5 w-3.5" />
-                        <span>Chỉ đường Google Maps</span>
-                      </a>
-
-                      {/* Lên Kèo tại sân này */}
-                      <Button
-                        asChild
-                        size="sm"
-                        className="flex-1 h-8 rounded-full bg-[#1b3554] hover:bg-[#000f22] text-white text-xs font-bold gap-1 shadow-xs"
-                      >
-                        <Link href="/len-keo">
-                          <Zap className="h-3.5 w-3.5 text-white" />
-                          <span>Lên Kèo Tại Sân</span>
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+function VenueDetailCard({
+  venue,
+  selected,
+  saved,
+  onSelect,
+  onToggleSave,
+  onStartLive,
+}: {
+  venue: SportsVenue;
+  selected: boolean;
+  saved: boolean;
+  onSelect: () => void;
+  onToggleSave: () => void;
+  onStartLive: () => void;
+}) {
+  return (
+    <article
+      onClick={onSelect}
+      className={cn(
+        "rounded-3xl border p-3.5 space-y-2.5 cursor-pointer",
+        selected ? "border-brand-600 bg-card shadow-md" : "border-border bg-card/70"
       )}
+    >
+      <div className="flex items-start gap-2">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-[14.5px] font-bold text-foreground leading-snug">{venue.name}</h3>
+          <p className="text-[11.5px] text-muted-foreground flex items-center gap-1">
+            <MapPin className="h-3 w-3 shrink-0" />
+            <span className="truncate">{venue.address}</span>
+          </p>
+        </div>
+        <div className="flex flex-col items-end shrink-0">
+          <span className="flex items-center gap-0.5 rounded-full bg-brand-600 text-white px-2 py-0.5 text-[12px] font-bold">
+            <Star className="h-3 w-3 fill-current" />
+            {venue.rating.toFixed(1)}
+          </span>
+          <span className="text-[10px] text-muted-foreground">({venue.reviewCount} đánh giá)</span>
+        </div>
+        <SaveButton saved={saved} onClick={onToggleSave} />
+      </div>
+      <p className="text-[12px] text-muted-foreground leading-relaxed">{venue.highlights}</p>
+      <div className="grid grid-cols-2 gap-1.5 rounded-2xl bg-muted/60 p-2">
+        <div>
+          <p className="text-[9.5px] text-muted-foreground">Mức giá tham khảo</p>
+          <p className="text-[12px] font-bold text-foreground">{venue.priceRange}</p>
+        </div>
+        <div>
+          <p className="text-[9.5px] text-muted-foreground">Giờ hoạt động</p>
+          <p className="text-[12px] font-semibold text-foreground flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            {venue.openHours}
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {venue.amenities.map((a) => (
+          <span key={a} className="px-2 py-0.5 rounded-full bg-muted/60 text-[10.5px] text-muted-foreground">
+            {a}
+          </span>
+        ))}
+      </div>
+      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+        <StartLiveButton onClick={onStartLive} />
+        <a
+          href={venue.googleMapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="h-9 px-3 rounded-full border border-border text-foreground text-[12px] font-bold flex items-center gap-1 hover:bg-muted"
+        >
+          <ExternalLink className="h-3.5 w-3.5" /> Chỉ đường
+        </a>
+        <Link
+          href="/len-keo"
+          aria-label="Lên kèo tại sân này"
+          className="h-9 w-9 shrink-0 rounded-full bg-brand hover:bg-brand-700 text-white flex items-center justify-center"
+        >
+          <Zap className="h-4 w-4" />
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+function EmptyResult() {
+  return (
+    <p className="text-center text-[13px] text-muted-foreground py-3">
+      Không có kết quả phù hợp. Thử đổi bộ lọc hoặc từ khoá.
+    </p>
+  );
+}
+
+function SafetyNote() {
+  return (
+    <div className="rounded-2xl bg-muted/50 p-3 text-[11.5px] text-muted-foreground space-y-1">
+      <p className="font-bold text-foreground flex items-center gap-1.5">
+        <ShieldCheck className="h-4 w-4" /> Tiêu chuẩn cung đường an toàn
+      </p>
+      <p>Ưu tiên cung đường có chiếu sáng, vòi nước sạch công cộng và chốt hỗ trợ SOS gần đó.</p>
     </div>
   );
 }
