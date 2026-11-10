@@ -24,6 +24,17 @@
         "3010"
       ],
       "port": 3010
+    },
+    {
+      "name": "sync-app-prod",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "next",
+        "start",
+        "--port",
+        "3020"
+      ],
+      "port": 3020
     }
   ]
 }

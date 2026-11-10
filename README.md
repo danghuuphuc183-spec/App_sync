@@ -23,6 +23,19 @@ pnpm dev
 # Trang kiểm thử Design System: http://localhost:3000/design-system
 ```
 
+### Dùng thử nhanh (bản demo, dữ liệu giả lập)
+
+| Mục | Giá trị |
+| --- | --- |
+| Màn đăng nhập + hiệu ứng mở đầu | http://localhost:3000/dang-nhap |
+| Mã OTP | `123456` |
+| Tài khoản có sẵn (SĐT) | `0908123456` |
+| Tài khoản có sẵn (Google) | `minhthu.run@gmail.com` |
+| Tài khoản mới | Nhập SĐT/email khác → tự chuyển sang khảo sát cá nhân hoá `/bat-dau` (10 bước) |
+
+Các trang chính: Trang chủ `/`, Bản đồ `/ban-do`, Lên kèo `/len-keo`, Xem kèo `/len-keo/xem`, Nhóm `/cau-lac-bo`, Reels `/reels`, Hồ sơ `/ho-so`.
+Dữ liệu (kèo, nhật ký tập, theo dõi...) lưu trong `localStorage` của trình duyệt — xoá dữ liệu trang để bắt đầu lại. Nên mở ở chế độ điện thoại (DevTools → 390px).
+
 ## 3. Cổng kiểm tra chất lượng (Quality Gates)
 
 Dự án áp dụng quy tắc kiểm tra nghiêm ngặt không lỗi trước khi commit:

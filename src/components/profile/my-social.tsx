@@ -36,6 +36,9 @@ export function MyPosts() {
   const [viewing, setViewing] = React.useState<string | null>(null);
   const [sheet, setSheet] = React.useState<"comments" | "share" | null>(null);
   const [view, setView] = React.useState<"grid" | "list">("grid");
+  // Thời gian tương đối chỉ tính sau khi mount: trang được prerender tĩnh nên giờ lúc build ≠ giờ trên máy người xem
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
   const post = viewing ? posts.find((p) => p.id === viewing) ?? null : null;
   const update = (id: string, fn: (p: FeedPost) => FeedPost) => setPosts((prev) => prev.map((p) => (p.id === id ? fn(p) : p)));
 
@@ -101,7 +104,7 @@ export function MyPosts() {
                 ) : null}
                 {p.media.length > 1 && <Layers className="absolute top-1.5 right-1.5 h-4 w-4 text-white drop-shadow" />}
                 <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-1.5 pb-1 pt-4 text-left text-[10px] font-bold text-white">
-                  {formatPostTime(p.createdAt)}
+                  {mounted ? formatPostTime(p.createdAt) : "\u00a0"}
                 </span>
               </button>
             );

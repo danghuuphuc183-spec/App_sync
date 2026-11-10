@@ -4,10 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
-  Search,
-  MessageCircle,
   Plus,
-  Shield,
   Phone,
   Video,
   Send,
@@ -20,15 +17,13 @@ import {
   CheckCircle2,
   ExternalLink,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ChatConversation, ChatMessage, INITIAL_CONVERSATIONS } from "@/features/chat/chat.data";
 
 export default function ChatPage() {
   const [conversations, setConversations] = React.useState<ChatConversation[]>(INITIAL_CONVERSATIONS);
   const [activeConvId, setActiveConvId] = React.useState<string>("conv-1");
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery] = React.useState("");
   const [inputText, setInputText] = React.useState("");
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
