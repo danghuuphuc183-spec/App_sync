@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChatConversation, ChatMessage, INITIAL_CONVERSATIONS } from "@/features/chat/chat.data";
+import { formatUt } from "@/features/trust/config";
 
 export default function ChatPage() {
   const [conversations, setConversations] = React.useState<ChatConversation[]>(INITIAL_CONVERSATIONS);
@@ -208,7 +209,7 @@ export default function ChatPage() {
               <div className="font-bold text-foreground flex items-center gap-1.5">
                 <span>{activeConv.partner.name}</span>
                 <span className="text-[10px] text-muted-foreground font-mono">
-                  {activeConv.partner.trustScore} TS
+                  {formatUt(activeConv.partner.trustScore)} UT
                 </span>
               </div>
               <p className="text-[10px] text-muted-foreground">{activeConv.partner.sportVi}</p>
@@ -256,7 +257,7 @@ export default function ChatPage() {
                   <span>{msg.text}</span>
                   {msg.liked && (
                     <span className="absolute -bottom-1.5 -right-1 bg-white dark:bg-neutral-900 rounded-full p-0.5 shadow-sm border border-neutral-200 dark:border-neutral-700">
-                      <Heart className="h-2.5 w-2.5 text-rose-500 fill-rose-500" />
+                      <Heart className="h-2.5 w-2.5 text-foreground fill-foreground" />
                     </span>
                   )}
                 </div>
@@ -287,7 +288,7 @@ export default function ChatPage() {
                   <div className="flex items-center justify-between pt-1 border-t border-neutral-100 dark:border-neutral-800">
                     <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                       <CheckCircle2 className="h-3 w-3 stroke-[2]" />
-                      Đã Khóa Cọc {msg.attachment.holdTs} TS
+                      Đã chốt kèo
                     </span>
                     {msg.attachment.actionHref && (
                       <Link
@@ -366,11 +367,11 @@ export default function ChatPage() {
           ) : (
             <button
               type="button"
-              onClick={() => handleSendMessage("❤️")}
+              onClick={() => handleSendMessage("♥︎")}
               className="p-1.5 text-neutral-500 hover:text-rose-500 active:scale-125 transition-transform"
               title="Gửi tim"
             >
-              <Heart className="h-5 w-5 text-rose-500 fill-rose-500" />
+              <Heart className="h-5 w-5 text-foreground fill-foreground" />
             </button>
           )}
         </form>

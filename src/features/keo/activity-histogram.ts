@@ -9,6 +9,7 @@
  * Cuối tuần giờ cao điểm buổi sáng lùi muộn hơn ~1 tiếng.
  */
 import type { Keo, TimeSlot } from "./keo.types";
+import { isWeekendDay, sameDay } from "./keo-date";
 import { toMinutes } from "./keo.algo";
 
 export const DAY_START_MIN = 4 * 60;
@@ -37,7 +38,6 @@ const PEAKS: Record<string, [number, number, number][]> = {
 };
 
 const SLOT_CENTER: Record<TimeSlot, number> = { morning_early: 5.75, noon: 12, evening: 17.75, night: 20 };
-const WEEKEND = new Set(["Thứ Bảy", "Chủ Nhật"]);
 
 export function activityHistogram(
   sport: string,
@@ -45,7 +45,7 @@ export function activityHistogram(
   keos: ReadonlyArray<Keo>,
   peopleSlots: ReadonlyArray<TimeSlot> = []
 ): number[] {
-  const weekendShift = WEEKEND.has(day) ? 1 : 0;
+  const weekendShift = isWeekendDay(day) ? 1 : 0;
   const peaks = PEAKS[sport] ?? PEAKS.running!;
   const slotShare: Partial<Record<TimeSlot, number>> = {};
   for (const slot of peopleSlots) slotShare[slot] = (slotShare[slot] ?? 0) + 1 / peopleSlots.length;
@@ -64,7 +64,7 @@ export function activityHistogram(
   });
 
   for (const k of keos) {
-    if (k.sport !== sport || k.time.day !== day) continue;
+    if (k.sport !== sport || !sameDay(k.time.day, day)) continue;
     const from = timeToBucket(k.time.from);
     const to = timeToBucket(k.time.to);
     for (let i = from; i < to; i++) if (i >= 0 && i < BUCKETS) bars[i]! += 0.12 * k.memberIds.length ** 0.5;

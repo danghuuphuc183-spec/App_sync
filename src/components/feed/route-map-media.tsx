@@ -1,4 +1,5 @@
 import * as React from "react";
+import { MapPin } from "lucide-react";
 import { projectRoute } from "@/features/feed/feed.utils";
 import type { FeedPost, LatLng } from "@/features/feed/feed.types";
 
@@ -116,8 +117,8 @@ export function RouteMapMedia({
       </svg>
 
       {!compact && (
-        <div className="absolute top-3 left-3 max-w-[75%] rounded-full bg-white/90 dark:bg-black/70 backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-foreground truncate">
-          📍 {label}
+        <div className="absolute top-3 left-3 max-w-[75%] rounded-lg bg-white/90 dark:bg-black/70 backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-foreground truncate flex items-center gap-1">
+          <MapPin className="h-3 w-3 shrink-0" />{label}
         </div>
       )}
 

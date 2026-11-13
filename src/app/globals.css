@@ -48,9 +48,9 @@
     --input: 214 20% 90%;
     --ring: 213 96% 45%;
 
-    --radius: 0.85rem;
+    --radius: 0.5rem;
 
-    /* 4 hạng Trust Score — thang xanh thương hiệu, cao nhất là đen */
+    /* 4 mức Uy tín (UT) — thang xanh thương hiệu, cao nhất là đen */
     --tier-bronze: 207 75% 80%; /* xanh nhạt */
     --tier-bronze-foreground: 213 96% 25%;
 
@@ -207,6 +207,29 @@
 
 @keyframes reel-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .reel-marquee { animation: reel-marquee 9s linear infinite; }
+
+/* Ngọn lửa chuỗi tuần: lửa ngoài lay nhẹ, lõi lửa nhấp nháy, quầng sáng thở */
+@keyframes flame-sway {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  25% { transform: scale(0.97, 1.04) skewX(-2deg); }
+  50% { transform: scale(1.02, 0.98) skewX(1.5deg); }
+  75% { transform: scale(0.98, 1.03) skewX(-1deg); }
+}
+@keyframes flame-core {
+  0%, 100% { transform: scale(1, 1); opacity: 1; }
+  33% { transform: scale(0.94, 1.07); opacity: 0.9; }
+  66% { transform: scale(1.04, 0.95); opacity: 1; }
+}
+@keyframes flame-glow {
+  0%, 100% { opacity: 0.35; transform: scale(0.9); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+.flame-sway { transform-origin: 50% 100%; transform-box: fill-box; animation: flame-sway 1.6s ease-in-out infinite; }
+.flame-core { transform-origin: 50% 100%; transform-box: fill-box; animation: flame-core 1.1s ease-in-out infinite; }
+.flame-glow { animation: flame-glow 2.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .flame-sway, .flame-core, .flame-glow { animation: none; }
+}
 
 /* Thanh trượt 2 đầu (chọn khoảng giờ trên biểu đồ hoạt động) */
 .dual-range {

@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Users, ShieldCheck, Key, Trophy, GraduationCap, MessageCircle } from "lucide-react";
+import { Users, ShieldCheck, Key, Trophy, GraduationCap, MessageCircle, CalendarDays, Settings2, Mail } from "lucide-react";
+import { useClubOs } from "@/features/clubs/use-club-os";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -49,12 +50,12 @@ const SAMPLE_CLUBS: ClubItem[] = [
     active30DaysCount: 320,
     checkInRate: "86%",
     openBountiesThisWeek: 12,
-    avgTs: 124,
+    avgTs: 8.5,
     description: "Cộng đồng chạy bộ rèn luyện sức bền sinh viên và cựu sinh viên Ngoại Thương CS2 quanh bờ kè Thanh Đa và Landmark 81.",
     areaName: "Bình Thạnh & Q.1",
     weeklySchedule: "05:30 AM • Thứ Tư & Chủ Nhật",
     isVerified: true,
-    myRole: "Member",
+    myRole: "Admin",
     challengeTitle: "Cả đội chạy 500km trong 7 ngày",
     challengeProgress: { currentKm: 340, targetKm: 500, daysLeft: 3 },
     internalBounties: [
@@ -65,7 +66,7 @@ const SAMPLE_CLUBS: ClubItem[] = [
         location: "Cổng bến du thuyền Landmark 81",
         intensity: "10km • Pace 6:00",
         hostName: "Minh Anh (Mentor)",
-        hostTs: 138,
+        hostTs: 9,
         slotsLeft: 2,
       },
       {
@@ -75,7 +76,7 @@ const SAMPLE_CLUBS: ClubItem[] = [
         location: "Khuôn viên Vinhomes Central Park",
         intensity: "5km • Pace 6:30",
         hostName: "Quốc Hưng (Admin)",
-        hostTs: 142,
+        hostTs: 9.5,
         slotsLeft: 4,
       },
     ],
@@ -89,7 +90,7 @@ const SAMPLE_CLUBS: ClubItem[] = [
     active30DaysCount: 680,
     checkInRate: "92%",
     openBountiesThisWeek: 18,
-    avgTs: 134,
+    avgTs: 9,
     description: "Cộng đồng chạy bộ bán chuyên hàng đầu Sài Gòn, chuyên kéo pace dài 21km - 42km cho các giải marathon.",
     areaName: "Toàn TP.HCM",
     weeklySchedule: "05:00 AM • Thứ Bảy & Chủ Nhật",
@@ -106,7 +107,7 @@ const SAMPLE_CLUBS: ClubItem[] = [
     active30DaysCount: 195,
     checkInRate: "94%",
     openBountiesThisWeek: 9,
-    avgTs: 118,
+    avgTs: 8,
     description: "Nhóm tập luyện chia sẻ giáo án, spotter đỡ tạ an toàn và khế ước tập gym đều đặn 4 buổi/tuần.",
     areaName: "Thủ Đức",
     weeklySchedule: "17:45 PM • Thứ 2-4-6",
@@ -153,6 +154,8 @@ export default function ClubsPage() {
   };
 
   const myClub = SAMPLE_CLUBS[0]!;
+  const { myInvitations, respondMine } = useClubOs();
+  const pendingInvites = myInvitations.filter((i) => i.status === "sent");
 
   return (
     <div className="flex flex-col w-full px-4 pt-4 space-y-4 pb-28">
@@ -174,7 +177,7 @@ export default function ClubsPage() {
             aria-selected={activeTab === t.id}
             onClick={() => setActiveTab(t.id)}
             className={cn(
-              "flex items-center justify-center gap-1.5 rounded-full py-2.5 text-[13.5px] font-bold transition-colors",
+              "flex items-center justify-center gap-1.5 rounded-lg py-2.5 text-[13.5px] font-bold transition-colors",
               activeTab === t.id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -194,7 +197,7 @@ export default function ClubsPage() {
                 <div className="min-w-0">
                   <p className="text-[11px] font-bold uppercase tracking-wider text-brand dark:text-brand-sky">CLB của bạn</p>
                   <h2 className="text-[16px] font-extrabold text-foreground flex items-center gap-1.5">
-                    {myClub.name} <ShieldCheck className="h-4 w-4 text-brand dark:text-brand-sky" />
+                    {myClub.name} <ShieldCheck className="h-4 w-4 text-foreground" />
                   </h2>
                   <p className="text-[12px] text-muted-foreground">
                     {myClub.areaName} · {myClub.sportName} · {myClub.myRole}
@@ -215,20 +218,30 @@ export default function ClubsPage() {
                   <p className="text-[10.5px] text-muted-foreground">Tỷ lệ check-in</p>
                 </div>
               </div>
-              <p className="text-[12.5px] text-muted-foreground">🗓 Lịch sinh hoạt: {myClub.weeklySchedule}</p>
-              <Link
-                href="/chat"
-                className="flex items-center justify-center gap-1.5 rounded-full border border-border py-2.5 text-[13px] font-bold text-foreground hover:bg-muted"
-              >
-                <MessageCircle className="h-4 w-4" /> Chat CLB
-              </Link>
+              <p className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground"><CalendarDays className="h-3.5 w-3.5 shrink-0 text-foreground" />Lịch sinh hoạt: {myClub.weeklySchedule}</p>
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  href="/chat"
+                  className="flex items-center justify-center gap-1.5 rounded-lg border border-border py-2.5 text-[13px] font-bold text-foreground hover:bg-muted"
+                >
+                  <MessageCircle className="h-4 w-4" /> Chat CLB
+                </Link>
+                {(myClub.myRole === "Owner" || myClub.myRole === "Admin") && (
+                  <Link
+                    href="/cau-lac-bo/quan-ly"
+                    className="flex items-center justify-center gap-1.5 rounded-lg bg-foreground text-background py-2.5 text-[13px] font-bold hover:opacity-90"
+                  >
+                    <Settings2 className="h-4 w-4" /> Quản lý CLB
+                  </Link>
+                )}
+              </div>
             </div>
 
             {/* Thử thách tháng của CLB */}
             <div className="border-t border-border p-4 space-y-2.5">
               <div className="flex items-center justify-between">
                 <h3 className="text-[14px] font-bold text-foreground flex items-center gap-1.5">
-                  <Trophy className="h-4 w-4 text-brand" /> Thử thách tháng 11: 100 km
+                  <Trophy className="h-4 w-4 text-foreground" /> Thử thách tháng 11: 100 km
                 </h3>
                 <Badge className="bg-brand text-white text-[10px] font-bold">Còn 12 ngày</Badge>
               </div>
@@ -237,13 +250,13 @@ export default function ClubsPage() {
               </div>
               <div className="flex justify-between text-[11.5px] text-muted-foreground">
                 <span>Bạn đã chạy 64/100 km</span>
-                <span className="font-bold text-brand dark:text-brand-sky">+25 TS khi hoàn thành</span>
+                <span className="font-bold text-brand dark:text-brand-sky">+0,5 UT khi đúng hẹn</span>
               </div>
               <Button
                 size="sm"
                 onClick={() => setChallengeJoined(true)}
                 disabled={challengeJoined}
-                className="w-full rounded-full bg-brand hover:bg-brand-700 text-white font-bold text-xs h-9 disabled:opacity-100 disabled:bg-emerald-50 disabled:text-emerald-700"
+                className="w-full rounded-lg bg-brand hover:bg-brand-700 text-white font-bold text-xs h-9 disabled:opacity-100 disabled:bg-emerald-50 disabled:text-emerald-700"
               >
                 {challengeJoined ? "✓ Đã ghi danh thử thách" : "Ghi danh thử thách"}
               </Button>
@@ -270,6 +283,31 @@ export default function ClubsPage() {
             </div>
           </section>
 
+          {/* A2. LỜI MỜI GỬI TỚI BẠN — phải tự Chấp nhận mới vào CLB */}
+          {pendingInvites.length > 0 && (
+            <section className="space-y-2" aria-label="Lời mời CLB">
+              <h2 className="text-[15px] font-bold text-foreground px-1 flex items-center gap-1.5">
+                <Mail className="h-4 w-4" /> Lời mời đang chờ bạn
+              </h2>
+              {pendingInvites.map((inv) => (
+                <div key={inv.id} className="p-3.5 rounded-2xl border border-border bg-card space-y-2.5">
+                  <div>
+                    <p className="text-[14px] font-bold text-foreground">{inv.clubName}</p>
+                    {inv.note && <p className="text-[12px] text-muted-foreground">{inv.note}</p>}
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => respondMine(inv.id, false)} className="flex-1 rounded-lg h-9 text-[13px] font-bold">
+                      Từ chối
+                    </Button>
+                    <Button size="sm" onClick={() => respondMine(inv.id, true)} className="flex-1 rounded-lg h-9 bg-brand hover:bg-brand-700 text-white text-[13px] font-bold">
+                      Chấp nhận
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
+
           {/* B. GIA NHẬP BẰNG MÃ MỜI */}
           <form onSubmit={handleJoinByCode} className="p-4 rounded-3xl bg-muted/60 border border-border space-y-2.5">
             <div className="flex items-center gap-1.5 text-[13px] font-bold text-foreground">
@@ -282,9 +320,9 @@ export default function ClubsPage() {
                 aria-label="Mã mời CLB"
                 value={inviteCode}
                 onChange={(e) => setInviteCode(e.target.value)}
-                className="flex-1 rounded-full border border-border bg-background px-3.5 py-2 text-[13px] text-foreground focus:outline-hidden focus:ring-2 focus:ring-brand/30"
+                className="flex-1 rounded-lg border border-border bg-background px-3.5 py-2 text-[13px] text-foreground focus:outline-hidden focus:ring-2 focus:ring-brand/30"
               />
-              <Button type="submit" disabled={!inviteCode.trim()} className="rounded-full bg-brand hover:bg-brand-700 text-white font-bold text-[13px] h-9 px-4">
+              <Button type="submit" disabled={!inviteCode.trim()} className="rounded-lg bg-brand hover:bg-brand-700 text-white font-bold text-[13px] h-9 px-4">
                 Gia nhập
               </Button>
             </div>
@@ -303,7 +341,7 @@ export default function ClubsPage() {
                     <div className="min-w-0">
                       <h3 className="text-[14px] font-bold text-foreground flex items-center gap-1">
                         {club.name}
-                        {club.isVerified && <ShieldCheck className="h-4 w-4 text-brand dark:text-brand-sky" />}
+                        {club.isVerified && <ShieldCheck className="h-4 w-4 text-foreground" />}
                       </h3>
                       <p className="text-[12px] text-muted-foreground">
                         {club.areaName} · {club.sportName}
@@ -320,7 +358,7 @@ export default function ClubsPage() {
                       variant="outline"
                       disabled={sent}
                       onClick={() => setRequested((r) => [...r, club.id])}
-                      className="rounded-full text-[12px] h-8 px-3.5 font-bold border-brand/40 text-brand dark:text-brand-sky"
+                      className="rounded-lg text-[12px] h-8 px-3.5 font-bold border-brand/40 text-brand dark:text-brand-sky"
                     >
                       {sent ? "Đã gửi yêu cầu" : "Xin gia nhập"}
                     </Button>

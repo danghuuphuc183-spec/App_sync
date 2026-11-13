@@ -96,7 +96,7 @@ export function CoachBookingModal({
             <div>
               <div className="flex items-center gap-1.5">
                 <h3 className="text-sm font-black text-foreground">Đặt Lịch Coaching</h3>
-                <ShieldCheck className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
+                <ShieldCheck className="h-3.5 w-3.5 text-foreground" />
               </div>
               <p className="text-[11px] text-muted-foreground">HLV {coach.name} • {coach.sportCategory}</p>
             </div>
@@ -171,7 +171,7 @@ export function CoachBookingModal({
           {mode === "group" && (
             <div className="p-2.5 rounded-2xl bg-brand-100/30 dark:bg-brand/30 border border-brand-300/40 space-y-1.5 animate-in fade-in">
               <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-                <Users className="h-3 w-3 text-brand dark:text-brand-sky" />
+                <Users className="h-3 w-3 text-foreground" />
                 Thành viên trong Micro-Squad cùng tham gia:
               </label>
               <input
@@ -190,7 +190,7 @@ export function CoachBookingModal({
           {/* Date Picker */}
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-              <Calendar className="h-3 w-3 text-brand dark:text-brand-sky" />
+              <Calendar className="h-3 w-3 text-foreground" />
               Chọn ngày tập:
             </label>
             <div className="grid grid-cols-3 gap-1.5">
@@ -215,7 +215,7 @@ export function CoachBookingModal({
           {/* Time slot */}
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-              <Clock className="h-3 w-3 text-brand dark:text-brand-sky" />
+              <Clock className="h-3 w-3 text-foreground" />
               Khung giờ tập luyện:
             </label>
             <select
@@ -233,7 +233,7 @@ export function CoachBookingModal({
           {/* Location */}
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-              <MapPin className="h-3 w-3 text-brand dark:text-brand-sky" />
+              <MapPin className="h-3 w-3 text-foreground" />
               Địa điểm tập:
             </label>
             <select
@@ -277,7 +277,7 @@ export function CoachBookingModal({
             </div>
             <div className="text-right">
               <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 block">
-                +10 TS thưởng kỷ luật
+                +0,5 UT khi đúng hẹn
               </span>
               <span className="text-[9px] text-muted-foreground">Có mặt đúng giờ</span>
             </div>
@@ -287,7 +287,7 @@ export function CoachBookingModal({
           <Button
             type="submit"
             disabled={isSubmitted}
-            className="w-full rounded-full bg-brand hover:bg-brand-700 text-white font-bold text-xs h-9 shadow-xs"
+            className="w-full rounded-lg bg-brand hover:bg-brand-700 text-white font-bold text-xs h-9 shadow-xs"
           >
             {isSubmitted ? (
               <span className="flex items-center gap-1.5">

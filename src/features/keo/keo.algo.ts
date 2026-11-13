@@ -19,6 +19,7 @@
 import { calculateCandidateMatch, type MatchScoreBreakdown } from "@/features/match/matcher";
 import type { MatchCandidate } from "@/features/match/candidates.data";
 import type { GroupForm, Keo, LatLng, PersonalForm, TimeSlot, TimeWindow, Viewer } from "./keo.types";
+import { sameDay } from "./keo-date";
 
 const EARTH_R = 6_371_000;
 const toRad = (d: number) => (d * Math.PI) / 180;
@@ -45,7 +46,7 @@ export function timeSlotOf(hhmm: string): TimeSlot {
 
 /** Tỉ lệ giao nhau của hai khung giờ (0..1), chỉ khi cùng ngày. */
 export function timeOverlap(a: TimeWindow, b: TimeWindow): number {
-  if (a.day !== b.day) return 0;
+  if (!sameDay(a.day, b.day)) return 0;
   const start = Math.max(toMinutes(a.from), toMinutes(b.from));
   const end = Math.min(toMinutes(a.to), toMinutes(b.to));
   if (end <= start) return 0;
@@ -137,7 +138,7 @@ export function findGroups(
     .map(({ keo, missing, d, overlap }) => {
       const near = Math.exp(-d / 3);
       const fill = 1 - (missing - bringing) / Math.max(1, keo.capacity); // nhóm càng sắp đủ càng ưu tiên
-      const trust = Math.min(1, ctx.hostTrust(keo.hostId) / 150);
+      const trust = Math.min(1, ctx.hostTrust(keo.hostId) / 10);
       const score = 0.4 * near + 0.3 * overlap + 0.2 * fill + 0.1 * trust;
       return { keo, distanceKm: d, missing, overlap, score, sameLocation: keo.place.id === form.place!.id };
     })
@@ -189,7 +190,7 @@ export function rankKeos(
         interest: interestScore(viewer, keo.sport),
         time: viewer.usualSlots.includes(timeSlotOf(keo.time.from)) ? 1 : 0.3,
         social: viewer.friendIds.includes(keo.hostId) ? 1 : 0,
-        trust: Math.min(1, ctx.hostTrust(keo.hostId) / 150),
+        trust: Math.min(1, ctx.hostTrust(keo.hostId) / 10),
       };
       const score =
         0.35 * signals.near + 0.3 * signals.interest + 0.15 * signals.time + 0.1 * signals.social + 0.1 * signals.trust;
@@ -203,6 +204,8 @@ export function rankKeos(
 
       return { keo, distanceKm: d, score, reasons, eligible: viewer.trustScore >= keo.minTrust, spotsLeft };
     })
-    .filter((r) => r.spotsLeft > 0 || r.keo.mine)
+    // người bị host từ chối không còn thấy kèo đó (D35)
+    .filter((r) => !(r.keo.declinedIds ?? []).includes(viewer.id))
+    .filter((r) => r.spotsLeft > 0 || r.keo.mine || r.keo.memberIds.includes(viewer.id))
     .sort((a, b) => b.score - a.score || a.distanceKm - b.distanceKm);
 }

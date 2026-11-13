@@ -1,24 +1,12 @@
 "use client";
 
 import * as React from "react";
-import {
-  X,
-  ShieldCheck,
-  Star,
-  Users,
-  User,
-  Award,
-  CheckCircle2,
-  Clock,
-  MapPin,
-  Heart,
-  Dumbbell,
-  TrendingUp,
-} from "lucide-react";
+import { Award, CheckCircle2, Clock, Dumbbell, Gift, Heart, MapPin, ShieldCheck, Star, TrendingUp, Trophy, User, Users, X } from "lucide-react";
 import { Coach } from "@/features/coaching/coaching.types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { formatUt } from "@/features/trust/config";
 
 interface CoachDetailModalProps {
   coach: Coach | null;
@@ -75,14 +63,14 @@ export function CoachDetailModal({
               />
               {coach.isVerified && (
                 <div className="absolute -bottom-1 -right-1 bg-white dark:bg-black p-0.5 rounded-full shadow-xs">
-                  <ShieldCheck className="h-5 w-5 text-brand dark:text-brand-sky fill-brand-100 dark:fill-brand" />
+                  <ShieldCheck className="h-5 w-5 text-foreground fill-foreground" />
                 </div>
               )}
             </div>
 
             <div className="flex items-center gap-2 pb-1">
               <Badge className="bg-brand text-white text-[11px] font-bold px-2.5 py-1">
-                {coach.trustScore} TS Uy Tín
+                {formatUt(coach.trustScore)} UT
               </Badge>
               <Badge variant="outline" className="text-[11px] font-semibold border-border">
                 {coach.tier.toUpperCase()} TIER
@@ -93,7 +81,7 @@ export function CoachDetailModal({
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-base font-black text-foreground">{coach.name}</h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-brand-100/50 text-brand dark:bg-brand/50 dark:text-brand-sky font-bold">
+              <span className="text-xs px-2 py-0.5 rounded-lg bg-brand-100/50 text-brand dark:bg-brand/50 dark:text-brand-sky font-bold">
                 {coach.sportCategory}
               </span>
             </div>
@@ -132,7 +120,7 @@ export function CoachDetailModal({
               {/* Chỉ số thể hình */}
               <div className="space-y-1.5">
                 <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                  <TrendingUp className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
+                  <TrendingUp className="h-3.5 w-3.5 text-foreground" />
                   <span>Số đo & Thể hình thực tế của HLV</span>
                 </div>
                 <div className="grid grid-cols-4 gap-2 p-3 rounded-2xl bg-muted/50 text-center">
@@ -175,14 +163,14 @@ export function CoachDetailModal({
               {/* Sở thích & Phong cách */}
               <div className="space-y-1.5">
                 <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                  <Heart className="h-3.5 w-3.5 text-rose-500" />
+                  <Heart className="h-3.5 w-3.5 text-foreground" />
                   <span>Sở thích cá nhân & Gu tập luyện</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {coach.hobbies.map((hobby, i) => (
                     <span
                       key={i}
-                      className="text-xs px-2.5 py-1 rounded-full bg-muted border border-border font-medium text-foreground"
+                      className="text-xs px-2.5 py-1 rounded-lg bg-muted border border-border font-medium text-foreground"
                     >
                       {hobby}
                     </span>
@@ -193,7 +181,7 @@ export function CoachDetailModal({
               {/* Địa điểm & Phòng tập hỗ trợ */}
               <div className="space-y-1.5">
                 <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                  <MapPin className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
+                  <MapPin className="h-3.5 w-3.5 text-foreground" />
                   <span>Phòng tập đối tác & Khu vực hoạt động</span>
                 </div>
                 <div className="p-3 rounded-2xl bg-muted/40 border border-border text-xs space-y-1">
@@ -214,7 +202,7 @@ export function CoachDetailModal({
               {/* Bằng cấp & Chứng chỉ quốc tế */}
               <div className="space-y-1.5">
                 <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                  <Award className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
+                  <Award className="h-3.5 w-3.5 text-foreground" />
                   <span>Chứng chỉ nghề nghiệp & Bằng cấp</span>
                 </div>
                 <div className="space-y-1.5">
@@ -223,7 +211,7 @@ export function CoachDetailModal({
                       key={i}
                       className="p-2.5 rounded-2xl bg-card border border-border flex items-start gap-2 text-xs"
                     >
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="h-4 w-4 text-foreground shrink-0 mt-0.5" />
                       <span className="font-semibold text-foreground">{cert}</span>
                     </div>
                   ))}
@@ -233,7 +221,7 @@ export function CoachDetailModal({
               {/* Timeline lịch sử sự nghiệp */}
               <div className="space-y-2">
                 <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                  <Clock className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
+                  <Clock className="h-3.5 w-3.5 text-foreground" />
                   <span>Quá trình công tác & Thành tích</span>
                 </div>
                 <div className="space-y-2 border-l-2 border-brand/30 ml-2 pl-3">
@@ -262,7 +250,7 @@ export function CoachDetailModal({
                       key={i}
                       className="p-2 rounded-xl bg-muted/60 text-[11px] font-semibold text-foreground flex items-center gap-1.5"
                     >
-                      <Dumbbell className="h-3 w-3 text-brand dark:text-brand-sky shrink-0" />
+                      <Dumbbell className="h-3 w-3 text-foreground shrink-0" />
                       <span className="truncate">{spec}</span>
                     </div>
                   ))}
@@ -281,7 +269,7 @@ export function CoachDetailModal({
                     {coach.rating}
                     <div className="flex text-amber-400">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-amber-400" />
+                        <Star key={i} className="h-4 w-4 fill-foreground" />
                       ))}
                     </div>
                   </div>
@@ -312,7 +300,7 @@ export function CoachDetailModal({
                           <div className="text-xs font-bold text-foreground flex items-center gap-1">
                             {rev.traineeName}
                             {rev.verifiedTrainee && (
-                              <CheckCircle2 className="h-3 w-3 text-brand dark:text-brand-sky" />
+                              <CheckCircle2 className="h-3 w-3 text-foreground" />
                             )}
                           </div>
                           <div className="text-[10px] text-muted-foreground">
@@ -323,7 +311,7 @@ export function CoachDetailModal({
 
                       <div className="flex text-amber-400">
                         {[...Array(rev.rating)].map((_, i) => (
-                          <Star key={i} className="h-3 w-3 fill-amber-400" />
+                          <Star key={i} className="h-3 w-3 fill-foreground" />
                         ))}
                       </div>
                     </div>
@@ -333,8 +321,8 @@ export function CoachDetailModal({
                     </p>
 
                     {rev.achievementBadge && (
-                      <div className="flex items-center gap-1 text-[10px] font-bold text-brand dark:text-brand-sky bg-brand-100/30 dark:bg-brand/30 px-2.5 py-1 rounded-full w-fit">
-                        <span>🏆 Kết quả: {rev.achievementBadge}</span>
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-brand dark:text-brand-sky bg-brand-100/30 dark:bg-brand/30 px-2.5 py-1 rounded-lg w-fit">
+                        <Trophy className="h-3 w-3" /><span>Kết quả: {rev.achievementBadge}</span>
                       </div>
                     )}
                   </div>
@@ -350,7 +338,7 @@ export function CoachDetailModal({
               <div className="p-3.5 rounded-3xl bg-card border-2 border-brand/40 dark:border-brand-sky/40 space-y-2 shadow-xs">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-xs font-black text-foreground">
-                    <User className="h-4 w-4 text-brand dark:text-brand-sky" />
+                    <User className="h-4 w-4 text-foreground" />
                     <span>GÓI COACHING 1:1 CÁ NHÂN</span>
                   </div>
                   <Badge className="bg-brand text-white text-[10px] font-bold">Kèm Riêng 100%</Badge>
@@ -365,7 +353,7 @@ export function CoachDetailModal({
 
                 {coach.pricing.single1on1.trialPrice && (
                   <div className="p-2 rounded-xl bg-brand-100/30 text-xs font-bold text-brand dark:text-brand-sky">
-                    🎉 Buổi đầu trải nghiệm & Đo Inbody: {formatVnd(coach.pricing.single1on1.trialPrice)}
+                    <Gift className="mr-1 inline h-3.5 w-3.5 -mt-0.5" />Buổi đầu trải nghiệm & Đo Inbody: {formatVnd(coach.pricing.single1on1.trialPrice)}
                   </div>
                 )}
 
@@ -374,7 +362,7 @@ export function CoachDetailModal({
                 <Button
                   onClick={() => onBookSession(coach, "1:1")}
                   size="sm"
-                  className="w-full rounded-full bg-brand hover:bg-brand-700 text-white font-bold text-xs h-8"
+                  className="w-full rounded-lg bg-brand hover:bg-brand-700 text-white font-bold text-xs h-8"
                 >
                   Đặt Lịch Kèm 1:1 Với HLV
                 </Button>
@@ -384,7 +372,7 @@ export function CoachDetailModal({
               <div className="p-3.5 rounded-3xl bg-gradient-to-b from-brand-50 to-card dark:from-brand/20 dark:to-card border-2 border-emerald-500/40 space-y-2.5 shadow-xs">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-xs font-black text-foreground">
-                    <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <Users className="h-4 w-4 text-foreground" />
                     <span>GÓI NHÓM SQUAD ({coach.pricing.groupCoaching.minMembers}-{coach.pricing.groupCoaching.maxMembers} NGƯỜI)</span>
                   </div>
                   <Badge className="bg-emerald-600 text-white text-[10px] font-bold">
@@ -402,7 +390,7 @@ export function CoachDetailModal({
                 <div className="space-y-1 text-xs">
                   {coach.pricing.groupCoaching.groupBenefits.map((b, i) => (
                     <div key={i} className="flex items-center gap-1.5 text-[11px] text-foreground font-medium">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                      <CheckCircle2 className="h-3.5 w-3.5 text-foreground shrink-0" />
                       <span>{b}</span>
                     </div>
                   ))}
@@ -411,7 +399,7 @@ export function CoachDetailModal({
                 <Button
                   onClick={() => onBookSession(coach, "group")}
                   size="sm"
-                  className="w-full rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs h-8 shadow-xs"
+                  className="w-full rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs h-8 shadow-xs"
                 >
                   Rủ Squad Cùng Đặt Lịch (Chia Tiền)
                 </Button>
@@ -434,14 +422,14 @@ export function CoachDetailModal({
               onClick={() => onBookSession(coach, "group")}
               variant="outline"
               size="sm"
-              className="rounded-full text-xs h-8 font-bold border-brand/30 text-brand dark:text-brand-sky"
+              className="rounded-lg text-xs h-8 font-bold border-brand/30 text-brand dark:text-brand-sky"
             >
               Rủ Nhóm Tập
             </Button>
             <Button
               onClick={() => onBookSession(coach, "1:1")}
               size="sm"
-              className="rounded-full bg-brand hover:bg-brand-700 text-white text-xs font-bold h-8 px-4"
+              className="rounded-lg bg-brand hover:bg-brand-700 text-white text-xs font-bold h-8 px-4"
             >
               Đặt Kèm 1:1
             </Button>

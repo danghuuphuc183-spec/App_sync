@@ -88,7 +88,7 @@ export function TrainingLog({ className }: { className?: string }) {
             setSelected(dateKey(now));
             setLogOpen(true);
           }}
-          className="shrink-0 whitespace-nowrap rounded-full bg-brand hover:bg-brand-700 active:scale-95 text-white text-[12.5px] font-bold px-3.5 py-2 flex items-center gap-1.5"
+          className="shrink-0 whitespace-nowrap rounded-lg bg-brand hover:bg-brand-700 active:scale-95 text-white text-[12.5px] font-bold px-3.5 py-2 flex items-center gap-1.5"
         >
           <CalendarPlus className="h-4 w-4" /> Ghi buổi tập
         </button>
@@ -165,7 +165,7 @@ export function TrainingLog({ className }: { className?: string }) {
         {/* Chú thích */}
         <div className="mt-2.5 flex items-center justify-between text-[11.5px] text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <Users className="h-3.5 w-3.5 text-brand-sky" /> Tập cùng bạn × {data.partnerDays}
+            <Users className="h-3.5 w-3.5 text-foreground" /> Tập cùng bạn × {data.partnerDays}
           </span>
           <span className="flex items-center gap-1" aria-label="Chú thích: ít đến nhiều buổi tập">
             <span>Ít</span>
@@ -215,7 +215,7 @@ export function TrainingLog({ className }: { className?: string }) {
                 <li key={e.id} className="flex items-center gap-2 text-[13px]">
                   <span className="flex-1 text-foreground">
                     {SPORT_LOG_LABEL[e.sport] ?? e.sport} · {e.minutes} phút
-                    {e.withPartner && <span className="ml-1.5 rounded-full bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-1.5 py-0.5 text-[10.5px] font-semibold">cùng bạn</span>}
+                    {e.withPartner && <span className="ml-1.5 rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-1.5 py-0.5 text-[10.5px] font-semibold">cùng bạn</span>}
                   </span>
                   <button onClick={() => removeEntry(e.id)} aria-label="Xoá buổi tập" className="h-7 w-7 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
                     <Trash2 className="h-3.5 w-3.5" />

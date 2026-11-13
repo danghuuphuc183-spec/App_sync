@@ -72,7 +72,7 @@ export function useToast() {
     msg && typeof document !== "undefined"
       ? createPortal(
           <div className="fixed bottom-24 inset-x-0 z-[1200] flex justify-center pointer-events-none">
-            <div role="status" className="rounded-full bg-black/90 text-white text-[13px] font-semibold px-4 py-2 shadow-lg animate-in fade-in slide-in-from-bottom-2">
+            <div role="status" className="rounded-lg bg-black/90 text-white text-[13px] font-semibold px-4 py-2 shadow-lg animate-in fade-in slide-in-from-bottom-2">
               {msg}
             </div>
           </div>,

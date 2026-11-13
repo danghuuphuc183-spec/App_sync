@@ -35,19 +35,9 @@ import { ARRIVAL_RADIUS_M, type LatLng, type LiveSpot } from "@/features/live/li
 import { useLiveSession } from "./use-live-session";
 import { CheckInSheet } from "./check-in-sheet";
 import { LiveSessionPanel } from "./live-session-panel";
+import { SportIcon, sportIconSvg } from "@/components/shared/sport-icon";
 
 type BaseLayer = "map" | "satellite";
-
-const SPORT_EMOJI: Record<string, string> = {
-  running: "🏃",
-  cycling: "🚴",
-  gym: "🏋️",
-  pickleball: "🏓",
-  badminton: "🏸",
-  table_tennis: "🏓",
-  football: "⚽",
-  basketball: "🏀",
-};
 
 const LENGTH_FILTERS = [
   { id: "all", label: "Độ dài", test: () => true },
@@ -282,7 +272,7 @@ export function InteractiveRouteMap() {
           const pin = L.marker(start, {
             icon: L.divIcon({
               className: "sync-route-pin",
-              html: `<div style="width:${selected ? 38 : 30}px;height:${selected ? 38 : 30}px;border-radius:9999px 9999px 9999px 2px;transform:rotate(-45deg);background:${selected ? BRAND : "#fff"};border:2px solid ${BRAND};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.3);"><span style="transform:rotate(45deg);font-size:${selected ? 18 : 14}px;">${SPORT_EMOJI[r.sport]}</span></div>`,
+              html: `<div style="width:${selected ? 38 : 30}px;height:${selected ? 38 : 30}px;border-radius:9999px 9999px 9999px 2px;transform:rotate(-45deg);background:${selected ? BRAND : "#fff"};border:2px solid ${BRAND};display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.3);"><span style="transform:rotate(45deg);display:flex;color:${selected ? "#fff" : "#111"};">${sportIconSvg(r.sport, selected ? 18 : 14)}</span></div>`,
               iconSize: [selected ? 38 : 30, selected ? 38 : 30],
               iconAnchor: [selected ? 4 : 3, selected ? 38 : 30],
             }),
@@ -308,7 +298,7 @@ export function InteractiveRouteMap() {
         const marker = L.marker([v.lat, v.lng], {
           icon: L.divIcon({
             className: "sync-venue-pin",
-            html: `<div style="display:flex;align-items:center;gap:3px;white-space:nowrap;background:${selected ? BRAND : "#fff"};color:${selected ? "#fff" : "#111"};height:${selected ? 32 : 26}px;padding:0 9px;border-radius:9999px;font:800 ${selected ? 12 : 11}px/1 system-ui;border:2px solid ${selected ? "#fff" : BRAND};box-shadow:0 4px 10px rgba(0,0,0,.3);"><span>${SPORT_EMOJI[v.sport]}</span><span>★${v.rating.toFixed(1)}</span></div>`,
+            html: `<div style="display:flex;align-items:center;gap:3px;white-space:nowrap;background:${selected ? BRAND : "#fff"};color:${selected ? "#fff" : "#111"};height:${selected ? 32 : 26}px;padding:0 9px;border-radius:9999px;font:800 ${selected ? 12 : 11}px/1 system-ui;border:2px solid ${selected ? "#fff" : BRAND};box-shadow:0 4px 10px rgba(0,0,0,.3);"><span style="display:flex">${sportIconSvg(v.sport, selected ? 13 : 12)}</span><span>★${v.rating.toFixed(1)}</span></div>`,
             iconSize: [70, selected ? 32 : 26],
             iconAnchor: [35, selected ? 16 : 13],
           }),
@@ -465,8 +455,8 @@ export function InteractiveRouteMap() {
             aria-expanded={isSportMenuOpen}
             className="flex items-center gap-0.5 pl-4 pr-2.5 border-r border-border disabled:opacity-50"
           >
-            <span className="text-xl leading-none">{SPORT_EMOJI[selectedSport]}</span>
-            <ChevronDown className="h-4 w-4 text-brand-700" />
+            <SportIcon sport={selectedSport} className="h-5 w-5 text-foreground" />
+            <ChevronDown className="h-4 w-4 text-foreground" />
           </button>
           <div className="relative flex-1 min-w-0 flex items-center">
             <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
@@ -513,7 +503,7 @@ export function InteractiveRouteMap() {
                   selectedSport === s.key ? "bg-brand-600 text-white" : "hover:bg-muted text-foreground"
                 )}
               >
-                <span>{SPORT_EMOJI[s.key!]}</span>
+                <SportIcon sport={s.key!} className="h-4 w-4" />
                 <span className="flex-1">{s.nameVi}</span>
                 <span className="text-[10px] opacity-70">{s.requiresVenue ? "Sân" : "Cung đường"}</span>
               </button>
@@ -526,7 +516,7 @@ export function InteractiveRouteMap() {
           <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-3 px-3 pb-1">
             {isRouteMode ? (
               <>
-                <span className="shrink-0 h-9 px-4 rounded-full border-2 border-brand-600 bg-background/95 text-brand-700 text-[13px] font-bold flex items-center gap-1 shadow-sm">
+                <span className="shrink-0 h-9 px-4 rounded-lg border-2 border-brand-600 bg-background/95 text-brand-700 text-[13px] font-bold flex items-center gap-1 shadow-sm">
                   {sportMeta?.nameVi} · {itemCount}
                 </span>
                 <FilterChip
@@ -552,7 +542,7 @@ export function InteractiveRouteMap() {
 
         {/* Trạng thái chia sẻ */}
         {isLive && (
-          <div className="inline-flex items-center gap-2 rounded-full bg-brand-600 text-white px-3.5 py-1.5 text-[12px] font-bold shadow-lg">
+          <div className="inline-flex items-center gap-2 rounded-lg bg-brand-600 text-white px-3.5 py-1.5 text-[12px] font-bold shadow-lg">
             <Radio className="h-3.5 w-3.5 animate-pulse" />
             Đang chia sẻ vị trí · {live.nearby.length} người tập gần bạn
           </div>
@@ -677,7 +667,7 @@ export function InteractiveRouteMap() {
                       onStartLive={() => setCheckInSpot(spotFromVenue(v))}
                       thumb={
                         <div className="w-full h-full flex flex-col items-center justify-center bg-brand-50 dark:bg-brand-950/40">
-                          <span className="text-2xl">{SPORT_EMOJI[v.sport]}</span>
+                          <SportIcon sport={v.sport} className="h-6 w-6 text-foreground" />
                           <span className="text-[11px] font-black text-brand-700 flex items-center gap-0.5">
                             <Star className="h-3 w-3 fill-current" />
                             {v.rating.toFixed(1)}
@@ -745,7 +735,7 @@ function FilterChip({
     <button
       onClick={onClick}
       className={cn(
-        "shrink-0 h-9 px-4 rounded-full text-[13px] font-semibold shadow-sm border transition-colors flex items-center gap-1",
+        "shrink-0 h-9 px-4 rounded-lg text-[13px] font-semibold shadow-sm border transition-colors flex items-center gap-1",
         active ? "bg-brand-600 border-brand-600 text-white" : "bg-background/95 border-border text-foreground"
       )}
     >
@@ -810,7 +800,7 @@ function SaveButton({ saved, onClick }: { saved: boolean; onClick: () => void })
       aria-pressed={saved}
       className="h-8 w-8 shrink-0 rounded-full bg-muted flex items-center justify-center"
     >
-      <Bookmark className={cn("h-4 w-4", saved ? "fill-brand-600 text-brand-600" : "text-foreground")} />
+      <Bookmark className={cn("h-4 w-4", saved ?"fill-foreground text-foreground" :"text-foreground")} />
     </button>
   );
 }
@@ -889,7 +879,7 @@ function RouteDetailCard({
       <div className="flex items-start gap-2">
         <div className="flex-1 min-w-0">
           <h3 className="text-[14.5px] font-bold text-foreground leading-snug">{route.name}</h3>
-          <p className="text-[11.5px] text-muted-foreground">📍 {route.areaVi} ({route.district})</p>
+          <p className="flex items-center gap-1 text-[11.5px] text-muted-foreground"><MapPin className="h-3 w-3 shrink-0 text-foreground" />{route.areaVi} ({route.district})</p>
         </div>
         <SaveButton saved={saved} onClick={onToggleSave} />
       </div>
@@ -910,14 +900,14 @@ function RouteDetailCard({
       </div>
       <div className="flex flex-wrap gap-1">
         {route.highlights.map((h) => (
-          <span key={h} className="px-2 py-0.5 rounded-full bg-muted/60 text-[10.5px] text-muted-foreground">
+          <span key={h} className="px-2 py-0.5 rounded-lg bg-muted/60 text-[10.5px] text-muted-foreground">
             {h}
           </span>
         ))}
       </div>
       <div className="flex items-center justify-between text-[11px] text-muted-foreground border-t border-border/60 pt-2">
         <span className="flex items-center gap-1">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+          <ShieldCheck className="h-3.5 w-3.5 text-foreground" />
           An toàn {route.safetyScore}% · {route.waterStations} trạm nước · {route.surface}
         </span>
       </div>
@@ -950,7 +940,7 @@ function RouteDetailCard({
         <StartLiveButton onClick={onStartLive} />
         <Link
           href="/len-keo"
-          className="flex-1 h-9 rounded-full bg-brand hover:bg-brand-700 text-white text-[13px] font-bold flex items-center justify-center gap-1"
+          className="flex-1 h-9 rounded-lg bg-brand hover:bg-brand-700 text-white text-[13px] font-bold flex items-center justify-center gap-1"
         >
           <Zap className="h-3.5 w-3.5" /> Lên kèo
         </Link>
@@ -991,7 +981,7 @@ function VenueDetailCard({
           </p>
         </div>
         <div className="flex flex-col items-end shrink-0">
-          <span className="flex items-center gap-0.5 rounded-full bg-brand-600 text-white px-2 py-0.5 text-[12px] font-bold">
+          <span className="flex items-center gap-0.5 rounded-lg bg-brand-600 text-white px-2 py-0.5 text-[12px] font-bold">
             <Star className="h-3 w-3 fill-current" />
             {venue.rating.toFixed(1)}
           </span>
@@ -1015,7 +1005,7 @@ function VenueDetailCard({
       </div>
       <div className="flex flex-wrap gap-1">
         {venue.amenities.map((a) => (
-          <span key={a} className="px-2 py-0.5 rounded-full bg-muted/60 text-[10.5px] text-muted-foreground">
+          <span key={a} className="px-2 py-0.5 rounded-lg bg-muted/60 text-[10.5px] text-muted-foreground">
             {a}
           </span>
         ))}
@@ -1026,7 +1016,7 @@ function VenueDetailCard({
           href={venue.googleMapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="h-9 px-3 rounded-full border border-border text-foreground text-[12px] font-bold flex items-center gap-1 hover:bg-muted"
+          className="h-9 px-3 rounded-lg border border-border text-foreground text-[12px] font-bold flex items-center gap-1 hover:bg-muted"
         >
           <ExternalLink className="h-3.5 w-3.5" /> Chỉ đường
         </a>

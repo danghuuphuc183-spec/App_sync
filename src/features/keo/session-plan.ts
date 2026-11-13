@@ -11,6 +11,7 @@ import type { StravaRoute } from "@/features/venues/routes.data";
 import type { SportsVenue } from "@/features/venues/venues.data";
 import type { TimeWindow } from "./keo.types";
 import { toMinutes } from "./keo.algo";
+import { resolveDay } from "./keo-date";
 
 const hhmm = (m: number) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(Math.round(m % 60)).padStart(2, "0")}`;
 
@@ -113,15 +114,7 @@ export const GYM_SPLITS: Record<GymSplit["key"], GymSplit> = {
 /** Lịch Push–Pull–Legs theo thứ trong tuần (T2..CN), lệch theo từng người */
 const WEEK_SPLIT: GymSplit["key"][] = ["push", "pull", "legs", "push", "pull", "legs", "full"];
 
-export function resolveDay(dayLabel: string, now: Date): Date {
-  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  if (dayLabel === "Ngày mai") d.setDate(d.getDate() + 1);
-  else if (dayLabel === "Thứ Bảy" || dayLabel === "Chủ Nhật") {
-    const target = dayLabel === "Thứ Bảy" ? 6 : 0;
-    d.setDate(d.getDate() + ((target - d.getDay() + 7) % 7));
-  }
-  return d;
-}
+export { resolveDay };
 
 const hash = (s: string) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 

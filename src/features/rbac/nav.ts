@@ -30,7 +30,7 @@ export const ROLE_NAVIGATION: Record<AppRole, NavItem[]> = {
     { title: "Chọn môn", href: "/chon-mon", iconName: "Activity" },
     { title: "CLB", href: "/cau-lac-bo", iconName: "Users" },
     { title: "Địa điểm", href: "/dia-diem", iconName: "MapPin" },
-    { title: "Ví TS", href: "/vi-uy-tin", iconName: "ShieldCheck" },
+    { title: "Ví UT", href: "/vi-uy-tin", iconName: "ShieldCheck" },
     { title: "Hồ sơ", href: "/ho-so", iconName: "User" },
   ],
   mentor: [
@@ -38,7 +38,7 @@ export const ROLE_NAVIGATION: Record<AppRole, NavItem[]> = {
     { title: "Kèm Tân binh", href: "/mentor/tan-binh", iconName: "Award", badge: "Mentor" },
     { title: "Kèo của tôi", href: "/keo-cua-toi", iconName: "Calendar" },
     { title: "CLB", href: "/cau-lac-bo", iconName: "Users" },
-    { title: "Ví TS", href: "/vi-uy-tin", iconName: "ShieldCheck" },
+    { title: "Ví UT", href: "/vi-uy-tin", iconName: "ShieldCheck" },
   ],
   club_admin: [
     { title: "CLB của tôi", href: "/clb/quan-ly", iconName: "Users" },

@@ -3,8 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Map, Zap, Users, User, Plus, LayoutList, ChevronRight } from "lucide-react";
-import { BottomSheet } from "@/components/feed/bottom-sheet";
+import { Home, Map, Zap, Users, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const FIVE_MAIN_TABS = [
@@ -15,28 +14,10 @@ export const FIVE_MAIN_TABS = [
   { title: "Bạn", href: "/ho-so", icon: User },
 ];
 
-const KEO_MENU = [
-  {
-    href: "/len-keo",
-    title: "Lên kèo mới",
-    desc: "Tạo kèo tập cá nhân hoặc nhóm trong thời gian tới",
-    icon: Plus,
-    tone: "bg-brand text-white",
-  },
-  {
-    href: "/len-keo/xem",
-    title: "Xem kèo",
-    desc: "Các kèo sắp diễn ra mà mọi người đã lên",
-    icon: LayoutList,
-    tone: "bg-black text-white dark:bg-white dark:text-black",
-  },
-];
-
 export function BottomNav() {
   const pathname = usePathname();
   // Reels: thanh điều hướng nền đen giống Instagram
   const isDark = pathname?.startsWith("/reels") ?? false;
-  const [isKeoMenuOpen, setIsKeoMenuOpen] = React.useState(false);
 
   return (
     <nav
@@ -57,12 +38,9 @@ export function BottomNav() {
 
           if (item.isHighlight) {
             return (
-              <button
+              <Link
                 key={item.href}
-                type="button"
-                onClick={() => setIsKeoMenuOpen(true)}
-                aria-haspopup="dialog"
-                aria-expanded={isKeoMenuOpen}
+                href={item.href}
                 className="relative -top-3 flex flex-col items-center justify-center group focus:outline-none"
               >
                 <div
@@ -78,12 +56,12 @@ export function BottomNav() {
                 <span
                   className={cn(
                     "text-[10px] font-bold mt-0.5 tracking-tight",
-                    isActive ? "text-brand dark:text-brand-sky" : "text-neutral-700 dark:text-neutral-300"
+                    isActive ? "text-foreground" : "text-neutral-700 dark:text-neutral-300"
                   )}
                 >
                   {item.title}
                 </span>
-              </button>
+              </Link>
             );
           }
 
@@ -94,20 +72,20 @@ export function BottomNav() {
               className={cn(
                 "flex flex-col items-center justify-center flex-1 py-1 min-h-[46px] rounded-xl text-[10px] font-medium transition-all select-none active:scale-95",
                 isActive
-                  ? "text-brand dark:text-brand-sky font-bold"
+                  ? "text-foreground font-bold"
                   : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
               )}
             >
               <div
                 className={cn(
-                  "relative flex items-center justify-center px-3 py-1 rounded-full transition-colors",
-                  isActive && "bg-brand-100/50 dark:bg-brand"
+                  "relative flex items-center justify-center px-3 py-1 rounded-lg transition-colors",
+                  isActive && "bg-muted"
                 )}
               >
                 <Icon
                   className={cn(
                     "h-5 w-5 transition-transform",
-                    isActive ? "stroke-[2.2] scale-105 text-brand dark:text-brand-sky" : "stroke-[1.75]"
+                    isActive ? "stroke-[2.2] scale-105 text-foreground" : "stroke-[1.75]"
                   )}
                 />
               </div>
@@ -119,26 +97,6 @@ export function BottomNav() {
         })}
       </div>
 
-      {/* Menu nút Lên Kèo: cá nhân · nhóm · xem kèo */}
-      <BottomSheet open={isKeoMenuOpen} onClose={() => setIsKeoMenuOpen(false)} title="Lên kèo" bodyClassName="p-3 pb-8 space-y-2">
-        {KEO_MENU.map((o) => (
-          <Link
-            key={o.href}
-            href={o.href}
-            onClick={() => setIsKeoMenuOpen(false)}
-            className="flex items-center gap-3.5 rounded-2xl border border-border p-3.5 hover:bg-muted active:scale-[0.99] transition-all text-foreground"
-          >
-            <span className={cn("h-12 w-12 shrink-0 rounded-2xl flex items-center justify-center", o.tone)}>
-              <o.icon className="h-6 w-6" />
-            </span>
-            <span className="flex-1 min-w-0">
-              <span className="block text-[15px] font-bold">{o.title}</span>
-              <span className="block text-[12.5px] text-muted-foreground">{o.desc}</span>
-            </span>
-            <ChevronRight className="h-5 w-5 text-muted-foreground" />
-          </Link>
-        ))}
-      </BottomSheet>
     </nav>
   );
 }

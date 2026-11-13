@@ -3,160 +3,124 @@
 import * as React from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { TrustMeter } from "@/components/shared/trust-meter";
+import { TierBadge } from "@/components/shared/tier-badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TRUST_CONFIG } from "@/features/trust/config";
-import { Shield, ArrowUpRight, ArrowDownRight, Sparkles, HeartHandshake } from "lucide-react";
+import { UT_CONFIG, formatUt } from "@/features/trust/config";
+import { computeUt, UT_EVENT_LABEL, type UtEvent } from "@/features/trust/ut-rules";
+import { Shield, ArrowUpRight, ArrowDownRight, Minus, HeartHandshake, Crown, Users, Gift } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface LedgerEntry {
-  id: string;
-  delta: number;
-  balanceAfter: number;
-  reasonVi: string;
-  createdAtVi: string;
-}
+const daysAgo = (n: number, h = 6) => {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  d.setHours(h, 0, 0, 0);
+  return d.toISOString();
+};
 
-const SAMPLE_LEDGER: LedgerEntry[] = [
-  {
-    id: "tx-3",
-    delta: 2,
-    balanceAfter: 102,
-    reasonVi: "Hoàn thành buổi chạy 10km Landmark 81 đúng hẹn",
-    createdAtVi: "29/10/2026, 06:45",
-  },
-  {
-    id: "tx-2",
-    delta: 0,
-    balanceAfter: 100,
-    reasonVi: "Sử dụng Thẻ Ân Hạn (Grace Pass) hủy lịch trước 2 giờ (Miễn trừ phạt)",
-    createdAtVi: "25/10/2026, 17:30",
-  },
-  {
-    id: "tx-1",
-    delta: 100,
-    balanceAfter: 100,
-    reasonVi: "Khởi tạo tài khoản thành viên mới (+100 TS)",
-    createdAtVi: "20/10/2026, 08:00",
-  },
+/** Dữ liệu mẫu — backend thật sẽ trả về danh sách sự kiện UT của người dùng */
+const SAMPLE_EVENTS: (UtEvent & { titleVi: string })[] = [
+  { id: "e1", kind: "on_time", at: daysAgo(20), titleVi: "Chạy 10 km Landmark 81 cùng Minh Anh" },
+  { id: "e2", kind: "cancel_early", at: daysAgo(16, 17), titleVi: "Gym chân – Fit24 Bình Thạnh", waiver: "grace" },
+  { id: "e3", kind: "on_time", at: daysAgo(9), titleVi: "Interval bờ kè Thanh Đa" },
+  { id: "e4", kind: "late_15_25", at: daysAgo(6), titleVi: "Calisthenics Công viên Tao Đàn (trễ 18 phút)" },
+  { id: "e5", kind: "on_time", at: daysAgo(2), titleVi: "Long run Vinhomes Central Park" },
+];
+
+const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleString("vi-VN", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+
+const RULES: { delta: number; title: string; note: string }[] = [
+  { delta: UT_CONFIG.RECOVERY.ON_TIME, title: "Đúng hẹn (trễ không quá 15 phút)", note: "Tối đa 1 lần/ngày và +1 UT/tuần" },
+  { delta: 0, title: "Huỷ khi kèo chưa chốt", note: "Host từ chối người nhận, hoặc người nhận tự rút" },
+  { delta: UT_CONFIG.PENALTY.CANCEL_EARLY, title: "Huỷ sớm (trước giờ tập hơn 30 phút)", note: "Kèo mở lại, người kia nhận kèo thay thế" },
+  { delta: UT_CONFIG.PENALTY.CANCEL_LATE, title: "Huỷ trong vòng 30 phút", note: "Cũng áp dụng khi host huỷ rồi tạo lại kèo gần giống trong 2h" },
+  { delta: UT_CONFIG.PENALTY.UNCONFIRMED, title: "Không xác nhận lần cuối trước T−30", note: "Kèo tự huỷ, người đã xác nhận được kèo thay thế ngay" },
+  { delta: UT_CONFIG.PENALTY.LATE_15_25, title: "Đến trễ 15–25 phút", note: "Sau 15 phút người kia chọn: chờ / tự tập / tìm người thay" },
+  { delta: UT_CONFIG.PENALTY.ABSENT_DECLARED, title: "Vắng có báo, hoặc trễ quá 25 phút", note: "Báo trong 24 giờ sau giờ tập" },
+  { delta: UT_CONFIG.PENALTY.ABSENT_SILENT, title: "Vắng im lặng", note: "Không huỷ, không đến, không báo. Không được dùng thẻ ân hạn hay xin lỗi" },
+  { delta: 0, title: "Hai bên cùng đồng ý huỷ", note: `${UT_CONFIG.MUTUAL_CANCEL_PER_MONTH} lần/tháng. Quá hạn mức: ${formatUt(UT_CONFIG.PENALTY.MUTUAL_OVER_QUOTA)} mỗi người. Cả hai cùng im lặng không check-in cũng tính vào đây` },
+  { delta: 0, title: "Bất khả kháng", note: "Mưa dông có cảnh báo chính thức, địa điểm đóng cửa, app lỗi" },
 ];
 
 export default function TrustWalletPage() {
-  const currentScore = 102;
-  const heldScore = 20; // Đang cọc 1 kèo
-  const gracePassesLeft = 1; // 1 thẻ ân hạn còn lại
+  const { score, ledger } = React.useMemo(() => computeUt(SAMPLE_EVENTS), []);
+  const titles = React.useMemo(() => new Map(SAMPLE_EVENTS.map((e) => [e.id, e.titleVi])), []);
+  const graceUsed = SAMPLE_EVENTS.filter((e) => e.waiver === "grace" && new Date(e.at).getMonth() === new Date().getMonth()).length;
+  const graceLeft = Math.max(0, UT_CONFIG.GRACE_PASSES_PER_MONTH - graceUsed);
 
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Ví Điểm Uy Tín (Trust Score Wallet)"
-        description="Thước đo danh dự thể thao của bạn. Điểm uy tín xác định thứ hạng đặc quyền và dùng làm tài sản thế chấp khi nhận kèo."
-        badge={<Badge variant="gold">Hạng Vàng</Badge>}
+        title="Ví Uy tín (UT)"
+        description={`Thang 0–10, mọi tài khoản bắt đầu ở ${UT_CONFIG.INITIAL}. Điểm tính trên các buổi trong ${UT_CONFIG.WINDOW_DAYS} ngày gần nhất. Không có cọc điểm.`}
+        badge={<TierBadge score={score} />}
       />
 
-      {/* 1. THANH ĐO UY TÍN */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <TrustMeter currentScore={currentScore} heldScore={heldScore} />
+          <TrustMeter currentScore={score} />
         </div>
 
-        {/* Thẻ ân hạn (Grace pass) */}
         <Card className="border-border shadow-sm flex flex-col justify-between">
           <CardHeader className="space-y-1">
             <div className="flex items-center gap-2 text-primary font-bold text-sm">
               <HeartHandshake className="h-4 w-4" />
-              <span>Bảo hiểm & Thẻ Ân Hạn</span>
+              <span>Thẻ ân hạn & lời xin lỗi</span>
             </div>
-            <CardTitle className="text-xl font-bold">Thẻ Ân Hạn (Grace Pass)</CardTitle>
+            <CardTitle className="text-xl font-bold">Thẻ ân hạn</CardTitle>
             <CardDescription className="text-xs">
-              Mỗi thành viên có {TRUST_CONFIG.GRACE_PASSES_PER_MONTH} thẻ/tháng để hủy kèo trước 2 giờ mà không bị trừ điểm uy tín.
+              {UT_CONFIG.GRACE_PASSES_PER_MONTH} thẻ/tháng, xoá 1 lần phạt, không cần giải thích. Không dùng cho vắng im lặng.
             </CardDescription>
           </CardHeader>
-
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between p-3 rounded-xl bg-muted/60 border border-border">
-              <span className="text-xs font-medium">Số thẻ còn lại trong tháng:</span>
+              <span className="text-xs font-medium">Còn lại tháng này</span>
               <span className="text-lg font-mono font-bold text-primary">
-                {gracePassesLeft} / {TRUST_CONFIG.GRACE_PASSES_PER_MONTH}
+                {graceLeft} / {UT_CONFIG.GRACE_PASSES_PER_MONTH}
               </span>
             </div>
             <p className="text-[11px] text-muted-foreground leading-normal">
-              Thẻ được tự động làm mới vào ngày 1 hàng tháng.
+              Lời xin lỗi được bạn tập chấp nhận: giảm {formatUt(UT_CONFIG.APOLOGY.REDUCE_BY)} UT mức phạt, {UT_CONFIG.APOLOGY.PER_MONTH} lần/tháng.
             </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* 2. LỊCH SỬ BIẾN ĐỘNG SỔ CÁI (TRUST LEDGER) */}
       <Card className="border-border shadow-sm">
         <CardHeader className="border-b border-border/70 pb-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <div>
               <CardTitle className="text-lg font-bold flex items-center gap-2">
-                <Shield className="h-5 w-5 text-primary" />
-                <span>Nhật ký Sổ Cái Uy Tín (Trust Ledger)</span>
+                <Shield className="h-5 w-5 text-foreground" />
+                <span>Nhật ký uy tín</span>
               </CardTitle>
-              <CardDescription className="text-xs mt-1">
-                Sổ cái bất biến (Append-only). Mọi biến động đều được lưu vết minh bạch.
-              </CardDescription>
+              <CardDescription className="text-xs mt-1">Chỉ thêm, không sửa hay xoá. Bắt đầu từ {UT_CONFIG.INITIAL} UT.</CardDescription>
             </div>
-            <Badge variant="outline" className="text-xs">
-              Chỉ thêm • Không sửa/xóa
-            </Badge>
+            <Badge variant="outline" className="text-xs shrink-0">{UT_CONFIG.WINDOW_DAYS} ngày gần nhất</Badge>
           </div>
         </CardHeader>
-
         <CardContent className="p-0">
           <div className="divide-y divide-border">
-            {SAMPLE_LEDGER.map((tx) => (
-              <div
-                key={tx.id}
-                className="p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-muted/30 transition-colors"
-              >
+            {[...ledger].reverse().map(({ event, delta, balance, note }) => (
+              <div key={event.id} className="p-4 sm:p-5 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className={cn(
-                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
-                      tx.delta > 0
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                        : tx.delta < 0
-                        ? "bg-destructive/10 text-destructive"
-                        : "bg-muted text-muted-foreground"
-                    )}
-                  >
-                    {tx.delta > 0 ? (
-                      <ArrowUpRight className="h-5 w-5 stroke-[2.5]" />
-                    ) : tx.delta < 0 ? (
-                      <ArrowDownRight className="h-5 w-5 stroke-[2.5]" />
-                    ) : (
-                      <Sparkles className="h-4 w-4" />
-                    )}
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+                    {delta > 0 ? <ArrowUpRight className="h-5 w-5" /> : delta < 0 ? <ArrowDownRight className="h-5 w-5" /> : <Minus className="h-4 w-4" />}
                   </div>
-
                   <div className="space-y-0.5 min-w-0">
-                    <p className="text-sm font-semibold text-foreground truncate">
-                      {tx.reasonVi}
+                    <p className="text-sm font-semibold text-foreground truncate">{titles.get(event.id)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {UT_EVENT_LABEL[event.kind]}
+                      {note ? ` · ${note}` : ""} · {fmtDate(event.at)}
                     </p>
-                    <p className="text-xs text-muted-foreground">{tx.createdAtVi}</p>
                   </div>
                 </div>
-
                 <div className="text-right shrink-0">
-                  <p
-                    className={cn(
-                      "text-sm font-mono font-bold",
-                      tx.delta > 0
-                        ? "text-emerald-600 dark:text-emerald-400"
-                        : tx.delta < 0
-                        ? "text-destructive"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    {tx.delta > 0 ? `+${tx.delta}` : tx.delta} TS
+                  <p className={cn("text-sm font-mono font-bold", delta < 0 ? "text-destructive" : "text-foreground")}>
+                    {delta === 0 ? "0" : formatUt(delta, { sign: true })} UT
                   </p>
-                  <p className="text-[11px] text-muted-foreground">
-                    Số dư sau: {tx.balanceAfter} TS
-                  </p>
+                  <p className="text-[11px] text-muted-foreground">Còn {formatUt(balance)}</p>
                 </div>
               </div>
             ))}
@@ -164,60 +128,64 @@ export default function TrustWalletPage() {
         </CardContent>
       </Card>
 
-      {/* 3. BẢNG QUY TẮC THƯỞNG PHẠT CHUẨN */}
       <Card className="border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Quy Tắc Thưởng & Phạt Kỷ Luật</CardTitle>
+          <CardTitle className="text-base">Luật huỷ kèo & phạt</CardTitle>
           <CardDescription className="text-xs">
-            Trích xuất trực tiếp từ file cấu hình hệ thống (PROJECT_CONTEXT 4.2).
+            Áp dụng như nhau cho host và người nhận sau khi kèo đã chốt. Mỗi người chỉ bị phạt 1 lần/kèo, lấy mức nặng nhất. Điểm phạt không chuyển cho ai.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-            <div className="p-3 rounded-lg border border-border bg-muted/20 space-y-1">
-              <span className="font-semibold text-emerald-600 dark:text-emerald-400 block">
-                +{TRUST_CONFIG.DELTAS.COMPLETED_ON_TIME} TS
-              </span>
-              <p className="text-foreground">Hoàn thành đúng hẹn & đủ khối lượng bài tập</p>
-              <p className="text-muted-foreground text-[11px]">Hoàn 100% điểm cọc</p>
-            </div>
-
-            <div className="p-3 rounded-lg border border-border bg-muted/20 space-y-1">
-              <span className="font-semibold text-amber-600 block">
-                {TRUST_CONFIG.DELTAS.LATE_5_TO_15_MIN} TS
-              </span>
-              <p className="text-foreground">Đến trễ từ 5 đến 15 phút</p>
-              <p className="text-muted-foreground text-[11px]">Trừ uy tín vì để đối tác chờ</p>
-            </div>
-
-            <div className="p-3 rounded-lg border border-border bg-muted/20 space-y-1">
-              <span className="font-semibold text-amber-600 block">
-                {TRUST_CONFIG.DELTAS.CANCEL_OVER_2H} TS
-              </span>
-              <p className="text-foreground">Hủy kèo trước giờ hẹn trên 2 giờ</p>
-              <p className="text-muted-foreground text-[11px]">0 TS nếu sử dụng Thẻ Ân Hạn</p>
-            </div>
-
-            <div className="p-3 rounded-lg border border-border bg-muted/20 space-y-1">
-              <span className="font-semibold text-destructive block">
-                {TRUST_CONFIG.DELTAS.CANCEL_UNDER_2H} TS
-              </span>
-              <p className="text-foreground">Hủy kèo sát giờ (dưới 2 giờ)</p>
-              <p className="text-muted-foreground text-[11px]">Tịch thu cọc đền bù đối tác</p>
-            </div>
-
-            <div className="p-3 rounded-lg border border-border bg-muted/20 space-y-1 sm:col-span-2">
-              <span className="font-semibold text-destructive block">
-                {TRUST_CONFIG.DELTAS.NO_SHOW_OR_OVER_15_MIN} TS
-              </span>
-              <p className="text-foreground">Bùng kèo hoặc trễ quá 15 phút không báo</p>
-              <p className="text-muted-foreground text-[11px]">
-                Đánh tụt hạng ngay lập tức. Khóa tạo kèo 7 ngày.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            {RULES.map((r) => (
+              <div key={r.title} className="p-3 rounded-lg border border-border bg-muted/20 space-y-1">
+                <span className={cn("font-bold font-mono block", r.delta < 0 ? "text-destructive" : "text-foreground")}>
+                  {r.delta === 0 ? "0 UT" : `${formatUt(r.delta, { sign: true })} UT`}
+                </span>
+                <p className="text-foreground font-semibold">{r.title}</p>
+                <p className="text-muted-foreground text-[11px]">{r.note}</p>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
+        <Card className="border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2"><Crown className="h-4 w-4" /> Luật riêng cho host</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-muted-foreground">
+            <p><b className="text-foreground">Rút khỏi kèo đã chốt:</b> kèo không bị huỷ. Quyền host chuyển cho thành viên UT cao nhất, chỗ trống mở lại. Host cũ bị phạt như một thành viên huỷ.</p>
+            <p><b className="text-foreground">Sửa kèo:</b> dời quá {UT_CONFIG.TIME.MINOR_SHIFT_MAX_MIN} phút, đổi chỗ xa hơn {UT_CONFIG.HOST.MAJOR_MOVE_KM} km hoặc đổi môn cần người kia đồng ý. Nếu họ từ chối, họ rút không bị trừ, host tính như huỷ.</p>
+            <p><b className="text-foreground">Huỷ rồi tạo lại để đổi người:</b> trong 2 giờ, cùng môn, lệch ≤ 1 giờ, cách ≤ 1 km → tính huỷ muộn.</p>
+            <p><b className="text-foreground">Vắng kèo nhóm mình làm host</b> {UT_CONFIG.HOST.GROUP_ABSENT_LIMIT} lần/{UT_CONFIG.HOST.GROUP_ABSENT_LOOKBACK_DAYS} ngày → khoá tạo kèo nhóm {UT_CONFIG.HOST.GROUP_BAN_DAYS} ngày.</p>
+          </CardContent>
+        </Card>
+        <Card className="border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2"><Users className="h-4 w-4" /> Hạn mức & xếp nhóm</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-muted-foreground">
+            {(Object.keys(UT_CONFIG.BANDS) as (keyof typeof UT_CONFIG.BANDS)[]).map((b) => (
+              <p key={b}><b className="text-foreground">{UT_CONFIG.BANDS[b].nameVi}:</b> {UT_CONFIG.BANDS[b].descriptionVi}</p>
+            ))}
+            <p>Hạn mức tính theo ngày lịch (00:00–24:00). Kèo đã tạo rồi huỷ vẫn tính.</p>
+            <p>Người uy tín thấp không được xếp chung kèo nhóm với người mới (dưới {UT_CONFIG.NEWBIE_MAX_SESSIONS} buổi đúng hẹn).</p>
+          </CardContent>
+        </Card>
+        <Card className="border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2"><Gift className="h-4 w-4" /> Gói bù cho người đã đến</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-muted-foreground">
+            <p><b className="text-foreground">Tự tập có xác thực:</b> ở điểm hẹn ≥ {UT_CONFIG.COMPENSATION.SOLO_SESSION_MIN} phút → +1 chuỗi, +{UT_CONFIG.COMPENSATION.SOLO_SESSION_XU} Xu, 1 lần/ngày.</p>
+            <p><b className="text-foreground">Bảo vệ chuỗi:</b> {UT_CONFIG.COMPENSATION.STREAK_PROTECT_PER_MONTH} lần/tháng.</p>
+            <p><b className="text-foreground">Kèo thay thế:</b> kèo gần nhất bắt đầu trong 30 phút hoặc trong hôm nay.</p>
+            <p><b className="text-foreground">Xu bồi thường:</b> +{UT_CONFIG.COMPENSATION.XU_PER_FLAKE} Xu từ quỹ thưởng, tối đa {UT_CONFIG.COMPENSATION.XU_MAX_PER_MONTH} Xu/tháng, cùng cặp 1 lần/{UT_CONFIG.COMPENSATION.SAME_PAIR_COOLDOWN_DAYS} ngày.</p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

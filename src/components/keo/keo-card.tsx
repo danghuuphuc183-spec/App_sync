@@ -2,13 +2,17 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { CalendarClock, Check, Lock, MapPin, Sparkles } from "lucide-react";
+import { CalendarClock, Check, Dumbbell, Lock, MapPin, MessageCircle, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Keo } from "@/features/keo/keo.types";
 import { hostOf, hostTrust } from "@/features/keo/keo.data";
 import { SPORT_LABEL } from "@/features/feed/feed.utils";
 import { profileHref } from "@/components/feed/post-card";
-import { SPORT_EMOJI } from "./keo-form";
+import { SportIcon } from "@/components/shared/sport-icon";
+import { formatKeoDay } from "@/features/keo/keo-date";
+import { formatUt } from "@/features/trust/config";
+import { summarizeDetails } from "@/features/keo/session-details";
+import { displayTitle } from "@/features/keo/keo-membership";
 
 export function MemberAvatars({
   ids,
@@ -67,6 +71,7 @@ export function KeoCard({
   eligible = true,
   joined,
   onJoin,
+  onOpenChat,
 }: {
   keo: Keo;
   distanceKm?: number;
@@ -74,6 +79,8 @@ export function KeoCard({
   eligible?: boolean;
   joined?: boolean;
   onJoin?: () => void;
+  /** đã nhận kèo → nút mở chat kèo thay cho "Đã tham gia" */
+  onOpenChat?: () => void;
 }) {
   const host = hostOf(keo.hostId);
   const spotsLeft = keo.capacity - keo.memberIds.length;
@@ -85,22 +92,22 @@ export function KeoCard({
         <img src={keo.place.image} alt={`${SPORT_LABEL[keo.sport]} tại ${keo.place.name}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         <div className="absolute top-2.5 left-2.5 flex gap-1.5">
-          <span className={cn("rounded-full px-2.5 py-1 text-[11px] font-bold", keo.kind === "group" ? "bg-brand-sky text-black" : "bg-brand text-white")}>
-            {keo.kind === "group" ? "Nhóm" : "Cá nhân"}
+          <span className={cn("rounded-lg px-2.5 py-1 text-[11px] font-bold", keo.kind === "group" ? "bg-brand-sky text-black" : "bg-brand text-white")}>
+            {keo.kind === "group" ? "Nhóm" : "1:1"}
           </span>
-          {keo.mine && <span className="rounded-full bg-black/70 text-white px-2.5 py-1 text-[11px] font-bold">Kèo của bạn</span>}
+          {keo.mine && <span className="rounded-lg bg-black/70 text-white px-2.5 py-1 text-[11px] font-bold">Kèo của bạn</span>}
         </div>
         {distanceKm !== undefined && (
-          <span className="absolute top-2.5 right-2.5 rounded-full bg-white/90 text-black px-2.5 py-1 text-[11px] font-bold">
+          <span className="absolute top-2.5 right-2.5 rounded-lg bg-white/90 text-black px-2.5 py-1 text-[11px] font-bold">
             {distanceKm.toFixed(1)} km
           </span>
         )}
         <div className="absolute bottom-2.5 left-3 right-3 text-white">
-          <p className="text-[12px] font-semibold opacity-90">
-            {SPORT_EMOJI[keo.sport]} {SPORT_LABEL[keo.sport]}
+          <p className="flex items-center gap-1 text-[12px] font-semibold opacity-90">
+            <SportIcon sport={keo.sport} className="h-3.5 w-3.5" /> {SPORT_LABEL[keo.sport]}
             {!full && keo.kind === "group" && ` · Thiếu ${spotsLeft} người`}
           </p>
-          <h3 className="text-[16px] font-extrabold leading-snug line-clamp-2">{keo.title}</h3>
+          <h3 className="text-[16px] font-extrabold leading-snug line-clamp-2">{displayTitle(keo)}</h3>
         </div>
       </div>
 
@@ -110,22 +117,28 @@ export function KeoCard({
             <img src={host.avatar} alt={host.name} className="h-8 w-8 rounded-full object-cover" />
             <span className="flex-1 min-w-0">
               <span className="block text-[13px] font-bold text-foreground truncate group-hover:underline">{host.name}</span>
-              <span className="block text-[11.5px] text-muted-foreground">Chủ kèo · {hostTrust(keo.hostId)} TS</span>
+              <span className="block text-[11.5px] text-muted-foreground">Chủ kèo · {formatUt(hostTrust(keo.hostId))} UT</span>
             </span>
           </Link>
         )}
 
         <div className="space-y-1 text-[12.5px] text-foreground">
           <p className="flex items-center gap-1.5">
-            <CalendarClock className="h-4 w-4 text-brand dark:text-brand-sky shrink-0" />
-            {keo.time.day} · {keo.time.from}–{keo.time.to}
+            <CalendarClock className="h-4 w-4 text-foreground shrink-0" />
+            {formatKeoDay(keo.time.day)} · {keo.time.from}–{keo.time.to}
           </p>
           <p className="flex items-center gap-1.5">
-            <MapPin className="h-4 w-4 text-brand dark:text-brand-sky shrink-0" />
+            <MapPin className="h-4 w-4 text-foreground shrink-0" />
             <span className="truncate">
               {keo.place.name} <span className="text-muted-foreground">· {keo.place.area}</span>
             </span>
           </p>
+          {keo.details && summarizeDetails(keo.sport, keo.details) && (
+            <p className="flex items-center gap-1.5">
+              <Dumbbell className="h-4 w-4 text-foreground shrink-0" />
+              <span className="truncate">{summarizeDetails(keo.sport, keo.details)}</span>
+            </p>
+          )}
         </div>
 
         {keo.note && <p className="text-[13px] text-muted-foreground leading-snug line-clamp-2">“{keo.note}”</p>}
@@ -134,21 +147,28 @@ export function KeoCard({
 
         {reasons && reasons.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
-            <Sparkles className="h-4 w-4 text-brand-sky" aria-hidden />
+            <Sparkles className="h-4 w-4 text-foreground" aria-hidden />
             {reasons.slice(0, 3).map((r) => (
-              <span key={r} className="rounded-full bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-2 py-0.5 text-[11px] font-semibold">
+              <span key={r} className="rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-2 py-0.5 text-[11px] font-semibold">
                 {r}
               </span>
             ))}
           </div>
         )}
 
-        {onJoin && !keo.mine && (
+        {onOpenChat && (joined || keo.mine) ? (
+          <button
+            onClick={onOpenChat}
+            className="w-full rounded-lg border-2 border-foreground py-2 text-[13.5px] font-bold text-foreground flex items-center justify-center gap-1.5 hover:bg-muted"
+          >
+            <MessageCircle className="h-4 w-4" /> {keo.kind === "group" ? "Mở chat nhóm" : "Mở chat kèo"}
+          </button>
+        ) : onJoin && !keo.mine && (
           <button
             onClick={onJoin}
             disabled={joined || full || !eligible}
             className={cn(
-              "w-full rounded-full py-2.5 text-[13.5px] font-bold flex items-center justify-center gap-1.5 transition-all",
+              "w-full rounded-lg py-2.5 text-[13.5px] font-bold flex items-center justify-center gap-1.5 transition-all",
               "bg-brand text-white hover:bg-brand-700 active:scale-[0.98]",
               "disabled:cursor-not-allowed",
               joined ? "disabled:bg-emerald-50 disabled:text-emerald-700 dark:disabled:bg-emerald-950/40" : "disabled:bg-neutral-200 disabled:text-neutral-500 dark:disabled:bg-neutral-800"
@@ -160,8 +180,8 @@ export function KeoCard({
               : full
                 ? "Đã đủ người"
                 : !eligible
-                  ? `Cần tối thiểu ${keo.minTrust} TS`
-                  : `${keo.kind === "group" ? "Tham gia" : "Nhận kèo"} · cọc ${keo.holdTs} TS`}
+                  ? `Cần tối thiểu ${formatUt(keo.minTrust)} UT`
+                  : keo.kind === "group" ? "Tham gia" : "Nhận kèo"}
           </button>
         )}
       </div>

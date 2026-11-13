@@ -24,7 +24,7 @@ export default function SportsCatalogPage() {
         actions={
           <Button asChild variant="outline" size="sm">
             <Link href="/chon-mon/goi-y">
-              <Compass className="mr-2 h-4 w-4 text-emerald-600" />
+              <Compass className="mr-2 h-4 w-4 text-foreground" />
               <span>Chưa biết chọn môn nào? Làm Quiz</span>
             </Link>
           </Button>

@@ -42,7 +42,7 @@ export async function requestPermission(key: PermKey): Promise<{ state: PermStat
 }
 
 const PERMS: { key: PermKey; title: string; why: string; icon: typeof MapPin; required?: boolean }[] = [
-  { key: "gps", title: "Vị trí (GPS)", why: "Ghép bạn tập trong 3 km, chỉ đường tới điểm hẹn và chống GPS giả.", icon: MapPin, required: true },
+  { key: "gps", title: "Vị trí (GPS)", why: "Ghép bạn tập trong 3 km, chỉ đường tới điểm hẹn và xác minh check-in khi vị trí có dấu hiệu bất thường.", icon: MapPin, required: true },
   { key: "camera", title: "Máy ảnh", why: "Quét QR check-in tại điểm hẹn, chụp ảnh buổi tập.", icon: Camera },
   { key: "notifications", title: "Thông báo", why: "Nhắc giờ kèo, lời mời ghép đội, cảnh báo mưa dông.", icon: Bell },
   { key: "motion", title: "Chuyển động & thể lực", why: "Đếm bước, nhận biết đang chạy để xác thực buổi tập.", icon: Smartphone },
@@ -87,7 +87,7 @@ export function PermissionsStep({
               onClick={() => void ask(p.key)}
               disabled={busy !== null || st === "granted" || st === "unsupported"}
               className={cn(
-                "shrink-0 rounded-full px-3.5 py-2 text-[12.5px] font-bold flex items-center gap-1 transition-colors",
+                "shrink-0 rounded-lg px-3.5 py-2 text-[12.5px] font-bold flex items-center gap-1 transition-colors",
                 st === "granted" ? "bg-emerald-400/15 text-emerald-300" : st === "denied" ? "bg-white/10 text-white" : st === "unsupported" ? "bg-white/5 text-white/40" : "bg-brand text-white hover:bg-brand-500"
               )}
             >
@@ -120,16 +120,25 @@ export const SPORT_APPS: SportApp[] = [
   { id: "appleHealth", name: "Apple Health", platform: "iPhone · Apple Watch", color: "#FF2D55", short: "♥", scopes: ["Bài tập", "Nhịp tim", "Bước chân & quãng đường", "Năng lượng tiêu hao"], syncPreview: "38 bài tập · nhịp tim nghỉ 58 bpm" },
   { id: "samsungHealth", name: "Samsung Health", platform: "Galaxy · Galaxy Watch", color: "#1428A0", short: "S", scopes: ["Bài tập", "Nhịp tim", "Giấc ngủ", "Bước chân"], syncPreview: "22 bài tập · 7.400 bước/ngày" },
   { id: "healthConnect", name: "Health Connect (Google Fit)", platform: "Android", color: "#34A853", short: "G", scopes: ["Phiên tập", "Nhịp tim", "Quãng đường"], syncPreview: "19 phiên tập · 42 km tháng này" },
-  { id: "strava", name: "Strava", platform: "Chạy bộ · Đạp xe", color: "#FC4C02", short: "S", scopes: ["Đọc hoạt động (pace, cự ly, độ cao)", "Đọc hồ sơ vận động viên"], syncPreview: "Pace TB 6:05/km · 31 km/tuần" },
+  {
+    id: "strava",
+    name: "Strava",
+    platform: "Chạy bộ · Đạp xe",
+    color: "#FC4C02",
+    short: "S",
+    scopes: ["Đọc hoạt động của bạn (pace, cự ly, độ cao)"],
+    syncPreview: "Pace TB 6:05/km · 31 km/tuần",
+    note: "Theo chính sách API của Strava, dữ liệu Strava của bạn chỉ hiển thị cho chính bạn trong SYNESIS — không hiện cho người khác và không dùng để so sánh hay ghép đôi.",
+  },
   {
     id: "hevy",
     name: "Hevy",
     platform: "Gym",
     color: "#1D4ED8",
     short: "H",
-    scopes: ["Bản ghi buổi tập tạ", "Khối lượng & số hiệp"],
+    scopes: ["Bản ghi buổi tập tạ của bạn", "Khối lượng & số hiệp"],
     syncPreview: "12 buổi tạ · khối lượng 10.200 kg/tuần",
-    note: "Đọc trực tiếp bản ghi có nguồn từ ứng dụng Hevy (bundle ID com.hevyapp.hevy) qua Apple Health / Health Connect — không đọc dữ liệu app khác.",
+    note: "Kết nối qua Hevy API chính thức bằng khoá API bạn tự tạo trong Hevy (Cài đặt → Developer). SYNESIS không nhận diện app qua bundle/package ID. Số liệu chỉ hiển thị cho chính bạn.",
   },
   { id: "garmin", name: "Garmin Connect", platform: "Đồng hồ Garmin", color: "#007CC3", short: "G", scopes: ["Hoạt động", "Nhịp tim", "VO2 max"], syncPreview: "VO2 max 46 · 27 hoạt động" },
   { id: "coros", name: "COROS", platform: "Đồng hồ COROS", color: "#111111", short: "C", scopes: ["Hoạt động", "Nhịp tim"], syncPreview: "14 hoạt động" },
@@ -156,7 +165,7 @@ export function ConnectAppsStep({ connected, onChange }: { connected: string[]; 
           const on = connected.includes(a.id);
           return (
             <div key={a.id} className="flex items-center gap-3 rounded-2xl bg-white/[0.06] border border-white/10 p-3">
-              <span className="h-11 w-11 shrink-0 rounded-xl flex items-center justify-center text-[18px] font-black text-white" style={{ background: a.color }}>
+              <span className="h-11 w-11 shrink-0 rounded-xl flex items-center justify-center text-[18px] font-black text-white border border-white/25 bg-white/[0.08]">
                 {a.short}
               </span>
               <div className="flex-1 min-w-0">
@@ -164,11 +173,11 @@ export function ConnectAppsStep({ connected, onChange }: { connected: string[]; 
                 <p className="text-[11.5px] text-white/55 truncate">{on ? `✓ ${a.syncPreview}` : a.platform}</p>
               </div>
               {on ? (
-                <button onClick={() => onChange(connected.filter((x) => x !== a.id))} className="shrink-0 rounded-full bg-emerald-400/15 text-emerald-300 px-3 py-1.5 text-[12px] font-bold">
+                <button onClick={() => onChange(connected.filter((x) => x !== a.id))} className="shrink-0 rounded-lg bg-emerald-400/15 text-emerald-300 px-3 py-1.5 text-[12px] font-bold">
                   Đã kết nối
                 </button>
               ) : (
-                <button onClick={() => setOpen(a)} className="shrink-0 rounded-full bg-white text-black px-3.5 py-1.5 text-[12px] font-bold hover:bg-neutral-200">
+                <button onClick={() => setOpen(a)} className="shrink-0 rounded-lg bg-white text-black px-3.5 py-1.5 text-[12px] font-bold hover:bg-neutral-200">
                   Kết nối
                 </button>
               )}
@@ -181,7 +190,7 @@ export function ConnectAppsStep({ connected, onChange }: { connected: string[]; 
         {open && (
           <>
             <div className="flex items-center gap-3">
-              <span className="h-12 w-12 rounded-xl flex items-center justify-center text-[20px] font-black text-white" style={{ background: open.color }}>
+              <span className="h-12 w-12 rounded-xl flex items-center justify-center text-[20px] font-black bg-foreground text-background">
                 {open.short}
               </span>
               <span className="text-[20px] text-muted-foreground">⇄</span>
@@ -191,13 +200,13 @@ export function ConnectAppsStep({ connected, onChange }: { connected: string[]; 
             <ul className="space-y-1.5">
               {open.scopes.map((s) => (
                 <li key={s} className="flex items-center gap-2 text-[13px] text-foreground">
-                  <Check className="h-4 w-4 text-brand" /> {s}
+                  <Check className="h-4 w-4 text-foreground" /> {s}
                 </li>
               ))}
             </ul>
             {open.note && <p className="rounded-xl bg-brand-50 dark:bg-brand-950/50 border border-brand-200 dark:border-brand-800 p-2.5 text-[12px] text-foreground">{open.note}</p>}
             <p className="text-[11.5px] text-muted-foreground">Không đăng bài, không sửa dữ liệu của bạn. Có thể ngắt kết nối bất kỳ lúc nào. (Bản thử nghiệm mô phỏng việc uỷ quyền.)</p>
-            <button onClick={() => void link()} disabled={linking} className="w-full h-12 rounded-full bg-brand hover:bg-brand-700 text-white font-bold text-[14px] flex items-center justify-center gap-2">
+            <button onClick={() => void link()} disabled={linking} className="w-full h-12 rounded-lg bg-brand hover:bg-brand-700 text-white font-bold text-[14px] flex items-center justify-center gap-2">
               {linking && <Loader2 className="h-4 w-4 animate-spin" />} Cho phép & kết nối
             </button>
           </>

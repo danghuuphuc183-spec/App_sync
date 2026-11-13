@@ -19,7 +19,7 @@ const personal: PersonalForm = {
   place: runPlace,
   time: { day: "Ngày mai", from: "05:00", to: "07:00" },
   note: "",
-  minTrust: 80,
+  minTrust: 5.5,
 };
 
 describe("tiện ích thời gian", () => {
@@ -59,20 +59,20 @@ describe("findPersonalMatches", () => {
     expect(res.length).toBeLessThanOrEqual(3);
     for (const r of res) {
       expect(r.candidate.sport).toBe("running");
-      expect(r.candidate.trustScore).toBeGreaterThanOrEqual(80);
+      expect(r.candidate.trustScore).toBeGreaterThanOrEqual(5.5);
     }
     const scores = res.map((r) => r.breakdown.totalScore);
     expect([...scores].sort((a, b) => b - a)).toEqual(scores);
   });
   it("uy tín yêu cầu quá cao → không có ai", () => {
-    expect(findPersonalMatches({ ...personal, minTrust: 151 }, CANDIDATES_DATA)).toEqual([]);
+    expect(findPersonalMatches({ ...personal, minTrust: 10.5 }, CANDIDATES_DATA)).toEqual([]);
   });
 });
 
 describe("findGroups", () => {
-  const form: GroupForm = { ...personal, capacity: 6, present: 2, minTrust: 50 };
+  const form: GroupForm = { ...personal, capacity: 6, present: 2, minTrust: 3.5 };
   it("chỉ trả nhóm cùng môn, trùng giờ, còn đủ chỗ cho số người bạn mang theo", () => {
-    const res = findGroups(form, SEED_KEOS, { myTrust: 125, hostTrust });
+    const res = findGroups(form, SEED_KEOS, { myTrust: 8.5, hostTrust });
     expect(res.map((r) => r.keo.id)).toEqual(expect.arrayContaining(["k-2", "k-10"]));
     for (const r of res) {
       expect(r.keo.sport).toBe("running");
@@ -82,7 +82,7 @@ describe("findGroups", () => {
     expect(res.map((r) => r.keo.id)).not.toContain("k-9"); // khác ngày
   });
   it("mang theo nhiều người hơn số chỗ trống → loại", () => {
-    const res = findGroups({ ...form, present: 4, capacity: 8 }, SEED_KEOS, { myTrust: 125, hostTrust });
+    const res = findGroups({ ...form, present: 4, capacity: 8 }, SEED_KEOS, { myTrust: 8.5, hostTrust });
     expect(res.map((r) => r.keo.id)).not.toContain("k-2"); // chỉ thiếu 2
   });
 });
@@ -96,7 +96,7 @@ describe("rankKeos", () => {
     expect(res[0]!.reasons.length).toBeGreaterThan(0);
   });
   it("đánh dấu kèo yêu cầu uy tín cao hơn mình", () => {
-    const res = rankKeos(SEED_KEOS, { ...DEMO_VIEWER, trustScore: 60 }, ctx);
+    const res = rankKeos(SEED_KEOS, { ...DEMO_VIEWER, trustScore: 4 }, ctx);
     expect(res.find((r) => r.keo.id === "k-8")!.eligible).toBe(false);
   });
 });

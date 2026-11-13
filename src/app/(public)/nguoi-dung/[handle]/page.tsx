@@ -71,7 +71,7 @@ function ProfileView({ handle }: { handle: string }) {
       <div className="px-6 py-20 text-center space-y-3">
         <p className="text-lg font-bold">Không tìm thấy người dùng</p>
         <p className="text-sm text-muted-foreground">Tài khoản này không tồn tại hoặc đã bị gỡ.</p>
-        <Link href="/" className="inline-block rounded-full bg-brand text-white px-4 py-2 text-sm font-bold">
+        <Link href="/" className="inline-block rounded-lg bg-brand text-white px-4 py-2 text-sm font-bold">
           Về trang chủ
         </Link>
       </div>
@@ -127,13 +127,13 @@ function ProfileView({ handle }: { handle: string }) {
             alt={person.name}
             className={cn("h-24 w-24 object-cover border-4 border-background shadow-md bg-background", isClub ? "rounded-2xl" : "rounded-full")}
           />
-          {isUser && person.tier && <TierBadge tier={person.tier} score={person.trustScore} showScore className="mb-2" />}
+          {isUser && person.trustScore !== undefined && <TierBadge score={person.trustScore} showScore className="mb-2" />}
         </div>
 
         <div className="mt-2.5">
           <h1 className="text-[22px] font-extrabold tracking-tight text-foreground flex items-center gap-1.5">
             {person.name}
-            {person.verified && <BadgeCheck className="h-5 w-5 text-white fill-brand" aria-label="Đã xác minh" />}
+            {person.verified && <BadgeCheck className="h-5 w-5 text-background fill-foreground" aria-label="Đã xác minh" />}
           </h1>
           <p className="text-[13px] text-muted-foreground">
             @{person.handle}
@@ -146,7 +146,7 @@ function ProfileView({ handle }: { handle: string }) {
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {person.sports.map((s) => (
-              <span key={s} className="rounded-full bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-2.5 py-0.5 text-[11.5px] font-semibold">
+              <span key={s} className="rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-2.5 py-0.5 text-[11.5px] font-semibold">
                 {SPORT_LABEL[s] ?? s}
               </span>
             ))}

@@ -99,7 +99,11 @@ const config: Config = {
         sans: ["var(--font-be-vietnam-pro)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "var(--font-be-vietnam-pro)", "system-ui", "sans-serif"],
       },
+      // Bo góc mức vừa: thu nhỏ toàn bộ thang để giao diện gọn, không quá tròn
       borderRadius: {
+        "3xl": "1rem", // 16px (mặc định 24px)
+        "2xl": "0.75rem", // 12px (mặc định 16px)
+        xl: "0.625rem", // 10px (mặc định 12px)
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",

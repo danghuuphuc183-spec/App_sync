@@ -10,6 +10,7 @@ import { gymPlan, runPlan, venueReviews, type Intensity } from "@/features/keo/s
 import type { KeoPlace, TimeWindow } from "@/features/keo/keo.types";
 import { BottomSheet } from "@/components/feed/bottom-sheet";
 import { RouteMapMedia } from "@/components/feed/route-map-media";
+import { formatKeoDay } from "@/features/keo/keo-date";
 
 const INTENSITY_CLASS: Record<Intensity, string> = {
   Nhẹ: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
@@ -36,7 +37,7 @@ function Row({ icon, children }: { icon: React.ReactNode; children: React.ReactN
 function IntensityChip({ value, note }: { value: Intensity; note: string }) {
   return (
     <div className="flex items-center gap-2">
-      <span className={cn("shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-bold", INTENSITY_CLASS[value])}>Cường độ {value.toLowerCase()}</span>
+      <span className={cn("shrink-0 rounded-lg px-2.5 py-0.5 text-[11px] font-bold", INTENSITY_CLASS[value])}>Cường độ {value.toLowerCase()}</span>
       <span className="text-[11.5px] text-muted-foreground truncate">{note}</span>
     </div>
   );
@@ -73,14 +74,14 @@ export function SessionPlanBlock({ place, candidate, time }: { place: KeoPlace |
         </div>
         <div className="p-3 space-y-1.5">
           <Row icon={<CalendarClock />}>
-            <b>{time.day} · {p.start} – {p.end}</b> <span className="text-muted-foreground">(gồm khởi động)</span>
+            <b>{formatKeoDay(time.day)} · {p.start} – {p.end}</b> <span className="text-muted-foreground">(gồm khởi động)</span>
           </Row>
           <Row icon={<MapPin />}>
             {route.name.replace(/^Cung đường /, "")} <span className="text-muted-foreground">· {route.district}</span>
           </Row>
           <Row icon={<Gauge />}>{p.paceNote}</Row>
           <Row icon={<Mountain />}>
-            Độ cao +{route.elevationGainM} m · {route.surface} · <ShieldCheck className="inline h-3.5 w-3.5 text-emerald-600" /> An toàn {route.safetyScore}%
+            Độ cao +{route.elevationGainM} m · {route.surface} · <ShieldCheck className="inline h-3.5 w-3.5 text-foreground" /> An toàn {route.safetyScore}%
           </Row>
           <IntensityChip value={p.intensity} note={p.intensityNote} />
           <DetailButton onClick={() => setDetailOpen(true)}>Xem chi tiết cung đường</DetailButton>
@@ -97,12 +98,12 @@ export function SessionPlanBlock({ place, candidate, time }: { place: KeoPlace |
         <VenueHeader venue={venue} />
         <div className="rounded-xl bg-brand-50 dark:bg-brand-950/50 p-2.5 space-y-1.5">
           <p className="flex items-center gap-1.5 text-[13.5px] font-extrabold text-foreground">
-            <Dumbbell className="h-4 w-4 text-brand" /> {p.split.label}
+            <Dumbbell className="h-4 w-4 text-foreground" /> {p.split.label}
           </p>
           <p className="text-[12px] text-muted-foreground">Nhóm cơ: {p.split.muscles}</p>
           <div className="flex flex-wrap gap-1">
             {p.split.exercises.map((e) => (
-              <span key={e} className="rounded-full bg-white dark:bg-black/40 border border-brand-200 dark:border-brand-800 px-2 py-0.5 text-[11px] font-semibold text-foreground">
+              <span key={e} className="rounded-lg bg-white dark:bg-black/40 border border-brand-200 dark:border-brand-800 px-2 py-0.5 text-[11px] font-semibold text-foreground">
                 {e}
               </span>
             ))}
@@ -110,7 +111,7 @@ export function SessionPlanBlock({ place, candidate, time }: { place: KeoPlace |
           <p className="text-[12px] text-foreground">{p.sets}</p>
         </div>
         <Row icon={<CalendarClock />}>
-          <b>{time.day} · {p.start} – {p.end}</b> <span className="text-muted-foreground">({p.durationMin} phút)</span>
+          <b>{formatKeoDay(time.day)} · {p.start} – {p.end}</b> <span className="text-muted-foreground">({p.durationMin} phút)</span>
         </Row>
         <IntensityChip value={p.intensity} note={p.intensityNote} />
         <DetailButton onClick={() => setDetailOpen(true)}>Xem chi tiết & đánh giá phòng tập</DetailButton>
@@ -124,7 +125,7 @@ export function SessionPlanBlock({ place, candidate, time }: { place: KeoPlace |
       <div className="rounded-2xl border border-border p-3 space-y-2">
         <VenueHeader venue={venue} />
         <Row icon={<CalendarClock />}>
-          <b>{time.day} · {time.from} – {time.to}</b>
+          <b>{formatKeoDay(time.day)} · {time.from} – {time.to}</b>
         </Row>
         <Row icon={<Gauge />}>Trình độ: {candidate.capabilities.level} · {candidate.capabilities.paceOrWeight}</Row>
         <DetailButton onClick={() => setDetailOpen(true)}>Xem chi tiết & đánh giá sân</DetailButton>
@@ -138,7 +139,7 @@ export function SessionPlanBlock({ place, candidate, time }: { place: KeoPlace |
 function VenueHeader({ venue }: { venue: SportsVenue }) {
   return (
     <div className="flex items-start gap-2.5">
-      <div className="h-11 w-11 shrink-0 rounded-xl bg-brand text-white flex flex-col items-center justify-center leading-none">
+      <div className="h-11 w-11 shrink-0 rounded-xl bg-muted text-foreground flex flex-col items-center justify-center leading-none">
         <Star className="h-3.5 w-3.5 fill-white" />
         <span className="text-[12px] font-extrabold mt-0.5">{venue.rating.toFixed(1)}</span>
       </div>
@@ -179,7 +180,7 @@ export function VenueDetailSheet({ open, onClose, venue }: { open: boolean; onCl
       </div>
 
       <div className="flex items-start gap-2.5 rounded-xl bg-brand-50 dark:bg-brand-950/50 border border-brand-200 dark:border-brand-800 p-3">
-        <Info className="h-4 w-4 shrink-0 text-brand mt-0.5" />
+        <Info className="h-4 w-4 shrink-0 text-foreground mt-0.5" />
         <p className="text-[12.5px] text-foreground">
           Chưa đăng ký {venue.sport === "gym" ? "phòng tập" : "sân"} này? Xem đánh giá, giá vé lẻ và giờ mở cửa — bạn có thể tập thử 1 buổi trước khi đăng ký tháng.
         </p>
@@ -191,7 +192,7 @@ export function VenueDetailSheet({ open, onClose, venue }: { open: boolean; onCl
           <p className="text-[36px] font-black font-display leading-none text-foreground">{venue.rating.toFixed(1)}</p>
           <div className="flex justify-center mt-1">
             {[1, 2, 3, 4, 5].map((i) => (
-              <Star key={i} className={cn("h-3.5 w-3.5", i <= Math.round(venue.rating) ? "fill-brand text-brand" : "text-neutral-300")} />
+              <Star key={i} className={cn("h-3.5 w-3.5", i <= Math.round(venue.rating) ?"fill-foreground text-foreground" :"text-neutral-300")} />
             ))}
           </div>
           <p className="text-[11px] text-muted-foreground mt-0.5">{venue.reviewCount} đánh giá</p>
@@ -218,7 +219,7 @@ export function VenueDetailSheet({ open, onClose, venue }: { open: boolean; onCl
             </div>
             <div className="flex my-0.5">
               {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} className={cn("h-3 w-3", s <= r.stars ? "fill-brand text-brand" : "text-neutral-300")} />
+                <Star key={s} className={cn("h-3 w-3", s <= r.stars ?"fill-foreground text-foreground" :"text-neutral-300")} />
               ))}
             </div>
             <p className="text-[12.5px] text-foreground">{r.text}</p>
@@ -235,7 +236,7 @@ export function VenueDetailSheet({ open, onClose, venue }: { open: boolean; onCl
         <p className="text-[13px] font-bold text-foreground">Tiện ích</p>
         <div className="flex flex-wrap gap-1.5">
           {venue.amenities.map((a) => (
-            <span key={a} className="rounded-full bg-muted px-2.5 py-1 text-[11.5px] text-foreground">
+            <span key={a} className="rounded-lg bg-muted px-2.5 py-1 text-[11.5px] text-foreground">
               {a}
             </span>
           ))}
@@ -246,14 +247,14 @@ export function VenueDetailSheet({ open, onClose, venue }: { open: boolean; onCl
       </p>
 
       <div className="flex gap-2">
-        <a href={`tel:${venue.phone.replace(/\s/g, "")}`} className="flex-1 rounded-full bg-brand hover:bg-brand-700 text-white py-3 text-[13.5px] font-bold flex items-center justify-center gap-1.5">
+        <a href={`tel:${venue.phone.replace(/\s/g, "")}`} className="flex-1 rounded-lg bg-brand hover:bg-brand-700 text-white py-3 text-[13.5px] font-bold flex items-center justify-center gap-1.5">
           <Phone className="h-4 w-4" /> Gọi hỏi tập thử
         </a>
         <a
           href={venue.googleMapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 rounded-full border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky py-2.5 text-[13.5px] font-bold flex items-center justify-center gap-1.5"
+          className="flex-1 rounded-lg border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky py-2.5 text-[13.5px] font-bold flex items-center justify-center gap-1.5"
         >
           <ExternalLink className="h-4 w-4" /> Chỉ đường
         </a>
@@ -306,7 +307,7 @@ export function RouteDetailSheet({ open, onClose, route }: { open: boolean; onCl
         <Row icon={<Droplets />}>{route.waterStations} trạm nước sạch trên tuyến</Row>
         <div className="flex flex-wrap gap-1.5">
           {route.highlights.map((h) => (
-            <span key={h} className="rounded-full bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-2.5 py-1 text-[11.5px] font-semibold">
+            <span key={h} className="rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-2.5 py-1 text-[11.5px] font-semibold">
               {h}
             </span>
           ))}

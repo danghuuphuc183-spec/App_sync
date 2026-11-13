@@ -62,23 +62,23 @@ export default function DesignSystemPage() {
 
       {/* 1. MÀU SẮC & HẠNG THỂ THAO */}
       <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">1. Design Tokens & 4 Hạng Thể Thao</h2>
+        <h2 className="text-xl font-bold border-b pb-2">1. Design Tokens & 4 Mức Uy tín (UT 0–10)</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="p-4 rounded-xl bg-tier-bronze text-tier-bronze-foreground shadow-sm">
-            <p className="font-bold text-sm">Hạng Đồng</p>
-            <p className="text-xs opacity-90">&lt; 60 TS</p>
+            <p className="font-bold text-sm">Uy tín thấp</p>
+            <p className="text-xs opacity-90">0 – 4,5 UT</p>
           </div>
           <div className="p-4 rounded-xl bg-tier-silver text-tier-silver-foreground shadow-sm">
-            <p className="font-bold text-sm">Hạng Bạc</p>
-            <p className="text-xs opacity-90">60 - 99 TS</p>
+            <p className="font-bold text-sm">Hạn chế</p>
+            <p className="text-xs opacity-90">5 – 6,5 UT</p>
           </div>
           <div className="p-4 rounded-xl bg-tier-gold text-tier-gold-foreground shadow-sm">
-            <p className="font-bold text-sm">Hạng Vàng</p>
-            <p className="text-xs opacity-90">100 - 129 TS</p>
+            <p className="font-bold text-sm">Cần chú ý</p>
+            <p className="text-xs opacity-90">7 – 8,5 UT</p>
           </div>
           <div className="p-4 rounded-xl bg-tier-diamond text-tier-diamond-foreground shadow-sm">
-            <p className="font-bold text-sm">Hạng Kim Cương</p>
-            <p className="text-xs opacity-90">130 - 150 TS</p>
+            <p className="font-bold text-sm">Uy tín cao</p>
+            <p className="text-xs opacity-90">9 – 10 UT</p>
           </div>
         </div>
       </section>
@@ -101,25 +101,25 @@ export default function DesignSystemPage() {
 
       {/* 3. TIER BADGE KIỂM TRA BIÊN */}
       <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">3. Tier Badges (Biên 59, 60, 99, 100, 129, 130, 150)</h2>
+        <h2 className="text-xl font-bold border-b pb-2">3. Nhãn Uy tín (biên 4,75 · 5 · 6,75 · 7 · 8,75 · 9 · 10)</h2>
         <div className="flex flex-wrap items-center gap-3">
-          <TierBadge score={45} showScore />
-          <TierBadge score={59} showScore />
-          <TierBadge score={60} showScore />
-          <TierBadge score={99} showScore />
-          <TierBadge score={100} showScore />
-          <TierBadge score={129} showScore />
-          <TierBadge score={130} showScore />
-          <TierBadge score={150} showScore />
+          <TierBadge score={3} showScore />
+          <TierBadge score={4.75} showScore />
+          <TierBadge score={5} showScore />
+          <TierBadge score={6.75} showScore />
+          <TierBadge score={7} showScore />
+          <TierBadge score={8.75} showScore />
+          <TierBadge score={9} showScore />
+          <TierBadge score={10} showScore />
         </div>
       </section>
 
       {/* 4. TRUST METER */}
       <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">4. Trust Meter Visualizer (0 - 150 TS)</h2>
+        <h2 className="text-xl font-bold border-b pb-2">4. Thanh đo Uy tín (0 – 10 UT)</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TrustMeter currentScore={100} heldScore={20} />
-          <TrustMeter currentScore={55} heldScore={0} />
+          <TrustMeter currentScore={7} />
+          <TrustMeter currentScore={4.5} />
         </div>
       </section>
 

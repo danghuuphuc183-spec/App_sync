@@ -61,9 +61,9 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
                 />
                 {c.isVerified && (
                   <BadgeCheck
-                    aria-label="Đã xác minh"
-                    className="absolute -top-0.5 -right-1 h-5 w-5 text-white fill-brand-600"
-                  />
+ aria-label="Đã xác minh"
+ className="absolute -top-0.5 -right-1 h-5 w-5 text-background fill-foreground"
+ />
                 )}
               </div>
               <h3 className="mt-2.5 text-[14px] font-bold text-foreground leading-tight line-clamp-1">{c.name}</h3>
@@ -73,7 +73,7 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
                   onClick={() => toggleFollow(c.id)}
                   aria-pressed={isFollowing}
                   className={cn(
-                    "w-full rounded-full py-1.5 text-[12.5px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1",
+                    "w-full rounded-lg py-1.5 text-[12.5px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1",
                     isFollowing
                       ? "bg-neutral-100 dark:bg-neutral-800 text-foreground"
                       : "bg-brand hover:bg-brand-700 text-white dark:bg-brand-sky dark:text-black"
@@ -88,7 +88,7 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
                   aria-hidden={isFollowing}
                   tabIndex={isFollowing ? -1 : undefined}
                   className={cn(
-                    "w-full rounded-full py-1.5 text-[12.5px] font-bold border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800",
+                    "w-full rounded-lg py-1.5 text-[12.5px] font-bold border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800",
                     isFollowing && "invisible"
                   )}
                 >

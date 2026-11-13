@@ -10,7 +10,7 @@ export const SAMPLE_COACHES: Coach[] = [
     gender: "male",
     sportCategory: "Gym & Kháng Lực",
     isVerified: true,
-    trustScore: 148,
+    trustScore: 10,
     tier: "diamond",
     bodyStats: {
       heightCm: 182,
@@ -117,7 +117,7 @@ export const SAMPLE_COACHES: Coach[] = [
     gender: "female",
     sportCategory: "Chạy Bộ & Marathon",
     isVerified: true,
-    trustScore: 144,
+    trustScore: 9.5,
     tier: "diamond",
     bodyStats: {
       heightCm: 168,
@@ -223,7 +223,7 @@ export const SAMPLE_COACHES: Coach[] = [
     gender: "female",
     sportCategory: "Pilates & Core",
     isVerified: true,
-    trustScore: 146,
+    trustScore: 9.5,
     tier: "diamond",
     bodyStats: {
       heightCm: 165,
@@ -312,7 +312,7 @@ export const SAMPLE_COACHES: Coach[] = [
     gender: "male",
     sportCategory: "Calisthenics & Street Workout",
     isVerified: true,
-    trustScore: 142,
+    trustScore: 9.5,
     tier: "gold",
     bodyStats: {
       heightCm: 175,
@@ -401,7 +401,7 @@ export const SAMPLE_COACHES: Coach[] = [
     gender: "male",
     sportCategory: "Boxing & Kickfit",
     isVerified: true,
-    trustScore: 140,
+    trustScore: 9.5,
     tier: "gold",
     bodyStats: {
       heightCm: 179,
@@ -490,7 +490,7 @@ export const SAMPLE_COACHES: Coach[] = [
     gender: "female",
     sportCategory: "Gym & Kháng Lực",
     isVerified: true,
-    trustScore: 145,
+    trustScore: 9.5,
     tier: "diamond",
     bodyStats: {
       heightCm: 167,

@@ -10,24 +10,24 @@ import { Input } from "@/components/ui/input";
 
 describe("Shared UI Components", () => {
   describe("TierBadge", () => {
-    it("render có chữ 'Hạng Đồng' và điểm số", () => {
-      render(<TierBadge score={50} showScore />);
-      expect(screen.getByText(/Hạng Đồng/i)).toBeInTheDocument();
-      expect(screen.getByText(/\(50\)/i)).toBeInTheDocument();
+    it("hiển thị mức Uy tín thấp và điểm UT", () => {
+      render(<TierBadge score={4.5} showScore />);
+      expect(screen.getByText("Uy tín thấp")).toBeInTheDocument();
+      expect(screen.getByText(/\(4,5 UT\)/)).toBeInTheDocument();
     });
 
-    it("render đúng Hạng Kim Cương cho điểm 140", () => {
-      render(<TierBadge score={140} />);
-      expect(screen.getByText(/Hạng Kim Cương/i)).toBeInTheDocument();
+    it("9 UT trở lên là Uy tín cao", () => {
+      render(<TierBadge score={9} />);
+      expect(screen.getByText("Uy tín cao")).toBeInTheDocument();
     });
   });
 
   describe("TrustMeter", () => {
-    it("hiển thị đúng điểm hiện tại, điểm khả dụng và điểm đang giữ (hold)", () => {
-      render(<TrustMeter currentScore={100} heldScore={20} />);
-      expect(screen.getAllByText("100").length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText(/Khả dụng: 80/i)).toBeInTheDocument();
-      expect(screen.getByText(/Đang cọc: 20/i)).toBeInTheDocument();
+    it("hiển thị điểm UT, thang 10 và hạn mức tạo kèo", () => {
+      render(<TrustMeter currentScore={7} />);
+      expect(screen.getAllByText("7").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText("/ 10 UT")).toBeInTheDocument();
+      expect(screen.getByText("Tạo tối đa 2 kèo/ngày")).toBeInTheDocument();
       expect(screen.getByRole("region", { name: /Thanh đo Điểm Uy Tín/i })).toBeInTheDocument();
     });
   });

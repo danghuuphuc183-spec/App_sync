@@ -30,6 +30,7 @@ import {
   REEL_SOUNDTRACKS,
   ReelSoundtrack,
 } from "@/features/community/reels.data";
+import { SportIcon } from "@/components/shared/sport-icon";
 
 export function RouteReels() {
   const [reels, setReels] = React.useState<RouteReel[]>(ROUTE_REELS);
@@ -318,7 +319,7 @@ export function RouteReels() {
         name: "Minh Thư (Bạn)",
         avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
         handle: "@minhthu_sync",
-        trustScore: 125,
+        trustScore: 8.5,
         badgeTitle: "Pacer",
       },
       stats: {
@@ -345,7 +346,7 @@ export function RouteReels() {
       {/* Header bar: Title & Upload Reel Button */}
       <div className="flex items-center justify-between px-3">
         <div className="flex items-center gap-1.5">
-          <Film className="h-4 w-4 text-brand dark:text-brand-sky stroke-[2]" />
+          <Film className="h-4 w-4 text-foreground stroke-[2]" />
           <h3 className="text-xs font-black tracking-tight text-foreground uppercase">
             Reels Cung Đường Đẹp
           </h3>
@@ -389,14 +390,14 @@ export function RouteReels() {
                 <span className="px-1.5 py-0.5 rounded-md bg-black/80 backdrop-blur-xs text-white text-[9px] font-bold">
                   {reel.distanceKm} km
                 </span>
-                <span className="text-[10px] drop-shadow-md">
-                  {reel.sport === "running" ? "🏃" : "🚴"}
+                <span className="text-white drop-shadow-md">
+                  <SportIcon sport={reel.sport === "running" ? "running" : "cycling"} className="h-3.5 w-3.5" />
                 </span>
               </div>
 
               {/* Soundtrack Tag */}
               <div className="absolute top-8 left-2 right-2 flex items-center gap-1 text-[8.5px] text-white/80 bg-black/40 backdrop-blur-xs px-1.5 py-0.5 rounded pointer-events-none">
-                <Music2 className="h-2.5 w-2.5 text-brand-300 shrink-0" />
+                <Music2 className="h-2.5 w-2.5 text-white shrink-0" />
                 <span className="truncate">{reel.soundtrack.title}</span>
               </div>
 
@@ -420,11 +421,11 @@ export function RouteReels() {
                 <div className="flex items-center justify-between text-[9px] text-white/75 pt-0.5">
                   <span className="flex items-center gap-1">
                     <Heart
-                      className={cn(
-                        "h-2.5 w-2.5",
-                        reel.hasLiked ? "text-rose-400 fill-rose-400" : "text-white"
-                      )}
-                    />
+ className={cn(
+"h-2.5 w-2.5",
+ reel.hasLiked ?"text-white fill-white" :"text-white"
+ )}
+ />
                     {reel.stats.likes}
                   </span>
                   <span className="font-mono">{reel.stats.views} views</span>
@@ -536,11 +537,11 @@ export function RouteReels() {
               >
                 <div className="p-2.5 rounded-full bg-black/50 backdrop-blur-md group-active:scale-125 transition-transform border border-white/10">
                   <Heart
-                    className={cn(
-                      "h-6 w-6 stroke-[1.8]",
-                      activeReel.hasLiked ? "text-rose-500 fill-rose-500" : "text-white"
-                    )}
-                  />
+ className={cn(
+"h-6 w-6 stroke-[1.8]",
+ activeReel.hasLiked ?"text-white fill-white" :"text-white"
+ )}
+ />
                 </div>
                 <span className="text-[10px] font-bold drop-shadow-md">
                   {activeReel.stats.likes}
@@ -605,7 +606,7 @@ export function RouteReels() {
                     !isMuted && isPlayingAudio && "animate-[spin_4s_linear_infinite]"
                   )}
                 >
-                  <Disc3 className="h-5 w-5 text-brand-300" />
+                  <Disc3 className="h-5 w-5 text-white" />
                 </div>
                 {!isMuted && isPlayingAudio && (
                   <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
@@ -621,9 +622,9 @@ export function RouteReels() {
               {/* Soundtrack Marquee Banner */}
               <div
                 onClick={() => setIsMusicModalOpen(true)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-brand-500/30 w-fit max-w-[280px] cursor-pointer hover:bg-black/80 transition-colors"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-brand-500/30 w-fit max-w-[280px] cursor-pointer hover:bg-black/80 transition-colors"
               >
-                <Radio className="h-3 w-3 text-brand-400 animate-pulse shrink-0" />
+                <Radio className="h-3 w-3 text-white animate-pulse shrink-0" />
                 <span className="text-[10px] font-bold text-brand-200 truncate">
                   ♫ {activeReel.soundtrack.title} • {activeReel.soundtrack.bpm} BPM
                 </span>
@@ -649,7 +650,7 @@ export function RouteReels() {
                   {activeReel.caption}
                 </p>
                 <div className="flex items-center gap-1 text-[10px] text-white/80">
-                  <MapPin className="h-3 w-3 text-emerald-400 shrink-0" />
+                  <MapPin className="h-3 w-3 text-white shrink-0" />
                   <span className="truncate">{activeReel.routeLocation}</span>
                 </div>
               </div>
@@ -761,7 +762,7 @@ export function RouteReels() {
 
                     <div className="shrink-0 pl-2">
                       {isSelected ? (
-                        <div className="h-6 w-6 rounded-full bg-brand-600 text-white flex items-center justify-center">
+                        <div className="h-6 w-6 rounded-full bg-foreground text-background flex items-center justify-center">
                           <Check className="h-3.5 w-3.5 stroke-[2.5]" />
                         </div>
                       ) : (
@@ -796,7 +797,7 @@ export function RouteReels() {
           <div className="w-full max-w-sm rounded-xl bg-card border border-neutral-200 dark:border-neutral-800 p-4 space-y-3 shadow-2xl">
             <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-2.5">
               <div className="flex items-center gap-2">
-                <Film className="h-4 w-4 text-brand dark:text-brand-sky stroke-[2]" />
+                <Film className="h-4 w-4 text-foreground stroke-[2]" />
                 <h3 className="text-sm font-black text-foreground">
                   Chia Sẻ Reel Quãng Đường Đẹp
                 </h3>
@@ -811,7 +812,7 @@ export function RouteReels() {
 
             {uploadSuccess ? (
               <div className="py-6 text-center space-y-2">
-                <Sparkles className="h-10 w-10 text-brand dark:text-brand-sky mx-auto animate-bounce stroke-[2]" />
+                <Sparkles className="h-10 w-10 text-foreground mx-auto animate-bounce stroke-[2]" />
                 <h4 className="text-sm font-bold text-foreground">Đã Đăng Reel Cung Đường!</h4>
                 <p className="text-xs text-muted-foreground">
                   Cung đường của bạn đã được công khai trên feed để cộng đồng cùng trải nghiệm.

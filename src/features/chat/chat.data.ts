@@ -13,7 +13,6 @@ export interface ChatMessage {
     subTitle: string;
     detail: string;
     imageUrl?: string;
-    holdTs?: number;
     actionLabel?: string;
     actionHref?: string;
   };
@@ -50,7 +49,7 @@ export const INITIAL_CONVERSATIONS: ChatConversation[] = [
       handle: "@hoangnam_run",
       isOnline: true,
       lastActiveVi: "Đang hoạt động",
-      trustScore: 135,
+      trustScore: 9,
       tier: "diamond",
       sportVi: "Chạy bộ • Pace 5:30",
     },
@@ -87,9 +86,8 @@ export const INITIAL_CONVERSATIONS: ChatConversation[] = [
           type: "appointment",
           title: "Khế Ước Buổi Chạy Sáng Mai",
           subTitle: "05:30 AM • Cổng Bến Thuyền Landmark 81",
-          detail: "10.0 km • Pace 5:30 - 5:45 • Khóa cọc bảo chứng 30 TS",
+          detail: "10.0 km • Pace 5:30 - 5:45 • Đã chốt kèo",
           imageUrl: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&auto=format&fit=crop&q=80",
-          holdTs: 30,
           actionLabel: "Xem trên Bản Đồ",
           actionHref: "/ban-do",
         },
@@ -125,7 +123,7 @@ export const INITIAL_CONVERSATIONS: ChatConversation[] = [
       handle: "@thuydung_gym",
       isOnline: true,
       lastActiveVi: "Hoạt động 5 phút trước",
-      trustScore: 120,
+      trustScore: 8,
       tier: "gold",
       sportVi: "Gym • Đỡ tạ Spotter",
     },
@@ -173,7 +171,7 @@ export const INITIAL_CONVERSATIONS: ChatConversation[] = [
       handle: "@quocanh_pickleball",
       isOnline: false,
       lastActiveVi: "Hoạt động 1 giờ trước",
-      trustScore: 128,
+      trustScore: 8.5,
       tier: "gold",
       sportVi: "Pickleball • DUPR 3.5",
     },
@@ -197,12 +195,12 @@ export const INITIAL_CONVERSATIONS: ChatConversation[] = [
     type: "group",
     partner: {
       id: "group-squad1",
-      name: "🔥 Saigon Runners Squad #01",
+      name: " Saigon Runners Squad #01",
       avatar: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=150&auto=format&fit=crop&q=80",
       handle: "@squad_landmark81",
       isOnline: true,
       lastActiveVi: "4 thành viên đang online",
-      trustScore: 140,
+      trustScore: 9.5,
       tier: "diamond",
       sportVi: "Micro-Squad 4 người",
     },
@@ -215,7 +213,7 @@ export const INITIAL_CONVERSATIONS: ChatConversation[] = [
         senderId: "partner-hoangnam",
         senderName: "Hoàng Nam",
         senderAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-        text: "Cả nhóm sáng nay check-in đủ 4/4 người, mỗi người được +2 TS vào ví!",
+        text: "Cả nhóm sáng nay check-in đủ 4/4 người, mỗi người được +0,5 UT!",
         timestamp: "07:05",
         isRead: true,
       },

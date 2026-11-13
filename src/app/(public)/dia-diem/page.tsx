@@ -111,7 +111,7 @@ export default function VenuesPage() {
               </div>
               <CardTitle className="text-base font-bold leading-snug">{venue.name}</CardTitle>
               <CardDescription className="text-xs flex items-start gap-1.5 mt-1">
-                <MapPin className="h-3.5 w-3.5 text-amber-500 shrink-0 mt-0.5" />
+                <MapPin className="h-3.5 w-3.5 text-foreground shrink-0 mt-0.5" />
                 <span className="line-clamp-2">{venue.address}</span>
               </CardDescription>
             </CardHeader>

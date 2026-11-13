@@ -83,7 +83,7 @@ export function MyPosts() {
               role="tab"
               aria-selected={view === id}
               onClick={() => setView(id)}
-              className={cn("rounded-full px-3 py-1 text-[12px] font-bold", view === id ? "bg-background shadow-sm text-foreground" : "text-muted-foreground")}
+              className={cn("rounded-lg px-3 py-1 text-[12px] font-bold", view === id ? "bg-background shadow-sm text-foreground" : "text-muted-foreground")}
             >
               {label}
             </button>
@@ -177,7 +177,7 @@ export function MyConnections({ initialTab = "friends" }: { initialTab?: SocialT
             aria-selected={tab === id}
             onClick={() => setTab(id)}
             className={cn(
-              "rounded-full py-2 px-1 text-[11.5px] font-bold transition-colors",
+              "rounded-lg py-2 px-1 text-[11.5px] font-bold transition-colors",
               tab === id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -186,7 +186,7 @@ export function MyConnections({ initialTab = "friends" }: { initialTab?: SocialT
         ))}
       </div>
 
-      <label className="flex items-center gap-2 rounded-full bg-muted/70 px-3.5 py-2">
+      <label className="flex items-center gap-2 rounded-lg bg-muted/70 px-3.5 py-2">
         <Search className="h-4 w-4 text-muted-foreground" />
         <input
           value={q}
@@ -204,7 +204,7 @@ export function MyConnections({ initialTab = "friends" }: { initialTab?: SocialT
             <PersonRow key={p.id} person={p}>
               <button
                 onClick={() => prefs.setFriendStatus(p.id, "none")}
-                className="rounded-full bg-muted px-3 py-1.5 text-[12px] font-bold text-foreground flex items-center gap-1"
+                className="rounded-lg bg-muted px-3 py-1.5 text-[12px] font-bold text-foreground flex items-center gap-1"
               >
                 <Clock className="h-3.5 w-3.5" /> Huỷ lời mời
               </button>
@@ -236,7 +236,7 @@ export function MyConnections({ initialTab = "friends" }: { initialTab?: SocialT
                     <button
                       onClick={() => prefs.toggleFollow(p.id)}
                       className={cn(
-                        "rounded-full px-3 py-1.5 text-[12px] font-bold flex items-center gap-1 transition-colors",
+                        "rounded-lg px-3 py-1.5 text-[12px] font-bold flex items-center gap-1 transition-colors",
                         isFollowing ? "bg-muted text-foreground" : "bg-brand text-white hover:bg-brand-700"
                       )}
                     >
@@ -262,7 +262,7 @@ function PersonRow({ person, children }: { person: Person; children: React.React
         <span className="min-w-0">
           <span className="flex items-center gap-1 text-[14px] font-bold text-foreground">
             <span className="truncate">{person.name}</span>
-            {person.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-white fill-brand" />}
+            {person.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-background fill-foreground" />}
           </span>
           <span className="block text-[12px] text-muted-foreground truncate">
             @{person.handle} · {person.sports.map((s) => SPORT_LABEL[s] ?? s).join(", ")}

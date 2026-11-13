@@ -10,7 +10,7 @@ const InteractiveRouteMap = dynamic(
     ssr: false,
     loading: () => (
       <div className="w-full h-full bg-muted/40 animate-pulse flex flex-col items-center justify-center text-muted-foreground text-xs gap-2">
-        <Map className="h-8 w-8 text-primary animate-bounce" />
+        <Map className="h-8 w-8 text-foreground animate-bounce" />
         <span>Đang nạp bản đồ...</span>
       </div>
     ),

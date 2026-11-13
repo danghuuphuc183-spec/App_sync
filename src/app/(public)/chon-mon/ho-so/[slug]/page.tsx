@@ -65,7 +65,7 @@ export default function SportProfilePage() {
       {isSaved ? (
         <Card className="border-emerald-500/40 bg-emerald-500/5 shadow-md">
           <CardContent className="p-8 text-center space-y-4">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted text-foreground">
               <CheckCircle2 className="h-7 w-7" />
             </div>
             <h3 className="text-xl font-bold text-foreground">Hồ sơ đã được lưu thành công!</h3>
@@ -88,7 +88,7 @@ export default function SportProfilePage() {
           {/* Cảnh báo Rookie Lock */}
           {isRookie && (
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs flex items-start gap-3 text-amber-900 dark:text-amber-200">
-              <ShieldAlert className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
+              <ShieldAlert className="h-5 w-5 shrink-0 text-foreground mt-0.5" />
               <div className="space-y-1">
                 <p className="font-bold">Trạng thái Tân binh (Quyết định D1)</p>
                 <p className="leading-relaxed">

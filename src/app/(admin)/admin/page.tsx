@@ -90,7 +90,7 @@ export default function AdminDashboardPage() {
     };
     setAuditLogs([newLog, ...auditLogs]);
     setFeedbackMsg(
-      `Đã điều chỉnh ${tsDelta > 0 ? `+${tsDelta}` : tsDelta} TS cho ${tsAdjustUser} (Lý do: ${tsReason}). Đã lưu audit_log.`
+      `Đã điều chỉnh ${tsDelta > 0 ? `+${tsDelta}` : tsDelta} UT cho ${tsAdjustUser} (Lý do: ${tsReason}). Đã lưu audit_log.`
     );
     setTsAdjustUser("");
     setTsReason("");
@@ -116,7 +116,7 @@ export default function AdminDashboardPage() {
         <Card className="p-4 space-y-1">
           <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-xs font-semibold">Tổng thành viên</span>
-            <Users className="h-4 w-4 text-primary" />
+            <Users className="h-4 w-4 text-foreground" />
           </div>
           <p className="text-2xl font-bold font-mono">162</p>
           <span className="text-[10px] text-muted-foreground">Dữ liệu từ Postgres thật</span>
@@ -125,7 +125,7 @@ export default function AdminDashboardPage() {
         <Card className="p-4 space-y-1">
           <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-xs font-semibold">Kèo đang mở</span>
-            <Flame className="h-4 w-4 text-amber-500" />
+            <Flame className="h-4 w-4 text-foreground" />
           </div>
           <p className="text-2xl font-bold font-mono">18</p>
           <span className="text-[10px] text-muted-foreground">Khu vực TP.HCM</span>
@@ -134,7 +134,7 @@ export default function AdminDashboardPage() {
         <Card className="p-4 space-y-1">
           <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-xs font-semibold">CLB chờ duyệt</span>
-            <Clock className="h-4 w-4 text-brand-500" />
+            <Clock className="h-4 w-4 text-foreground" />
           </div>
           <p className="text-2xl font-bold font-mono">{pendingClubs.length}</p>
           <span className="text-[10px] text-amber-600 font-semibold">Cần xử lý</span>
@@ -143,7 +143,7 @@ export default function AdminDashboardPage() {
         <Card className="p-4 space-y-1">
           <div className="flex items-center justify-between text-muted-foreground">
             <span className="text-xs font-semibold">Địa điểm xác thực</span>
-            <CheckCircle className="h-4 w-4 text-emerald-500" />
+            <CheckCircle className="h-4 w-4 text-foreground" />
           </div>
           <p className="text-2xl font-bold font-mono">3</p>
           <span className="text-[10px] text-muted-foreground">Điểm công cộng</span>
@@ -156,7 +156,7 @@ export default function AdminDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-base font-bold flex items-center gap-2">
-                <Clock className="h-4 w-4 text-primary" />
+                <Clock className="h-4 w-4 text-foreground" />
                 <span>Hàng đợi phê duyệt Câu lạc bộ ({pendingClubs.length})</span>
               </CardTitle>
               <CardDescription className="text-xs">
@@ -205,13 +205,13 @@ export default function AdminDashboardPage() {
         </CardContent>
       </Card>
 
-      {/* 3. ĐIỀU CHỈNH TS THỦ CÔNG & GHI AUDIT LOG */}
+      {/* 3. ĐIỀU CHỈNH UT THỦ CÔNG & GHI AUDIT LOG */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-base font-bold flex items-center gap-2">
-              <Shield className="h-4 w-4 text-primary" />
-              <span>Điều chỉnh Trust Score khi khiếu nại (Admin)</span>
+              <Shield className="h-4 w-4 text-foreground" />
+              <span>Điều chỉnh Điểm Uy tín (UT) khi khiếu nại (Admin)</span>
             </CardTitle>
             <CardDescription className="text-xs">
               CHỈ thực hiện qua hàm <code>apply_trust_delta</code> với lý do <code>admin_adjustment</code>. Bắt buộc nhập lý do minh bạch.
@@ -233,7 +233,7 @@ export default function AdminDashboardPage() {
               </FormField>
 
               <div className="grid grid-cols-2 gap-3">
-                <FormField id="ts-delta" label="Điểm thay đổi (Δ TS)" required>
+                <FormField id="ts-delta" label="Điểm thay đổi (Δ UT, bước 0,25)" required>
                   {(props) => (
                     <Input
                       type="number"
@@ -269,7 +269,7 @@ export default function AdminDashboardPage() {
         <Card className="flex flex-col justify-between">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-bold flex items-center gap-2">
-              <FileText className="h-4 w-4 text-primary" />
+              <FileText className="h-4 w-4 text-foreground" />
               <span>Nhật Ký Kiểm Toán (Audit Log)</span>
             </CardTitle>
             <CardDescription className="text-xs">

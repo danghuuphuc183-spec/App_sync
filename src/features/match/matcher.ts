@@ -1,4 +1,5 @@
 import { MatchCandidate, WorkoutHabits } from "./candidates.data";
+import { formatUt } from "@/features/trust/config";
 
 export interface UserPreferences {
   sport: MatchCandidate["sport"];
@@ -116,12 +117,11 @@ export function calculateCandidateMatch(
     reasons.push(`Vibe: ${candidate.habitsAndPreferences.traits[0]}`);
   }
 
-  // 6. Trust Score & Reliability Boost (Weight: 6%)
-  // Normalized TS over 150
-  const normalizedTs = Math.min(100, (candidate.trustScore / 150) * 100);
-  const trustBoost = Math.round(normalizedTs);
-  if (candidate.trustScore >= 140) {
-    reasons.push(`Uy tín bảo chứng: ${candidate.trustScore} TS (Đúng hẹn 99-100%)`);
+  // 6. Điểm Uy tín (UT 0–10) (Weight: 6%)
+  const normalizedUt = Math.min(100, (candidate.trustScore / 10) * 100);
+  const trustBoost = Math.round(normalizedUt);
+  if (candidate.trustScore >= 9) {
+    reasons.push(`Uy tín cao: ${formatUt(candidate.trustScore)} UT`);
   }
 
   // Multi-Objective Weighted Sum (TikTok Two-Tower Ranking Model)
@@ -134,7 +134,7 @@ export function calculateCandidateMatch(
     0.06 * trustBoost;
 
   // Reciprocal ELO adjustment (Tinder principle: commitment synergy)
-  const reciprocalFactor = Math.sqrt(weightedTotal * normalizedTs) / 100;
+  const reciprocalFactor = Math.sqrt(weightedTotal * normalizedUt) / 100;
   const totalScore = Math.min(99, Math.max(60, Math.round(0.85 * weightedTotal + 0.15 * reciprocalFactor * 100)));
 
   return {
@@ -242,7 +242,7 @@ export function generateSyntheticWorkoutUsers(count: number): MatchCandidate[] {
     const name = `${firstName} ${lastName}`;
     const age = 20 + (i % 18);
     const distanceKm = parseFloat(((i % 50) * 0.1 + 0.6).toFixed(1));
-    const trustScore = 110 + (i % 38);
+    const trustScore = 7.5 + (i % 38);
     const targetPaceSec = sport === "running" ? 300 + (i % 120) : undefined;
 
     users.push({
@@ -255,7 +255,7 @@ export function generateSyntheticWorkoutUsers(count: number): MatchCandidate[] {
       areaVi: area,
       activeRunningZone: `Khu vực tập luyện ${area.split(",")[0]}`,
       trustScore,
-      tier: trustScore >= 140 ? "diamond" : trustScore >= 125 ? "gold" : "silver",
+      tier: trustScore >= 9.5 ? "diamond" : trustScore >= 8.5 ? "gold" : "silver",
       punctualRate: `${94 + (i % 6)}% đúng hẹn`,
       sport,
       sportVi: sportViMap[sport],
@@ -283,7 +283,6 @@ export function generateSyntheticWorkoutUsers(count: number): MatchCandidate[] {
         locationName: `Công viên ${area.split(",")[0]}`,
         addressDetail: `${area}`,
         targetStats: "Buổi tập tiêu chuẩn 60 phút",
-        holdTs: 25,
         duration: "60 phút",
         googleMapsUrl: "https://maps.google.com",
       },

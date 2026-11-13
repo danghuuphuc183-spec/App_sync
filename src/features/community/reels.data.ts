@@ -121,7 +121,7 @@ export const ROUTE_REELS: RouteReel[] = [
       name: "Hoàng Nam",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
       handle: "@hoangnam_run",
-      trustScore: 135,
+      trustScore: 9,
       badgeTitle: "Pacer 5:30",
     },
     stats: {
@@ -150,7 +150,7 @@ export const ROUTE_REELS: RouteReel[] = [
       name: "Minh Thư",
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
       handle: "@minhthu_sync",
-      trustScore: 125,
+      trustScore: 8.5,
       badgeTitle: "Mentor Chạy Bộ",
     },
     stats: {
@@ -179,7 +179,7 @@ export const ROUTE_REELS: RouteReel[] = [
       name: "Tuấn Kiệt",
       avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80",
       handle: "@tuankiet_road",
-      trustScore: 145,
+      trustScore: 9.5,
       badgeTitle: "Peloton Leader",
     },
     stats: {
@@ -208,7 +208,7 @@ export const ROUTE_REELS: RouteReel[] = [
       name: "Hải Yến",
       avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
       handle: "@haiyen_night",
-      trustScore: 142,
+      trustScore: 9.5,
       badgeTitle: "Night Runner",
     },
     stats: {
@@ -237,7 +237,7 @@ export const ROUTE_REELS: RouteReel[] = [
       name: "Đức Trọng",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
       handle: "@ductrong_pmh",
-      trustScore: 130,
+      trustScore: 8.5,
       badgeTitle: "Endurance Runner",
     },
     stats: {
@@ -266,7 +266,7 @@ export const ROUTE_REELS: RouteReel[] = [
       name: "Bảo Long",
       avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80",
       handle: "@baolong_velo",
-      trustScore: 148,
+      trustScore: 10,
       badgeTitle: "Ultra Cyclist",
     },
     stats: {
@@ -295,7 +295,7 @@ export const ROUTE_REELS: RouteReel[] = [
       name: "Lan Phương",
       avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
       handle: "@lanphuong_run",
-      trustScore: 139,
+      trustScore: 9.5,
       badgeTitle: "Sub 2 Half-Marathon",
     },
     stats: {

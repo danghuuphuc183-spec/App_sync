@@ -165,13 +165,13 @@ export function IntroAnimation({ onDone }: { onDone: () => void }) {
         }}
       >
         <div className="relative">
-          <div className="absolute inset-0 rounded-[28px] bg-brand-sky/50 blur-2xl" />
-          <img src="/logo-icon-584.png" alt="" className="relative h-24 w-24 rounded-[26px] shadow-2xl" />
+          <div className="absolute inset-0 rounded-3xl bg-brand-sky/50 blur-2xl" />
+          <img src="/logo-icon-584.png" alt="" className="relative h-24 w-24 rounded-3xl shadow-2xl" />
         </div>
         <p className="mt-4 text-[28px] font-black tracking-[0.14em] font-display">SYN≡SIS</p>
       </div>
 
-      <button onClick={finish} className="absolute top-[max(16px,env(safe-area-inset-top))] right-4 rounded-full bg-white/10 hover:bg-white/20 px-3.5 py-1.5 text-[12.5px] font-semibold backdrop-blur">
+      <button onClick={finish} className="absolute top-[max(16px,env(safe-area-inset-top))] right-4 rounded-lg bg-white/10 hover:bg-white/20 px-3.5 py-1.5 text-[12.5px] font-semibold backdrop-blur">
         Bỏ qua
       </button>
     </div>

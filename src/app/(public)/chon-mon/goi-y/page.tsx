@@ -88,7 +88,7 @@ export default function SportQuizPage() {
         {/* Đề xuất Ghost Mode nếu người dùng ngại giao tiếp */}
         {topSport?.recommendGhostMode && (
           <div className="rounded-xl border border-primary/40 bg-primary/10 p-4 text-xs flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
               <Ghost className="h-5 w-5" />
             </div>
             <div>
@@ -125,7 +125,7 @@ export default function SportQuizPage() {
                   <ul className="space-y-1 text-xs text-muted-foreground">
                     {topSport.reasonsVi.map((reason, idx) => (
                       <li key={idx} className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-emerald-500 shrink-0" />
+                        <Check className="h-4 w-4 text-foreground shrink-0" />
                         <span>{reason}</span>
                       </li>
                     ))}

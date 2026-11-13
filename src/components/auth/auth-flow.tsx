@@ -113,7 +113,7 @@ export function AuthFlow() {
   };
 
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-[#020611] text-white">
+    <div className="relative min-h-dvh overflow-clip bg-[#020611] text-white">
       <div className="absolute inset-0 intro-grid opacity-60" />
       <div className="absolute -top-40 left-1/2 -translate-x-1/2 h-[520px] w-[520px] rounded-full bg-brand/30 blur-[120px]" />
 
@@ -133,8 +133,8 @@ export function AuthFlow() {
           <div className="flex flex-1 flex-col animate-in fade-in duration-500">
             <div className="flex flex-col items-center pt-10">
               <div className="relative welcome-float">
-                <div className="absolute inset-0 rounded-[26px] bg-brand-sky/40 blur-2xl" />
-                <img src="/logo-icon-584.png" alt="SYNESIS" className="relative h-24 w-24 rounded-[26px]" />
+                <div className="absolute inset-0 rounded-3xl bg-brand-sky/40 blur-2xl" />
+                <img src="/logo-icon-584.png" alt="SYNESIS" className="relative h-24 w-24 rounded-3xl" />
               </div>
               <p className="mt-4 text-[28px] font-black tracking-[0.14em] font-display">SYN≡SIS</p>
               <h1 className="mt-5 text-center text-[24px] font-extrabold leading-tight font-display">
@@ -147,7 +147,7 @@ export function AuthFlow() {
             <ul className="mt-7 space-y-2.5">
               {[
                 [MapPin, "Ghép bạn tập trong bán kính 3 km, trùng giờ rảnh"],
-                [Users, "Hợp loại buổi tập, tính cách (DISC) và vibe"],
+                [Users, "Hợp loại buổi tập, cường độ, cách giao tiếp và vibe"],
                 [Watch, "Đồng bộ Strava, Apple Health, Samsung Health, Hevy"],
                 [Shield, "Điểm uy tín chống bùng kèo, tuỳ chọn chỉ ghép cùng giới"],
               ].map(([Icon, text], i) => {
@@ -166,13 +166,13 @@ export function AuthFlow() {
             <div className="mt-auto space-y-2.5 pt-8">
               <button
                 onClick={() => setGoogleOpen(true)}
-                className="w-full h-12 rounded-full bg-white text-black font-bold text-[15px] flex items-center justify-center gap-2.5 hover:bg-neutral-100 active:scale-[0.98] transition-all"
+                className="w-full h-12 rounded-lg bg-white text-black font-bold text-[15px] flex items-center justify-center gap-2.5 hover:bg-neutral-100 active:scale-[0.98] transition-all"
               >
                 <GoogleIcon /> Tiếp tục với Google
               </button>
               <button
                 onClick={() => setStep("phone")}
-                className="w-full h-12 rounded-full bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2.5 hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30"
+                className="w-full h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2.5 hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30"
               >
                 <Smartphone className="h-5 w-5" /> Tiếp tục bằng số điện thoại
               </button>
@@ -213,14 +213,14 @@ export function AuthFlow() {
                 aria-label="Số điện thoại"
                 className="flex-1 bg-transparent text-[17px] font-semibold tracking-wide outline-none placeholder:text-white/30"
               />
-              {normalized && <Check className="h-5 w-5 text-brand-sky" />}
+              {normalized && <Check className="h-5 w-5 text-white" />}
             </label>
             {phoneInput && !normalized && <p className="mt-2 text-[12px] text-amber-300">Số di động Việt Nam gồm 10 số, bắt đầu bằng 03, 05, 07, 08 hoặc 09.</p>}
             <p className="mt-3 text-[11.5px] text-white/45">Mẹo thử nghiệm: 0908 123 456 là tài khoản đã có; số khác sẽ tạo tài khoản mới.</p>
             <button
               type="submit"
               disabled={!normalized || busy}
-              className="mt-auto h-12 rounded-full bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
+              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
             >
               {busy && <Loader2 className="h-4 w-4 animate-spin" />} Gửi mã OTP
             </button>
@@ -257,7 +257,7 @@ export function AuthFlow() {
             <button
               onClick={() => void verifyOtp(otp)}
               disabled={otp.length !== 6 || busy}
-              className="mt-auto h-12 rounded-full bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 disabled:bg-white/10 disabled:text-white/40"
+              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 disabled:bg-white/10 disabled:text-white/40"
             >
               {busy && <Loader2 className="h-4 w-4 animate-spin" />} Xác minh
             </button>
@@ -273,7 +273,7 @@ export function AuthFlow() {
             }}
             className="flex flex-1 flex-col pt-4 animate-in fade-in slide-in-from-right-4 duration-300"
           >
-            <span className="self-start rounded-full bg-emerald-400/15 text-emerald-300 px-3 py-1 text-[11.5px] font-bold">✓ Đã xác minh · Tài khoản mới</span>
+            <span className="self-start rounded-lg bg-emerald-400/15 text-emerald-300 px-3 py-1 text-[11.5px] font-bold">✓ Đã xác minh · Tài khoản mới</span>
             <h1 className="mt-3 text-[26px] font-extrabold font-display">Bạn tên là gì?</h1>
             <p className="mt-1 text-[13.5px] text-white/60">Tên hiển thị với bạn tập. Có thể đổi sau trong hồ sơ.</p>
             <input
@@ -288,7 +288,7 @@ export function AuthFlow() {
             <button
               type="submit"
               disabled={name.trim().length < 2 || busy}
-              className="mt-auto h-12 rounded-full bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 disabled:bg-white/10 disabled:text-white/40"
+              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 disabled:bg-white/10 disabled:text-white/40"
             >
               {busy && <Loader2 className="h-4 w-4 animate-spin" />} Tạo tài khoản & thiết lập
             </button>
@@ -335,7 +335,7 @@ export function AuthFlow() {
             <button
               type="submit"
               disabled={!gEmailValid || gName.trim().length < 2 || busy}
-              className="w-full h-12 rounded-full bg-brand text-white font-bold text-[14px] hover:bg-brand-700 disabled:bg-neutral-200 disabled:text-neutral-500"
+              className="w-full h-12 rounded-lg bg-brand text-white font-bold text-[14px] hover:bg-brand-700 disabled:bg-neutral-200 disabled:text-neutral-500"
             >
               Tạo tài khoản với Google
             </button>
@@ -349,8 +349,8 @@ export function AuthFlow() {
           {[
             ["Chọn Google hoặc Số điện thoại", "Không cần mật khẩu. Tài khoản được tạo tự động ở lần đầu."],
             ["Xác minh", "Google: chọn tài khoản · Số điện thoại: nhập mã OTP 6 số qua SMS."],
-            ["Trả lời vài câu hỏi (~2 phút)", "Mục tiêu, loại buổi tập, giờ rảnh, khu vực, tính cách DISC, vibe."],
-            ["Cấp quyền & liên kết app", "GPS để ghép trong 3 km, máy ảnh để check-in, Strava/Apple Health/Samsung Health/Hevy để đọc chỉ số."],
+            ["Trả lời vài câu hỏi (~2 phút)", "Mục tiêu, loại buổi tập, cường độ, giờ rảnh, khu vực, cách giao tiếp, vibe."],
+            ["Cấp quyền & liên kết app", "GPS để ghép trong 3 km, máy ảnh để check-in, Strava/Apple Health/Samsung Health/Hevy để tự xác thực buổi tập (chỉ bạn thấy)."],
           ].map(([t, d], i) => (
             <li key={t} className="flex gap-3">
               <span className="h-8 w-8 shrink-0 rounded-full bg-brand text-white font-bold flex items-center justify-center">{i + 1}</span>
@@ -361,7 +361,7 @@ export function AuthFlow() {
             </li>
           ))}
         </ol>
-        <button onClick={() => setGuideOpen(false)} className="mt-5 w-full h-11 rounded-full bg-brand text-white font-bold text-[14px]">
+        <button onClick={() => setGuideOpen(false)} className="mt-5 w-full h-11 rounded-lg bg-brand text-white font-bold text-[14px]">
           Đã hiểu
         </button>
       </BottomSheet>
@@ -369,8 +369,8 @@ export function AuthFlow() {
       {welcomeBack && (
         <div className="fixed inset-0 z-[1300] flex items-center justify-center bg-[#020611]/90 backdrop-blur animate-in fade-in">
           <div className="text-center">
-            <div className="mx-auto h-14 w-14 rounded-full bg-emerald-400/20 flex items-center justify-center">
-              <Check className="h-7 w-7 text-emerald-300" />
+            <div className="mx-auto h-14 w-14 rounded-full bg-white/10 flex items-center justify-center">
+              <Check className="h-7 w-7 text-white" />
             </div>
             <p className="mt-3 text-[20px] font-extrabold font-display">Chào mừng trở lại, {welcomeBack}!</p>
           </div>

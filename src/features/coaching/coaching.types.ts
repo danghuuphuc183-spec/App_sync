@@ -78,7 +78,7 @@ export interface Coach {
   gender: "male" | "female";
   sportCategory: SportCoachingCategory;
   isVerified: boolean;
-  trustScore: number; // Điểm Uy Tín TS (Hệ thống Sync)
+  trustScore: number; // Điểm Uy tín UT 0–10
   tier: "diamond" | "gold" | "silver";
   
   // Số đo & thể hình

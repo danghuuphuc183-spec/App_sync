@@ -60,7 +60,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
     totalPrice: number;
   }) => {
     setToastMessage(
-      `🎉 Bạn đã đặt lịch thành công với HLV ${details.coachName} (${details.mode === "1:1" ? "Gói kèm 1:1" : "Gói Nhóm Squad"}) vào ${details.time} - ${details.date} tại ${details.location}! HLV sẽ liên hệ xác nhận trong 15 phút.`
+      `Bạn đã đặt lịch thành công với HLV ${details.coachName} (${details.mode === "1:1" ? "Gói kèm 1:1" : "Gói Nhóm Squad"}) vào ${details.time} - ${details.date} tại ${details.location}! HLV sẽ liên hệ xác nhận trong 15 phút.`
     );
     setTimeout(() => {
       setToastMessage(null);
@@ -87,7 +87,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
       <div className="p-4 rounded-3xl bg-gradient-to-r from-brand via-brand-800 to-brand text-white shadow-md relative overflow-hidden space-y-2">
         <div className="relative z-10 space-y-1">
           <div className="flex items-center gap-1.5 text-xs text-brand-200 font-bold">
-            <Sparkles className="h-3.5 w-3.5 fill-brand-100" />
+            <Sparkles className="h-3.5 w-3.5 fill-white" />
             <span>MẠNG LƯỚI COACHING BẢO CHỨNG CHUYÊN NGHIỆP</span>
           </div>
           <h2 className="text-base sm:text-lg font-black tracking-tight leading-snug">
@@ -99,16 +99,16 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
         </div>
 
         <div className="relative z-10 flex flex-wrap items-center gap-2 pt-1 text-[11px] font-semibold text-white/95">
-          <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full backdrop-blur-xs">
-            <ShieldCheck className="h-3.5 w-3.5 text-brand-200" />
+          <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-lg backdrop-blur-xs">
+            <ShieldCheck className="h-3.5 w-3.5 text-white" />
             100% Bằng cấp xác minh
           </span>
-          <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full backdrop-blur-xs">
-            <Users className="h-3.5 w-3.5 text-brand-200" />
+          <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-lg backdrop-blur-xs">
+            <Users className="h-3.5 w-3.5 text-white" />
             Ghép nhóm từ 140k/bạn
           </span>
-          <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-full backdrop-blur-xs">
-            <TrendingUp className="h-3.5 w-3.5 text-brand-200" />
+          <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-lg backdrop-blur-xs">
+            <TrendingUp className="h-3.5 w-3.5 text-white" />
             Đo Inbody & Giáo án số
           </span>
         </div>
@@ -131,7 +131,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
               placeholder="Tìm theo tên HLV, môn tập (Gym, Chạy, Yoga, Boxing) hoặc khu vực..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-8.5 rounded-full border border-border bg-background pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden"
+              className="w-full h-8.5 rounded-lg border border-border bg-background pl-8 pr-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden"
             />
             {searchQuery && (
               <button
@@ -156,7 +156,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
                 key={m.id}
                 onClick={() => setModeFilter(m.id as "all" | "1:1" | "group")}
                 className={cn(
-                  "px-3 py-1 rounded-full text-[11px] font-bold transition-all border",
+                  "px-3 py-1 rounded-lg text-[11px] font-bold transition-all border",
                   modeFilter === m.id
                     ? "bg-brand text-white border-brand shadow-xs"
                     : "bg-muted/50 border-border text-muted-foreground hover:text-foreground"
@@ -217,7 +217,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
         <Button
           onClick={() => setModeFilter("group")}
           size="sm"
-          className="rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs h-8 px-3 shrink-0"
+          className="rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs h-8 px-3 shrink-0"
         >
           Xem HLV Nhóm
         </Button>

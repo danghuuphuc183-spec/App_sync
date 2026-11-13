@@ -1,17 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Sparkles,
-  SlidersHorizontal,
-  Target,
-  Users,
-  DollarSign,
-  Heart,
-  Dumbbell,
-  RotateCcw,
-  Activity,
-} from "lucide-react";
+import { Activity, DollarSign, Dumbbell, Footprints, Heart, Laptop, RotateCcw, SlidersHorizontal, Sparkles, Target, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   UserCoachProfile,
@@ -83,13 +73,13 @@ export function CoachPersonalizeWidget({
       {/* Widget Header */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0 flex-1 basis-[220px]">
-          <div className="h-8 w-8 shrink-0 rounded-xl bg-brand-100/60 dark:bg-brand flex items-center justify-center text-brand dark:text-brand-sky">
+          <div className="h-8 w-8 shrink-0 rounded-xl bg-muted flex items-center justify-center text-foreground">
             <Sparkles className="h-4 w-4" />
           </div>
           <div className="min-w-0">
             <h3 className="text-[13px] font-black text-foreground flex flex-wrap items-center gap-1.5">
               Ghép Đôi Huấn Luyện Viên Cá Nhân Hoá
-              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-brand text-white font-bold">
+              <span className="text-[9px] px-1.5 py-0.2 rounded-lg bg-brand text-white font-bold">
                 AI Match
               </span>
             </h3>
@@ -116,7 +106,7 @@ export function CoachPersonalizeWidget({
             variant="outline"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="h-7 px-2.5 rounded-full text-[10px] font-bold border-brand/30 text-brand dark:text-brand-sky"
+            className="h-7 px-2.5 rounded-lg text-[10px] font-bold border-brand/30 text-brand dark:text-brand-sky"
           >
             <SlidersHorizontal className="h-3 w-3 mr-1" />
             {isExpanded ? "Thu gọn" : "Tùy chỉnh sâu"}
@@ -134,49 +124,49 @@ export function CoachPersonalizeWidget({
             type="button"
             onClick={() => applyPreset("office_posture")}
             className={cn(
-              "text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all flex items-center gap-1",
+              "text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1",
               profile.fitnessGoal === "chinh_dang_posture"
                 ? "bg-brand text-white border-brand"
                 : "bg-muted/50 border-border text-foreground hover:bg-muted"
             )}
           >
-            <span>💻 Dân văn phòng trị gù/đau lưng</span>
+            <Laptop className="h-3 w-3" /><span>Dân văn phòng trị gù/đau lưng</span>
           </button>
           <button
             type="button"
             onClick={() => applyPreset("squad_saver")}
             className={cn(
-              "text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all flex items-center gap-1",
+              "text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1",
               profile.preferredMode === "group" && profile.maxBudgetPerSession <= 200000
                 ? "bg-brand text-white border-brand"
                 : "bg-muted/50 border-border text-foreground hover:bg-muted"
             )}
           >
-            <span>👥 Rủ Squad chia tiền (&lt;200k/bạn)</span>
+            <Users className="h-3 w-3" /><span>Rủ Squad chia tiền (&lt;200k/bạn)</span>
           </button>
           <button
             type="button"
             onClick={() => applyPreset("marathon")}
             className={cn(
-              "text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all flex items-center gap-1",
+              "text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1",
               profile.fitnessGoal === "chay_marathon"
                 ? "bg-brand text-white border-brand"
                 : "bg-muted/50 border-border text-foreground hover:bg-muted"
             )}
           >
-            <span>🏃 Chạy Marathon Sub 4:00</span>
+            <Footprints className="h-3 w-3" /><span>Chạy Marathon Sub 4:00</span>
           </button>
           <button
             type="button"
             onClick={() => applyPreset("hypertrophy")}
             className={cn(
-              "text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all flex items-center gap-1",
+              "text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all flex items-center gap-1",
               profile.fitnessGoal === "tang_co"
                 ? "bg-brand text-white border-brand"
                 : "bg-muted/50 border-border text-foreground hover:bg-muted"
             )}
           >
-            <span>💪 Tăng cơ nạc chuẩn form 1:1</span>
+            <Dumbbell className="h-3 w-3" /><span>Tăng cơ nạc chuẩn form 1:1</span>
           </button>
         </div>
       </div>
@@ -186,7 +176,7 @@ export function CoachPersonalizeWidget({
         {/* Mục tiêu tập luyện */}
         <div className="space-y-1">
           <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-            <Target className="h-3 w-3 text-brand dark:text-brand-sky" />
+            <Target className="h-3 w-3 text-foreground" />
             Mục tiêu thể hình của bạn:
           </label>
           <select
@@ -205,7 +195,7 @@ export function CoachPersonalizeWidget({
         {/* Hình thức tập luyện (1:1 vs Nhóm) */}
         <div className="space-y-1">
           <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-            <Users className="h-3 w-3 text-brand dark:text-brand-sky" />
+            <Users className="h-3 w-3 text-foreground" />
             Hình thức mong muốn:
           </label>
           <div className="grid grid-cols-3 gap-1">
@@ -280,7 +270,7 @@ export function CoachPersonalizeWidget({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-                <Heart className="h-3 w-3 text-brand dark:text-brand-sky" />
+                <Heart className="h-3 w-3 text-foreground" />
                 Phong cách HLV bạn thích:
               </label>
               <select
@@ -304,7 +294,7 @@ export function CoachPersonalizeWidget({
 
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-                <DollarSign className="h-3 w-3 text-brand dark:text-brand-sky" />
+                <DollarSign className="h-3 w-3 text-foreground" />
                 Ngân sách tối đa mỗi buổi:
               </label>
               <select
@@ -329,7 +319,7 @@ export function CoachPersonalizeWidget({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-                <Dumbbell className="h-3 w-3 text-brand dark:text-brand-sky" />
+                <Dumbbell className="h-3 w-3 text-foreground" />
                 Bộ môn thể thao:
               </label>
               <select
@@ -353,7 +343,7 @@ export function CoachPersonalizeWidget({
 
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
-                <Activity className="h-3 w-3 text-brand dark:text-brand-sky" />
+                <Activity className="h-3 w-3 text-foreground" />
                 Khu vực tập luyện:
               </label>
               <select

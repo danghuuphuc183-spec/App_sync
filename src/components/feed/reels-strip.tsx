@@ -9,7 +9,7 @@ export function ReelsStrip() {
     <section aria-label="Reels" className="bg-white dark:bg-card border-y sm:border sm:rounded-2xl border-neutral-200/80 dark:border-neutral-800 py-3">
       <div className="flex items-center justify-between px-3.5 mb-2.5">
         <h2 className="text-[16px] font-bold text-foreground flex items-center gap-1.5">
-          <Clapperboard className="h-5 w-5 text-brand" /> Reels
+          <Clapperboard className="h-5 w-5 text-foreground" /> Reels
         </h2>
         <Link href="/reels" className="text-[13px] font-bold text-brand dark:text-brand-sky">
           Xem tất cả
@@ -25,7 +25,7 @@ export function ReelsStrip() {
           >
             <img src={r.thumbnailUrl} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/20" />
-            <span className="absolute top-2 left-2 rounded-full bg-brand px-1.5 py-0.5 text-[10px] font-bold text-white">
+            <span className="absolute top-2 left-2 rounded-lg bg-brand px-1.5 py-0.5 text-[10px] font-bold text-white">
               {r.distanceKm} km
             </span>
             <div className="absolute bottom-2 inset-x-2 text-white">

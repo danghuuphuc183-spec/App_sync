@@ -49,8 +49,8 @@ export interface FeedPost {
     calories?: number;
     source?: "Strava" | "Garmin" | "Apple Health" | "SYNC";
   };
-  /** Kèo tập mở — người khác có thể "Nhận kèo" bằng cọc TS */
-  invite?: { dateTimeVi: string; locationName: string; intensity: string; holdTs: number; slotsLeft: number };
+  /** Kèo tập mở — người khác có thể "Nhận kèo" */
+  invite?: { dateTimeVi: string; locationName: string; intensity: string; slotsLeft: number };
   /** Thử thách của CLB */
   challenge?: { title: string; currentKm: number; targetKm: number; daysLeft: number; participants: number };
   /** Quảng cáo */

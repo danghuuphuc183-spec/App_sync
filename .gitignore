@@ -46,3 +46,4 @@ graphify-out/
 # build riêng cho dev server thứ hai
 /.next-preview/
 /screenshots/
+/.next-prodcheck/

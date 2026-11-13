@@ -69,7 +69,7 @@ export function LiveSessionPanel({
         </div>
         <button
           onClick={onStop}
-          className="shrink-0 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-3.5 py-1.5 text-[12px] font-bold active:scale-95"
+          className="shrink-0 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-3.5 py-1.5 text-[12px] font-bold active:scale-95"
         >
           Kết thúc
         </button>
@@ -104,13 +104,13 @@ export function LiveSessionPanel({
                 <div className="flex gap-2 mt-2.5">
                   <button
                     onClick={() => onAnswerIncoming(a.id, false)}
-                    className="flex-1 rounded-full border border-border bg-background py-2 text-[12.5px] font-bold text-foreground"
+                    className="flex-1 rounded-lg border border-border bg-background py-2 text-[12.5px] font-bold text-foreground"
                   >
                     Từ chối
                   </button>
                   <button
                     onClick={() => onAnswerIncoming(a.id, true)}
-                    className="flex-1 rounded-full bg-brand-600 hover:bg-brand-700 text-white py-2 text-[12.5px] font-bold"
+                    className="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white py-2 text-[12.5px] font-bold"
                   >
                     Đồng ý
                   </button>
@@ -150,7 +150,7 @@ export function LiveSessionPanel({
                         onClick={() => onInvite(a.id)}
                         disabled={!!status}
                         className={cn(
-                          "shrink-0 rounded-full px-3 py-1.5 text-[12px] font-bold flex items-center gap-1 transition-all active:scale-95",
+                          "shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-bold flex items-center gap-1 transition-all active:scale-95",
                           !status && "bg-brand hover:bg-brand-700 text-white dark:bg-brand-sky dark:text-black",
                           status === "pending" && "bg-muted text-muted-foreground",
                           status === "declined" && "bg-muted text-muted-foreground line-through"
@@ -211,9 +211,9 @@ function MatchedCard({
 
       {met ? (
         <div className="rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 p-3 flex gap-2.5 items-center">
-          <PartyPopper className="h-6 w-6 text-emerald-600 shrink-0" />
+          <PartyPopper className="h-6 w-6 text-foreground shrink-0" />
           <p className="text-[13px] text-foreground leading-snug">
-            Hai bạn đã ở cạnh nhau. Chúc buổi tập vui vẻ — nhớ check-in để cùng được cộng TS!
+            Hai bạn đã ở cạnh nhau. Chúc buổi tập vui vẻ — nhớ check-in để cùng được +0,5 UT!
           </p>
         </div>
       ) : (
@@ -230,13 +230,13 @@ function MatchedCard({
       )}
 
       <p className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
-        <Radio className="h-3.5 w-3.5 text-brand-600" />
+        <Radio className="h-3.5 w-3.5 text-foreground" />
         Hai bạn đang chia sẻ vị trí chính xác cho nhau để tìm đến nhau.
       </p>
 
       <div className="flex gap-2">
         {met ? (
-          <button onClick={onFinish} className="flex-1 rounded-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 text-[13px] font-bold">
+          <button onClick={onFinish} className="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white py-2.5 text-[13px] font-bold">
             Bắt đầu tập cùng & tắt chia sẻ
           </button>
         ) : (
@@ -245,13 +245,13 @@ function MatchedCard({
               href={directionsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 rounded-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 text-[13px] font-bold flex items-center justify-center gap-1.5"
+              className="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white py-2.5 text-[13px] font-bold flex items-center justify-center gap-1.5"
             >
               <Navigation className="h-4 w-4" /> Chỉ đường
             </a>
             <Link
               href="/chat"
-              className="flex-1 rounded-full border border-border py-2.5 text-[13px] font-bold text-foreground flex items-center justify-center gap-1.5 hover:bg-muted"
+              className="flex-1 rounded-lg border border-border py-2.5 text-[13px] font-bold text-foreground flex items-center justify-center gap-1.5 hover:bg-muted"
             >
               <MessageCircle className="h-4 w-4" /> Nhắn tin
             </Link>

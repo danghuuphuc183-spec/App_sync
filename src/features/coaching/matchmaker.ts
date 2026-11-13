@@ -106,7 +106,7 @@ export function calculateCoachMatch(coach: Coach, profile: UserCoachProfile): Co
     }
   }
 
-  // Điểm đánh giá và Trust Score thêm tối đa 5 điểm cộng
+  // Điểm đánh giá và Điểm Uy tín thêm tối đa 5 điểm cộng
   const ratingBonus = Math.round((coach.rating - 4.5) * 6);
   score += Math.max(0, ratingBonus);
 

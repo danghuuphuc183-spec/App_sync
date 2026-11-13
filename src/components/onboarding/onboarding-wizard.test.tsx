@@ -20,8 +20,9 @@ describe("OnboardingWizard", () => {
   it("đi hết 10 bước, nút Tiếp tục khoá khi chưa đủ thông tin, cuối cùng có gợi ý bạn tập và lưu hồ sơ", async () => {
     render(<AuthProvider><OnboardingWizard /></AuthProvider>);
 
-    // 1. Giới thiệu
+    // 1. Giới thiệu — không hỏi chiều cao / cân nặng
     expect(await screen.findByText("Giới thiệu về bạn")).toBeInTheDocument();
+    expect(screen.queryByText("Cân nặng")).not.toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Tên hiển thị"), { target: { value: "Lan Anh" } });
     expect(nextBtn()).toBeDisabled();
     fireEvent.click(screen.getByRole("button", { name: "Nữ" }));
@@ -49,9 +50,9 @@ describe("OnboardingWizard", () => {
     expect(screen.getByText("≤ 3 km")).toBeInTheDocument();
     next();
 
-    // 6. DISC — 5 câu
-    for (let i = 0; i < 5; i++) fireEvent.click(screen.getAllByRole("button", { pressed: false }).find((b) => /đúng thói quen|đi cùng họ|phút chót|Giãn cơ|đáng tin/.test(b.textContent ?? ""))!);
-    expect(screen.getByText(/S – Người kiên định/)).toBeInTheDocument();
+    // 6. Cách giao tiếp — chọn trực tiếp (không còn trắc nghiệm DISC)
+    expect(screen.queryByText(/DISC/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Ít nói, tập trung/ }));
     next();
 
     // 7. Vibe & an toàn: chọn Nữ → mặc định chỉ ghép cùng giới
@@ -73,6 +74,9 @@ describe("OnboardingWizard", () => {
     expect(saved.sports).toEqual(["running"]);
     expect(saved.workoutTypes).toEqual(["long_run"]);
     expect(saved.sameGenderOnly).toBe(true);
+    expect(saved.commStyle).toBe("quiet");
+    expect(saved).not.toHaveProperty("weightKg");
+    expect(saved).not.toHaveProperty("discAnswers");
     expect(saved.completedAt).toBeTruthy();
   });
 });

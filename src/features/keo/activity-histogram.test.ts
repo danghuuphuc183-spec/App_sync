@@ -16,8 +16,9 @@ describe("activityHistogram", () => {
   });
 
   it("cuối tuần giờ cao điểm sáng lùi muộn hơn ngày thường", () => {
-    const weekday = peakBucket(activityHistogram("cycling", "Ngày mai", []));
-    const weekend = peakBucket(activityHistogram("cycling", "Chủ Nhật", []));
+    // ngày cố định: "Ngày mai" rơi vào thứ Bảy thì test sai
+    const weekday = peakBucket(activityHistogram("cycling", "2026-11-18", [])); // thứ Tư
+    const weekend = peakBucket(activityHistogram("cycling", "2026-11-22", [])); // Chủ Nhật
     expect(weekend).toBeGreaterThan(weekday);
   });
 

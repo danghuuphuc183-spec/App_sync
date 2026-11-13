@@ -34,7 +34,6 @@ export interface WorkoutPost {
     locationName: string;
     areaVi: string;
     intensity: string;
-    holdTs: number;
     targetPaceOrWeight?: string;
     isGhostMode?: boolean;
     slotsLeft: number;
@@ -99,7 +98,7 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
       handle: "@minhanh_run",
       tier: "diamond",
-      trustScore: 138,
+      trustScore: 9,
       badgeTitle: "Mentor Chạy Bộ",
       clubName: "SRC - Saigon Runners",
     },
@@ -117,7 +116,6 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       locationName: "Cổng công viên Landmark 81 (bến thuyền)",
       areaVi: "Bình Thạnh, TP.HCM",
       intensity: "10.0 km • Pace 6:00/km",
-      holdTs: 20,
       targetPaceOrWeight: "Pace 6:00/km",
       slotsLeft: 1,
       status: "open",
@@ -129,7 +127,7 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       {
         author: "Quốc Hưng",
         avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-        text: "Pace này vừa khít bài recovery của mình. Đã bấm giữ chỗ 20 TS nhé Minh Anh!",
+        text: "Pace này vừa khít bài recovery của mình. Mình nhận kèo nhé Minh Anh!",
         timeVi: "8 phút trước",
         ts: 124,
       },
@@ -145,7 +143,7 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
       handle: "@hoangnam_vnu",
       tier: "diamond",
-      trustScore: 135,
+      trustScore: 9,
       badgeTitle: "Chiến Binh Kỷ Luật",
       clubName: "VNU Runners",
     },
@@ -156,7 +154,7 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&auto=format&fit=crop&q=80",
     ],
     caption:
-      "Vừa hoàn thành 10.2km bình minh cùng Minh Anh tại Landmark 81. Đúng giờ 05:30 xuất phát, thời tiết mát mẻ 25°C. Hoàn thành khế ước thành công +2 TS cho cả hai! 🌅🏃‍♂️",
+      "Vừa hoàn thành 10.2km bình minh cùng Minh Anh tại Landmark 81. Đúng giờ 05:30 xuất phát, thời tiết mát mẻ 25°C. Đúng hẹn, +0,5 UT cho cả hai!",
     tags: ["#StravaVerified", "#KhếƯớcHoànThành", "#KhôngBùngKèo", "+2TS"],
     stats: {
       distance: "10.2 km",
@@ -164,7 +162,7 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       pace: "5:45/km",
       calories: "620 kcal",
       verifiedSource: "Strava",
-      partnerName: "Minh Anh (138 TS)",
+      partnerName: "Minh Anh (9 UT)",
     },
     likes: 76,
     commentsCount: 8,
@@ -189,7 +187,7 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       avatar: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=150&auto=format&fit=crop&q=80",
       handle: "@ftu2_runclub",
       tier: "diamond",
-      trustScore: 145,
+      trustScore: 9.5,
       badgeTitle: "Câu Lạc Bộ Xác Thực",
       clubName: "FTU2 Run Club",
     },
@@ -233,7 +231,7 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
       handle: "@minhvu_fitness",
       tier: "gold",
-      trustScore: 128,
+      trustScore: 8.5,
       badgeTitle: "Đối Tác Tin Cậy",
       clubName: "The New Gym Squad",
     },
@@ -244,18 +242,18 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&auto=format&fit=crop&q=80",
     ],
     caption:
-      "Minh và Lan vừa chính thức hoàn thành buổi tập thứ 10 liên tiếp cùng nhau không trễ 1 phút, không no-show! Cả hai đã được mở khóa Huy hiệu Kỷ Luật 'Duo Streak 10x' và nhận thưởng +10 TS vào ví uy tín! 🎉🔥",
+      "Minh và Lan vừa chính thức hoàn thành buổi tập thứ 10 liên tiếp cùng nhau không trễ 1 phút, không no-show! Cả hai đã được mở khóa Huy hiệu Kỷ Luật 'Duo Streak 10x'!",
     tags: ["#DuoStreak", "#HuyHiệuKỷLuật", "#10BuổiLiênTiếp", "#KhôngNoShow"],
     milestone: {
-      partnerName: "Ngọc Lan (126 TS)",
+      partnerName: "Ngọc Lan (8,5 UT)",
       streakCount: 10,
       badgeUnlocked: "Duo Streak Partner (Cặp đôi kỷ luật)",
-      badgeIcon: "🔥",
+      badgeIcon: "",
     },
     stats: {
       exercises: "Đỡ tạ Spotter 10 buổi",
       verifiedSource: "Hevy",
-      partnerName: "Ngọc Lan (126 TS)",
+      partnerName: "Ngọc Lan (8,5 UT)",
     },
     likes: 92,
     commentsCount: 14,
@@ -280,7 +278,7 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       avatar: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=150&auto=format&fit=crop&q=80",
       handle: "@hcmc_runner_spots",
       tier: "diamond",
-      trustScore: 149,
+      trustScore: 10,
       badgeTitle: "Bản Đồ Xác Thực",
     },
     sport: "running",
@@ -317,7 +315,7 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
       handle: "@yen_silent_runner",
       tier: "diamond",
-      trustScore: 142,
+      trustScore: 9.5,
       badgeTitle: "Ghost Mode Master",
       clubName: "Sala Endurance",
     },
@@ -335,7 +333,6 @@ export const INITIAL_POSTS: WorkoutPost[] = [
       locationName: "Chân cầu Thị Nghè (Phía bờ kè Hoàng Sa)",
       areaVi: "Quận 1 - Bình Thạnh",
       intensity: "7.0 km • Pace 6:15/km",
-      holdTs: 20,
       isGhostMode: true,
       slotsLeft: 2,
       status: "open",

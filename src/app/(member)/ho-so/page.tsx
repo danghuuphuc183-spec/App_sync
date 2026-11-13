@@ -45,8 +45,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TrustMeter } from "@/components/shared/trust-meter";
 import { TierBadge } from "@/components/shared/tier-badge";
+import { RankCard } from "@/components/profile/rank-card";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
+import { formatKeoDay } from "@/features/keo/keo-date";
+import { formatUt } from "@/features/trust/config";
 
 // 6 HUY HIỆU KỶ LUẬT (ICON TRẮNG ĐEN MONOCHROME THEO YÊU CẦU)
 const SYSTEM_BADGES = [
@@ -110,11 +113,10 @@ const MY_BOUNTIES = {
       title: "Chạy 10km sáng sớm ven sông Sài Gòn",
       partner: "Hoàng Nam",
       partnerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-      partnerTs: 135,
+      partnerTs: 9,
       timeVi: "05:30 AM • Sáng mai (Thứ Hai)",
       location: "Công viên Landmark 81, Bình Thạnh",
-      holdTs: 30,
-      statusVi: "Đã chốt — Đang giữ cọc",
+      statusVi: "Đã chốt",
       canCheckin: true,
     },
   ],
@@ -124,11 +126,10 @@ const MY_BOUNTIES = {
       title: "Chạy 8.5km bờ kè Hoàng Sa",
       partner: "Quốc Hưng",
       partnerAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
-      partnerTs: 142,
+      partnerTs: 9.5,
       timeVi: "Hôm qua lúc 05:45 AM",
       location: "Chân cầu Thị Nghè, Bình Thạnh",
-      holdTs: 20,
-      statusVi: "Hoàn thành (+2 TS)",
+      statusVi: "Hoàn thành (+0,5 UT)",
       canCheckin: false,
     },
     {
@@ -136,11 +137,10 @@ const MY_BOUNTIES = {
       title: "Đỡ tạ Spotter Ngực Dưới (Chest Day)",
       partner: "Tuấn Khang",
       partnerAvatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80",
-      partnerTs: 118,
+      partnerTs: 8,
       timeVi: "3 ngày trước • 18:30 PM",
       location: "The New Gym Điện Biên Phủ",
-      holdTs: 25,
-      statusVi: "Hoàn thành (+2 TS)",
+      statusVi: "Hoàn thành (+0,5 UT)",
       canCheckin: false,
     },
   ],
@@ -150,10 +150,9 @@ const MY_BOUNTIES = {
       title: "Chạy Easy 6km Sala Quận 2",
       partner: "Chờ đối phương xác nhận",
       partnerAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
-      partnerTs: 110,
+      partnerTs: 7.5,
       timeVi: "06:00 AM • Thứ Bảy tuần này",
       location: "Khu đô thị Sala, TP. Thủ Đức",
-      holdTs: 15,
       statusVi: "Đang chờ đối phương nhận kèo",
       canCheckin: false,
     },
@@ -164,11 +163,10 @@ const MY_BOUNTIES = {
       title: "Chạy chiều mưa Thanh Đa",
       partner: "Hải Yến",
       partnerAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
-      partnerTs: 120,
+      partnerTs: 8,
       timeVi: "Tuần trước",
       location: "Bờ kè Thanh Đa",
-      holdTs: 20,
-      statusVi: "Đã hủy có báo trước 2h (Hoàn 100% TS)",
+      statusVi: "Huỷ sớm, dùng thẻ ân hạn (0 UT)",
       canCheckin: false,
     },
   ],
@@ -213,10 +211,9 @@ export default function ProfilePage() {
         partner: k.kind === "group" ? `${partner.name} · nhóm ${k.memberIds.length}/${k.capacity}` : partner.name,
         partnerAvatar: partner.avatar,
         partnerTs: partnerId ? hostTrust(partnerId) : 0,
-        timeVi: `${k.time.from} – ${k.time.to} • ${k.time.day}`,
+        timeVi: `${k.time.from} – ${k.time.to} • ${formatKeoDay(k.time.day)}`,
         location: k.place.name,
-        holdTs: k.holdTs,
-        statusVi: k.mine ? (k.memberIds.length >= k.capacity ? "Đã chốt — Đang giữ cọc" : "Đang chờ thêm người") : "Đã tham gia — Đang giữ cọc",
+        statusVi: k.mine ? (k.memberIds.length >= k.capacity ? "Đã chốt" : "Đang chờ thêm người") : "Đã tham gia",
         canCheckin: true,
       };
     });
@@ -283,7 +280,7 @@ export default function ProfilePage() {
             <button
               onClick={() => setIsQrModalOpen(true)}
               aria-label="Mã QR Điểm Hẹn"
-              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-brand-200 transition-colors active:scale-95"
+              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors active:scale-95"
               title="Mã QR Điểm Hẹn"
             >
               <QrCode className="h-4 w-4" />
@@ -294,7 +291,7 @@ export default function ProfilePage() {
               className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors active:scale-95"
               title="Chia sẻ hồ sơ"
             >
-              {copiedLink ? <Check className="h-4 w-4 text-emerald-400" /> : <Share2 className="h-4 w-4" />}
+              {copiedLink ? <Check className="h-4 w-4 text-white" /> : <Share2 className="h-4 w-4" />}
             </button>
             <button
               onClick={() => setIsEditModalOpen(true)}
@@ -315,7 +312,7 @@ export default function ProfilePage() {
             <button
               onClick={() => setIsLogoutModalOpen(true)}
               aria-label="Đăng xuất"
-              className="p-1.5 rounded-full bg-red-500/20 hover:bg-red-500/35 text-red-200 border border-red-500/30 transition-all active:scale-95"
+              className="p-1.5 rounded-full bg-white/10 hover:bg-red-500/35 text-white border border-white/20 transition-all active:scale-95"
               title="Đăng xuất khỏi thiết bị"
             >
               <LogOut className="h-4 w-4" />
@@ -334,18 +331,18 @@ export default function ProfilePage() {
               />
             </div>
             <span className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-brand border border-white/60 flex items-center justify-center shadow-xs">
-              <CheckCircle2 className="h-3 w-3 text-brand-200" />
+              <CheckCircle2 className="h-3 w-3 text-white" />
             </span>
           </div>
 
           <div className="flex-1 min-w-0 space-y-1">
             <div className="flex items-center gap-1.5 flex-wrap">
               <h1 className="text-base font-extrabold tracking-tight text-white">{profileName}</h1>
-              <TierBadge tier="gold" />
+              <TierBadge score={8.5} />
             </div>
 
             <div className="flex items-center gap-1 text-[11px] text-brand-200/80">
-              <MapPin className="h-3 w-3 shrink-0 text-brand-sky" />
+              <MapPin className="h-3 w-3 shrink-0 text-white" />
               <span className="truncate">{profileArea}</span>
             </div>
 
@@ -373,8 +370,8 @@ export default function ProfilePage() {
             <div className="text-[10px] text-white/70 font-medium whitespace-nowrap">Đúng giờ</div>
           </div>
           <div className="px-1 border-l border-white/10">
-            <div className="text-base font-black text-white">125</div>
-            <div className="text-[10px] text-brand-200/80 font-medium whitespace-nowrap">Điểm TS</div>
+            <div className="text-base font-black text-white">8,5</div>
+            <div className="text-[10px] text-brand-200/80 font-medium whitespace-nowrap">Điểm UT</div>
           </div>
           <div className="px-1 border-l border-white/10">
             <div className="text-base font-black text-emerald-300">32.4</div>
@@ -390,33 +387,31 @@ export default function ProfilePage() {
       <div className="rounded-3xl border border-border bg-card p-3.5 space-y-2.5 shadow-xs">
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-1.5 font-bold text-foreground">
-            <ShieldCheck className="h-4 w-4 text-brand dark:text-brand-sky" />
+            <ShieldCheck className="h-4 w-4 text-foreground" />
             <span>Ví Kỷ Luật & Điểm Uy Tín</span>
           </div>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-            Hạng Vàng (125 TS)
-          </span>
+          <TierBadge score={8.5} showScore />
         </div>
 
-        <TrustMeter currentScore={125} heldScore={20} />
+        <TrustMeter currentScore={8.5} />
 
         <div className="grid grid-cols-3 gap-1.5 text-center text-xs pt-1">
           <div className="p-2 rounded-2xl bg-muted/40 border border-border/50">
-            <div className="text-[9px] text-muted-foreground">Khả dụng</div>
-            <div className="text-xs font-black text-foreground">105 TS</div>
+            <div className="text-[9px] text-muted-foreground">Kèo tạo hôm nay</div>
+            <div className="text-xs font-black text-foreground">0 / 2</div>
           </div>
           <div className="p-2 rounded-2xl bg-muted/40 border border-border/50">
-            <div className="text-[9px] text-muted-foreground">Đang cọc (1 kèo)</div>
-            <div className="text-xs font-black text-amber-600 dark:text-amber-400">20 TS</div>
+            <div className="text-[9px] text-muted-foreground">Cùng huỷ tháng này</div>
+            <div className="text-xs font-black text-foreground">0 / 4</div>
           </div>
           <div className="p-2 rounded-2xl bg-muted/40 border border-border/50">
             <div className="text-[9px] text-muted-foreground">Thẻ ân hạn</div>
-            <div className="text-xs font-black text-emerald-600 dark:text-emerald-400">2 lượt</div>
+            <div className="text-xs font-black text-foreground">1 lượt</div>
           </div>
         </div>
 
         <div className="flex items-center justify-between text-[11px] pt-1 text-muted-foreground border-t border-border/40">
-          <span>Khởi điểm 100 TS • Mốc 130 TS lên Kim Cương</span>
+          <span>Khởi điểm 7 UT • Từ 9 UT: Uy tín cao, 3 kèo/ngày</span>
           <Link
             href="/vi-uy-tin"
             className="text-[10px] font-bold text-brand dark:text-brand-sky hover:underline flex items-center gap-0.5"
@@ -426,6 +421,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* 2a. CẤP TẬP LUYỆN 6 CẤP (TÁCH KHỎI UT) */}
+      <RankCard verifiedSessions={28} />
+
       {/* 2b. GHI NHẬN TẬP LUYỆN THEO NGÀY TRONG TUẦN & THÁNG (BẢN ĐỒ NHIỆT) */}
       <TrainingLog />
 
@@ -434,7 +432,7 @@ export default function ProfilePage() {
         <div className="flex items-center justify-between">
           <div>
             <div className="text-xs font-black text-foreground flex items-center gap-1.5">
-              <BarChart2 className="h-4 w-4 text-brand dark:text-brand-sky" />
+              <BarChart2 className="h-4 w-4 text-foreground" />
               <span>Nhịp Điệu Tập Luyện Tuần Này</span>
             </div>
             <div className="text-[10px] text-muted-foreground">
@@ -541,7 +539,7 @@ export default function ProfilePage() {
       <div className="grid grid-cols-2 gap-2">
         <div className="p-3 rounded-2xl bg-card border border-border shadow-xs space-y-1">
           <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-            <Activity className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
+            <Activity className="h-3.5 w-3.5 text-foreground" />
             <span>Chỉ Số Hình Thể</span>
           </div>
           <div className="text-xs font-black text-foreground">162 cm • 51 kg</div>
@@ -550,7 +548,7 @@ export default function ProfilePage() {
 
         <div className="p-3 rounded-2xl bg-card border border-border shadow-xs space-y-1">
           <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-            <TrendingUp className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
+            <TrendingUp className="h-3.5 w-3.5 text-foreground" />
             <span>Pace & Kỷ Lục</span>
           </div>
           <div className="text-xs font-black text-foreground">{profilePace}</div>
@@ -559,7 +557,7 @@ export default function ProfilePage() {
 
         <div className="p-3 rounded-2xl bg-card border border-border shadow-xs space-y-1">
           <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-            <Calendar className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
+            <Calendar className="h-3.5 w-3.5 text-foreground" />
             <span>Lịch Tập Cố Định</span>
           </div>
           <div className="text-xs font-black text-foreground">Sáng 05:30 AM</div>
@@ -568,7 +566,7 @@ export default function ProfilePage() {
 
         <div className="p-3 rounded-2xl bg-card border border-border shadow-xs space-y-1">
           <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-            <MapPin className="h-3.5 w-3.5 text-brand dark:text-brand-sky" />
+            <MapPin className="h-3.5 w-3.5 text-foreground" />
             <span>Cung Đường Quen</span>
           </div>
           <div className="text-xs font-black text-foreground truncate">Công viên Landmark 81</div>
@@ -615,7 +613,7 @@ export default function ProfilePage() {
           <div className="p-3 rounded-3xl bg-card border border-border shadow-xs space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-bold text-xs text-foreground">
-                <TrendingUp className="h-4 w-4 text-brand-600 stroke-[2]" />
+                <TrendingUp className="h-4 w-4 text-foreground stroke-[2]" />
                 <span>Chạy Bộ (Strava Linked)</span>
               </div>
               <Badge className="bg-brand-600/10 text-brand-700 dark:text-brand-400 border border-brand-600/20 text-[9px] font-bold">
@@ -642,7 +640,7 @@ export default function ProfilePage() {
           <div className="p-3 rounded-3xl bg-card border border-border shadow-xs space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-bold text-xs text-foreground">
-                <Dumbbell className="h-4 w-4 text-brand dark:text-brand-sky stroke-[2]" />
+                <Dumbbell className="h-4 w-4 text-foreground stroke-[2]" />
                 <span>Gym & Kháng Lực (Hevy Linked)</span>
               </div>
               <Badge className="bg-brand-100/60 text-brand dark:bg-brand/50 dark:text-brand-sky border border-brand/20 text-[9px] font-bold">
@@ -705,7 +703,7 @@ export default function ProfilePage() {
                 key={sub.id}
                 onClick={() => setBountySubTab(sub.id as "upcoming" | "history" | "pending" | "cancelled")}
                 className={cn(
-                  "px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap border transition-all",
+                  "px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap border transition-all",
                   bountySubTab === sub.id
                     ? "bg-brand text-white border-brand shadow-xs"
                     : "bg-muted/60 text-muted-foreground border-border hover:text-foreground"
@@ -740,7 +738,7 @@ export default function ProfilePage() {
                     className="w-6 h-6 rounded-full object-cover border border-border"
                   />
                   <span className="text-[11px] text-muted-foreground">
-                    Bạn tập: <strong className="text-foreground">{item.partner}</strong> ({item.partnerTs} TS)
+                    Bạn tập: <strong className="text-foreground">{item.partner}</strong> ({formatUt(item.partnerTs)} UT)
                   </span>
                 </div>
 
@@ -755,15 +753,15 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="flex items-center justify-between pt-1.5 border-t border-border/40">
-                  <span className="text-[10px] text-brand dark:text-brand-sky font-semibold">
-                    Cọc bảo chứng: {item.holdTs} TS
+                  <span className="text-[10px] text-muted-foreground font-semibold">
+                    Huỷ sớm −0,25 · trong 30 phút −0,5 UT
                   </span>
 
                   {item.canCheckin && (
                     <Button
                       size="sm"
                       onClick={() => setIsQrModalOpen(true)}
-                      className="h-7 px-3 text-[10px] font-bold bg-brand text-white rounded-full flex items-center gap-1 shadow-xs"
+                      className="h-7 px-3 text-[10px] font-bold bg-brand text-white rounded-lg flex items-center gap-1 shadow-xs"
                     >
                       <QrCode className="h-3 w-3" />
                       <span>Check-in QR Điểm Hẹn</span>
@@ -859,10 +857,10 @@ export default function ProfilePage() {
               <div className="space-y-0.5 max-w-[75%]">
                 <div className="font-bold text-foreground flex items-center gap-1.5">
                   <EyeOff className="h-3.5 w-3.5 text-foreground stroke-[2]" />
-                  Ẩn vị trí chính xác trước khi cọc
+                  Ẩn vị trí chính xác trước khi chốt kèo
                 </div>
                 <div className="text-[10px] text-muted-foreground">
-                  Chỉ hiện bán kính khu vực (Bình Thạnh); chỉ mở tọa độ khi cả hai đã khóa cọc TS.
+                  Chỉ hiện bán kính khu vực (Bình Thạnh); chỉ mở tọa độ khi cả hai đã chốt kèo.
                 </div>
               </div>
               <input
@@ -964,7 +962,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => updatePermissions({ camera: user?.permissions?.camera ? false : true })}
                   className={cn(
-                    "px-2.5 py-1 rounded-full text-[10px] font-bold transition-all",
+                    "px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all",
                     user?.permissions?.camera
                       ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -989,7 +987,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => updatePermissions({ gps: user?.permissions?.gps ? false : true })}
                   className={cn(
-                    "px-2.5 py-1 rounded-full text-[10px] font-bold transition-all",
+                    "px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all",
                     user?.permissions?.gps
                       ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -1014,7 +1012,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => updatePermissions({ notifications: user?.permissions?.notifications ? false : true })}
                   className={cn(
-                    "px-2.5 py-1 rounded-full text-[10px] font-bold transition-all",
+                    "px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all",
                     user?.permissions?.notifications
                       ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -1039,7 +1037,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => toggleBiometric()}
                   className={cn(
-                    "px-2.5 py-1 rounded-full text-[10px] font-bold transition-all",
+                    "px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all",
                     user?.biometricEnabled
                       ? "bg-brand-500/15 text-brand-700 dark:text-brand-400 border border-brand-500/30"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -1087,7 +1085,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => toggleAppConnection("strava")}
                   className={cn(
-                    "px-3 py-1 rounded-full text-[10px] font-bold transition-all",
+                    "px-3 py-1 rounded-lg text-[10px] font-bold transition-all",
                     user?.connectedApps?.strava
                       ? "bg-[#FC4C02] text-white shadow-xs"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -1115,7 +1113,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => toggleAppConnection("appleHealth")}
                   className={cn(
-                    "px-3 py-1 rounded-full text-[10px] font-bold transition-all",
+                    "px-3 py-1 rounded-lg text-[10px] font-bold transition-all",
                     user?.connectedApps?.appleHealth
                       ? "bg-red-500 text-white shadow-xs"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -1140,7 +1138,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => toggleAppConnection("garmin")}
                   className={cn(
-                    "px-3 py-1 rounded-full text-[10px] font-bold transition-all",
+                    "px-3 py-1 rounded-lg text-[10px] font-bold transition-all",
                     user?.connectedApps?.garmin
                       ? "bg-[#007cc3] text-white shadow-xs"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -1165,7 +1163,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => toggleAppConnection("coros")}
                   className={cn(
-                    "px-3 py-1 rounded-full text-[10px] font-bold transition-all",
+                    "px-3 py-1 rounded-lg text-[10px] font-bold transition-all",
                     user?.connectedApps?.coros
                       ? "bg-foreground text-background shadow-xs"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -1190,7 +1188,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => toggleAppConnection("whoop")}
                   className={cn(
-                    "px-3 py-1 rounded-full text-[10px] font-bold transition-all",
+                    "px-3 py-1 rounded-lg text-[10px] font-bold transition-all",
                     user?.connectedApps?.whoop
                       ? "bg-zinc-800 text-white shadow-xs"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -1248,7 +1246,7 @@ export default function ProfilePage() {
                 size="sm"
                 variant="outline"
                 onClick={() => router.push("/bat-dau")}
-                className="w-full text-xs h-8 rounded-full font-bold border-brand-300/40 hover:bg-brand-sky/10 text-brand dark:text-brand-sky"
+                className="w-full text-xs h-8 rounded-lg font-bold border-brand-300/40 hover:bg-brand-sky/10 text-brand dark:text-brand-sky"
               >
                 <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
                 Làm Lại Khảo Sát Cá Nhân Hoá AI
@@ -1265,7 +1263,7 @@ export default function ProfilePage() {
                   Đăng nhập qua: <span className="font-semibold text-foreground capitalize">{user?.authProvider || "Email"}</span> • {user?.email || user?.phone || "minhthu@runner.vn"}
                 </p>
               </div>
-              <div className="flex items-center gap-1 text-[10px] font-mono text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-full">
+              <div className="flex items-center gap-1 text-[10px] font-mono text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-lg">
                 <ShieldCheck className="h-3 w-3" />
                 <span>Active</span>
               </div>
@@ -1276,7 +1274,7 @@ export default function ProfilePage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsLogoutModalOpen(true)}
-                className="w-full text-xs h-8 rounded-full font-bold text-red-600 dark:text-red-400 border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50"
+                className="w-full text-xs h-8 rounded-lg font-bold text-red-600 dark:text-red-400 border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50"
               >
                 <LogOut className="h-3.5 w-3.5 mr-1.5" />
                 Đăng Xuất Khỏi Thiết Bị Này
@@ -1297,7 +1295,7 @@ export default function ProfilePage() {
                   alert("Đã xuất tệp dữ liệu cá nhân (sync-athlete-data-2026.json) thành công!");
                 }, 800);
               }}
-              className="text-xs h-7 px-3 rounded-full font-semibold border-border"
+              className="text-xs h-7 px-3 rounded-lg font-semibold border-border"
             >
               <Download className="h-3 w-3 mr-1 text-foreground" />
               {isExporting ? "Đang xuất..." : "Tải Về Dữ Liệu"}
@@ -1324,7 +1322,7 @@ export default function ProfilePage() {
                 <QrCode className="h-4 w-4" />
                 <span>QUÉT MÃ ĐIỂM HẸN 2 CHIỀU</span>
               </div>
-              <h2 className="text-base font-extrabold text-foreground">Điểm Danh & Mở Khóa Cọc</h2>
+              <h2 className="text-base font-extrabold text-foreground">Điểm Danh Đúng Hẹn</h2>
               <p className="text-[11px] text-muted-foreground">
                 Cùng đưa mã QR lại gần điện thoại của bạn tập để hệ thống ghi nhận có mặt đúng giờ.
               </p>
@@ -1350,7 +1348,7 @@ export default function ProfilePage() {
                 </div>
                 {/* Center logo */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-7 h-7 rounded-md bg-brand text-white flex items-center justify-center shadow-xs">
+                  <div className="w-7 h-7 rounded-md bg-muted text-foreground flex items-center justify-center shadow-xs">
                     <Shield className="h-4 w-4" />
                   </div>
                 </div>
@@ -1379,7 +1377,7 @@ export default function ProfilePage() {
               </Button>
               <Button
                 onClick={() => {
-                  alert("Điểm danh thành công! Cả 2 đã đúng hẹn. Đã hoàn 100% cọc + thưởng 2 TS.");
+                  alert("Điểm danh thành công! Cả 2 đã đúng hẹn. +0,5 UT cho mỗi người.");
                   setIsQrModalOpen(false);
                 }}
                 className="flex-1 rounded-full text-xs font-bold bg-brand text-white"
@@ -1481,14 +1479,14 @@ export default function ProfilePage() {
       {isLogoutModalOpen && (
         <div className="fixed inset-0 z-[90] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
           <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative text-center">
-            <div className="w-12 h-12 rounded-2xl bg-red-500/15 border border-red-500/30 flex items-center justify-center mx-auto text-red-600 dark:text-red-400">
+            <div className="w-12 h-12 rounded-2xl bg-muted border border-border flex items-center justify-center mx-auto text-foreground">
               <LogOut className="h-6 w-6" />
             </div>
 
             <div className="space-y-1">
               <h2 className="text-base font-extrabold text-foreground">Đăng Xuất Khỏi SYNESIS?</h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Bạn có chắc chắn muốn đăng xuất? Các kèo thể thao đang tham gia và điểm TrustScore của bạn vẫn được lưu trữ an toàn trên máy chủ bảo mật.
+                Bạn có chắc chắn muốn đăng xuất? Các kèo thể thao đang tham gia và Điểm Uy tín (UT) của bạn vẫn được lưu trữ an toàn trên máy chủ bảo mật.
               </p>
             </div>
 
@@ -1498,7 +1496,7 @@ export default function ProfilePage() {
                 <span className="font-bold text-foreground">{user?.name || profileName}</span>
               </div>
               <div className="flex items-center justify-between text-muted-foreground">
-                <span>Điểm TrustScore:</span>
+                <span>Điểm Uy tín:</span>
                 <span className="font-bold text-brand dark:text-brand-sky">{user?.trustScore || 98}/100</span>
               </div>
               <div className="flex items-center justify-between text-muted-foreground">

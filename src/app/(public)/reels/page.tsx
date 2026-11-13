@@ -13,7 +13,7 @@ import { CommentsSheet, PostOptionsSheet, ShareSheet } from "@/components/feed/p
 import { useToast } from "@/components/feed/bottom-sheet";
 import { profileHref } from "@/components/feed/post-card";
 
-const SEED_COMMENTS = ["Cung này đẹp quá 😍", "Sáng mai rủ nhau chạy không?", "Nhạc hợp nhịp chạy ghê 🔥"];
+const SEED_COMMENTS = ["Cung này đẹp quá", "Sáng mai rủ nhau chạy không?", "Nhạc hợp nhịp chạy ghê"];
 
 export default function ReelsPage() {
   return (

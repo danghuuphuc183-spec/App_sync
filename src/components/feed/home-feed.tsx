@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CheckCircle2, MessageCircle, Shield, Zap } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, MessageCircle, Shield, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { FeedPost } from "@/features/feed/feed.types";
 import { PEOPLE } from "@/features/feed/feed.data";
@@ -18,9 +18,9 @@ const FILTERS = [
   { id: "following", label: "Đang theo dõi" },
   { id: "clubs", label: "CLB" },
   { id: "invites", label: "Kèo tập" },
-  { id: "running", label: "🏃 Chạy bộ" },
-  { id: "gym", label: "🏋️ Gym" },
-  { id: "cycling", label: "🚴 Đạp xe" },
+  { id: "running", label: "Chạy bộ" },
+  { id: "gym", label: "Gym" },
+  { id: "cycling", label: "Đạp xe" },
 ];
 
 type ChatPartner = React.ComponentProps<typeof InstagramChatModal>["partnerInfo"];
@@ -83,7 +83,7 @@ export function HomeFeed({
               onClick={() => setFilter(f.id)}
               aria-pressed={filter === f.id}
               className={cn(
-                "px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold whitespace-nowrap border transition-colors",
+                "px-3.5 py-1.5 rounded-lg text-[12.5px] font-semibold whitespace-nowrap border transition-colors",
                 filter === f.id
                   ? "bg-brand text-white border-brand dark:bg-brand-sky dark:text-black dark:border-brand-sky"
                   : "bg-white dark:bg-card text-foreground border-neutral-200 dark:border-neutral-800 hover:bg-muted"
@@ -99,7 +99,7 @@ export function HomeFeed({
         <div className="mx-3 rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-700 p-8 text-center space-y-3">
           <p className="text-[15px] font-bold text-foreground">Chưa có bài viết phù hợp</p>
           <p className="text-[13px] text-muted-foreground">Thử bộ lọc khác, hoặc chia sẻ buổi tập đầu tiên của bạn.</p>
-          <button onClick={onCreatePost} className="rounded-full bg-brand text-white text-[13px] font-bold px-4 py-2">
+          <button onClick={onCreatePost} className="rounded-lg bg-brand text-white text-[13px] font-bold px-4 py-2">
             Đăng bài
           </button>
         </div>
@@ -216,23 +216,23 @@ export function HomeFeed({
         toast={toast.show}
       />
 
-      {/* ===== Nhận kèo (cọc TrustScore) ===== */}
+      {/* ===== Nhận kèo ===== */}
       <BottomSheet
         open={!!joinPost}
         onClose={() => {
           setJoinFor(null);
           setJoined(false);
         }}
-        title={joined ? "Nhận kèo thành công" : "Xác nhận khế ước nhận kèo"}
+        title={joined ? "Nhận kèo thành công" : "Xác nhận nhận kèo"}
         bodyClassName="p-4 pb-6 space-y-3"
       >
         {joinPost?.invite && joinAuthor && (
           <>
             {joined ? (
               <div className="text-center space-y-2 py-2">
-                <CheckCircle2 className="h-12 w-12 text-emerald-600 mx-auto" />
+                <CheckCircle2 className="h-12 w-12 text-foreground mx-auto" />
                 <p className="text-[14px] text-foreground">
-                  Đã giữ <b>{joinPost.invite.holdTs} TS</b> vào khế ước tập cùng <b>{joinAuthor.name}</b>.
+                  Đã gửi yêu cầu tập cùng <b>{joinAuthor.name}</b>. Kèo được chốt khi hai bạn cùng đồng ý.
                 </p>
               </div>
             ) : (
@@ -245,17 +245,17 @@ export function HomeFeed({
               </div>
             )}
             <ul className="text-[13px] space-y-1 text-foreground">
-              <li>🕔 {joinPost.invite.dateTimeVi}</li>
-              <li>📍 {joinPost.invite.locationName}</li>
+              <li className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 shrink-0" />{joinPost.invite.dateTimeVi}</li>
+              <li className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 shrink-0" />{joinPost.invite.locationName}</li>
             </ul>
             {!joined && (
               <div className="rounded-2xl border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-950/40 p-3 text-[12.5px] space-y-1">
                 <p className="font-bold text-brand dark:text-brand-sky flex items-center gap-1.5">
                   <Shield className="h-4 w-4" /> Cam kết kỷ luật
                 </p>
-                <p className="text-muted-foreground">• Tạm giữ {joinPost.invite.holdTs} TS từ ví của bạn.</p>
-                <p className="text-muted-foreground">• Check-in đúng giờ: hoàn cọc và cộng +2 TS.</p>
-                <p className="text-muted-foreground">• Bùng kèo không báo trước: trừ 30 TS.</p>
+                <p className="text-muted-foreground">• Trước khi chốt: rút không bị trừ điểm.</p>
+                <p className="text-muted-foreground">• Đúng hẹn: +0,5 UT. Huỷ sớm −0,25, trong 30 phút −0,5 UT.</p>
+                <p className="text-muted-foreground">• Vắng có báo −1 UT, vắng im lặng −1,5 UT.</p>
               </div>
             )}
             {joined ? (
@@ -271,13 +271,12 @@ export function HomeFeed({
                       title: `Kèo ${SPORT_LABEL[joinPost.sport]}`,
                       dateTimeVi: joinPost.invite!.dateTimeVi,
                       locationName: joinPost.invite!.locationName,
-                      holdTs: joinPost.invite!.holdTs,
                     },
                   });
                   setJoinFor(null);
                   setJoined(false);
                 }}
-                className="w-full rounded-full bg-brand hover:bg-brand-700 text-white font-bold py-3 text-[14px] flex items-center justify-center gap-2"
+                className="w-full rounded-lg bg-brand hover:bg-brand-700 text-white font-bold py-3 text-[14px] flex items-center justify-center gap-2"
               >
                 <MessageCircle className="h-4 w-4" /> Nhắn tin với {joinAuthor.name}
               </button>
@@ -289,9 +288,9 @@ export function HomeFeed({
                     p.invite ? { ...p, invite: { ...p.invite, slotsLeft: Math.max(0, p.invite.slotsLeft - 1) } } : p
                   );
                 }}
-                className="w-full rounded-full bg-brand hover:bg-brand-700 text-white font-bold py-3 text-[14px] flex items-center justify-center gap-2"
+                className="w-full rounded-lg bg-brand hover:bg-brand-700 text-white font-bold py-3 text-[14px] flex items-center justify-center gap-2"
               >
-                <Zap className="h-4 w-4" /> Ký khế ước ({joinPost.invite.holdTs} TS)
+                <Zap className="h-4 w-4" /> Nhận kèo
               </button>
             )}
           </>

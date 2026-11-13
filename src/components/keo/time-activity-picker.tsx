@@ -5,6 +5,7 @@ import { Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BUCKETS, activityHistogram, bucketToTime, peakBucket, timeToBucket } from "@/features/keo/activity-histogram";
 import { SEED_KEOS } from "@/features/keo/keo.data";
+import { formatKeoDay } from "@/features/keo/keo-date";
 import { CANDIDATES_DATA } from "@/features/match/candidates.data";
 
 /**
@@ -47,12 +48,15 @@ export function TimeActivityPicker({
   return (
     <div className="rounded-2xl border border-border p-3.5 pb-3">
       <div className="flex items-baseline justify-between mb-2">
-        <p className="text-[22px] font-extrabold font-display text-foreground tracking-tight" aria-live="polite">
-          {from} – {to}
-        </p>
+        <div>
+          <p className="text-[12px] font-semibold text-muted-foreground">{formatKeoDay(day)}</p>
+          <p className="text-[22px] font-extrabold font-display text-foreground tracking-tight" aria-live="polite">
+            {from} – {to}
+          </p>
+        </div>
         <span
           className={cn(
-            "rounded-full px-2.5 py-0.5 text-[11.5px] font-bold",
+            "rounded-lg px-2.5 py-0.5 text-[11.5px] font-bold",
             selectedAvg >= 60 ? "bg-brand text-white" : selectedAvg >= 30 ? "bg-brand-100 text-brand-700" : "bg-muted text-muted-foreground"
           )}
         >
@@ -118,7 +122,7 @@ export function TimeActivityPicker({
       <div className="flex justify-between text-[11.5px] text-muted-foreground">
         <span>04:00</span>
         <span className="flex items-center gap-1 text-foreground font-semibold">
-          <Flame className="h-3.5 w-3.5 text-brand" /> Đông nhất {bucketToTime(peak)}
+          <Flame className="h-3.5 w-3.5 text-foreground" /> Đông nhất {bucketToTime(peak)}
         </span>
         <span>22:00</span>
       </div>

@@ -79,7 +79,7 @@ export function PostCard({
             <Link href={profileHref(author)} className="text-[14px] font-bold text-foreground truncate hover:underline">
               {author.name}
             </Link>
-            {author.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-white fill-brand" aria-label="Đã xác minh" />}
+            {author.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-background fill-foreground" aria-label="Đã xác minh" />}
             {isClub && (
               <span className="shrink-0 rounded-md bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-200 px-1.5 text-[10px] font-bold">CLB</span>
             )}
@@ -132,12 +132,12 @@ export function PostCard({
           href="/ban-do"
           className="flex items-center gap-1.5 px-3.5 pt-2.5 text-[12.5px] font-medium text-foreground hover:text-brand"
         >
-          <MapPin className="h-3.5 w-3.5 shrink-0 text-brand dark:text-brand-sky" />
+          <MapPin className="h-3.5 w-3.5 shrink-0 text-foreground" />
           <span className="truncate">
             {post.location.name}
             {post.location.area && <span className="text-muted-foreground"> · {post.location.area}</span>}
           </span>
-          <span className="ml-auto shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-semibold text-muted-foreground">
+          <span className="ml-auto shrink-0 rounded-lg bg-muted px-2 py-0.5 text-[10.5px] font-semibold text-muted-foreground">
             {SPORT_LABEL[post.sport] ?? post.sport}
           </span>
         </Link>
@@ -161,7 +161,7 @@ export function PostCard({
         <div className="mx-3.5 mt-2.5 rounded-xl border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-950/40 p-3 space-y-2">
           <div className="flex items-center justify-between">
             <p className="text-[13px] font-bold text-foreground flex items-center gap-1.5">
-              <Trophy className="h-4 w-4 text-brand" /> {post.challenge.title}
+              <Trophy className="h-4 w-4 text-foreground" /> {post.challenge.title}
             </p>
             <span className="text-[11px] text-muted-foreground">Còn {post.challenge.daysLeft} ngày</span>
           </div>
@@ -185,17 +185,17 @@ export function PostCard({
       {/* ===== KÈO TẬP MỞ ===== */}
       {post.invite && (
         <div className="mx-3.5 mt-2.5 flex items-center gap-3 rounded-xl border border-border p-2.5">
-          <div className="h-10 w-10 shrink-0 rounded-lg bg-brand-100 dark:bg-brand-900 flex items-center justify-center">
-            <Zap className="h-5 w-5 text-brand dark:text-brand-sky" />
+          <div className="h-10 w-10 shrink-0 rounded-lg bg-muted flex items-center justify-center">
+            <Zap className="h-5 w-5 text-foreground" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[13px] font-bold text-foreground truncate">{post.invite.dateTimeVi}</p>
             <p className="text-[11.5px] text-muted-foreground truncate">
-              {post.invite.intensity} · Cọc {post.invite.holdTs} TS · Còn {post.invite.slotsLeft} chỗ
+              {post.invite.intensity} · Còn {post.invite.slotsLeft} chỗ
             </p>
           </div>
           {onJoinInvite && (
-            <button onClick={onJoinInvite} className="shrink-0 rounded-full bg-brand hover:bg-brand-700 text-white text-[12.5px] font-bold px-3.5 py-1.5">
+            <button onClick={onJoinInvite} className="shrink-0 rounded-lg bg-brand hover:bg-brand-700 text-white text-[12.5px] font-bold px-3.5 py-1.5">
               Nhận kèo
             </button>
           )}
@@ -208,7 +208,7 @@ export function PostCard({
           label={post.hasLiked ? "Bỏ thích" : "Thích"}
           active={post.hasLiked}
           onClick={onLike}
-          icon={<Heart className={cn("h-[22px] w-[22px] transition-transform", post.hasLiked && "fill-brand text-brand scale-110")} />}
+          icon={<Heart className={cn("h-[22px] w-[22px] transition-transform", post.hasLiked &&"fill-foreground text-foreground scale-110")} />}
           count={post.likes}
         />
         <ActionButton label="Bình luận" onClick={onOpenComments} icon={<MessageCircle className="h-[22px] w-[22px]" />} count={post.comments.length} />
@@ -256,7 +256,7 @@ function ActionButton({
       onClick={onClick}
       aria-label={label}
       aria-pressed={active}
-      className="flex items-center gap-1.5 rounded-full px-2 py-1.5 text-foreground hover:bg-muted active:scale-95 transition-all"
+      className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-foreground hover:bg-muted active:scale-95 transition-all"
     >
       {icon}
       <span className="text-[13.5px] font-semibold">{formatCount(count)}</span>
@@ -305,7 +305,7 @@ function MediaCarousel({ post, onDoubleTap }: { post: FeedPost; onDoubleTap: () 
 
       {total > 1 && (
         <>
-          <span className="absolute top-3 right-3 rounded-full bg-black/60 text-white text-[11px] font-semibold px-2 py-0.5">
+          <span className="absolute top-3 right-3 rounded-lg bg-black/60 text-white text-[11px] font-semibold px-2 py-0.5">
             {index + 1}/{total}
           </span>
           <div className="absolute -bottom-0 inset-x-0 flex justify-center gap-1 pb-2 pointer-events-none">
@@ -317,7 +317,7 @@ function MediaCarousel({ post, onDoubleTap }: { post: FeedPost; onDoubleTap: () 
       )}
 
       {post.activity?.source && (
-        <span className="absolute top-3 left-3 rounded-full bg-black/60 text-white text-[10.5px] font-semibold px-2 py-0.5 pointer-events-none" style={{ display: post.media[index]?.type === "route" ? "none" : undefined }}>
+        <span className="absolute top-3 left-3 rounded-lg bg-black/60 text-white text-[10.5px] font-semibold px-2 py-0.5 pointer-events-none" style={{ display: post.media[index]?.type === "route" ? "none" : undefined }}>
           ✓ {post.activity.source}
         </span>
       )}

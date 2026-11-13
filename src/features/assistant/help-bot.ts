@@ -36,7 +36,7 @@ const INTENTS: HelpIntent[] = [
     id: "create",
     keywords: ["tao keo", "len keo", "hen tap", "tao lich", "dat keo"],
     answer: {
-      text: "Bấm nút “Lên Kèo” ở giữa thanh điều hướng dưới cùng, chọn môn, thời gian, địa điểm và mức cọc TS. Bạn tập phù hợp sẽ nhận kèo và hai bên check-in khi gặp nhau.",
+      text: "Bấm nút “Lên Kèo” ở giữa thanh điều hướng dưới cùng, chọn môn, thời gian và địa điểm. Bạn tập phù hợp sẽ nhận kèo và hai bên check-in khi gặp nhau.",
       link: { href: "/len-keo", label: "Mở Lên Kèo" },
     },
   },
@@ -51,7 +51,7 @@ const INTENTS: HelpIntent[] = [
     id: "trust",
     keywords: ["ts", "trust", "trustscore", "trust score", "uy tin", "coc", "diem"],
     answer: {
-      text: "TrustScore (TS) là điểm uy tín. Khi nhận kèo bạn cọc một ít TS; check-in đúng giờ sẽ được hoàn cọc và cộng thêm điểm, còn bùng kèo sẽ bị trừ.",
+      text: "Điểm Uy tín (UT) theo thang 0–10, ai cũng bắt đầu ở 7. Đúng hẹn +0,5 UT. Sau khi chốt kèo: huỷ sớm −0,25, huỷ trong 30 phút −0,5, đến trễ 15–25 phút −0,25, vắng có báo −1, vắng im lặng −1,5. Hai bạn cùng đồng ý huỷ thì không bị trừ (4 lần/tháng).",
       link: { href: "/vi-uy-tin", label: "Xem ví uy tín" },
     },
   },
@@ -108,12 +108,12 @@ const INTENTS: HelpIntent[] = [
 export const HELP_SUGGESTIONS = [
   "Chuỗi tuần tính thế nào?",
   "Làm sao tạo kèo tập?",
-  "TrustScore là gì?",
+  "Điểm Uy tín (UT) là gì?",
   "Kết nối Strava/Garmin",
 ];
 
 const FALLBACK: HelpAnswer = {
-  text: "Mình chưa hiểu rõ câu hỏi. Bạn có thể hỏi về: chuỗi tuần, tạo kèo, TrustScore, nhóm/CLB, bản đồ, tin nhắn, kết nối Strava/Garmin hoặc quyền riêng tư.",
+  text: "Mình chưa hiểu rõ câu hỏi. Bạn có thể hỏi về: chuỗi tuần, tạo kèo, Điểm Uy tín, nhóm/CLB, bản đồ, tin nhắn, kết nối Strava/Garmin hoặc quyền riêng tư.",
 };
 
 export function answerHelpQuestion(question: string): HelpAnswer {

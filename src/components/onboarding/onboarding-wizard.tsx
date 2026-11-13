@@ -6,21 +6,22 @@ import { ArrowLeft, Check, CloudLightning, LocateFixed, Shield, Sparkles, Users,
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
 import {
+  COMM_STYLE_OPTIONS,
   DEFAULT_ONBOARDING,
-  DISC_INFO,
-  DISC_QUESTIONS,
   GOALS,
+  INTENSITY_OPTIONS,
   SPORT_OPTIONS,
   WORKOUTS_BY_SPORT,
-  discResult,
+  migrateOnboarding,
   saveOnboarding,
   toPartnerProfile,
   type OnboardingProfile,
 } from "@/features/onboarding/onboarding";
-import { DAY_PARTS, slotKey, matchPartners, WORKOUT_LABEL, bmi, type DayPart } from "@/features/match/partner-match";
+import { COMM_STYLE_LABEL, DAY_PARTS, INTENSITY_LABEL, slotKey, matchPartners, WORKOUT_LABEL, type DayPart } from "@/features/match/partner-match";
 import { candidateToPartner } from "@/features/match/partner-pool";
 import { CANDIDATES_DATA } from "@/features/match/candidates.data";
 import { ConnectAppsStep, PermissionsStep } from "./permissions-and-apps";
+import { GoalIcon, SportIcon } from "@/components/shared/sport-icon";
 
 const DRAFT_KEY = "sync.onboarding.draft";
 const DAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -35,7 +36,6 @@ const AREAS: { label: string; pos: [number, number] }[] = [
   { label: "Tân Bình", pos: [10.8015, 106.6527] },
   { label: "Gò Vấp", pos: [10.8387, 106.6653] },
 ];
-const paceText = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}/km`;
 
 /* ---------- UI nhỏ ---------- */
 function Chip({ on, onClick, children, className }: { on: boolean; onClick: () => void; children: React.ReactNode; className?: string }) {
@@ -95,13 +95,12 @@ export function OnboardingWizard() {
   const { user, completeOnboarding } = useAuth();
   const [p, setP] = React.useState<OnboardingProfile>(DEFAULT_ONBOARDING);
   const [step, setStep] = React.useState(0);
-  const [discIdx, setDiscIdx] = React.useState(0);
   const [loaded, setLoaded] = React.useState(false);
 
   React.useEffect(() => {
     try {
       const raw = window.localStorage.getItem(DRAFT_KEY);
-      if (raw) setP({ ...DEFAULT_ONBOARDING, ...(JSON.parse(raw) as Partial<OnboardingProfile>) });
+      if (raw) setP(migrateOnboarding(JSON.parse(raw) as Partial<OnboardingProfile>));
     } catch {
       /* bỏ qua */
     }
@@ -124,7 +123,6 @@ export function OnboardingWizard() {
   const update = (fn: (x: OnboardingProfile) => Partial<OnboardingProfile>) => setP((x) => ({ ...x, ...fn(x) }));
   const toggleIn = <T,>(list: T[], v: T) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
-  const disc = discResult(p.discAnswers);
   const hasGym = p.sports.includes("gym") || p.sports.includes("calisthenics");
   const workoutOptions = p.sports.flatMap((s) => (WORKOUTS_BY_SPORT[s] ?? []).map((w) => ({ ...w, sport: s })));
 
@@ -138,7 +136,7 @@ export function OnboardingWizard() {
       sportsProfile: {
         preferredSports: p.sports,
         fitnessGoal: GOALS.filter((g) => p.goals.includes(g.id)).map((g) => g.label).join(", "),
-        runningPace: p.sports.includes("running") ? paceText(p.paceSecPerKm) : "",
+        runningPace: "",
         preferredArea: p.areaLabel,
         buddyStyle: p.vibe === "performance" ? "Mode Hiệu suất" : "Mode Đồng hành thân thiện",
         privacyZoneEnabled: p.hideExactLocation,
@@ -153,8 +151,8 @@ export function OnboardingWizard() {
     {
       key: "about",
       title: "Giới thiệu về bạn",
-      sub: "Giới tính dùng cho tuỳ chọn an toàn; chiều cao/cân nặng chỉ dùng để ghép người đỡ tạ phù hợp.",
-      valid: p.displayName.trim().length >= 2 && p.gender !== "unspecified" && p.heightCm >= 120 && p.weightKg >= 30,
+      sub: "Giới tính dùng cho tuỳ chọn an toàn. Năm sinh để xác nhận bạn đủ 18 tuổi.",
+      valid: p.displayName.trim().length >= 2 && p.gender !== "unspecified",
       body: (
         <div className="space-y-3">
           <label className="block rounded-2xl bg-white/[0.06] border border-white/10 px-3.5 py-2.5">
@@ -174,12 +172,7 @@ export function OnboardingWizard() {
               </Chip>
             ))}
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            <NumberField label="Năm sinh" value={p.birthYear} onChange={(v) => set({ birthYear: v })} min={1940} max={2015} unit="" />
-            <NumberField label="Chiều cao" value={p.heightCm} onChange={(v) => set({ heightCm: v })} min={120} max={220} unit="cm" />
-            <NumberField label="Cân nặng" value={p.weightKg} onChange={(v) => set({ weightKg: v })} min={30} max={200} unit="kg" />
-          </div>
-          {p.heightCm >= 120 && p.weightKg >= 30 && <p className="text-[12px] text-white/55">BMI của bạn: {bmi(p.heightCm, p.weightKg).toFixed(1)} · chỉ bạn nhìn thấy</p>}
+          <NumberField label="Năm sinh" value={p.birthYear} onChange={(v) => set({ birthYear: v })} min={1940} max={2015} unit="" />
         </div>
       ),
     },
@@ -192,7 +185,7 @@ export function OnboardingWizard() {
         <div className="grid grid-cols-2 gap-2">
           {GOALS.map((g) => (
             <Chip key={g.id} on={p.goals.includes(g.id)} onClick={() => update((x) => ({ goals: toggleIn(x.goals, g.id) }))}>
-              <span className="mr-1.5">{g.emoji}</span>
+              <GoalIcon goal={g.id} className="mr-1.5 inline h-4 w-4 -mt-0.5" />
               {g.label}
             </Chip>
           ))}
@@ -202,7 +195,7 @@ export function OnboardingWizard() {
     {
       key: "workouts",
       title: "Bạn tập gì?",
-      sub: "Chọn môn, rồi loại buổi tập bạn hay tập — hệ thống ghép theo đúng loại buổi.",
+      sub: "Chọn môn, loại buổi, trình độ và cường độ — hệ thống ghép theo đúng buổi tập, không theo hồ sơ người.",
       valid: p.sports.length > 0 && (workoutOptions.length === 0 || p.workoutTypes.length > 0),
       body: (
         <div className="space-y-4">
@@ -220,7 +213,7 @@ export function OnboardingWizard() {
                 }
                 className="flex flex-col items-center gap-1 px-1 py-2 text-[11.5px] text-center"
               >
-                <span className="text-[22px] leading-none">{s.emoji}</span>
+                <SportIcon sport={s.id} className="h-6 w-6" />
                 {s.label}
               </Chip>
             ))}
@@ -255,16 +248,17 @@ export function OnboardingWizard() {
               ))}
             </div>
           </div>
-          {p.sports.includes("running") && (
-            <div className="rounded-2xl bg-white/[0.06] border border-white/10 p-3.5">
-              <div className="flex justify-between text-[13px]">
-                <span className="text-white/70">Pace chạy thoải mái</span>
-                <b>{paceText(p.paceSecPerKm)}</b>
-              </div>
-              <input type="range" min={240} max={540} step={5} value={p.paceSecPerKm} onChange={(e) => set({ paceSecPerKm: Number(e.target.value) })} className="mt-2 w-full accent-brand-sky" aria-label="Pace" />
-              <p className="text-[11px] text-white/45">Kết nối Strava ở bước sau để tự cập nhật pace thật.</p>
+          <div className="space-y-2">
+            <p className="text-[12px] font-bold uppercase tracking-wider text-white/55">Cường độ thường tập</p>
+            <div className="grid grid-cols-3 gap-2">
+              {INTENSITY_OPTIONS.map((o) => (
+                <Chip key={o.id} on={p.intensity === o.id} onClick={() => set({ intensity: o.id })} className="px-2 text-center">
+                  <span className="block">{o.label}</span>
+                  <span className="block text-[11px] font-normal text-white/55">{o.hint}</span>
+                </Chip>
+              ))}
             </div>
-          )}
+          </div>
         </div>
       ),
     },
@@ -283,12 +277,12 @@ export function OnboardingWizard() {
                 ["Cuối tuần", [5, 6].flatMap((d) => (["dawn", "morning", "afternoon"] as DayPart[]).map((x) => slotKey(d, x)))],
               ] as [string, string[]][]
             ).map(([l, slots]) => (
-              <button key={l} type="button" onClick={() => update((x) => ({ availability: [...new Set([...x.availability, ...slots])] }))} className="rounded-full bg-white/10 px-3 py-1.5 text-[12px] font-semibold hover:bg-white/20">
+              <button key={l} type="button" onClick={() => update((x) => ({ availability: [...new Set([...x.availability, ...slots])] }))} className="rounded-lg bg-white/10 px-3 py-1.5 text-[12px] font-semibold hover:bg-white/20">
                 + {l}
               </button>
             ))}
             {p.availability.length > 0 && (
-              <button type="button" onClick={() => set({ availability: [] })} className="rounded-full px-3 py-1.5 text-[12px] font-semibold text-white/60">
+              <button type="button" onClick={() => set({ availability: [] })} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold text-white/60">
                 Xoá hết
               </button>
             )}
@@ -343,7 +337,7 @@ export function OnboardingWizard() {
             }
             className={cn("w-full flex items-center gap-3 rounded-2xl border p-3.5 text-left", p.areaLabel === "Vị trí hiện tại" ? "border-brand-sky bg-brand/30" : "border-white/12 bg-white/[0.05]")}
           >
-            <LocateFixed className="h-5 w-5 text-brand-sky" />
+            <LocateFixed className="h-5 w-5 text-white" />
             <span className="flex-1">
               <span className="block text-[14px] font-bold">Dùng vị trí hiện tại (GPS)</span>
               <span className="block text-[12px] text-white/55">{p.permissions.gps === "denied" ? "Quyền vị trí bị từ chối — chọn khu vực bên dưới" : "Chính xác nhất"}</span>
@@ -367,53 +361,20 @@ export function OnboardingWizard() {
       ),
     },
     {
-      key: "disc",
-      title: "Phong cách tập của bạn (DISC)",
-      sub: "5 câu hỏi nhanh để tìm người có tính cách hợp khi TẬP CÙNG (không phải làm việc nhóm).",
-      valid: p.discAnswers.length === DISC_QUESTIONS.length,
-      body:
-        p.discAnswers.length < DISC_QUESTIONS.length ? (
-          <div key={discIdx} className="animate-in fade-in slide-in-from-right-3 duration-200">
-            <p className="text-[12px] font-bold text-brand-sky">
-              Câu {discIdx + 1}/{DISC_QUESTIONS.length}
-            </p>
-            <p className="mt-1 text-[17px] font-bold">{DISC_QUESTIONS[discIdx]!.q}</p>
-            <div className="mt-3 space-y-2">
-              {DISC_QUESTIONS[discIdx]!.options.map((o) => (
-                <Chip
-                  key={o.text}
-                  on={false}
-                  onClick={() => {
-                    update((x) => ({ discAnswers: [...x.discAnswers.slice(0, discIdx), o.disc] }));
-                    if (discIdx < DISC_QUESTIONS.length - 1) setDiscIdx(discIdx + 1);
-                  }}
-                  className="w-full"
-                >
-                  {o.text}
-                </Chip>
-              ))}
-            </div>
-          </div>
-        ) : (
-          disc && (
-            <div className="rounded-3xl bg-gradient-to-br from-brand to-brand-900 p-5 text-center animate-in zoom-in-95">
-              <p className="text-[56px] font-black font-display leading-none">{disc}</p>
-              <p className="mt-2 text-[18px] font-extrabold">{DISC_INFO[disc].title}</p>
-              <p className="mt-1 text-[13px] text-white/80">{DISC_INFO[disc].desc}</p>
-              <p className="mt-2 text-[12.5px] text-brand-100">{DISC_INFO[disc].partner}</p>
-              <button
-                type="button"
-                onClick={() => {
-                  set({ discAnswers: [] });
-                  setDiscIdx(0);
-                }}
-                className="mt-3 text-[12.5px] font-bold text-white/70 underline"
-              >
-                Làm lại
-              </button>
-            </div>
-          )
-        ),
+      key: "comm",
+      title: "Bạn thích tập cùng thế nào?",
+      sub: "Chọn trực tiếp kiểu giao tiếp khi tập. Bạn đổi được bất cứ lúc nào trong Hồ sơ.",
+      valid: true,
+      body: (
+        <div className="space-y-2">
+          {COMM_STYLE_OPTIONS.map((o) => (
+            <Chip key={o.id} on={p.commStyle === o.id} onClick={() => set({ commStyle: o.id })} className="w-full py-3">
+              <span className="block font-bold">{o.label}</span>
+              <span className="block text-[12px] font-normal text-white/60">{o.hint}</span>
+            </Chip>
+          ))}
+        </div>
+      ),
     },
     {
       key: "vibe",
@@ -424,12 +385,12 @@ export function OnboardingWizard() {
         <div className="space-y-2.5">
           <div className="grid grid-cols-2 gap-2">
             <Chip on={p.vibe === "performance"} onClick={() => set({ vibe: "performance" })} className="py-3.5">
-              <Zap className="h-5 w-5 text-brand-sky mb-1" />
+              <Zap className="h-5 w-5 text-white mb-1" />
               <span className="block font-bold">Mode Hiệu suất</span>
               <span className="block text-[11.5px] font-normal text-white/60">Tập trung tập luyện, ít xã giao</span>
             </Chip>
             <Chip on={p.vibe === "friendly"} onClick={() => set({ vibe: "friendly" })} className="py-3.5">
-              <Users className="h-5 w-5 text-brand-sky mb-1" />
+              <Users className="h-5 w-5 text-white mb-1" />
               <span className="block font-bold">Mode Đồng hành</span>
               <span className="block text-[11.5px] font-normal text-white/60">Cởi mở, trò chuyện nhiều hơn</span>
             </Chip>
@@ -440,7 +401,8 @@ export function OnboardingWizard() {
             title="Chỉ ghép cặp cùng giới"
             desc={p.gender === "female" ? "Khuyên dùng — bảo vệ bạn khỏi rủi ro bị làm phiền" : "Chỉ hiện và ghép với người cùng giới tính"}
           />
-          {hasGym && <Toggle on={p.needsSpotter} onChange={(v) => set({ needsSpotter: v })} title="Cần người đỡ tạ (spotter)" desc="Ưu tiên người có tỷ lệ cân nặng phù hợp cho buổi tạ nặng" />}
+          {hasGym && <Toggle on={p.needsSpotter} onChange={(v) => set({ needsSpotter: v })} title="Cần người đỡ tạ (spotter)" desc="Buổi tạ nặng sẽ ưu tiên người tự tin đỡ tạ an toàn" />}
+          {hasGym && <Toggle on={p.canSpot} onChange={(v) => set({ canSpot: v })} title="Tôi đỡ tạ được" desc="Bạn biết cách đỡ tạ an toàn cho bench, squat" />}
           <Toggle on={p.hideExactLocation} onChange={(v) => set({ hideExactLocation: v })} title="Ẩn vị trí chính xác" desc="Người khác chỉ thấy khu vực, không thấy điểm xuất phát của bạn" />
         </div>
       ),
@@ -461,7 +423,7 @@ export function OnboardingWizard() {
     {
       key: "apps",
       title: "Liên kết ứng dụng thể thao",
-      sub: "Đọc chỉ số thật (pace, nhịp tim, khối lượng tạ) để ghép chính xác hơn.",
+      sub: "Đồng bộ buổi tập của bạn để tự xác thực. Số liệu chỉ hiển thị cho chính bạn, không dùng để so sánh với người khác.",
       valid: true,
       body: <ConnectAppsStep connected={p.connectedApps} onChange={(connectedApps) => set({ connectedApps })} />,
     },
@@ -473,13 +435,13 @@ export function OnboardingWizard() {
   const skippable = ["perms", "apps"].includes(cur.key);
 
   return (
-    <div className="relative min-h-dvh bg-[#020611] text-white overflow-hidden">
+    <div className="relative min-h-dvh bg-[#020611] text-white overflow-clip">
       <div className="absolute inset-0 intro-grid opacity-40" />
       <div className="absolute -top-48 right-[-30%] h-[460px] w-[460px] rounded-full bg-brand/25 blur-[110px]" />
       <div className="relative mx-auto flex min-h-dvh max-w-md flex-col px-5 pb-6 pt-[max(16px,env(safe-area-inset-top))]">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => (cur.key === "disc" && discIdx > 0 && p.discAnswers.length < DISC_QUESTIONS.length ? setDiscIdx(discIdx - 1) : setStep(Math.max(0, step - 1)))}
+            onClick={() => setStep(Math.max(0, step - 1))}
             disabled={step === 0}
             aria-label="Quay lại"
             className="h-10 w-10 -ml-2 rounded-full hover:bg-white/10 flex items-center justify-center disabled:opacity-0"
@@ -504,7 +466,7 @@ export function OnboardingWizard() {
           <button
             onClick={() => (last ? finish() : setStep(step + 1))}
             disabled={!cur.valid}
-            className="w-full h-12 rounded-full bg-brand text-white font-bold text-[15px] hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30 disabled:bg-white/10 disabled:text-white/40 disabled:shadow-none disabled:cursor-not-allowed"
+            className="w-full h-12 rounded-lg bg-brand text-white font-bold text-[15px] hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30 disabled:bg-white/10 disabled:text-white/40 disabled:shadow-none disabled:cursor-not-allowed"
           >
             {last ? "Vào SYNESIS" : "Tiếp tục"}
           </button>
@@ -531,8 +493,6 @@ function Summary({ p }: { p: OnboardingProfile }) {
     return matchPartners(me, pool, { sport, radiusKm: p.radiusKm, limit: 3 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [p, sport]);
-  const disc = discResult(p.discAnswers);
-
   return (
     <div className="space-y-4">
       <div className="rounded-2xl bg-white/[0.06] border border-white/10 p-3.5 grid grid-cols-2 gap-y-2 text-[12.5px]">
@@ -544,9 +504,11 @@ function Summary({ p }: { p: OnboardingProfile }) {
         <span className="font-semibold text-right">{p.availability.length} khung/tuần</span>
         <span className="text-white/55">Khu vực</span>
         <span className="font-semibold text-right">{p.areaLabel} · ≤{p.radiusKm} km</span>
-        <span className="text-white/55">DISC · Vibe</span>
-        <span className="font-semibold text-right">
-          {disc ?? "—"} · {p.vibe === "performance" ? "Hiệu suất" : "Đồng hành"}
+        <span className="text-white/55">Cường độ</span>
+        <span className="font-semibold text-right">{INTENSITY_LABEL[p.intensity]}</span>
+        <span className="text-white/55">Giao tiếp · Vibe</span>
+        <span className="font-semibold text-right truncate">
+          {COMM_STYLE_LABEL[p.commStyle]} · {p.vibe === "performance" ? "Hiệu suất" : "Đồng hành"}
         </span>
         <span className="text-white/55">Ứng dụng</span>
         <span className="font-semibold text-right">{p.connectedApps.length} đã kết nối</span>
@@ -554,7 +516,7 @@ function Summary({ p }: { p: OnboardingProfile }) {
 
       <div>
         <p className="mb-2 flex items-center gap-1.5 text-[14px] font-bold">
-          <Sparkles className="h-4 w-4 text-brand-sky" /> {run.matches.length ? `${run.matches.length} bạn tập phù hợp nhất` : "Chưa có ai phù hợp trong bán kính này"}
+          <Sparkles className="h-4 w-4 text-white" /> {run.matches.length ? `${run.matches.length} bạn tập phù hợp nhất` : "Chưa có ai phù hợp trong bán kính này"}
         </p>
         <ul className="space-y-2">
           {run.matches.map((m) => {
@@ -576,18 +538,18 @@ function Summary({ p }: { p: OnboardingProfile }) {
 
       <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-3 space-y-1.5 text-[12px] text-white/65">
         <p className="flex items-center gap-1.5 font-bold text-white/85">
-          <Shield className="h-4 w-4 text-brand-sky" /> Hệ thống đã lọc giúp bạn
+          <Shield className="h-4 w-4 text-white" /> Hệ thống đã lọc giúp bạn
         </p>
         <p>• {run.excluded.distance} người ngoài {p.radiusKm} km · {run.excluded.schedule} người không trùng giờ rảnh</p>
         {run.excluded.gender > 0 && <p>• {run.excluded.gender} người khác giới (tuỳ chọn an toàn)</p>}
-        {run.excluded.fakeGps > 0 && <p>• {run.excluded.fakeGps} tài khoản nghi giả mạo GPS (dịch chuyển &gt; 2 km trong 2 phút)</p>}
-        <p>• Người hay bùng kèo được xếp hàng đợi riêng</p>
+        {run.excluded.locationRestricted > 0 && <p>• {run.excluded.locationRestricted} tài khoản bị hạn chế vị trí (nhiều tín hiệu bất thường, đã xác minh thất bại)</p>}
+        <p>• Độ tin cậy tính theo số buổi đã tập — người mới không bị xếp riêng</p>
         <p className="flex items-center gap-1.5">
-          <CloudLightning className="h-3.5 w-3.5" /> Có mưa dông ở điểm hẹn ngoài trời → tự đề xuất phòng gym gần nhất & miễn trừ huỷ không trừ cọc
+          <CloudLightning className="h-3.5 w-3.5 shrink-0" /> Mưa dông ở điểm hẹn ngoài trời → đề xuất phòng tập có thật gần đó, cả hai xác nhận mới đổi; huỷ hoặc đổi giờ không bị phạt
         </p>
       </div>
       <p className="flex items-center gap-1.5 text-[12px] text-emerald-300">
-        <Check className="h-4 w-4" /> +20 TS chào mừng khi hoàn tất thiết lập
+        <Check className="h-4 w-4" /> Bắt đầu với 7 Điểm Uy tín (UT)
       </p>
     </div>
   );

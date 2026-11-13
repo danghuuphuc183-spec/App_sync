@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { UT_CONFIG, legacyTsToUt } from "@/features/trust/config";
 
 export interface UserPermissions {
   camera: boolean;
@@ -88,7 +89,7 @@ const DEFAULT_USER: UserProfile = {
   phone: "0908 123 456",
   avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
   authProvider: "phone",
-  trustScore: 125,
+  trustScore: 8.5,
   tier: "Vàng",
   isSurveyCompleted: true,
   biometricEnabled: true,
@@ -117,7 +118,7 @@ const DEFAULT_USER: UserProfile = {
     preferredTime: "05:30 - 06:45 AM (Sáng sớm)",
     workoutFrequency: "4 buổi / tuần",
     preferredArea: "Bình Thạnh & Q.1 (Ven sông Sài Gòn, Landmark 81)",
-    buddyStyle: "Kỷ luật cao, đúng giờ 100%, sẵn sàng cọc điểm TS",
+    buddyStyle: "Kỷ luật cao, đúng giờ 100%, luôn báo trước nếu đổi lịch",
     privacyZoneEnabled: true,
   },
 };
@@ -125,6 +126,15 @@ const DEFAULT_USER: UserProfile = {
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
 const STORAGE_KEY = "sync_sport_auth_session_v1";
+/**
+ * Tự đăng nhập tài khoản mẫu "Minh Thư" khi chưa có phiên.
+ * Mặc định: BẬT khi chạy dev/test, TẮT ở bản production (Hostinger) để người mới phải đăng ký.
+ * Ép bật/tắt bằng biến môi trường NEXT_PUBLIC_DEMO_AUTOLOGIN=true|false.
+ */
+const DEMO_AUTOLOGIN =
+  process.env.NEXT_PUBLIC_DEMO_AUTOLOGIN !== undefined
+    ? process.env.NEXT_PUBLIC_DEMO_AUTOLOGIN === "true"
+    : process.env.NODE_ENV !== "production";
 const LOGGED_OUT_KEY = "sync_sport_logged_out_flag";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -136,11 +146,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const isLoggedOut = localStorage.getItem(LOGGED_OUT_KEY);
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        setUser(JSON.parse(stored));
-      } else if (isLoggedOut === "true") {
+        const parsed = JSON.parse(stored) as UserProfile;
+        // Dữ liệu cũ theo thang TS 0–150 → quy đổi sang UT 0–10
+        if (parsed.trustScore > UT_CONFIG.MAX) parsed.trustScore = legacyTsToUt(parsed.trustScore);
+        setUser(parsed);
+      } else if (isLoggedOut === "true" || !DEMO_AUTOLOGIN) {
+        // Bản chạy thật (production): người mới phải tự đăng ký / đăng nhập
         setUser(null);
       } else {
-        // Khởi tạo người dùng mặc định trải nghiệm lần đầu
+        // Chỉ khi chạy trên máy (dev): tự đăng nhập tài khoản mẫu để thử nhanh
         setUser(DEFAULT_USER);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_USER));
       }
@@ -253,7 +267,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       phone: data.phone || "0987 654 321",
       avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80",
       authProvider: data.provider || "phone",
-      trustScore: 100, // Điểm TS chào mừng
+      trustScore: UT_CONFIG.INITIAL, // mọi tài khoản mới bắt đầu ở 7 UT
       tier: "Bạc",
       isSurveyCompleted: false, // Cần làm khảo sát onboarding
       biometricEnabled: false,
@@ -300,7 +314,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const updatedUser: UserProfile = {
       ...user,
       isSurveyCompleted: true,
-      trustScore: user.trustScore + 20, // Thưởng 20 điểm TS khi hoàn thành khảo sát
       sportsProfile: {
         ...user.sportsProfile,
         ...profileData,
@@ -315,7 +328,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       ...user,
       name: data.name || user.name,
       isSurveyCompleted: true,
-      trustScore: user.isSurveyCompleted ? user.trustScore : user.trustScore + 20,
       sportsProfile: { ...user.sportsProfile, ...data.sportsProfile },
       permissions: { ...user.permissions, ...data.permissions },
       connectedApps: { ...(user.connectedApps || DEFAULT_USER.connectedApps), ...data.connectedApps },

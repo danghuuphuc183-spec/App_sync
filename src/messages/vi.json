@@ -52,7 +52,7 @@
     "consentPrivacy": "Tôi đồng ý với Chính sách bảo vệ dữ liệu cá nhân"
   },
   "trust": {
-    "title": "Điểm Uy Tín (Trust Score)",
+    "title": "Điểm Uy tín (UT)",
     "currentScore": "Điểm hiện tại",
     "availableScore": "Điểm khả dụng",
     "heldScore": "Điểm đang giữ (Hold)",
@@ -63,14 +63,14 @@
     "reasonCancelledEarly": "Hủy kèo trước trên 2 giờ (-3)",
     "reasonCancelledLate": "Hủy kèo sát giờ dưới 2 giờ (-15)",
     "reasonNoShow": "Bùng kèo hoặc trễ quá 15 phút (-30)",
-    "reasonGracePass": "Sử dụng thẻ ân hạn hủy kèo (0 TS)"
+    "reasonGracePass": "Sử dụng thẻ ân hạn (0 UT)"
   },
   "bounty": {
     "title": "Bảng Kèo Thể Thao",
     "createTitle": "Tạo Kèo Mới",
     "accept": "Nhận kèo",
     "cancel": "Hủy kèo",
-    "stake": "Điểm cọc cam kết",
+    "stake": "Hậu quả nếu huỷ",
     "beginnerOnly": "Chỉ dành cho Tân binh (Beginner)",
     "ghostMode": "Chế độ Hướng nội (Ghost Mode)",
     "normalMode": "Chế độ Tiêu chuẩn",
@@ -87,7 +87,7 @@
     "network": "Lỗi kết nối mạng, vui lòng kiểm tra lại đường truyền.",
     "server": "Máy chủ đang bận, vui lòng thử lại sau.",
     "alreadyMatched": "Kèo này đã có người nhận trước bạn.",
-    "insufficientPoints": "Điểm khả dụng của bạn không đủ để đặt cọc kèo này.",
+    "insufficientPoints": "Điểm Uy tín của bạn chưa đủ để nhận kèo này.",
     "timeConflict": "Bạn đã có lịch tập khác trùng với khung giờ này."
   }
 }

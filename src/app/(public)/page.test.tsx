@@ -19,8 +19,8 @@ describe("HomePage - Community Controlled Activity Feed", () => {
     expect(screen.getAllByRole("button", { name: "Theo dõi" }).length).toBeGreaterThan(0);
     expect(screen.queryByText(/Reels Cung Đường Đẹp/i)).not.toBeInTheDocument();
 
-    // Kiểm tra banner Ghép Bạn Tập Kỷ Luật
-    expect(screen.getByText(/Khám phá & Ghép đôi bạn tập thể thao/i)).toBeInTheDocument();
+    // Banner Ghép Bạn Tập Kỷ Luật đã bỏ khỏi trang chủ
+    expect(screen.queryByText(/Khám phá & Ghép đôi bạn tập thể thao/i)).not.toBeInTheDocument();
 
     // Kiểm tra bộ lọc chips
     expect(screen.getByRole("button", { name: "Tất cả" })).toBeInTheDocument();

@@ -7,7 +7,7 @@ export function PublicFooter() {
     <footer className="border-t border-border bg-card/60 text-muted-foreground text-xs py-8 px-4 sm:px-6">
       <div className="container max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2">
-          <Shield className="h-4 w-4 text-primary" />
+          <Shield className="h-4 w-4 text-foreground" />
           <span className="font-semibold text-foreground">Khế Ước Kỷ Luật Thể Thao</span>
           <span>© 2026. Phát triển tại TP.HCM.</span>
         </div>

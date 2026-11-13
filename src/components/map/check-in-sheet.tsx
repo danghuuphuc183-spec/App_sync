@@ -71,27 +71,27 @@ export function CheckInSheet({
           <>
             <ul className="space-y-2.5 text-[13px] text-foreground">
               <li className="flex gap-2.5">
-                <Radio className="h-4.5 w-4.5 shrink-0 text-brand-600 mt-0.5" />
+                <Radio className="h-4.5 w-4.5 shrink-0 text-foreground mt-0.5" />
                 <span>
                   Vị trí của bạn được hiển thị cho người tập <b>cùng môn</b> trong bán kính{" "}
                   <b>{formatDistance(VISIBLE_RADIUS_M)}</b> để mời ghép đội.
                 </span>
               </li>
               <li className="flex gap-2.5">
-                <LocateFixed className="h-4.5 w-4.5 shrink-0 text-brand dark:text-brand-sky mt-0.5" />
+                <LocateFixed className="h-4.5 w-4.5 shrink-0 text-foreground mt-0.5" />
                 <span>
                   Dành cho người <b>đã tới nơi</b> và chuẩn bị tập (trong vòng {ARRIVAL_RADIUS_M} m từ điểm tập).
                 </span>
               </li>
               <li className="flex gap-2.5">
-                <ShieldCheck className="h-4.5 w-4.5 shrink-0 text-emerald-600 mt-0.5" />
+                <ShieldCheck className="h-4.5 w-4.5 shrink-0 text-foreground mt-0.5" />
                 <span>Tự động dừng chia sẻ khi bạn bấm “Kết thúc”.</span>
               </li>
             </ul>
             <button
               onClick={startWithGps}
               disabled={step.kind === "locating"}
-              className="w-full rounded-full bg-brand-600 hover:bg-brand-700 disabled:opacity-70 text-white font-bold py-3 text-sm flex items-center justify-center gap-2"
+              className="w-full rounded-lg bg-brand-600 hover:bg-brand-700 disabled:opacity-70 text-white font-bold py-3 text-sm flex items-center justify-center gap-2"
             >
               {step.kind === "locating" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Radio className="h-4 w-4" />}
               {step.kind === "locating" ? "Đang xác định vị trí..." : "Bật chia sẻ vị trí & bắt đầu"}
@@ -102,7 +102,7 @@ export function CheckInSheet({
         {(step.kind === "too_far" || step.kind === "no_gps") && (
           <>
             <div className="flex gap-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 p-3">
-              <MapPinOff className="h-5 w-5 shrink-0 text-amber-600 mt-0.5" />
+              <MapPinOff className="h-5 w-5 shrink-0 text-foreground mt-0.5" />
               <p className="text-[13px] text-foreground leading-snug">
                 {step.kind === "too_far"
                   ? `Bạn đang cách điểm tập ${formatDistance(step.distanceM)}. Hãy tới nơi (trong vòng ${ARRIVAL_RADIUS_M} m) rồi bật lại nhé.`
@@ -110,10 +110,10 @@ export function CheckInSheet({
               </p>
             </div>
             <div className="flex gap-2">
-              <button onClick={startWithGps} className="flex-1 rounded-full border border-border py-2.5 text-[13px] font-bold text-foreground hover:bg-muted">
+              <button onClick={startWithGps} className="flex-1 rounded-lg border border-border py-2.5 text-[13px] font-bold text-foreground hover:bg-muted">
                 Thử lại
               </button>
-              <button onClick={startDemo} className="flex-1 rounded-full bg-brand hover:bg-brand-700 text-white py-2.5 text-[13px] font-bold">
+              <button onClick={startDemo} className="flex-1 rounded-lg bg-brand hover:bg-brand-700 text-white py-2.5 text-[13px] font-bold">
                 Dùng vị trí mô phỏng
               </button>
             </div>

@@ -21,7 +21,7 @@ const display = Montserrat({
 export const metadata: Metadata = {
   title: "Khế Ước Kỷ Luật Thể Thao | Nền Tảng Kết Nối Bạn Tập & Cam Kết Uy Tín",
   description:
-    "Nền tảng kết nối người tập thể thao phong trào đô thị (chạy bộ & gym) theo mô hình khế ước kỷ luật, bảo chứng bằng Điểm Uy Tín (Trust Score).",
+    "Nền tảng kết nối người tập thể thao phong trào đô thị (chạy bộ & gym) theo mô hình khế ước kỷ luật, bảo chứng bằng Điểm Uy tín (UT).",
   keywords: ["chạy bộ", "gym", "bạn tập", "kỷ luật", "trust score", "thể thao đô thị", "bình thạnh", "thủ đức"],
   authors: [{ name: "Đội ngũ phát triển Khế Ước Thể Thao" }],
 };

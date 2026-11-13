@@ -95,7 +95,7 @@ export function ReelItem(p: ReelItemProps) {
       {/* Cột hành động bên phải */}
       <div className="absolute right-2.5 bottom-24 flex flex-col items-center gap-4">
         <RailButton label={p.liked ? "Bỏ thích" : "Thích"} onClick={p.onLike} count={p.likes}>
-          <Heart className={cn("h-7 w-7 transition-transform", p.liked && "fill-brand-sky text-brand-sky scale-110")} />
+          <Heart className={cn("h-7 w-7 transition-transform", p.liked &&"fill-white text-white scale-110")} />
         </RailButton>
         <RailButton label="Bình luận" onClick={p.onComments} count={p.commentsCount}>
           <MessageCircle className="h-7 w-7" />
@@ -146,10 +146,10 @@ export function ReelItem(p: ReelItemProps) {
         </button>
 
         <div className="flex flex-wrap gap-1.5">
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/20 backdrop-blur px-2.5 py-1 text-[11.5px] font-semibold">
+          <span className="inline-flex items-center gap-1 rounded-lg bg-white/20 backdrop-blur px-2.5 py-1 text-[11.5px] font-semibold">
             <MapPin className="h-3.5 w-3.5" /> {reel.routeLocation.split(" - ")[0]}
           </span>
-          <span className="inline-flex items-center rounded-full bg-brand px-2.5 py-1 text-[11.5px] font-bold">
+          <span className="inline-flex items-center rounded-lg bg-brand px-2.5 py-1 text-[11.5px] font-bold">
             {reel.distanceKm} km · {reel.sportNameVi}
           </span>
         </div>

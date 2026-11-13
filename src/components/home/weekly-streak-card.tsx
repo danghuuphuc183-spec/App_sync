@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Flame, Check } from "lucide-react";
+import { Check } from "lucide-react";
+import { StreakFlame } from "@/components/home/streak-flame";
 import { computeWeeklyStreak } from "@/features/streak/streak";
 import { cn } from "@/lib/utils";
 import { useActivityLog } from "@/features/activity/use-activity-log";
@@ -63,30 +64,13 @@ export function WeeklyStreakCard() {
         {/* SLIDE 1: Chuỗi tuần */}
         <div className="w-full shrink-0 snap-center px-4 py-3 flex items-center gap-3">
           <div className="flex flex-col items-center shrink-0 w-14">
-            <div className="relative">
-              <Flame
-                className={cn(
-                  "h-12 w-12 stroke-[1.5]",
-                  streak.current > 0
-                    ? "text-brand-600 fill-brand-400/80"
-                    : "text-neutral-300 fill-neutral-200 dark:text-neutral-600 dark:fill-neutral-700"
-                )}
-              />
-              <span
-                className={cn(
-                  "absolute inset-x-0 bottom-1.5 text-center text-[15px] font-black",
-                  streak.current > 0 ? "text-white" : "text-neutral-600 dark:text-neutral-300"
-                )}
-              >
-                {log ? streak.current : "–"}
-              </span>
-            </div>
+            <StreakFlame value={log ? streak.current : "–"} active={!!log && streak.current > 0} />
             <span className="text-[12px] font-semibold text-muted-foreground">Tuần</span>
           </div>
           <p className="flex-1 text-[13px] leading-snug text-neutral-700 dark:text-neutral-300">{subtitle}</p>
           <button
             onClick={() => setIsLogOpen(true)}
-            className="shrink-0 rounded-full bg-brand hover:bg-brand-700 dark:bg-brand-sky dark:text-black text-white text-[13px] font-bold px-4 py-2 active:scale-95 transition-all"
+            className="shrink-0 rounded-lg bg-brand hover:bg-brand-700 dark:bg-brand-sky dark:text-black text-white text-[13px] font-bold px-4 py-2 active:scale-95 transition-all"
           >
             Ghi ngay
           </button>

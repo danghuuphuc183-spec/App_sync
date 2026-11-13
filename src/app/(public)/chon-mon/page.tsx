@@ -20,7 +20,7 @@ export default function ChooseSportGatewayPage() {
         {/* Lối 1: Đã biết môn */}
         <Card className="hover:border-primary/50 transition-all shadow-sm flex flex-col justify-between">
           <CardHeader className="space-y-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-foreground">
               <CheckCircle2 className="h-6 w-6 stroke-[2]" />
             </div>
             <div>
@@ -44,7 +44,7 @@ export default function ChooseSportGatewayPage() {
         {/* Lối 2: Làm Quiz gợi ý */}
         <Card className="hover:border-primary/50 transition-all shadow-sm flex flex-col justify-between border-primary/30 bg-primary/5">
           <CardHeader className="space-y-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-foreground shadow-sm">
               <Compass className="h-6 w-6 stroke-[2]" />
             </div>
             <div>
@@ -59,7 +59,7 @@ export default function ChooseSportGatewayPage() {
             <Button asChild variant="outline" className="w-full justify-between border-primary/40 hover:bg-primary/10" size="lg">
               <Link href="/chon-mon/goi-y">
                 <span>Làm Quiz gợi ý môn</span>
-                <ArrowRight className="h-4 w-4 text-primary" />
+                <ArrowRight className="h-4 w-4 text-foreground" />
               </Link>
             </Button>
           </CardContent>

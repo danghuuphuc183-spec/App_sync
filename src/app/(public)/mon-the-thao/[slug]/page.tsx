@@ -63,7 +63,7 @@ export default async function SportDetailPage({ params }: SportDetailPageProps) 
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-primary" />
+                <ShieldCheck className="h-5 w-5 text-foreground" />
                 <span>Quy trình xác thực khế ước buổi tập</span>
               </CardTitle>
             </CardHeader>
@@ -85,16 +85,16 @@ export default async function SportDetailPage({ params }: SportDetailPageProps) 
                 </h4>
                 <ul className="space-y-1.5 text-xs">
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                     <span>Dải trình độ tự khai & năng lực tính toán nội bộ (Beginner/Intermediate/Advanced)</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                    <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
                     <span>Khung giờ sinh hoạt & cụm khu vực thường tập (Bình Thạnh, Thủ Đức...)</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
-                    <span>Tương đồng thói quen kỷ luật và điểm uy tín Trust Score</span>
+                    <CheckCircle2 className="h-4 w-4 text-foreground shrink-0" />
+                    <span>Tương đồng thói quen kỷ luật và Điểm Uy tín (UT)</span>
                   </li>
                 </ul>
               </div>
@@ -132,7 +132,7 @@ export default async function SportDetailPage({ params }: SportDetailPageProps) 
 
           <div className="rounded-xl border border-border p-4 bg-muted/30 text-xs text-muted-foreground space-y-2">
             <div className="flex items-center gap-1.5 font-semibold text-foreground">
-              <Clock className="h-3.5 w-3.5 text-primary" />
+              <Clock className="h-3.5 w-3.5 text-foreground" />
               <span>Chế độ Hướng nội (Ghost Mode)</span>
             </div>
             <p>

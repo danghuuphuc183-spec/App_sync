@@ -10,7 +10,8 @@ import { Switch } from "@/components/ui/switch";
 import { FormField } from "@/components/shared/form-field";
 import { EmptyState } from "@/components/shared/empty-state";
 import { AREAS } from "@/features/sports/quiz.config";
-import { TRUST_CONFIG } from "@/features/trust/config";
+import { UT_CONFIG, formatUt } from "@/features/trust/config";
+import { canCreateKeo, keosCreatedToday } from "@/features/trust/ut-rules";
 import {
   Flame,
   Clock,
@@ -31,7 +32,6 @@ interface BountyItem {
   locationNote: string;
   startsAt: string;
   targetDescription: string;
-  stakePoints: number;
   isGhostMode: boolean;
   isBeginnerOnly: boolean;
   status: "open" | "matched" | "completed" | "cancelled";
@@ -48,7 +48,6 @@ const INITIAL_BOUNTIES: BountyItem[] = [
     locationNote: "Khuôn viên Landmark 81 / Bờ kè Thanh Đa",
     startsAt: "05:30 AM • Thứ Tư",
     targetDescription: "Chạy 10km • Pace 5:45 - 6:15",
-    stakePoints: 50,
     isGhostMode: false,
     isBeginnerOnly: false,
     status: "open",
@@ -63,7 +62,6 @@ const INITIAL_BOUNTIES: BountyItem[] = [
     locationNote: "Phòng gym SV Đại học Quốc Gia",
     startsAt: "18:00 PM • Thứ Năm",
     targetDescription: "Tập ngực & tay sau • Cần spotter đỡ tạ",
-    stakePoints: 30,
     isGhostMode: true,
     isBeginnerOnly: true,
     status: "open",
@@ -78,7 +76,6 @@ const INITIAL_BOUNTIES: BountyItem[] = [
     locationNote: "Bờ kè Hoàng Sa - Trường Sa (Gần Cầu Đỏ)",
     startsAt: "06:00 AM • Thứ Bảy",
     targetDescription: "Chạy nhẹ 5km cho Tân binh • Pace 7:00",
-    stakePoints: 20,
     isGhostMode: false,
     isBeginnerOnly: true,
     status: "open",
@@ -99,7 +96,10 @@ export default function BountyBoardPage() {
   const [newLocation, setNewLocation] = React.useState("");
   const [newTime, setNewTime] = React.useState("05:30 AM • Thứ Bảy");
   const [newTarget, setNewTarget] = React.useState("");
-  const [newStake, setNewStake] = React.useState(50);
+  /** UT của bạn (demo) và các kèo đã tạo — hạn mức tính theo ngày lịch 00:00–24:00 */
+  const MY_UT = 8.5;
+  const [createdAt, setCreatedAt] = React.useState<string[]>([]);
+  const quota = canCreateKeo({ ut: MY_UT, createdToday: keosCreatedToday(createdAt), kind: "group" });
   const [newGhost, setNewGhost] = React.useState(false);
   const [newBeginnerOnly, setNewBeginnerOnly] = React.useState(true);
 
@@ -119,7 +119,6 @@ export default function BountyBoardPage() {
   });
 
   const handleAcceptBounty = (bounty: BountyItem) => {
-    // Giả lập khóa kèo & đặt cọc giữ chỗ (Hold)
     setBounties((prev) =>
       prev.map((item) =>
         item.id === bounty.id ? { ...item, status: "matched" } : item
@@ -127,13 +126,17 @@ export default function BountyBoardPage() {
     );
     setActionMessage({
       type: "success",
-      text: `Nhận kèo thành công! Đã tạm đóng băng ${bounty.stakePoints} Điểm Uy Tín (Hold). Hãy có mặt đúng giờ lúc ${bounty.startsAt} tại ${bounty.locationNote}.`,
+      text: `Đã nhận kèo! Hãy có mặt lúc ${bounty.startsAt} tại ${bounty.locationNote}. Đúng hẹn +${formatUt(UT_CONFIG.RECOVERY.ON_TIME)} UT; sau khi chốt, huỷ sớm ${formatUt(UT_CONFIG.PENALTY.CANCEL_EARLY)}, trong 30 phút ${formatUt(UT_CONFIG.PENALTY.CANCEL_LATE)} UT.`,
     });
     setTimeout(() => setActionMessage(null), 6000);
   };
 
   const handleCreateBounty = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!quota.ok) {
+      setActionMessage({ type: "error", text: quota.reasonVi });
+      return;
+    }
     const areaObj = AREAS.find((a) => a.id === newArea);
     const newBounty: BountyItem = {
       id: `bounty-${Date.now()}`,
@@ -145,17 +148,17 @@ export default function BountyBoardPage() {
       locationNote: newLocation || "Điểm hẹn xác thực công cộng",
       startsAt: newTime,
       targetDescription: newTarget || "Tập luyện đúng cam kết",
-      stakePoints: Number(newStake),
       isGhostMode: newGhost,
       isBeginnerOnly: newBeginnerOnly,
       status: "open",
     };
 
     setBounties([newBounty, ...bounties]);
+    setCreatedAt((prev) => [...prev, new Date().toISOString()]);
     setIsCreateOpen(false);
     setActionMessage({
       type: "success",
-      text: `Tạo kèo mới thành công! Đã tạm đóng băng ${newStake} Điểm Uy Tín của bạn để giữ cam kết.`,
+      text: `Đã đăng kèo. ${canCreateKeo({ ut: MY_UT, createdToday: keosCreatedToday(createdAt) + 1, kind: "group" }).reasonVi}.`,
     });
     setTimeout(() => setActionMessage(null), 6000);
   };
@@ -164,17 +167,20 @@ export default function BountyBoardPage() {
     <div className="container max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       <PageHeader
         title="Bảng Kèo Thể Thao (Workout Bounty v0)"
-        description="Khám phá các buổi tập cần bạn đồng hành. Mỗi kèo được bảo chứng bằng Điểm Uy Tín để ngăn ngừa bùng lịch."
+        description="Khám phá các buổi tập cần bạn đồng hành. Huỷ hay vắng sau khi chốt kèo sẽ bị trừ Điểm Uy tín (UT)."
         badge={
           <Badge variant="outline" className="text-xs">
             {filteredBounties.length} kèo đang mở
           </Badge>
         }
         actions={
-          <Button onClick={() => setIsCreateOpen(true)} className="font-semibold shadow-sm">
-            <Plus className="mr-1.5 h-4 w-4" />
-            <span>Tạo kèo mới</span>
-          </Button>
+          <div className="flex flex-col items-end gap-1">
+            <Button onClick={() => setIsCreateOpen(true)} disabled={!quota.ok} className="font-semibold shadow-sm">
+              <Plus className="mr-1.5 h-4 w-4" />
+              <span>Tạo kèo mới</span>
+            </Button>
+            <span className="text-[11px] text-muted-foreground">{quota.reasonVi}</span>
+          </div>
         }
       />
 
@@ -185,7 +191,7 @@ export default function BountyBoardPage() {
           className="p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 text-sm flex items-center justify-between"
         >
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+            <CheckCircle2 className="h-5 w-5 shrink-0 text-foreground" />
             <span>{actionMessage.text}</span>
           </div>
           <Button
@@ -274,9 +280,6 @@ export default function BountyBoardPage() {
                       </Badge>
                     )}
                   </div>
-                  <span className="text-xs font-bold text-primary font-mono">
-                    Cọc: {bounty.stakePoints} TS
-                  </span>
                 </div>
 
                 <div>
@@ -292,18 +295,18 @@ export default function BountyBoardPage() {
 
               <CardContent className="space-y-2 text-xs text-muted-foreground pb-4">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <Clock className="h-3.5 w-3.5 text-foreground shrink-0" />
                   <span>{bounty.startsAt}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                  <MapPin className="h-3.5 w-3.5 text-foreground shrink-0" />
                   <span>{bounty.locationNote} ({bounty.areaName})</span>
                 </div>
               </CardContent>
 
               <CardFooter className="pt-0 border-t border-border/60 mt-2 flex items-center justify-between">
                 <span className="text-[11px] text-muted-foreground">
-                  Hoàn thành nhận +{TRUST_CONFIG.DELTAS.COMPLETED_ON_TIME} TS
+                  Đúng hẹn +{formatUt(UT_CONFIG.RECOVERY.ON_TIME)} UT
                 </span>
                 <Button size="sm" onClick={() => handleAcceptBounty(bounty)}>
                   <span>Nhận kèo này</span>
@@ -320,7 +323,7 @@ export default function BountyBoardPage() {
           <div className="w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-2xl space-y-5 my-8">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-foreground">
                   <Flame className="h-4 w-4" />
                 </div>
                 <h3 className="text-lg font-bold">Tạo Kèo Thể Thao Mới</h3>
@@ -401,20 +404,6 @@ export default function BountyBoardPage() {
                     />
                   )}
                 </FormField>
-
-                <FormField id="bounty-stake" label="Điểm cọc (10 - 100 TS)" required hint="Điểm bị đóng băng tạm">
-                  {(props) => (
-                    <Input
-                      type="number"
-                      min={10}
-                      max={100}
-                      value={newStake}
-                      onChange={(e) => setNewStake(Number(e.target.value))}
-                      required
-                      {...props}
-                    />
-                  )}
-                </FormField>
               </div>
 
               <div className="space-y-2 pt-2 border-t border-border">
@@ -428,7 +417,7 @@ export default function BountyBoardPage() {
                   id="bounty-beginner-toggle"
                   checked={newBeginnerOnly}
                   onCheckedChange={setNewBeginnerOnly}
-                  label="Chỉ dành cho Tân binh (Beginner Only)"
+                  label={`Dành cho người mới (chỉ nhận người từ ${UT_CONFIG.NEWBIE_GROUP_MIN_UT} UT)`}
                 />
               </div>
 
@@ -437,7 +426,7 @@ export default function BountyBoardPage() {
                   Hủy bỏ
                 </Button>
                 <Button type="submit" className="font-semibold">
-                  Tạo kèo & Đóng băng {newStake} TS
+                  Tạo kèo ({quota.remaining}/{quota.limit} hôm nay)
                 </Button>
               </div>
             </form>

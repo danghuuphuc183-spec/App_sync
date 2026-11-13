@@ -192,7 +192,7 @@ export function CommentsSheet({
           onChange={(e) => setText(e.target.value)}
           placeholder="Thêm bình luận..."
           aria-label="Nội dung bình luận"
-          className="flex-1 min-w-0 rounded-full bg-muted px-4 py-2.5 text-[13.5px] outline-none focus:ring-2 focus:ring-brand/30"
+          className="flex-1 min-w-0 rounded-lg bg-muted px-4 py-2.5 text-[13.5px] outline-none focus:ring-2 focus:ring-brand/30"
         />
         <button type="submit" disabled={!text.trim()} className="text-[14px] font-bold text-brand dark:text-brand-sky disabled:opacity-40">
           Đăng
@@ -269,7 +269,7 @@ export function ShareSheet({
                 }}
                 disabled={sent}
                 className={cn(
-                  "rounded-full px-2.5 py-0.5 text-[11px] font-bold",
+                  "rounded-lg px-2.5 py-0.5 text-[11px] font-bold",
                   sent ? "bg-muted text-muted-foreground" : "bg-brand text-white"
                 )}
               >

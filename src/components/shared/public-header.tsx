@@ -66,7 +66,7 @@ export function PublicHeader() {
             title="Trợ lý AI hỗ trợ sử dụng"
           >
             <Bot className="h-5 w-5 stroke-[1.9]" />
-            <span className="absolute -top-0.5 -right-0.5 rounded-full bg-gradient-to-r from-brand to-brand-500 px-1 text-[8px] font-black text-white leading-[14px]">
+            <span className="absolute -top-0.5 -right-0.5 rounded-lg bg-gradient-to-r from-brand to-brand-500 px-1 text-[8px] font-black text-white leading-[14px]">
               AI
             </span>
           </Button>
@@ -99,7 +99,7 @@ export function PublicHeader() {
           >
             <Bell className="h-5 w-5 stroke-[1.9]" />
             {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold leading-4 text-center ring-2 ring-background">
+              <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-lg bg-red-500 text-white text-[9px] font-bold leading-4 text-center ring-2 ring-background">
                 {unreadCount}
               </span>
             )}

@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { PlusCircle, ArrowRight, X, Zap, Search, Camera } from "lucide-react";
+import { PlusCircle, X, Zap, Search, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { WeeklyStreakCard } from "@/components/home/weekly-streak-card";
@@ -65,7 +64,6 @@ export default function HomePage() {
   const [newSport, setNewSport] = React.useState<NewSport>("running");
   const [newLocation, setNewLocation] = React.useState("Khuôn viên Landmark 81");
   const [newTime, setNewTime] = React.useState("05:45 AM • Ngày mai");
-  const [newHoldTs, setNewHoldTs] = React.useState("20");
   const [newPostImage, setNewPostImage] = React.useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -99,7 +97,6 @@ export default function HomePage() {
         dateTimeVi: newTime,
         locationName: newLocation,
         intensity: newSport === "running" ? "10 km • Pace 6:00" : "75 phút",
-        holdTs: parseInt(newHoldTs) || 20,
         slotsLeft: 1,
       },
       likes: 0,
@@ -179,37 +176,6 @@ export default function HomePage() {
 
       {/* 4. NÊN THEO DÕI — gợi ý người nổi tiếng & người có điểm chung */}
       <SuggestedFollows />
-
-      {/* 5. PROMO BANNER: GHÉP ĐÔI BẠN TẬP KỶ LUẬT (KHÔNG CÒN TINDER) */}
-      <div className="px-3">
-        <div className="relative overflow-hidden rounded-xl bg-brand dark:bg-black border border-brand-700/40 p-3 text-white shadow-xs">
-          <div className="relative z-10 flex items-center justify-between">
-            <div className="space-y-1 max-w-[70%]">
-              <span className="inline-flex items-center gap-1 rounded-md bg-brand-100 text-brand px-2 py-0.5 text-[9px] font-black uppercase tracking-wider">
-                <Zap className="h-2.5 w-2.5 stroke-[2] fill-current" />
-                Ghép Bạn Tập Kỷ Luật
-              </span>
-              <h3 className="text-xs font-black tracking-tight leading-tight">
-                Khám phá & Ghép đôi bạn tập thể thao
-              </h3>
-              <p className="text-[10px] text-neutral-300 leading-tight">
-                Đối chiếu khung năng lực, thói quen & tạo lịch hẹn tập có bảo chứng TS.
-              </p>
-            </div>
-            <Button
-              asChild
-              size="sm"
-              className="bg-white text-brand hover:bg-neutral-100 font-bold text-[11px] rounded-lg shadow-sm shrink-0 h-7 px-3"
-            >
-              <Link href="/len-keo">
-                Lên Kèo
-                <ArrowRight className="ml-1 h-3 w-3 stroke-[2]" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-
 
       {/* 6. BẢNG TIN: bài người dùng · CLB · quảng cáo + Reels */}
       <HomeFeed posts={posts} setPosts={setPosts} searchQuery={searchQuery} onCreatePost={() => setIsCreateModalOpen(true)} />
@@ -333,13 +299,13 @@ export default function HomePage() {
                     onClick={() => fileInputRef.current?.click()}
                     className="w-full py-2.5 px-3 rounded-xl border border-dashed border-border/80 bg-neutral-50 dark:bg-neutral-900/60 hover:bg-neutral-100 dark:hover:bg-neutral-800/80 flex items-center justify-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition-all active:scale-98"
                   >
-                    <Camera className="h-4 w-4 text-brand dark:text-brand-sky" />
+                    <Camera className="h-4 w-4 text-foreground" />
                     <span>Chụp ảnh hoặc chọn ảnh từ máy</span>
                   </button>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 <div className="space-y-1">
                   <label className="font-semibold text-foreground">Thời gian</label>
                   <input
@@ -348,18 +314,6 @@ export default function HomePage() {
                     onChange={(e) => setNewTime(e.target.value)}
                     className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-2 py-1.5 text-xs text-foreground"
                   />
-                </div>
-                <div className="space-y-1">
-                  <label className="font-semibold text-foreground">Mức cọc TS</label>
-                  <select
-                    value={newHoldTs}
-                    onChange={(e) => setNewHoldTs(e.target.value)}
-                    className="w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-2 py-1.5 text-xs text-foreground"
-                  >
-                    <option value="15">15 TS (Tối thiểu)</option>
-                    <option value="20">20 TS (Khuyên dùng)</option>
-                    <option value="30">30 TS (Cam kết cao)</option>
-                  </select>
                 </div>
               </div>
 

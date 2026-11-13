@@ -6,12 +6,12 @@ import { cn } from "@/lib/utils";
 import { BottomSheet } from "@/components/feed/bottom-sheet";
 
 export const LOG_SPORTS = [
-  { id: "running", label: "🏃 Chạy bộ" },
-  { id: "gym", label: "🏋️ Gym" },
-  { id: "cycling", label: "🚴 Đạp xe" },
-  { id: "pickleball", label: "🏓 Pickleball" },
-  { id: "badminton", label: "🏸 Cầu lông" },
-  { id: "swimming", label: "🏊 Bơi lội" },
+  { id: "running", label: "Chạy bộ" },
+  { id: "gym", label: "Gym" },
+  { id: "cycling", label: "Đạp xe" },
+  { id: "pickleball", label: "Pickleball" },
+  { id: "badminton", label: "Cầu lông" },
+  { id: "swimming", label: "Bơi lội" },
 ];
 
 export const SPORT_LOG_LABEL: Record<string, string> = Object.fromEntries(LOG_SPORTS.map((s) => [s.id, s.label]));
@@ -44,7 +44,7 @@ export function LogWorkoutSheet({
               onClick={() => setSport(s.id)}
               aria-pressed={sport === s.id}
               className={cn(
-                "rounded-full px-3 py-1.5 text-[13px] font-medium border transition-colors",
+                "rounded-lg px-3 py-1.5 text-[13px] font-medium border transition-colors",
                 sport === s.id ? "bg-brand text-white border-brand" : "border-border text-foreground hover:bg-muted"
               )}
             >
@@ -72,7 +72,7 @@ export function LogWorkoutSheet({
       </div>
 
       <label className="flex items-center gap-3 rounded-xl border border-border p-3 cursor-pointer">
-        <Users className="h-5 w-5 text-brand shrink-0" />
+        <Users className="h-5 w-5 text-foreground shrink-0" />
         <span className="flex-1 text-[13px] text-foreground">Tập cùng bạn (qua kèo)</span>
         <input type="checkbox" checked={withPartner} onChange={(e) => setWithPartner(e.target.checked)} className="h-5 w-5 accent-brand" />
       </label>
@@ -80,7 +80,7 @@ export function LogWorkoutSheet({
       <button
         type="button"
         onClick={() => onSave({ sport, minutes, withPartner })}
-        className="w-full rounded-full bg-brand hover:bg-brand-700 active:scale-[0.98] text-white font-bold py-3 text-sm flex items-center justify-center gap-2"
+        className="w-full rounded-lg bg-brand hover:bg-brand-700 active:scale-[0.98] text-white font-bold py-3 text-sm flex items-center justify-center gap-2"
       >
         <Flame className="h-4 w-4" />
         Lưu buổi tập

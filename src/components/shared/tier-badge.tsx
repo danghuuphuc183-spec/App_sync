@@ -1,44 +1,43 @@
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
-import { getTierFromScore, getTierNameVi, type SportTier } from "@/features/trust/config";
-import { Shield, Award, Flame, Gem } from "lucide-react";
+import { formatUt, getUtBand, getUtBandNameVi, type UtBand } from "@/features/trust/config";
+import { ShieldAlert, ShieldMinus, Shield, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TierBadgeProps {
-  score?: number;
-  tier?: SportTier;
+  /** Điểm uy tín UT 0–10 */
+  score: number;
   showScore?: boolean;
   className?: string;
 }
 
-export function TierBadge({
-  score,
-  tier: directTier,
-  showScore = false,
-  className,
-}: TierBadgeProps) {
-  const effectiveTier: SportTier =
-    directTier ?? (score !== undefined ? getTierFromScore(score) : "gold");
-  const tierName = getTierNameVi(effectiveTier);
+const VARIANT: Record<UtBand, "bronze" | "silver" | "gold" | "diamond"> = {
+  low: "bronze",
+  limited: "silver",
+  watch: "gold",
+  high: "diamond",
+};
 
-  const icons: Record<SportTier, React.ReactNode> = {
-    bronze: <Shield className="mr-1 h-3.5 w-3.5" />,
-    silver: <Award className="mr-1 h-3.5 w-3.5" />,
-    gold: <Flame className="mr-1 h-3.5 w-3.5" />,
-    diamond: <Gem className="mr-1 h-3.5 w-3.5" />,
-  };
+const ICON: Record<UtBand, React.ReactNode> = {
+  low: <ShieldAlert className="mr-1 h-3.5 w-3.5" />,
+  limited: <ShieldMinus className="mr-1 h-3.5 w-3.5" />,
+  watch: <Shield className="mr-1 h-3.5 w-3.5" />,
+  high: <ShieldCheck className="mr-1 h-3.5 w-3.5" />,
+};
 
+/** Nhãn mức Uy tín (UT 0–10) */
+export function TierBadge({ score, showScore = false, className }: TierBadgeProps) {
+  const band = getUtBand(score);
+  const name = getUtBandNameVi(band);
   return (
     <Badge
-      variant={effectiveTier}
+      variant={VARIANT[band]}
       className={cn("font-medium tracking-wide shadow-sm text-xs py-1 px-2.5", className)}
-      aria-label={`Hạng ${tierName}${score !== undefined ? ` với ${score} điểm uy tín` : ""}`}
+      aria-label={`${name}, ${formatUt(score)} điểm uy tín`}
     >
-      {icons[effectiveTier]}
-      <span>Hạng {tierName}</span>
-      {showScore && score !== undefined && (
-        <span className="ml-1 opacity-90 font-mono">({score})</span>
-      )}
+      {ICON[band]}
+      <span>{name}</span>
+      {showScore && <span className="ml-1 opacity-90 font-mono">({formatUt(score)} UT)</span>}
     </Badge>
   );
 }
