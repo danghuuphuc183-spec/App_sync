@@ -137,6 +137,14 @@ const DEMO_AUTOLOGIN =
     : process.env.NODE_ENV !== "production";
 const LOGGED_OUT_KEY = "sync_sport_logged_out_flag";
 
+/**
+ * Bản cũ tự lưu phiên tài khoản mẫu (id cố định DEFAULT_USER.id) cho mọi người mở web.
+ * Khi tắt tự đăng nhập (production), phiên đó không được dùng nữa. Tài khoản tự đăng ký có id khác.
+ */
+export function isLeftoverDemoSession(stored: Pick<UserProfile, "id">, demoAutologin: boolean): boolean {
+  return !demoAutologin && stored.id === DEFAULT_USER.id;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -145,8 +153,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const isLoggedOut = localStorage.getItem(LOGGED_OUT_KEY);
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored) as UserProfile;
+      const parsedStored = stored ? (JSON.parse(stored) as UserProfile) : null;
+      if (parsedStored && isLeftoverDemoSession(parsedStored, DEMO_AUTOLOGIN)) {
+        // Phiên tài khoản mẫu do bản cũ tự tạo → bỏ, để người dùng tự đăng ký / đăng nhập
+        localStorage.removeItem(STORAGE_KEY);
+        setUser(null);
+      } else if (parsedStored) {
+        const parsed = parsedStored;
         // Dữ liệu cũ theo thang TS 0–150 → quy đổi sang UT 0–10
         if (parsed.trustScore > UT_CONFIG.MAX) parsed.trustScore = legacyTsToUt(parsed.trustScore);
         setUser(parsed);
