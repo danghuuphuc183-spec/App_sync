@@ -212,9 +212,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
     if (!isSupabaseConfigured()) {
       try {
-        localStorage.removeItem(STORAGE_KEY);
-        if (DEMO_AUTOLOGIN) setUser(DEFAULT_USER);
-        else setUser(null);
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          setUser(JSON.parse(stored));
+        } else if (DEMO_AUTOLOGIN) {
+          setUser(DEFAULT_USER);
+        } else {
+          setUser(null);
+        }
       } catch { setUser(null); }
       setIsLoading(false);
       return;
@@ -223,7 +228,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let active = true;
     const load = async (authUser: import("@supabase/supabase-js").User | null) => {
       if (!active) return;
-      if (!authUser) { setUser(DEMO_AUTOLOGIN ? DEFAULT_USER : null); setIsLoading(false); return; }
+      if (!authUser) {
+        const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+        if (stored) {
+          try {
+            setUser(JSON.parse(stored));
+            setIsLoading(false);
+            return;
+          } catch {}
+        }
+        setUser(DEMO_AUTOLOGIN ? DEFAULT_USER : null);
+        setIsLoading(false);
+        return;
+      }
       try { await userFromAuth(authUser); }
       catch (error) { console.error("Không tải được hồ sơ Supabase:", error); setUser(null); }
       finally { if (active) setIsLoading(false); }
@@ -268,11 +285,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Vui lòng hoàn tất xác minh bảo mật trước khi nhận mã SMS.");
     }
     const { error } = await getSupabaseBrowserClient().auth.signInWithOtp({ phone, options: { captchaToken } });
-    if (error) throw error;
+    if (error) {
+      if (process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_ENABLE_MOCK_PROVIDER === "true") {
+        console.warn("Supabase SMS provider not configured, falling back to mock OTP (123456):", error.message);
+        return;
+      }
+      throw error;
+    }
   };
 
   const loginWithPhone = async (phone: string, otp: string): Promise<boolean> => {
-    if (!isSupabaseConfigured()) {
+    if (!isSupabaseConfigured() || process.env.NEXT_PUBLIC_ENABLE_MOCK_PROVIDER === "true") {
       if (otp !== "123456") throw new Error("Mã OTP không đúng. Vui lòng kiểm tra lại.");
       const isExisting = phone.includes("908123456") || phone.includes("0908123456");
       if (isExisting) {

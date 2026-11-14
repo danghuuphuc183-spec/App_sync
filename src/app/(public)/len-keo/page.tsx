@@ -88,7 +88,24 @@ function Hub() {
         <ChevronRight className="h-5 w-5 shrink-0" />
       </button>
 
-      <MyKeosSection />
+      {/* Lối tắt xem Kèo của bạn (đã chuyển sang trang Bạn / Profile theo yêu cầu) */}
+      <div className="mt-4 flex items-center justify-between rounded-2xl bg-muted/40 border border-border px-3.5 py-2.5">
+        <div className="flex items-center gap-2.5">
+          <span className="h-8 w-8 rounded-xl bg-brand/10 text-brand dark:text-brand-sky flex items-center justify-center">
+            <UsersRound className="h-4 w-4" />
+          </span>
+          <div>
+            <span className="block text-[13px] font-bold text-foreground">Kèo của bạn</span>
+            <span className="block text-[11px] text-muted-foreground">Quản lý kèo đã tạo & đã nhận tại trang Bạn</span>
+          </div>
+        </div>
+        <Link
+          href="/ho-so?tab=bounties"
+          className="text-[12px] font-bold text-brand dark:text-brand-sky hover:underline flex items-center gap-1"
+        >
+          Xem kèo →
+        </Link>
+      </div>
 
       {plans.length > 0 && (
         <section className="mt-4" aria-label="Kế hoạch tự tập của bạn">
