@@ -95,7 +95,7 @@ const WEEK_DAYS = [
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, logout, toggleAppConnection } = useAuth();
+  const { user, logout, toggleAppConnection, updateProfile } = useAuth();
   const keoStore = useKeoStore();
 
   const [metricTab, setMetricTab] = React.useState<"distance" | "duration" | "volume">("distance");
@@ -132,16 +132,25 @@ export default function ProfilePage() {
   const [qrCountdown, setQrCountdown] = React.useState(30);
   const [isExporting, setIsExporting] = React.useState<boolean>(false);
 
-  // Editable profile state
-  const [profileName, setProfileName] = React.useState(user?.name || "Minh Thư");
+  // Editable profile state - Tự động đồng bộ với tài khoản người dùng
+  const [profileName, setProfileName] = React.useState(user?.name || "Đặng Hữu Phúc");
   const [profileAvatar, setProfileAvatar] = React.useState(
-    user?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=250&auto=format&fit=crop&q=80"
+    user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=350&auto=format&fit=crop&q=80"
   );
   const [profileBio, setProfileBio] = React.useState(
-    "Pace 5:30 - 5:45/km. Kỷ luật cao, đúng giờ 100%, không hủy kèo phút chót. Tìm bạn chạy Landmark 81 & tập tạ The New Gym."
+    "Pace 5:30 - 5:45/km. Kỷ luật cao, đúng giờ 100%, không hủy kèo phút chót. Thường chạy Sala Q.2 & Landmark 81 Bình Thạnh."
   );
-  const [profilePace, setProfilePace] = React.useState("5:30 - 5:45/km");
-  const [profileArea, setProfileArea] = React.useState("Bình Thạnh & Q.1, TP.HCM");
+  const [profilePace, setProfilePace] = React.useState(user?.sportsProfile?.runningPace || "5:30 - 5:45/km");
+  const [profileArea, setProfileArea] = React.useState(user?.sportsProfile?.preferredArea || "Bình Thạnh & Q.2 Sala, TP.HCM");
+
+  React.useEffect(() => {
+    if (user) {
+      if (user.name) setProfileName(user.name);
+      if (user.avatar) setProfileAvatar(user.avatar);
+      if (user.sportsProfile?.runningPace) setProfilePace(user.sportsProfile.runningPace);
+      if (user.sportsProfile?.preferredArea) setProfileArea(user.sportsProfile.preferredArea);
+    }
+  }, [user]);
 
   // Timer for dynamic QR code refresh
   React.useEffect(() => {
@@ -156,7 +165,8 @@ export default function ProfilePage() {
   }, [isQrModalOpen]);
 
   const handleCopyLink = () => {
-    navigator.clipboard?.writeText?.("https://syncsport.app/v/minhthu_runner");
+    const handle = user?.handle || "danghuuphuc183";
+    navigator.clipboard?.writeText?.(`https://syncsport.app/v/${handle}`);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
   };
@@ -175,7 +185,9 @@ export default function ProfilePage() {
         {/* Top Actions: @Handle + Các nút công cụ */}
         <div className="flex items-center justify-between relative z-10 pb-3">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-mono font-bold tracking-tight text-brand-200">@minhthu_runner</span>
+            <span className="text-xs font-mono font-bold tracking-tight text-brand-200">
+              @{user?.handle || "danghuuphuc183"}
+            </span>
             <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" title="Đang online sẵn sàng tập" />
           </div>
 
@@ -253,15 +265,23 @@ export default function ProfilePage() {
               <TierBadge score={user?.trustScore || 8.5} />
             </div>
 
-            <div className="flex items-center gap-1 text-[11px] text-brand-200/90">
-              <MapPin className="h-3 w-3 shrink-0 text-white" />
-              <span className="truncate">{profileArea}</span>
+            <div className="flex items-center gap-2 text-[11px] text-brand-200/90 flex-wrap">
+              <div className="flex items-center gap-1">
+                <MapPin className="h-3 w-3 shrink-0 text-white" />
+                <span className="truncate">{profileArea}</span>
+              </div>
+              <div className="flex items-center gap-1 text-white/95 bg-white/15 px-2 py-0.5 rounded-full text-[10.5px]">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span className="font-mono">{user?.email || "danghuuphuc183@gmail.com"}</span>
+              </div>
             </div>
 
             <div className="flex items-center gap-1.5 text-[10px] text-white/80 pt-0.5">
-              <span className="px-1.5 py-0.5 rounded-md bg-white/15 font-semibold">Bán Chuyên</span>
+              <span className="px-1.5 py-0.5 rounded-md bg-white/15 font-semibold">Tài khoản Google</span>
               <span>•</span>
-              <span className="text-brand-200 font-semibold">CLB FTU2 Run</span>
+              <span className="text-emerald-300 font-semibold">✓ Đã xác thực</span>
+              <span>•</span>
+              <span className="text-brand-200 font-semibold">CLB Sala Runners</span>
             </div>
           </div>
         </div>
@@ -680,6 +700,7 @@ export default function ProfilePage() {
 
             <Button
               onClick={() => {
+                updateProfile({ avatar: profileAvatar });
                 setIsAvatarModalOpen(false);
               }}
               className="w-full rounded-xl text-xs font-bold bg-brand text-white h-10"
@@ -765,6 +786,15 @@ export default function ProfilePage() {
               </Button>
               <Button
                 onClick={() => {
+                  updateProfile({
+                    name: profileName,
+                    avatar: profileAvatar,
+                    sportsProfile: {
+                      ...(user?.sportsProfile || {}),
+                      runningPace: profilePace,
+                      preferredArea: profileArea,
+                    } as any,
+                  });
                   setIsEditModalOpen(false);
                 }}
                 className="flex-1 rounded-xl text-xs font-bold bg-brand text-white h-10"

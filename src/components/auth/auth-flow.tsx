@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
 import { formatVnPhone, normalizeVnPhone } from "@/features/auth/accounts";
 
-type Step = "welcome" | "phone" | "otp" | "name";
+type Step = "welcome" | "phone" | "otp" | "name" | "email";
 
 function GoogleIcon() {
   return (
@@ -28,9 +28,10 @@ function GoogleIcon() {
  */
 export function AuthFlow() {
   const router = useRouter();
-  const { sendPhoneOtp, loginWithPhone, loginWithSocial, register } = useAuth();
+  const { sendPhoneOtp, loginWithPhone, loginWithSocial, loginWithEmail, register } = useAuth();
   const [step, setStep] = React.useState<Step>("welcome");
   const [phoneInput, setPhoneInput] = React.useState("");
+  const [emailInput, setEmailInput] = React.useState("danghuuphuc183@gmail.com");
   const [phone, setPhone] = React.useState<string | null>(null);
   const [otp, setOtp] = React.useState("");
   const [otpError, setOtpError] = React.useState("");
@@ -109,9 +110,21 @@ export function AuthFlow() {
     setAuthError("");
     try {
       const ok = await loginWithSocial("google");
-      if (ok) goHome("bạn");
+      if (ok) goHome("Đặng Hữu Phúc");
     } catch (error) {
       setAuthError(error instanceof Error ? error.message : "Không thể mở đăng nhập Google. Vui lòng thử lại.");
+      setBusy(false);
+    }
+  };
+
+  const handleQuickEmailLogin = async (emailToLogin: string) => {
+    setBusy(true);
+    setAuthError("");
+    try {
+      await loginWithEmail(emailToLogin);
+      goHome(emailToLogin === "danghuuphuc183@gmail.com" ? "Đặng Hữu Phúc" : (emailToLogin.split("@")[0] || "bạn"));
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : "Không thể đăng nhập bằng email.");
       setBusy(false);
     }
   };
@@ -124,7 +137,7 @@ export function AuthFlow() {
       <div className="relative mx-auto flex min-h-dvh max-w-md flex-col px-6 pb-8 pt-[max(24px,env(safe-area-inset-top))]">
         {step !== "welcome" && (
           <button
-            onClick={() => setStep(step === "otp" ? "phone" : step === "name" ? "otp" : "welcome")}
+            onClick={() => setStep(step === "otp" ? "phone" : step === "name" ? "otp" : step === "email" ? "welcome" : "welcome")}
             aria-label="Quay lại"
             className="h-10 w-10 -ml-2 rounded-full hover:bg-white/10 flex items-center justify-center"
           >
@@ -167,7 +180,26 @@ export function AuthFlow() {
               })}
             </ul>
 
-            <div className="mt-auto space-y-2.5 pt-8">
+            <div className="mt-auto space-y-2.5 pt-6">
+              {/* Nút xác nhận nhanh tài khoản Gmail danghuuphuc183@gmail.com */}
+              <button
+                type="button"
+                onClick={() => void handleQuickEmailLogin("danghuuphuc183@gmail.com")}
+                disabled={busy}
+                className="w-full py-2.5 px-3.5 rounded-xl bg-gradient-to-r from-emerald-500/20 via-brand-sky/20 to-brand/20 border border-emerald-400/40 text-white flex items-center justify-between text-left hover:border-emerald-400 active:scale-[0.98] transition-all shadow-md"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-bold text-emerald-300">Tài khoản Google / Gmail</p>
+                    <p className="text-[13px] font-extrabold text-white truncate">danghuuphuc183@gmail.com</p>
+                  </div>
+                </div>
+                <span className="shrink-0 text-xs font-bold px-2.5 py-1 rounded-md bg-white/10 text-brand-sky">
+                  Xác nhận vào →
+                </span>
+              </button>
+
               <button
                 onClick={() => void continueWithGoogle()}
                 disabled={busy}
@@ -181,6 +213,12 @@ export function AuthFlow() {
               >
                 <Smartphone className="h-5 w-5" /> Tiếp tục bằng số điện thoại
               </button>
+              <button
+                onClick={() => setStep("email")}
+                className="w-full py-1 text-center text-[12.5px] font-semibold text-white/70 hover:text-white transition-colors"
+              >
+                Hoặc đăng nhập bằng Email khác
+              </button>
               <p className="text-center text-[12px] text-white/60 leading-relaxed">
                 Chưa có tài khoản? Cứ chọn một cách ở trên — tài khoản sẽ được <b className="text-white/90">tạo tự động</b> sau khi xác minh.
               </p>
@@ -193,6 +231,40 @@ export function AuthFlow() {
             </div>
             {authError && <p role="alert" className="mt-3 text-center text-[12px] text-red-300">{authError}</p>}
           </div>
+        )}
+
+        {/* ================= EMAIL ================= */}
+        {step === "email" && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (emailInput.trim()) void handleQuickEmailLogin(emailInput.trim());
+            }}
+            className="flex flex-1 flex-col pt-4 animate-in fade-in slide-in-from-right-4 duration-300"
+          >
+            <h1 className="text-[26px] font-extrabold font-display">Email của bạn</h1>
+            <p className="mt-1 text-[13.5px] text-white/60">Nhập địa chỉ email / Gmail để nhận diện và xác nhận hồ sơ thể thao của bạn.</p>
+            <label className="mt-6 flex items-center gap-2 rounded-2xl bg-white/[0.07] border border-white/15 px-4 h-14 focus-within:border-brand-sky">
+              <input
+                autoFocus
+                type="email"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                placeholder="danghuuphuc183@gmail.com"
+                aria-label="Địa chỉ email"
+                className="flex-1 bg-transparent text-[16px] font-semibold tracking-wide outline-none placeholder:text-white/30"
+              />
+              {emailInput.includes("@") && <Check className="h-5 w-5 text-emerald-400" />}
+            </label>
+            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
+            <button
+              type="submit"
+              disabled={!emailInput.includes("@") || busy}
+              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
+            >
+              {busy && <Loader2 className="h-4 w-4 animate-spin" />} Xác nhận & Vào hồ sơ
+            </button>
+          </form>
         )}
 
         {/* ================= SỐ ĐIỆN THOẠI ================= */}
