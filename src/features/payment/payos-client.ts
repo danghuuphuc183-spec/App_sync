@@ -7,7 +7,6 @@ import crypto from "crypto";
 import {
   BankAccount,
   MOCK_PARTNER_ACCOUNTS,
-  PayOSWebhookPayload,
   SYNESIS_PLATFORM_ACCOUNT,
   SplitPaymentBreakdown,
   SplitPaymentKind,
@@ -106,16 +105,15 @@ export function calculateSplitPayment(
  * Kho lưu trữ đơn hàng tạm thời trong bộ nhớ (In-memory Store)
  * Dùng cho các cuộc chạy thử nghiệm (Simulation) và web demo
  */
-declare global {
-  // eslint-disable-next-line no-var
-  var __SYNESIS_PAYMENT_ORDERS__: Map<number, SplitPaymentOrder> | undefined;
+const globalForOrders = globalThis as unknown as {
+  __SYNESIS_PAYMENT_ORDERS__?: Map<number, SplitPaymentOrder>;
+};
+
+if (!globalForOrders.__SYNESIS_PAYMENT_ORDERS__) {
+  globalForOrders.__SYNESIS_PAYMENT_ORDERS__ = new Map<number, SplitPaymentOrder>();
 }
 
-if (!global.__SYNESIS_PAYMENT_ORDERS__) {
-  global.__SYNESIS_PAYMENT_ORDERS__ = new Map<number, SplitPaymentOrder>();
-}
-
-const ordersStore = global.__SYNESIS_PAYMENT_ORDERS__;
+const ordersStore = globalForOrders.__SYNESIS_PAYMENT_ORDERS__;
 
 /**
  * Khởi tạo Đơn hàng thanh toán Phân tách dòng tiền (Split Payment Order)

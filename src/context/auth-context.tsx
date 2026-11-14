@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { UT_CONFIG } from "@/features/trust/config";
 import { getSupabaseBrowserClient, getSupabaseConfig, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export interface UserPermissions {
@@ -147,17 +146,27 @@ export function isLeftoverDemoSession(stored: Pick<UserProfile, "id">, demoAutol
   return !demoAutologin && stored.id === "usr_athlete_01";
 }
 
+interface SynesisProfileRow {
+  id: string;
+  display_name?: string;
+  email?: string | null;
+  phone?: string | null;
+  auth_provider?: string;
+  name_completed?: boolean;
+  onboarding_completed?: boolean;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
   const userFromAuth = React.useCallback(async (authUser: import("@supabase/supabase-js").User) => {
-    let profile: any = null;
+    let profile: SynesisProfileRow | null = null;
     if (isSupabaseConfigured()) {
       try {
         const supabase = getSupabaseBrowserClient();
         const { data, error } = await supabase.from("synesis_profiles").select("*").eq("id", authUser.id).maybeSingle();
-        if (!error && data) profile = data;
+        if (!error && data) profile = data as SynesisProfileRow;
       } catch (err) {
         console.warn("Lưu ý: Không truy vấn được synesis_profiles, dùng dữ liệu xác thực authUser:", err);
       }
@@ -183,7 +192,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const avatar = authUser.user_metadata?.avatar_url
       || (isOwner ? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=350&auto=format&fit=crop&q=80" : DEFAULT_USER.avatar);
 
-    let row = profile ?? {
+    const row: SynesisProfileRow = profile ?? {
       id: authUser.id,
       display_name: displayName,
       email: email,

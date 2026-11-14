@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { TrainingLog } from "@/components/profile/training-log";
 import { MyConnections, MyPosts, SocialStatsBar, type SocialTab } from "@/components/profile/my-social";
@@ -11,15 +10,11 @@ import { RankCard } from "@/components/profile/rank-card";
 import { useKeoStore } from "@/features/keo/use-keo-store";
 import {
   Shield,
-  ShieldCheck,
-  Download,
   Share2,
   QrCode,
   MapPin,
   TrendingUp,
   Activity,
-  Dumbbell,
-  Calendar,
   Settings,
   Edit3,
   BarChart2,
@@ -27,11 +22,7 @@ import {
   X,
   Check,
   LogOut,
-  RotateCcw,
-  Sparkles,
   Upload,
-  CalendarDays,
-  Flame,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -95,7 +86,7 @@ const WEEK_DAYS = [
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, logout, toggleAppConnection, updateProfile } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
   const keoStore = useKeoStore();
 
   const [metricTab, setMetricTab] = React.useState<"distance" | "duration" | "volume">("distance");
@@ -130,7 +121,6 @@ export default function ProfilePage() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = React.useState(false);
   const [copiedLink, setCopiedLink] = React.useState(false);
   const [qrCountdown, setQrCountdown] = React.useState(30);
-  const [isExporting, setIsExporting] = React.useState<boolean>(false);
 
   // Editable profile state - Tự động đồng bộ với tài khoản người dùng
   const [profileName, setProfileName] = React.useState(user?.name || "Đặng Hữu Phúc");
@@ -790,10 +780,20 @@ export default function ProfilePage() {
                     name: profileName,
                     avatar: profileAvatar,
                     sportsProfile: {
-                      ...(user?.sportsProfile || {}),
+                      ...(user?.sportsProfile || {
+                        preferredSports: [],
+                        fitnessGoal: "",
+                        maxDistance: "",
+                        gymExperience: "",
+                        racketLevel: "",
+                        preferredTime: "",
+                        workoutFrequency: "",
+                        buddyStyle: "",
+                        privacyZoneEnabled: true,
+                      }),
                       runningPace: profilePace,
                       preferredArea: profileArea,
-                    } as any,
+                    },
                   });
                   setIsEditModalOpen(false);
                 }}

@@ -1,10 +1,9 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   calculateSplitPayment,
   createSplitPaymentOrder,
   getOrder,
   markOrderAsPaid,
-  getAllOrders,
 } from "./payos-client";
 import {
   generateVietQrImageUrl,
@@ -13,7 +12,6 @@ import {
 } from "./vietqr.service";
 import {
   SYNESIS_PLATFORM_ACCOUNT,
-  MOCK_PARTNER_ACCOUNTS,
 } from "./payos.types";
 
 describe("payOS VietQR Split Payment", () => {
