@@ -50,6 +50,9 @@ describe("AuthFlow", () => {
     expect(screen.getByText(/0912 345 678/)).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText("Mã OTP 6 số"), { target: { value: "111111" } });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(100);
+    });
     expect(screen.getByText(/Mã OTP không đúng/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Mã OTP 6 số"), { target: { value: "123456" } });
     await act(async () => {
@@ -84,18 +87,15 @@ describe("AuthFlow", () => {
     vi.useRealTimers();
   });
 
-  it("Google: tài khoản khác chưa có → tạo mới → /bat-dau", async () => {
+  it("Google: tiếp tục với Google → đăng nhập vào app", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     renderFlow();
     fireEvent.click(screen.getByRole("button", { name: /Tiếp tục với Google/ }));
-    fireEvent.click(screen.getByRole("button", { name: /Dùng một tài khoản Google khác/ }));
-    fireEvent.change(screen.getByLabelText("Họ tên"), { target: { value: "Quốc Bảo" } });
-    fireEvent.change(screen.getByLabelText("Email Google"), { target: { value: "quocbao@gmail.com" } });
-    fireEvent.click(screen.getByRole("button", { name: "Tạo tài khoản với Google" }));
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(800);
+      await vi.advanceTimersByTimeAsync(1200);
     });
-    expect(push).toHaveBeenCalledWith("/bat-dau");
+    expect(screen.getByText(/Chào mừng trở lại/)).toBeInTheDocument();
+    expect(push).toHaveBeenCalledWith("/");
     vi.useRealTimers();
   });
 });

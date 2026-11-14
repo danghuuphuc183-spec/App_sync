@@ -1,3 +1,6 @@
+import { BINH_THANH_ROUTES } from "./routes-binh-thanh.data";
+import { SALA_ROUTES } from "./routes-sala.data";
+
 export interface StravaRoute {
   id: string;
   sport: "running" | "cycling";
@@ -22,147 +25,11 @@ export interface StravaRoute {
     time: string;
     paceOrSpeed: string;
   };
+  rating?: number;
+  reviewCount?: number;
 }
 
-export const STRAVA_ROUTES: StravaRoute[] = [
-  // ==================== CUNG ĐƯỜNG CHẠY BỘ (RUNNING) ====================
-  {
-    id: "route-run-1",
-    sport: "running",
-    name: "Cung đường Landmark 81 & Bờ Kè Thanh Đa",
-    subtitle: "Cung đường ven sông thoáng gió, mặt đường êm ái bậc nhất Bình Thạnh",
-    district: "Bình Thạnh",
-    areaVi: "Vinhomes Central Park & Bán đảo Thanh Đa",
-    distanceKm: 8.5,
-    elevationGainM: 14,
-    difficulty: "Dễ",
-    difficultyColor: "emerald",
-    estimatedTime: "48 - 55 phút",
-    targetPaceOrSpeed: "Pace 5:45 - 6:00/km",
-    surface: "Gạch lát công viên & Nhựa phẳng ven sông",
-    safetyScore: 98,
-    highlights: ["Chiếu sáng 24/7", "3 vòi nước sạch", "Chốt bảo vệ SOS", "Không xe máy"],
-    waterStations: 3,
-    coordinates: [
-      [10.795, 106.721],
-      [10.798, 106.724],
-      [10.803, 106.726],
-      [10.809, 106.722],
-      [10.814, 106.718],
-      [10.812, 106.713],
-      [10.805, 106.715],
-      [10.797, 106.717],
-      [10.795, 106.721],
-    ],
-    elevationPoints: [4, 6, 8, 14, 11, 7, 5, 4],
-    bestRecord: {
-      holder: "Quốc Hưng (SRC)",
-      time: "38:42",
-      paceOrSpeed: "4:33/km",
-    },
-  },
-  {
-    id: "route-run-2",
-    sport: "running",
-    name: "Cung đường Đô Thị Mới Sala - Đại Lộ Mai Chí Thọ",
-    subtitle: "Vỉa hè rộng 8m, không khí trong lành, lý tưởng chạy biến tốc (Interval)",
-    district: "Thủ Đức / Q.2",
-    areaVi: "Khu đô thị Sala, Thủ Thiêm",
-    distanceKm: 10.2,
-    elevationGainM: 18,
-    difficulty: "Vừa phải",
-    difficultyColor: "amber",
-    estimatedTime: "56 - 65 phút",
-    targetPaceOrSpeed: "Pace 5:30 - 5:50/km",
-    surface: "Vỉa hè đá granite rộng & Nhựa mịn",
-    safetyScore: 96,
-    highlights: ["Vỉa hè cực rộng", "Gió sông Thủ Thiêm", "Đèn đường sáng rực", "Nhiều runner cự ly dài"],
-    waterStations: 2,
-    coordinates: [
-      [10.768, 106.718],
-      [10.772, 106.723],
-      [10.776, 106.729],
-      [10.781, 106.732],
-      [10.778, 106.738],
-      [10.771, 106.734],
-      [10.766, 106.725],
-      [10.768, 106.718],
-    ],
-    elevationPoints: [5, 7, 12, 18, 14, 9, 6, 5],
-    bestRecord: {
-      holder: "Minh Anh (FTU2 Run)",
-      time: "46:15",
-      paceOrSpeed: "4:32/km",
-    },
-  },
-  {
-    id: "route-run-3",
-    sport: "running",
-    name: "Cung đường Kênh Nhiêu Lộc (Hoàng Sa - Trường Sa)",
-    subtitle: "Cung đường chạy huyền thoại xuyên tâm qua 4 quận trung tâm Sài Gòn",
-    district: "Quận 1 - Q.3 - Phú Nhuận",
-    areaVi: "Bờ kè kênh Nhiêu Lộc - Thị Nghè",
-    distanceKm: 12.0,
-    elevationGainM: 9,
-    difficulty: "Vừa phải",
-    difficultyColor: "amber",
-    estimatedTime: "68 - 78 phút",
-    targetPaceOrSpeed: "Pace 5:50 - 6:20/km",
-    surface: "Đường bộ hành ven kênh râm mát bóng cây",
-    safetyScore: 92,
-    highlights: ["Bóng mát cây xanh", "Nhiều cầu bộ hành qua lại", "Nhiều cửa hàng tiện lợi", "Gần trung tâm"],
-    waterStations: 4,
-    coordinates: [
-      [10.789, 106.702],
-      [10.793, 106.696],
-      [10.798, 106.689],
-      [10.802, 106.681],
-      [10.806, 106.674],
-      [10.803, 106.677],
-      [10.797, 106.685],
-      [10.791, 106.693],
-      [10.789, 106.702],
-    ],
-    elevationPoints: [3, 4, 6, 9, 8, 6, 4, 3],
-    bestRecord: {
-      holder: "Đức Trọng",
-      time: "58:10",
-      paceOrSpeed: "4:50/km",
-    },
-  },
-  {
-    id: "route-run-4",
-    sport: "running",
-    name: "Cung đường Di Sản Phố Đi Bộ & Cầu Ba Son",
-    subtitle: "Ngắm bình minh sông Sài Gòn trên cầu Ba Son và phố đi bộ Nguyễn Huệ",
-    district: "Quận 1",
-    areaVi: "Bến Bạch Đằng & Cầu Ba Son",
-    distanceKm: 5.5,
-    elevationGainM: 22,
-    difficulty: "Dễ",
-    difficultyColor: "emerald",
-    estimatedTime: "30 - 36 phút",
-    targetPaceOrSpeed: "Pace 6:00 - 6:30/km",
-    surface: "Đá công viên & Dốc cầu Ba Son thử thách",
-    safetyScore: 99,
-    highlights: ["View triệu đô sông Sài Gòn", "Đoạn dốc cầu Ba Son rèn cơ đùi", "An ninh tuyệt đối"],
-    waterStations: 2,
-    coordinates: [
-      [10.773, 106.704],
-      [10.776, 106.707],
-      [10.781, 106.711],
-      [10.785, 106.714],
-      [10.781, 106.716],
-      [10.777, 106.709],
-      [10.773, 106.704],
-    ],
-    elevationPoints: [4, 5, 15, 22, 18, 8, 4],
-    bestRecord: {
-      holder: "Lan Phương",
-      time: "26:40",
-      paceOrSpeed: "4:51/km",
-    },
-  },
+export const OTHER_RUNNING_ROUTES: StravaRoute[] = [
   {
     id: "route-run-5",
     sport: "running",
@@ -194,9 +61,12 @@ export const STRAVA_ROUTES: StravaRoute[] = [
       time: "32:15",
       paceOrSpeed: "4:44/km",
     },
+    rating: 4.8,
+    reviewCount: 114,
   },
+];
 
-  // ==================== CUNG ĐƯỜNG ĐẠP XE (CYCLING) ====================
+export const CYCLING_ROUTES: StravaRoute[] = [
   {
     id: "route-cyc-1",
     sport: "cycling",
@@ -329,4 +199,11 @@ export const STRAVA_ROUTES: StravaRoute[] = [
       paceOrSpeed: "32.2 km/h",
     },
   },
+];
+
+export const STRAVA_ROUTES: StravaRoute[] = [
+  ...BINH_THANH_ROUTES,
+  ...SALA_ROUTES,
+  ...OTHER_RUNNING_ROUTES,
+  ...CYCLING_ROUTES,
 ];

@@ -15,6 +15,7 @@ export function OnboardingGuard() {
   const pathname = usePathname();
   React.useEffect(() => {
     if (isLoading) return;
+    if (pathname?.startsWith("/thanh-toan")) return;
     if (!user) {
       router.replace("/dang-nhap");
       return;

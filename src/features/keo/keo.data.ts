@@ -24,7 +24,7 @@ export function placesForSport(sport: string): KeoPlace[] {
   if (sport === "running" || sport === "cycling") {
     return STRAVA_ROUTES.filter((r) => r.sport === sport).map((r) => ({
       id: r.id,
-      name: r.name.replace(/^Cung đường /, ""),
+      name: r.name.replace(/^Cung [đĐ]ường /i, ""),
       area: r.district,
       position: r.coordinates[0] ?? [10.795, 106.721],
       image: SPORT_IMAGE[sport]!,

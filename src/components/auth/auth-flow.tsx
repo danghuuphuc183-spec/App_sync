@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, ChevronRight, Loader2, MapPin, Shield, Smartphone, Users, Watch } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { ArrowLeft, Check, Loader2, MapPin, Shield, Smartphone, Users, Watch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
-import { DEMO_OTP, formatVnPhone, isKnownAccount, normalizeVnPhone, rememberAccount } from "@/features/auth/accounts";
-import { BottomSheet } from "@/components/feed/bottom-sheet";
+import { formatVnPhone, normalizeVnPhone } from "@/features/auth/accounts";
 
 type Step = "welcome" | "phone" | "otp" | "name";
 
@@ -28,7 +28,7 @@ function GoogleIcon() {
  */
 export function AuthFlow() {
   const router = useRouter();
-  const { loginWithPhone, loginWithSocial, register } = useAuth();
+  const { sendPhoneOtp, loginWithPhone, loginWithSocial, register } = useAuth();
   const [step, setStep] = React.useState<Step>("welcome");
   const [phoneInput, setPhoneInput] = React.useState("");
   const [phone, setPhone] = React.useState<string | null>(null);
@@ -37,12 +37,12 @@ export function AuthFlow() {
   const [resendIn, setResendIn] = React.useState(0);
   const [name, setName] = React.useState("");
   const [busy, setBusy] = React.useState(false);
-  const [googleOpen, setGoogleOpen] = React.useState(false);
-  const [googleNew, setGoogleNew] = React.useState(false);
-  const [gName, setGName] = React.useState("");
-  const [gEmail, setGEmail] = React.useState("");
   const [guideOpen, setGuideOpen] = React.useState(false);
   const [welcomeBack, setWelcomeBack] = React.useState<string | null>(null);
+  const [authError, setAuthError] = React.useState("");
+  const [captchaToken, setCaptchaToken] = React.useState("");
+  const [captchaKey, setCaptchaKey] = React.useState(0);
+  const captchaSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   const normalized = normalizeVnPhone(phoneInput);
 
@@ -60,56 +60,60 @@ export function AuthFlow() {
   const sendOtp = async () => {
     if (!normalized) return;
     setBusy(true);
-    await new Promise((r) => setTimeout(r, 700));
-    setPhone(normalized);
-    setOtp("");
-    setOtpError("");
-    setResendIn(60);
-    setBusy(false);
-    setStep("otp");
+    setAuthError("");
+    try {
+      await sendPhoneOtp(`+84${normalized.slice(1)}`, captchaToken || undefined);
+      setCaptchaToken("");
+      setCaptchaKey((v) => v + 1);
+      setPhone(normalized);
+      setOtp("");
+      setOtpError("");
+      setResendIn(60);
+      setStep("otp");
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : "Không gửi được mã OTP. Vui lòng thử lại.");
+    } finally {
+      if (captchaSiteKey) { setCaptchaToken(""); setCaptchaKey((v) => v + 1); }
+      setBusy(false);
+    }
   };
 
   const verifyOtp = async (code: string) => {
     if (!phone || code.length !== 6) return;
-    if (code !== DEMO_OTP) {
-      setOtpError("Mã OTP không đúng. Vui lòng kiểm tra lại.");
-      return;
-    }
     setBusy(true);
-    if (isKnownAccount({ phone })) {
-      await loginWithPhone(formatVnPhone(phone), code);
-      setBusy(false);
-      goHome("Minh Thư");
-    } else {
-      setBusy(false);
-      setStep("name");
-    }
+    setOtpError("");
+    setAuthError("");
+    try {
+      const existing = await loginWithPhone(`+84${phone.slice(1)}`, code);
+      if (existing) goHome("bạn");
+      else setStep("name");
+    } catch (error) {
+      setOtpError(error instanceof Error ? error.message : "Mã OTP không hợp lệ hoặc đã hết hạn.");
+    } finally { setBusy(false); }
   };
 
   const createPhoneAccount = async () => {
     if (!phone || name.trim().length < 2) return;
     setBusy(true);
-    await register({ name: name.trim(), phone: formatVnPhone(phone), provider: "phone" });
-    rememberAccount({ phone });
-    router.push("/bat-dau");
+    setAuthError("");
+    try {
+      await register({ name: name.trim(), phone: `+84${phone.slice(1)}`, provider: "phone" });
+      router.push("/bat-dau");
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : "Không tạo được hồ sơ. Vui lòng thử lại.");
+    } finally { setBusy(false); }
   };
 
-  const googleExisting = async () => {
+  const continueWithGoogle = async () => {
     setBusy(true);
-    await loginWithSocial("google");
-    setGoogleOpen(false);
-    setBusy(false);
-    goHome("Minh Thư");
-  };
-
-  const gEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gEmail.trim());
-  const googleCreate = async () => {
-    if (!gEmailValid || gName.trim().length < 2) return;
-    if (isKnownAccount({ email: gEmail.trim() })) return googleExisting();
-    setBusy(true);
-    await register({ name: gName.trim(), email: gEmail.trim(), provider: "google" });
-    rememberAccount({ email: gEmail.trim() });
-    router.push("/bat-dau");
+    setAuthError("");
+    try {
+      const ok = await loginWithSocial("google");
+      if (ok) goHome("bạn");
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : "Không thể mở đăng nhập Google. Vui lòng thử lại.");
+      setBusy(false);
+    }
   };
 
   return (
@@ -165,10 +169,11 @@ export function AuthFlow() {
 
             <div className="mt-auto space-y-2.5 pt-8">
               <button
-                onClick={() => setGoogleOpen(true)}
+                onClick={() => void continueWithGoogle()}
+                disabled={busy}
                 className="w-full h-12 rounded-lg bg-white text-black font-bold text-[15px] flex items-center justify-center gap-2.5 hover:bg-neutral-100 active:scale-[0.98] transition-all"
               >
-                <GoogleIcon /> Tiếp tục với Google
+                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />} Tiếp tục với Google
               </button>
               <button
                 onClick={() => setStep("phone")}
@@ -186,6 +191,7 @@ export function AuthFlow() {
                 Tiếp tục nghĩa là bạn đồng ý Điều khoản sử dụng & Chính sách quyền riêng tư của SYNESIS.
               </p>
             </div>
+            {authError && <p role="alert" className="mt-3 text-center text-[12px] text-red-300">{authError}</p>}
           </div>
         )}
 
@@ -216,7 +222,8 @@ export function AuthFlow() {
               {normalized && <Check className="h-5 w-5 text-white" />}
             </label>
             {phoneInput && !normalized && <p className="mt-2 text-[12px] text-amber-300">Số di động Việt Nam gồm 10 số, bắt đầu bằng 03, 05, 07, 08 hoặc 09.</p>}
-            <p className="mt-3 text-[11.5px] text-white/45">Mẹo thử nghiệm: 0908 123 456 là tài khoản đã có; số khác sẽ tạo tài khoản mới.</p>
+            {captchaSiteKey && <div className="mt-4"><Turnstile key={captchaKey} siteKey={captchaSiteKey} onSuccess={setCaptchaToken} onExpire={() => setCaptchaToken("")} onError={() => { setCaptchaToken(""); setAuthError("Không xác minh được bảo mật. Vui lòng tải lại trang."); }} /></div>}
+            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
             <button
               type="submit"
               disabled={!normalized || busy}
@@ -244,9 +251,7 @@ export function AuthFlow() {
               error={!!otpError}
             />
             {otpError && <p className="mt-2 text-[12.5px] text-red-300">{otpError}</p>}
-            <p className="mt-3 rounded-xl bg-brand/20 border border-brand-sky/30 px-3 py-2 text-[12px] text-brand-100">
-              Bản thử nghiệm: mã OTP là <b className="tracking-widest">{DEMO_OTP}</b>
-            </p>
+            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
             <button
               onClick={() => resendIn <= 0 && void sendOtp()}
               disabled={resendIn > 0}
@@ -296,55 +301,8 @@ export function AuthFlow() {
         )}
       </div>
 
-      {/* ================= CHỌN TÀI KHOẢN GOOGLE (mô phỏng) ================= */}
-      <BottomSheet
-        open={googleOpen}
-        onClose={() => {
-          setGoogleOpen(false);
-          setGoogleNew(false);
-        }}
-        title="Đăng nhập bằng Google"
-        bodyClassName="p-4 pb-7 space-y-3"
-      >
-        <p className="text-[12px] text-muted-foreground">Chọn tài khoản để tiếp tục tới SYNESIS. (Bản thử nghiệm — bản thật mở cửa sổ Google.)</p>
-        {!googleNew ? (
-          <>
-            <button onClick={() => void googleExisting()} className="w-full flex items-center gap-3 rounded-2xl border border-border p-3 hover:bg-muted text-left">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="" className="h-10 w-10 rounded-full object-cover" />
-              <span className="flex-1 min-w-0">
-                <span className="block text-[14px] font-bold text-foreground">Minh Thư</span>
-                <span className="block text-[12px] text-muted-foreground">minhthu.run@gmail.com · đã có tài khoản</span>
-              </span>
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-            </button>
-            <button onClick={() => setGoogleNew(true)} className="w-full flex items-center gap-3 rounded-2xl border border-dashed border-border p-3 hover:bg-muted text-left">
-              <span className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-[18px]">+</span>
-              <span className="text-[14px] font-semibold text-foreground">Dùng một tài khoản Google khác</span>
-            </button>
-          </>
-        ) : (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void googleCreate();
-            }}
-            className="space-y-2.5"
-          >
-            <input value={gName} onChange={(e) => setGName(e.target.value)} placeholder="Họ tên" aria-label="Họ tên" className="w-full h-12 rounded-xl border border-border bg-background px-3.5 text-[14px] outline-none focus:ring-2 focus:ring-brand/30" />
-            <input value={gEmail} onChange={(e) => setGEmail(e.target.value)} placeholder="email@gmail.com" inputMode="email" aria-label="Email Google" className="w-full h-12 rounded-xl border border-border bg-background px-3.5 text-[14px] outline-none focus:ring-2 focus:ring-brand/30" />
-            <button
-              type="submit"
-              disabled={!gEmailValid || gName.trim().length < 2 || busy}
-              className="w-full h-12 rounded-lg bg-brand text-white font-bold text-[14px] hover:bg-brand-700 disabled:bg-neutral-200 disabled:text-neutral-500"
-            >
-              Tạo tài khoản với Google
-            </button>
-          </form>
-        )}
-      </BottomSheet>
-
       {/* ================= HƯỚNG DẪN NGƯỜI MỚI ================= */}
-      <BottomSheet open={guideOpen} onClose={() => setGuideOpen(false)} title="Bắt đầu với SYNESIS" bodyClassName="p-4 pb-7">
+      {guideOpen && <div role="dialog" aria-label="Bắt đầu với SYNESIS" className="fixed inset-0 z-[1200] flex items-end bg-black/70 p-4" onClick={() => setGuideOpen(false)}><div className="w-full rounded-3xl bg-white p-5 text-black" onClick={(e) => e.stopPropagation()}>
         <ol className="space-y-3">
           {[
             ["Chọn Google hoặc Số điện thoại", "Không cần mật khẩu. Tài khoản được tạo tự động ở lần đầu."],
@@ -364,7 +322,7 @@ export function AuthFlow() {
         <button onClick={() => setGuideOpen(false)} className="mt-5 w-full h-11 rounded-lg bg-brand text-white font-bold text-[14px]">
           Đã hiểu
         </button>
-      </BottomSheet>
+      </div></div>}
 
       {welcomeBack && (
         <div className="fixed inset-0 z-[1300] flex items-center justify-center bg-[#020611]/90 backdrop-blur animate-in fade-in">

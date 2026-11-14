@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { UT_CONFIG, legacyTsToUt } from "@/features/trust/config";
+import { UT_CONFIG } from "@/features/trust/config";
+import { getSupabaseBrowserClient, getSupabaseConfig, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export interface UserPermissions {
   camera: boolean;
@@ -62,6 +63,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   loginWithEmail: (email: string, pass?: string) => Promise<boolean>;
+  sendPhoneOtp: (phone: string, captchaToken?: string) => Promise<void>;
+  /** Returns true when an existing profile was found, false for a newly verified identity. */
   loginWithPhone: (phone: string, otp: string) => Promise<boolean>;
   loginWithSocial: (provider: "facebook" | "google" | "apple" | "strava") => Promise<boolean>;
   register: (data: { name: string; email?: string; phone?: string; provider?: "email" | "phone" | "facebook" | "google" | "apple" | "strava" }) => Promise<boolean>;
@@ -132,9 +135,7 @@ const STORAGE_KEY = "sync_sport_auth_session_v1";
  * Ép bật/tắt bằng biến môi trường NEXT_PUBLIC_DEMO_AUTOLOGIN=true|false.
  */
 const DEMO_AUTOLOGIN =
-  process.env.NEXT_PUBLIC_DEMO_AUTOLOGIN !== undefined
-    ? process.env.NEXT_PUBLIC_DEMO_AUTOLOGIN === "true"
-    : process.env.NODE_ENV !== "production";
+  process.env.NEXT_PUBLIC_DEMO_AUTOLOGIN === "true" && process.env.NODE_ENV !== "production";
 const LOGGED_OUT_KEY = "sync_sport_logged_out_flag";
 
 /**
@@ -149,34 +150,94 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  React.useEffect(() => {
-    try {
-      const isLoggedOut = localStorage.getItem(LOGGED_OUT_KEY);
-      const stored = localStorage.getItem(STORAGE_KEY);
-      const parsedStored = stored ? (JSON.parse(stored) as UserProfile) : null;
-      if (parsedStored && isLeftoverDemoSession(parsedStored, DEMO_AUTOLOGIN)) {
-        // Phiên tài khoản mẫu do bản cũ tự tạo → bỏ, để người dùng tự đăng ký / đăng nhập
-        localStorage.removeItem(STORAGE_KEY);
-        setUser(null);
-      } else if (parsedStored) {
-        const parsed = parsedStored;
-        // Dữ liệu cũ theo thang TS 0–150 → quy đổi sang UT 0–10
-        if (parsed.trustScore > UT_CONFIG.MAX) parsed.trustScore = legacyTsToUt(parsed.trustScore);
-        setUser(parsed);
-      } else if (isLoggedOut === "true" || !DEMO_AUTOLOGIN) {
-        // Bản chạy thật (production): người mới phải tự đăng ký / đăng nhập
-        setUser(null);
-      } else {
-        // Chỉ khi chạy trên máy (dev): tự đăng nhập tài khoản mẫu để thử nhanh
-        setUser(DEFAULT_USER);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_USER));
+  const userFromAuth = React.useCallback(async (authUser: import("@supabase/supabase-js").User) => {
+    const supabase = getSupabaseBrowserClient();
+    const { data: profile, error } = await supabase.from("synesis_profiles").select("*").eq("id", authUser.id).maybeSingle();
+    if (error) throw error;
+    const provider = authUser.app_metadata.provider === "phone" || authUser.phone
+      ? "phone"
+      : authUser.app_metadata.provider === "google" ? "google" : "email";
+    const displayName = (profile?.display_name
+      || authUser.user_metadata.full_name
+      || authUser.user_metadata.name
+      || authUser.email?.split("@")[0]
+      || "Vận động viên").trim().slice(0, 40) || "Vận động viên";
+    let row = profile ?? {
+      id: authUser.id,
+      display_name: displayName,
+      email: authUser.email?.toLowerCase() ?? null,
+      phone: authUser.phone ?? null,
+      auth_provider: provider,
+      name_completed: provider === "google" && Boolean(authUser.user_metadata.full_name || authUser.user_metadata.name),
+      onboarding_completed: false,
+    };
+    if (!profile) {
+      const { error: insertError } = await supabase.from("synesis_profiles").upsert(row, { onConflict: "id", ignoreDuplicates: true });
+      if (insertError) {
+        if (insertError.message.includes("SYNESIS_REGISTRATION_LIMIT_REACHED")) {
+          throw new Error("Đợt dùng thử SYNESIS đã đủ 10 tài khoản. Tài khoản mới hiện chưa thể đăng ký.");
+        }
+        throw insertError;
       }
-    } catch {
-      setUser(null);
-    } finally {
-      setIsLoading(false);
+      const { data: savedProfile, error: readError } = await supabase.from("synesis_profiles").select("*").eq("id", authUser.id).single();
+      if (readError) throw readError;
+      row = savedProfile;
     }
+    const mapped: UserProfile = {
+      ...DEFAULT_USER,
+      id: authUser.id,
+      name: row.display_name,
+      handle: (row.display_name || "athlete").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""),
+      email: row.email ?? "",
+      phone: row.phone ?? "",
+      avatar: authUser.user_metadata.avatar_url ?? "",
+      authProvider: row.auth_provider,
+      trustScore: UT_CONFIG.INITIAL,
+      tier: "Bạc",
+      isSurveyCompleted: row.onboarding_completed,
+      biometricEnabled: false,
+      securityPinEnabled: false,
+      permissions: { camera: false, gps: false, notifications: false },
+      connectedApps: { strava: false, appleHealth: false, garmin: false, coros: false, whoop: false, googleFit: false, nikeRunClub: false },
+      sportsProfile: {
+        preferredSports: [], fitnessGoal: "", runningPace: "", maxDistance: "", gymExperience: "",
+        racketLevel: "", preferredTime: "", workoutFrequency: "", preferredArea: "",
+        buddyStyle: "", privacyZoneEnabled: true,
+      },
+    };
+    setUser(mapped);
+    return { user: mapped, isNew: !profile || !profile.name_completed };
   }, []);
+
+  React.useEffect(() => {
+    if (!isSupabaseConfigured()) {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        if (DEMO_AUTOLOGIN) setUser(DEFAULT_USER);
+        else setUser(null);
+      } catch { setUser(null); }
+      setIsLoading(false);
+      return;
+    }
+    const supabase = getSupabaseBrowserClient();
+    let active = true;
+    const load = async (authUser: import("@supabase/supabase-js").User | null) => {
+      if (!active) return;
+      if (!authUser) { setUser(DEMO_AUTOLOGIN ? DEFAULT_USER : null); setIsLoading(false); return; }
+      try { await userFromAuth(authUser); }
+      catch (error) { console.error("Không tải được hồ sơ Supabase:", error); setUser(null); }
+      finally { if (active) setIsLoading(false); }
+    };
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (error) console.error("Không tải được phiên đăng nhập:", error);
+      return load(data.session?.user ?? null);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "INITIAL_SESSION") return;
+      void load(session?.user ?? null);
+    });
+    return () => { active = false; listener.subscription.unsubscribe(); };
+  }, [userFromAuth]);
 
   const saveUser = (updatedUser: UserProfile | null) => {
     setUser(updatedUser);
@@ -194,73 +255,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const loginWithEmail = async (email: string): Promise<boolean> => {
-    setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    const newUser: UserProfile = {
-      ...DEFAULT_USER,
-      id: `usr_${Date.now()}`,
-      email,
-      name: email.split("@")[0] || "Vận Động Viên",
-      authProvider: "email",
-    };
-    saveUser(newUser);
-    setIsLoading(false);
+    const { error } = await getSupabaseBrowserClient().auth.signInWithOtp({ email: email.trim().toLowerCase() });
+    if (error) throw error;
     return true;
   };
 
-  const loginWithPhone = async (phone: string): Promise<boolean> => {
-    setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 600));
-    const newUser: UserProfile = {
-      ...DEFAULT_USER,
-      id: `usr_${Date.now()}`,
-      phone,
-      authProvider: "phone",
-    };
-    saveUser(newUser);
-    setIsLoading(false);
-    return true;
+  const sendPhoneOtp = async (phone: string, captchaToken?: string) => {
+    if (!isSupabaseConfigured()) {
+      return;
+    }
+    if (process.env.NODE_ENV === "production" && !captchaToken) {
+      throw new Error("Vui lòng hoàn tất xác minh bảo mật trước khi nhận mã SMS.");
+    }
+    const { error } = await getSupabaseBrowserClient().auth.signInWithOtp({ phone, options: { captchaToken } });
+    if (error) throw error;
+  };
+
+  const loginWithPhone = async (phone: string, otp: string): Promise<boolean> => {
+    if (!isSupabaseConfigured()) {
+      if (otp !== "123456") throw new Error("Mã OTP không đúng. Vui lòng kiểm tra lại.");
+      const isExisting = phone.includes("908123456") || phone.includes("0908123456");
+      if (isExisting) {
+        saveUser(DEFAULT_USER);
+        return true;
+      }
+      return false;
+    }
+    const supabase = getSupabaseBrowserClient();
+    const { data, error } = await supabase.auth.verifyOtp({ phone, token: otp, type: "sms" });
+    if (error) throw error;
+    if (!data.user) throw new Error("Không xác minh được tài khoản. Vui lòng thử lại.");
+    const { isNew } = await userFromAuth(data.user);
+    return !isNew;
   };
 
   const loginWithSocial = async (provider: "facebook" | "google" | "apple" | "strava"): Promise<boolean> => {
-    setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
-    let name = "Vận Động Viên";
-    let email = "athlete@sync.vn";
-    let avatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80";
-    const connectedApps = { ...DEFAULT_USER.connectedApps };
-
-    if (provider === "facebook") {
-      name = "Hoàng Nam";
-      email = "hoangnam@facebook.com";
-      avatar = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80";
-    } else if (provider === "google") {
-      name = "Minh Thư";
-      email = "minhthu.run@gmail.com";
-      avatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80";
-    } else if (provider === "apple") {
-      name = "Tuấn Kiệt";
-      email = "tuankiet.apple@privaterelay.appleid.com";
-      avatar = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80";
-      connectedApps.appleHealth = true;
-    } else if (provider === "strava") {
-      name = "Thảo My (Strava)";
-      email = "thaomy@athlete.strava.com";
-      avatar = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80";
-      connectedApps.strava = true;
+    if (provider !== "google") throw new Error("Hiện chỉ hỗ trợ Google và số điện thoại.");
+    if (!isSupabaseConfigured()) {
+      saveUser(DEFAULT_USER);
+      return true;
     }
-
-    const newUser: UserProfile = {
-      ...DEFAULT_USER,
-      id: `usr_${provider}_${Date.now()}`,
-      name,
-      email,
-      avatar,
-      authProvider: provider,
-      connectedApps,
-    };
-    saveUser(newUser);
-    setIsLoading(false);
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!.replace(/\/$/, "");
+    const { anonKey: publishableKey } = getSupabaseConfig();
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 3500);
+    try {
+      const health = await fetch(`${supabaseUrl}/auth/v1/health`, {
+        method: "GET",
+        cache: "no-store",
+        headers: { apikey: publishableKey },
+        signal: controller.signal,
+      });
+      if (!health.ok) throw new Error("Supabase đang không sẵn sàng.");
+    } catch {
+      throw new Error("Không kết nối được máy chủ đăng nhập Supabase. Vui lòng khởi động Supabase hoặc kiểm tra cấu hình rồi thử lại.");
+    } finally {
+      window.clearTimeout(timeout);
+    }
+    const { error } = await getSupabaseBrowserClient().auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback`, queryParams: { prompt: "select_account" } },
+    });
+    if (error) throw error;
     return true;
   };
 
@@ -270,55 +326,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     phone?: string;
     provider?: "email" | "phone" | "facebook" | "google" | "apple" | "strava";
   }): Promise<boolean> => {
-    setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
-    const newUser: UserProfile = {
-      id: `usr_new_${Date.now()}`,
-      name: data.name || "Vận Động Viên Mới",
-      handle: (data.name || "athlete").toLowerCase().replace(/\s+/g, "_") + Math.floor(Math.random() * 900 + 100),
-      email: data.email || "athlete@sync.vn",
-      phone: data.phone || "0987 654 321",
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80",
-      authProvider: data.provider || "phone",
-      trustScore: UT_CONFIG.INITIAL, // mọi tài khoản mới bắt đầu ở 7 UT
-      tier: "Bạc",
-      isSurveyCompleted: false, // Cần làm khảo sát onboarding
-      biometricEnabled: false,
-      securityPinEnabled: false,
-      permissions: {
-        camera: false,
-        gps: false,
-        notifications: false,
-      },
-      connectedApps: {
-        strava: false,
-        appleHealth: false,
-        garmin: false,
-        coros: false,
-        whoop: false,
-        googleFit: false,
-        nikeRunClub: false,
-      },
-      sportsProfile: {
-        preferredSports: [],
-        fitnessGoal: "",
-        runningPace: "",
-        maxDistance: "",
-        gymExperience: "",
-        racketLevel: "",
-        preferredTime: "",
-        workoutFrequency: "",
-        preferredArea: "TP. Hồ Chí Minh",
-        buddyStyle: "Kỷ luật cao, đúng giờ",
-        privacyZoneEnabled: true,
-      },
-    };
-    saveUser(newUser);
-    setIsLoading(false);
+    if (!isSupabaseConfigured()) {
+      const newUser: UserProfile = {
+        ...DEFAULT_USER,
+        id: `usr_${Date.now()}`,
+        name: data.name.trim(),
+        handle: data.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_"),
+        phone: data.phone || "",
+        email: data.email || "",
+        authProvider: data.provider || "phone",
+        isSurveyCompleted: false,
+      };
+      saveUser(newUser);
+      return true;
+    }
+    const supabase = getSupabaseBrowserClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) throw new Error("Phiên xác minh đã hết hạn. Vui lòng đăng nhập lại.");
+    const { error } = await supabase.from("synesis_profiles").upsert({
+      id: authUser.id,
+      display_name: data.name.trim(),
+      email: authUser.email?.toLowerCase() ?? null,
+      phone: authUser.phone ?? null,
+      auth_provider: authUser.phone ? "phone" : (authUser.app_metadata.provider === "google" ? "google" : "email"),
+      name_completed: true,
+      onboarding_completed: false,
+      updated_at: new Date().toISOString(),
+    });
+    if (error) throw error;
+    await userFromAuth(authUser);
     return true;
   };
 
   const logout = () => {
+    if (isSupabaseConfigured()) void getSupabaseBrowserClient().auth.signOut();
     saveUser(null);
   };
 
@@ -337,14 +378,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const completeOnboarding: AuthContextType["completeOnboarding"] = (data) => {
     if (!user) return;
+    const displayName = data.name || user.name;
     saveUser({
       ...user,
-      name: data.name || user.name,
+      name: displayName,
       isSurveyCompleted: true,
       sportsProfile: { ...user.sportsProfile, ...data.sportsProfile },
       permissions: { ...user.permissions, ...data.permissions },
       connectedApps: { ...(user.connectedApps || DEFAULT_USER.connectedApps), ...data.connectedApps },
     });
+    if (isSupabaseConfigured()) {
+      void getSupabaseBrowserClient().from("synesis_profiles").update({
+        display_name: displayName,
+        onboarding_completed: true,
+        updated_at: new Date().toISOString(),
+      }).eq("id", user.id).then(({ error }) => {
+        if (error) console.error("Không lưu được trạng thái onboarding:", error);
+      });
+    }
   };
 
   const updatePermissions = (perms: Partial<UserPermissions>) => {
@@ -411,6 +462,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!user,
         isLoading,
         loginWithEmail,
+        sendPhoneOtp,
         loginWithPhone,
         loginWithSocial,
         register,

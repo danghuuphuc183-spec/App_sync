@@ -14,8 +14,11 @@ import {
   Pin,
   QrCode,
   ShieldCheck,
+  Sparkles,
   Users,
 } from "lucide-react";
+import { VietQRPaymentModal } from "@/components/payment/vietqr-payment-modal";
+import { SplitPaymentOrder } from "@/features/payment/payos.types";
 import { cn } from "@/lib/utils";
 import {
   activeMembers,
@@ -414,9 +417,56 @@ function InviteTab({ admin }: { admin: boolean }) {
 function PayTab() {
   const [kind, setKind] = React.useState<TxKind>("club_membership");
   const [amount, setAmount] = React.useState(150_000);
+  const [paymentOrder, setPaymentOrder] = React.useState<SplitPaymentOrder | null>(null);
+  const [isCreatingPayment, setIsCreatingPayment] = React.useState(false);
   const q = quoteFee(kind, amount);
+
+  const handleCreatePayment = async () => {
+    if (amount <= 0) return;
+    setIsCreatingPayment(true);
+    try {
+      const res = await fetch("/api/payment/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          kind: kind === "coaching_booking" ? "coaching_starter" : "club_membership",
+          title: `${TX_LABEL[kind]} · CLB Running FTU2`,
+          amount,
+          buyerName: "Thành viên CLB (Tester)",
+          partnerKey: "club_running_ftu2",
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        setPaymentOrder(data.data);
+      }
+    } catch (err) {
+      console.error("Lỗi tạo đơn thanh toán:", err);
+    } finally {
+      setIsCreatingPayment(false);
+    }
+  };
+
   return (
     <div className="space-y-3">
+      <div className="flex items-center justify-between rounded-xl bg-primary/10 border border-primary/20 p-3">
+        <div>
+          <p className="text-xs font-bold text-primary flex items-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5" />
+            Cổng payOS VietQR Split Payment
+          </p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            Tiền chuyển thẳng tài khoản CLB (ACB), tự động trích phí về Vietcombank 09090909.
+          </p>
+        </div>
+        <Link
+          href="/thanh-toan/demo"
+          className="text-[11px] font-bold text-primary hover:underline flex items-center gap-1 shrink-0 ml-2"
+        >
+          Trang Demo <ArrowLeft className="h-3 w-3 rotate-180" />
+        </Link>
+      </div>
+
       <p className="rounded-xl bg-muted/60 p-3 text-[12.5px] text-foreground">
         Thu qua <b>{PAYMENT_CONFIG.partnerNameVi}</b> ({PAYMENT_CONFIG.methods.join(", ")}). SYNESIS không giữ tiền. Phí hiển thị từng dòng trước khi thanh toán; quỹ phạt không bị thu phí nền tảng.
       </p>
@@ -460,7 +510,24 @@ function PayTab() {
             <CheckCircle2 className="h-4 w-4" /> Giao dịch này không thu phí nền tảng.
           </p>
         )}
+
+        <button
+          type="button"
+          disabled={isCreatingPayment || amount <= 0}
+          onClick={handleCreatePayment}
+          className="w-full mt-3 rounded-xl bg-primary py-2.5 font-bold text-primary-foreground hover:bg-primary/90 flex items-center justify-center gap-2 text-xs transition-colors shadow-sm disabled:opacity-50"
+        >
+          <QrCode className="h-4 w-4" />
+          {isCreatingPayment ? "Đang tạo mã VietQR..." : "Tạo Mã VietQR Thanh Toán (payOS Split Payment)"}
+        </button>
       </Card>
+
+      {paymentOrder && (
+        <VietQRPaymentModal
+          order={paymentOrder}
+          onClose={() => setPaymentOrder(null)}
+        />
+      )}
     </div>
   );
 }
