@@ -61,7 +61,7 @@ describe("Lên kèo nhóm", () => {
   it("Done → danh sách nhóm đang thiếu người → bỏ qua để tự lập nhóm", () => {
     render(<GroupFlow />);
     expect(screen.getByText("Hiện diện")).toBeInTheDocument();
-    fireEvent.click(screen.getAllByRole("button", { name: /Pickleball Saigon Riverside/ })[0]!);
+    fireEvent.click(screen.getAllByRole("button", { name: /Landmark 81/ })[0]!);
     fireEvent.click(screen.getByRole("button", { name: /\(Hôm nay\)/ }));
     // Thanh trượt 2 đầu trên biểu đồ hoạt động: 17:00 → 19:00
     fireEvent.change(screen.getByLabelText("Giờ kết thúc"), { target: { value: "30" } });

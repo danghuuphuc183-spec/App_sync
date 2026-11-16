@@ -44,7 +44,11 @@ export function BrowseKeos({ initialTab = "for-you" }: { initialTab?: Tab } = {}
     const base = rankKeos(allKeos, viewer, { hostTrust, sportLabel: (s) => SPORT_LABEL[s] ?? s });
     // chỉ kèo còn chỗ mà bạn chưa ở trong: kèo 1:1 vừa nhận ẩn ngay, kèo bạn tạo / đã nhận nằm ở "Kèo của bạn" (D35)
     const filtered = base.filter(
-      (r) => isOnBoardFor(r.keo, viewer.id) && (kind === "all" || r.keo.kind === kind) && (sport === "all" || r.keo.sport === sport)
+      (r) =>
+        isOnBoardFor(r.keo, viewer.id) &&
+        KEO_SPORTS.includes(r.keo.sport) &&
+        (kind === "all" || r.keo.kind === kind) &&
+        (sport === "all" || r.keo.sport === sport)
     );
     return tab === "nearest" ? [...filtered].sort((a, b) => a.distanceKm - b.distanceKm) : filtered;
   }, [tab, allKeos, viewer, kind, sport]);

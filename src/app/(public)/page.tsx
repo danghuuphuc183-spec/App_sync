@@ -11,7 +11,7 @@ import { INITIAL_FEED } from "@/features/feed/feed.data";
 import type { FeedPost } from "@/features/feed/feed.types";
 import { SPORT_LABEL } from "@/features/feed/feed.utils";
 
-type NewSport = "running" | "gym" | "pickleball" | "badminton" | "table_tennis" | "football" | "basketball" | "cycling";
+type NewSport = "running" | "gym" | "cycling";
 
 const DEFAULT_SPORT_PHOTO: Record<string, string> = {
   running: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=900&auto=format&fit=crop&q=80",
@@ -199,39 +199,25 @@ export default function HomePage() {
 
             <form onSubmit={handleCreatePost} className="space-y-3 text-xs">
               <div className="space-y-1">
-                <label className="font-semibold text-foreground">Loại hình thể thao</label>
-                <div className="grid grid-cols-4 gap-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="font-semibold text-foreground">Loại hình thể thao (Giai đoạn 1)</label>
+                  <span className="text-[10px] text-muted-foreground">3 môn chính</span>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
                   {[
                     { id: "running", label: "Chạy bộ" },
                     { id: "gym", label: "Gym" },
-                    { id: "pickleball", label: "Pickleball" },
-                    { id: "badminton", label: "Cầu lông" },
-                    { id: "table_tennis", label: "Bóng bàn" },
-                    { id: "football", label: "Bóng đá" },
-                    { id: "basketball", label: "Bóng rổ" },
                     { id: "cycling", label: "Đạp xe" },
                   ].map((s) => (
                     <button
                       key={s.id}
                       type="button"
-                      onClick={() =>
-                        setNewSport(
-                          s.id as
-                            | "running"
-                            | "gym"
-                            | "pickleball"
-                            | "badminton"
-                            | "table_tennis"
-                            | "football"
-                            | "basketball"
-                            | "cycling"
-                        )
-                      }
+                      onClick={() => setNewSport(s.id as "running" | "gym" | "cycling")}
                       className={cn(
-                        "py-1.5 rounded-lg border text-[11px] font-bold transition-all text-center",
+                        "py-2 rounded-xl border text-xs font-bold transition-all text-center shadow-2xs",
                         newSport === s.id
-                          ? "bg-brand text-white border-brand"
-                          : "bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300"
+                          ? "bg-brand text-white border-brand shadow-xs"
+                          : "bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100"
                       )}
                     >
                       {s.label}

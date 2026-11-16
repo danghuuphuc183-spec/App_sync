@@ -110,8 +110,8 @@ export const SEED_SPORTS: SportItem[] = [
     category: "racket_team",
     requiresVenue: true,
     verificationMode: "qr_only",
-    phase: 1,
-    isActive: true,
+    phase: 2,
+    isActive: false,
     sortOrder: 4,
     descriptionVi:
       "Môn thể thao bùng nổ cho nhóm 2-4 người. Ghép cặp đánh đơn/đôi theo trình độ DUPR tại các cụm sân chất lượng cao.",
@@ -132,8 +132,8 @@ export const SEED_SPORTS: SportItem[] = [
     category: "racket_team",
     requiresVenue: true,
     verificationMode: "qr_only",
-    phase: 1,
-    isActive: true,
+    phase: 2,
+    isActive: false,
     sortOrder: 5,
     descriptionVi:
       "Tìm đối tác đánh đơn, đánh đôi giải phóng calo cực nhanh tại các cụm sân cầu lông tiêu chuẩn thảm chuyên dụng.",
@@ -154,8 +154,8 @@ export const SEED_SPORTS: SportItem[] = [
     category: "racket_team",
     requiresVenue: true,
     verificationMode: "qr_only",
-    phase: 1,
-    isActive: true,
+    phase: 2,
+    isActive: false,
     sortOrder: 6,
     descriptionVi:
       "Rèn luyện phản xạ nhanh và sự tập trung cao độ cùng đối tác ngang cơ tại các CLB bóng bàn có máy lạnh và sàn thi đấu.",
@@ -176,8 +176,8 @@ export const SEED_SPORTS: SportItem[] = [
     category: "ball_sport",
     requiresVenue: true,
     verificationMode: "qr_only",
-    phase: 1,
-    isActive: true,
+    phase: 2,
+    isActive: false,
     sortOrder: 7,
     descriptionVi:
       "Tìm slot đá ké hoặc gom người cho đội hình sân 5 và sân 7 cỏ nhân tạo, cam kết đúng giờ và không bỏ vị trí.",
@@ -198,8 +198,8 @@ export const SEED_SPORTS: SportItem[] = [
     category: "ball_sport",
     requiresVenue: true,
     verificationMode: "qr_only",
-    phase: 1,
-    isActive: true,
+    phase: 2,
+    isActive: false,
     sortOrder: 8,
     descriptionVi:
       "Tìm bạn pick-up game nửa sân 3x3 hoặc đấu giao lưu full-court 5x5 tại các sân bóng rổ ngoài trời & nhà thi đấu trong nhà.",
@@ -213,4 +213,6 @@ export const SEED_SPORTS: SportItem[] = [
   },
 ];
 
+export const PHASE_1_SPORT_KEYS: SportKey[] = ["running", "gym", "cycling"];
+export const PHASE_1_SPORTS = SEED_SPORTS.filter((s) => s.phase === 1);
 export const POPULAR_GROUP_SPORTS = SEED_SPORTS;

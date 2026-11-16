@@ -56,8 +56,8 @@ describe("HomeFeed", () => {
     expect(screen.getByText("Đã ẩn quảng cáo này.")).toBeInTheDocument();
   });
 
-  it("có dải Reels dẫn tới trang reels", () => {
+  it("đã ẩn dải Reels khỏi bảng tin trang chủ theo giai đoạn 1", () => {
     render(<Harness />);
-    expect(screen.getByRole("link", { name: "Xem tất cả" })).toHaveAttribute("href", "/reels");
+    expect(screen.queryByRole("link", { name: "Xem tất cả" })).not.toBeInTheDocument();
   });
 });

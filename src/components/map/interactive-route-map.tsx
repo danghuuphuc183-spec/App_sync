@@ -526,28 +526,39 @@ export function InteractiveRouteMap() {
           </button>
         </div>
 
-        {/* Menu chọn môn */}
+        {/* Menu chọn môn (Giai đoạn 1: Chạy bộ, Gym, Đạp xe) */}
         {isSportMenuOpen && (
-          <div className="rounded-2xl bg-background/98 backdrop-blur shadow-xl border border-border p-2 grid grid-cols-2 gap-1 animate-in fade-in slide-in-from-top-1">
-            {POPULAR_GROUP_SPORTS.filter((s) => s.key).map((s) => (
-              <button
-                key={s.key}
-                onClick={() => {
-                  setSelectedSport(s.key!);
-                  setSelectedId(null);
-                  setSearchQuery("");
-                  setIsSportMenuOpen(false);
-                }}
-                className={cn(
-                  "flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-semibold text-left",
-                  selectedSport === s.key ? "bg-brand-600 text-white" : "hover:bg-muted text-foreground"
-                )}
-              >
-                <SportIcon sport={s.key!} className="h-4 w-4" />
-                <span className="flex-1">{s.nameVi}</span>
-                <span className="text-[10px] opacity-70">{s.requiresVenue ? "Sân" : "Cung đường"}</span>
-              </button>
-            ))}
+          <div className="rounded-2xl bg-background/98 backdrop-blur shadow-xl border border-border p-2 space-y-1.5 animate-in fade-in slide-in-from-top-1">
+            <div className="flex items-center justify-between px-2 pt-1 pb-0.5">
+              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Môn Giai đoạn 1</span>
+              <span className="text-[10px] text-brand font-semibold">3 môn chính</span>
+            </div>
+            <div className="grid grid-cols-1 gap-1">
+              {POPULAR_GROUP_SPORTS.filter((s) => s.key && ["running", "gym", "cycling"].includes(s.key)).map((s) => (
+                <button
+                  key={s.key}
+                  onClick={() => {
+                    setSelectedSport(s.key!);
+                    setSelectedId(null);
+                    setSearchQuery("");
+                    setIsSportMenuOpen(false);
+                  }}
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-semibold text-left transition-colors",
+                    selectedSport === s.key ? "bg-brand text-white" : "hover:bg-muted text-foreground"
+                  )}
+                >
+                  <SportIcon sport={s.key!} className="h-4 w-4" />
+                  <span className="flex-1 font-bold">{s.nameVi}</span>
+                  <span className={cn("text-[10.5px] px-2 py-0.5 rounded-full font-medium", selectedSport === s.key ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
+                    {s.requiresVenue ? "Phòng tập & Sân" : "Cung đường mở"}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="text-[10.5px] text-muted-foreground/80 px-2 pb-1 text-center italic">
+              Các môn khác (Pickleball, Cầu lông, Bóng đá...) sẽ được mở ở giai đoạn sau.
+            </p>
           </div>
         )}
 

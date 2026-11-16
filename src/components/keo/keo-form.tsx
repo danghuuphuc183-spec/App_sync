@@ -26,7 +26,7 @@ export function emptyPersonalForm(): PersonalForm {
 }
 
 export function emptyGroupForm(): GroupForm {
-  return { ...emptyPersonalForm(), sport: "pickleball", details: defaultDetails("pickleball"), capacity: 4, present: 2 };
+  return { ...emptyPersonalForm(), sport: "running", details: defaultDetails("running"), capacity: 4, present: 2 };
 }
 
 export type KeoFormKind = "solo" | "personal" | "group";
@@ -105,9 +105,9 @@ export function KeoForm<T extends PersonalForm>({
         </div>
       )}
 
-      {/* Môn thể thao */}
-      <Section title="Chọn môn thể thao">
-        <div className="grid grid-cols-4 gap-2">
+      {/* Môn thể thao (Giai đoạn 1: 3 môn chính) */}
+      <Section title="Chọn môn thể thao (Giai đoạn 1)">
+        <div className="grid grid-cols-3 gap-2">
           {KEO_SPORTS.map((s) => (
             <button
               key={s}
@@ -115,14 +115,14 @@ export function KeoForm<T extends PersonalForm>({
               onClick={() => set({ sport: s, place: null, details: defaultDetails(s) } as Partial<T>)}
               aria-pressed={value.sport === s}
               className={cn(
-                "flex flex-col items-center gap-1 rounded-2xl border py-2.5 text-[11.5px] font-semibold transition-all active:scale-95",
+                "flex flex-col items-center gap-1.5 rounded-2xl border py-3 text-xs font-bold transition-all active:scale-95 shadow-2xs",
                 value.sport === s
-                  ? "bg-brand border-brand text-white shadow-sm"
+                  ? "bg-brand border-brand text-white shadow-xs"
                   : "border-border text-foreground hover:border-brand-300 hover:bg-brand-50 dark:hover:bg-brand-950/40"
               )}
             >
-              <SportIcon sport={s} className="h-5 w-5" />
-              {SPORT_LABEL[s]}
+              <SportIcon sport={s} className="h-6 w-6" />
+              <span>{SPORT_LABEL[s]}</span>
             </button>
           ))}
         </div>

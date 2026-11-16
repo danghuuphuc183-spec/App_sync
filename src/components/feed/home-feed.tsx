@@ -11,7 +11,6 @@ import { InstagramChatModal } from "@/components/chat/instagram-chat-modal";
 import { PostCard } from "./post-card";
 import { CommentsSheet, PostOptionsSheet, ShareSheet } from "./post-sheets";
 import { BottomSheet, useToast } from "./bottom-sheet";
-import { ReelsStrip } from "./reels-strip";
 
 const FILTERS = [
   { id: "all", label: "Tất cả" },
@@ -150,7 +149,6 @@ export function HomeFeed({
                     onJoinInvite={post.invite && !author.isMe ? () => setJoinFor(post.id) : undefined}
                   />
                 )}
-                {i === 1 && filter === "all" && !searchQuery && <ReelsStrip />}
               </React.Fragment>
             );
           })}
