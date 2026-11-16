@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, ChevronRight, Lock, Plus, UserRound, Users, UsersRound } from "lucide-react";
 import { BottomSheet } from "@/components/feed/bottom-sheet";
 import { BrowseKeos } from "@/components/keo/browse-keos";
-import { MyKeosSection } from "@/components/keo/my-keos";
 import { GroupFlow, PersonalFlow, SoloFlow } from "@/components/keo/keo-flows";
 import { useKeoStore } from "@/features/keo/use-keo-store";
 import { formatKeoDay } from "@/features/keo/keo-date";

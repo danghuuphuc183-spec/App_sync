@@ -33,7 +33,9 @@ export function BottomNav() {
         {FIVE_MAIN_TABS.map((item) => {
           const isActive = item.exact
             ? pathname === item.href
-            : pathname === item.href || (item.href !== "/" && pathname?.startsWith(`${item.href}`));
+            : pathname === item.href ||
+              (item.href !== "/" && pathname?.startsWith(`${item.href}`)) ||
+              (item.href === "/ho-so" && pathname?.startsWith("/cai-dat"));
           const Icon = item.icon;
 
           if (item.isHighlight) {

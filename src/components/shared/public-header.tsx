@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Bell, MessageCircle, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth-context";
@@ -16,6 +17,7 @@ const ICON_BTN =
  * Header trên cùng: logo bên trái; bên phải chỉ có Trợ lý AI, Tin nhắn và Thông báo.
  */
 export function PublicHeader() {
+  const pathname = usePathname();
   const { isAuthenticated } = useAuth();
   const [isAssistantOpen, setIsAssistantOpen] = React.useState(false);
   const [isNotifOpen, setIsNotifOpen] = React.useState(false);
@@ -34,6 +36,10 @@ export function PublicHeader() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (pathname === "/cai-dat" || pathname === "/ho-so") {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/70 bg-background/90 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">

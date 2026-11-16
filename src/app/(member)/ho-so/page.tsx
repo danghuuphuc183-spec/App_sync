@@ -1,36 +1,42 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
-import { TrainingLog } from "@/components/profile/training-log";
-import { MyConnections, MyPosts, SocialStatsBar, type SocialTab } from "@/components/profile/my-social";
-import { MyKeosSection } from "@/components/keo/my-keos";
-import { CompactTrustScoreBar } from "@/components/profile/compact-trust-score-bar";
-import { RankCard } from "@/components/profile/rank-card";
-import { useKeoStore } from "@/features/keo/use-keo-store";
+import Link from "next/link";
 import {
-  Shield,
   Share2,
-  QrCode,
-  MapPin,
-  TrendingUp,
-  Activity,
   Settings,
+  Sun,
+  Eye,
+  Calendar,
+  Zap,
+  Users,
+  Coins,
+  ChevronRight,
+  LayoutGrid,
+  List,
+  Plus,
+  QrCode,
+  ShieldCheck,
+  ShieldAlert,
+  Shield,
   Edit3,
-  BarChart2,
   Camera,
   X,
   Check,
-  LogOut,
-  Upload,
+  MapPin,
+  Lock,
+  Dumbbell,
+  Activity,
+  Flame,
+  Award,
+  Clock,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { TierBadge } from "@/components/shared/tier-badge";
 import { useAuth } from "@/context/auth-context";
+import { LogWorkoutSheet } from "@/components/activity/log-workout-sheet";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-// DANH SÁCH ẢNH ĐẠI DIỆN MẪU PHONG CÁCH THỂ THAO
+// PRESET AVATARS FOR ATHLETES
 const PRESET_AVATARS = [
   { id: "av-1", label: "Runner Nữ", url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=350&auto=format&fit=crop&q=80" },
   { id: "av-2", label: "Yoga & Stretching", url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=350&auto=format&fit=crop&q=80" },
@@ -40,109 +46,52 @@ const PRESET_AVATARS = [
   { id: "av-6", label: "Vận Động Viên Đa Năng", url: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=350&auto=format&fit=crop&q=80" },
 ];
 
-const MY_POSTS_GRID = [
-  {
-    src: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=500&auto=format&fit=crop&q=80",
-    caption: "10km sáng sớm Landmark 81 • Pace 5:35",
-    likes: 42,
-  },
-  {
-    src: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=500&auto=format&fit=crop&q=80",
-    caption: "Legday Squat 75kg tại The New Gym",
-    likes: 38,
-  },
-  {
-    src: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=500&auto=format&fit=crop&q=80",
-    caption: "Long Run 15km bờ kè Thanh Đa",
-    likes: 56,
-  },
-  {
-    src: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&fit=crop&q=80",
-    caption: "Buổi giãn cơ & Core sau chạy",
-    likes: 29,
-  },
-  {
-    src: "https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=500&auto=format&fit=crop&q=80",
-    caption: "Tập cùng Squad FTU2 Run sáng T7",
-    likes: 64,
-  },
-  {
-    src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&auto=format&fit=crop&q=80",
-    caption: "Check-in hoàn thành kèo 8.5km với partner",
-    likes: 47,
-  },
-];
-
-// DỮ LIỆU BIỂU ĐỒ 7 NGÀY TRONG TUẦN (TUẦN NÀY)
-const WEEK_DAYS = [
-  { day: "T2", duration: 0, volume: 0, distance: 0, completed: false, label: "Nghỉ ngơi" },
-  { day: "T3", duration: 58, volume: 0, distance: 10.2, completed: true, label: "Chạy 10.2km Landmark" },
-  { day: "T4", duration: 0, volume: 0, distance: 0, completed: false, label: "Nghỉ ngơi" },
-  { day: "T5", duration: 65, volume: 7.2, distance: 0, completed: true, label: "Gym Kháng lực Legday" },
-  { day: "T6", duration: 0, volume: 0, distance: 0, completed: false, label: "Nghỉ ngơi" },
-  { day: "T7", duration: 75, volume: 0, distance: 13.5, completed: true, label: "Long Run Thanh Đa" },
-  { day: "CN", duration: 45, volume: 7.3, distance: 8.7, completed: true, label: "Easy Run & Kháng lực" },
-];
-
 export default function ProfilePage() {
-  const router = useRouter();
-  const { user, logout, updateProfile } = useAuth();
-  const keoStore = useKeoStore();
+  const { user, updateProfile } = useAuth();
 
-  const [metricTab, setMetricTab] = React.useState<"distance" | "duration" | "volume">("distance");
-  type ProfileTab = "bounties" | "posts" | "fitness" | "friends" | "privacy";
-  const [activeTab, setActiveTab] = React.useState<ProfileTab>("bounties");
-  const [socialTab, setSocialTab] = React.useState<SocialTab>("friends");
-  const tabsRef = React.useRef<HTMLDivElement>(null);
-
-  const openSection = (target: "posts" | SocialTab) => {
-    if (target === "posts") setActiveTab("posts");
-    else {
-      setSocialTab(target);
-      setActiveTab("friends");
-    }
-    requestAnimationFrame(() => tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
-  };
-
-  // Mở tab tương ứng khi có search params (VD: ?tab=bounties từ Lên kèo)
-  React.useEffect(() => {
-    const tabParam = new URLSearchParams(window.location.search).get("tab");
-    if (tabParam === "bounties") setActiveTab("bounties");
-    else if (tabParam === "posts") setActiveTab("posts");
-    else if (tabParam === "fitness") setActiveTab("fitness");
-    else if (tabParam === "friends") setActiveTab("friends");
-    else if (tabParam === "privacy") setActiveTab("privacy");
-  }, []);
+  // Active Tab
+  type ProfileTab = "posts" | "keo" | "badges" | "buddies";
+  const [activeTab, setActiveTab] = React.useState<ProfileTab>("posts");
+  const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
 
   // Modals state
-  const [isQrModalOpen, setIsQrModalOpen] = React.useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = React.useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = React.useState(false);
+  const [isQrModalOpen, setIsQrModalOpen] = React.useState(false);
+  const [isTrustRulesOpen, setIsTrustRulesOpen] = React.useState(false);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = React.useState(false);
+  const [isCoinsModalOpen, setIsCoinsModalOpen] = React.useState(false);
+  const [isNewPostModalOpen, setIsNewPostModalOpen] = React.useState(false);
   const [copiedLink, setCopiedLink] = React.useState(false);
   const [qrCountdown, setQrCountdown] = React.useState(30);
 
-  // Editable profile state - Tự động đồng bộ với tài khoản người dùng
-  const [profileName, setProfileName] = React.useState(user?.name || "Đặng Hữu Phúc");
-  const [profileAvatar, setProfileAvatar] = React.useState(
-    user?.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=350&auto=format&fit=crop&q=80"
-  );
-  const [profileBio, setProfileBio] = React.useState(
-    "Pace 5:30 - 5:45/km. Kỷ luật cao, đúng giờ 100%, không hủy kèo phút chót. Thường chạy Sala Q.2 & Landmark 81 Bình Thạnh."
-  );
-  const [profilePace, setProfilePace] = React.useState(user?.sportsProfile?.runningPace || "5:30 - 5:45/km");
-  const [profileArea, setProfileArea] = React.useState(user?.sportsProfile?.preferredArea || "Bình Thạnh & Q.2 Sala, TP.HCM");
+  // Dark mode toggle
+  const [isDarkMode, setIsDarkMode] = React.useState(false);
+  React.useEffect(() => {
+    setIsDarkMode(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  const toggleTheme = () => {
+    const isDark = document.documentElement.classList.toggle("dark");
+    setIsDarkMode(isDark);
+  };
+
+  // User Profile Data - Defaults to Minh Thư matching mockup or current logged in user
+  const [profileName, setProfileName] = React.useState(user?.name || "Minh Thư");
+  const [profileAvatar, setProfileAvatar] = React.useState(user?.avatar || "");
+  const [profileHandle, setProfileHandle] = React.useState(user?.handle || "minhthu_runner");
+  const [profileArea, setProfileArea] = React.useState(user?.sportsProfile?.preferredArea || "Bình Thạnh");
+  const [profilePace, setProfilePace] = React.useState(user?.sportsProfile?.runningPace || "5:45 /km");
 
   React.useEffect(() => {
-    if (user) {
-      if (user.name) setProfileName(user.name);
-      if (user.avatar) setProfileAvatar(user.avatar);
-      if (user.sportsProfile?.runningPace) setProfilePace(user.sportsProfile.runningPace);
-      if (user.sportsProfile?.preferredArea) setProfileArea(user.sportsProfile.preferredArea);
-    }
+    if (user?.name) setProfileName(user.name);
+    if (user?.avatar) setProfileAvatar(user.avatar);
+    if (user?.handle) setProfileHandle(user.handle);
+    if (user?.sportsProfile?.preferredArea) setProfileArea(user.sportsProfile.preferredArea);
+    if (user?.sportsProfile?.runningPace) setProfilePace(user.sportsProfile.runningPace);
   }, [user]);
 
-  // Timer for dynamic QR code refresh
+  // QR Timer countdown
   React.useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isQrModalOpen) {
@@ -154,558 +103,595 @@ export default function ProfilePage() {
     return () => clearInterval(timer);
   }, [isQrModalOpen]);
 
-  const handleCopyLink = () => {
-    const handle = user?.handle || "danghuuphuc183";
-    navigator.clipboard?.writeText?.(`https://syncsport.app/v/${handle}`);
+  const handleShareProfile = () => {
+    navigator.clipboard?.writeText?.(`https://syncsport.app/v/${profileHandle}`);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
-  const totalMyKeos = keoStore.mine.filter((k) => k.status !== "cancelled").length + keoStore.joined.size;
+  const userInitials = profileName
+    .split(" ")
+    .map((w) => w[0])
+    .filter(Boolean)
+    .slice(-2)
+    .join("")
+    .toUpperCase() || "MT";
+
+  // Mocked Heatmap Matrix (7 days x 16 weeks)
+  const heatmapData = React.useMemo(() => {
+    // 0: empty, 1: light, 2: medium, 3: dark, 4: intense
+    return [
+      [0, 1, 0, 0, 2, 0, 1, 0, 0, 0, 1, 0, 0, 1, 2, 0], // T2
+      [0, 0, 2, 0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 0, 0, 3], // T3
+      [0, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0], // T4
+      [0, 0, 0, 1, 0, 0, 0, 2, 2, 0, 0, 0, 3, 4, 0, 0], // T5
+      [0, 0, 1, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0], // T6
+      [1, 0, 3, 0, 1, 0, 2, 0, 2, 0, 0, 0, 1, 2, 3, 0], // T7
+      [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0], // CN
+    ];
+  }, []);
 
   return (
-    <div className="flex flex-col w-full pb-20 space-y-3.5 px-3 pt-1 max-w-2xl mx-auto">
-      {/* =================================================================== */}
-      {/* 1. ATHLETE COVER & STATUS BAR (TINH GỌN, GIỮ NGUYÊN NỘI DUNG CHÍNH) */}
-      {/* =================================================================== */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-brand via-black to-brand-800 text-white p-4 shadow-md border border-brand-300/20">
-        <div className="absolute top-0 right-0 w-44 h-44 bg-brand-sky/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-brand-100/5 rounded-full blur-xl pointer-events-none" />
+    <div className="flex flex-col w-full min-h-screen bg-background pb-24 max-w-md mx-auto text-foreground">
+      {/* 1. TOP HEADER: Hồ sơ + Share + Sun + Settings */}
+      <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-md px-4 py-3 flex items-center justify-between">
+        <h1 className="text-xl font-bold tracking-tight text-foreground">Hồ sơ</h1>
+        <div className="flex items-center gap-1.5">
+          {/* Share */}
+          <button
+            type="button"
+            onClick={handleShareProfile}
+            aria-label="Chia sẻ hồ sơ"
+            title="Chia sẻ hồ sơ"
+            className="p-2 rounded-full hover:bg-muted text-foreground transition-all active:scale-95"
+          >
+            {copiedLink ? <Check className="h-5 w-5 text-emerald-500" /> : <Share2 className="h-5 w-5 stroke-[1.8]" />}
+          </button>
 
-        {/* Top Actions: @Handle + Các nút công cụ */}
-        <div className="flex items-center justify-between relative z-10 pb-3">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-mono font-bold tracking-tight text-brand-200">
-              @{user?.handle || "danghuuphuc183"}
-            </span>
-            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" title="Đang online sẵn sàng tập" />
-          </div>
+          {/* Theme toggle (Sun / Moon) */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Đổi giao diện sáng/tối"
+            title="Đổi giao diện sáng/tối"
+            className="p-2 rounded-full hover:bg-muted text-foreground transition-all active:scale-95"
+          >
+            {isDarkMode ? <Sun className="h-5 w-5 stroke-[1.8]" /> : <Sun className="h-5 w-5 stroke-[1.8]" />}
+          </button>
 
-          <div className="flex items-center gap-1.5">
-            {/* Nút Chỉnh sửa profile nổi bật */}
-            <button
-              onClick={() => setIsEditModalOpen(true)}
-              className="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 text-white transition-all active:scale-95"
-              title="Chỉnh sửa hồ sơ cá nhân"
-            >
-              <Edit3 className="h-3 w-3" />
-              <span>Sửa hồ sơ</span>
-            </button>
-
-            <button
-              onClick={() => setIsQrModalOpen(true)}
-              aria-label="Mã QR Điểm Hẹn"
-              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors active:scale-95"
-              title="Mã QR Điểm Hẹn"
-            >
-              <QrCode className="h-4 w-4" />
-            </button>
-            <button
-              onClick={handleCopyLink}
-              aria-label="Chia sẻ hồ sơ"
-              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors active:scale-95"
-              title="Chia sẻ hồ sơ"
-            >
-              {copiedLink ? <Check className="h-4 w-4 text-emerald-300" /> : <Share2 className="h-4 w-4" />}
-            </button>
-            <button
-              onClick={() => setActiveTab("privacy")}
-              aria-label="Cài đặt riêng tư"
-              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors active:scale-95"
-              title="Cài đặt quyền riêng tư"
-            >
-              <Settings className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setIsLogoutModalOpen(true)}
-              aria-label="Đăng xuất"
-              className="p-1.5 rounded-full bg-white/10 hover:bg-red-500/35 text-white border border-white/20 transition-all active:scale-95"
-              title="Đăng xuất"
-            >
-              <LogOut className="h-4 w-4" />
-            </button>
-          </div>
+          {/* Settings */}
+          <Link
+            href="/cai-dat"
+            aria-label="Cài đặt tài khoản"
+            title="Cài đặt tài khoản"
+            className="p-2 rounded-full hover:bg-muted text-foreground transition-all active:scale-95"
+          >
+            <Settings className="h-5 w-5 stroke-[1.8]" />
+          </Link>
         </div>
+      </div>
 
-        {/* Athlete Core Identity (Có thể thay đổi ảnh đại diện) */}
-        <div className="flex items-start gap-3.5 relative z-10">
-          <div className="relative shrink-0 group">
-            <div className="w-16 h-16 rounded-2xl p-0.5 bg-gradient-to-tr from-brand-sky via-brand-100 to-white shadow-md overflow-hidden">
-              <img
-                src={profileAvatar}
-                alt={profileName}
-                className="w-full h-full rounded-2xl object-cover"
-              />
+      <div className="px-3.5 space-y-3.5">
+        {/* 2. PROFILE CARD */}
+        <div className="rounded-3xl bg-card border border-border/70 p-4 shadow-xs space-y-3.5">
+          <div className="flex items-start gap-3.5">
+            {/* Avatar Circle with initials or photo */}
+            <div className="relative shrink-0">
+              <div className="w-14 h-14 rounded-full bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky font-bold text-base flex items-center justify-center overflow-hidden border border-brand/20">
+                {profileAvatar ? (
+                  <img src={profileAvatar} alt={profileName} className="w-full h-full object-cover" />
+                ) : (
+                  <span>{userInitials}</span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAvatarModalOpen(true)}
+                aria-label="Đổi ảnh đại diện"
+                className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-brand text-white border border-background flex items-center justify-center shadow-xs"
+              >
+                <Camera className="h-2.5 w-2.5" />
+              </button>
             </div>
-            {/* Nút bấm thay đổi avatar */}
+
+            {/* Info & Badges */}
+            <div className="flex-1 min-w-0 space-y-1">
+              <h2 className="text-base font-bold text-foreground tracking-tight truncate">{profileName}</h2>
+              <p className="text-xs text-muted-foreground truncate">
+                @{profileHandle} · {profileArea}
+              </p>
+              <div className="flex items-center gap-1.5 pt-0.5">
+                <span className="inline-flex items-center text-[10.5px] font-semibold text-brand dark:text-brand-sky bg-brand/10 dark:bg-brand/20 px-2 py-0.5 rounded-full">
+                  Đã xác thực
+                </span>
+                <span className="inline-flex items-center text-[10.5px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                  Cấp 2
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons: [Sửa hồ sơ] & [👁] */}
+          <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setIsAvatarModalOpen(true)}
-              aria-label="Đổi ảnh đại diện"
-              className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-brand text-white border border-white/80 flex items-center justify-center shadow-md hover:scale-105 active:scale-95 transition-all"
-              title="Bấm để đổi ảnh đại diện"
+              onClick={() => setIsEditModalOpen(true)}
+              className="flex-1 py-2.5 px-4 rounded-xl bg-brand hover:bg-brand-600 active:scale-[0.99] text-white font-bold text-xs transition-all shadow-xs"
             >
-              <Camera className="h-3 w-3" />
+              Sửa hồ sơ
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                alert(`Xem trước hồ sơ công khai của @${profileHandle}`);
+              }}
+              aria-label="Xem trước hồ sơ"
+              title="Xem trước hồ sơ công khai"
+              className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center text-foreground hover:bg-muted active:scale-95 transition-all"
+            >
+              <Eye className="h-4 w-4 stroke-[1.8]" />
+            </button>
+          </div>
+        </div>
+
+        {/* 3. ALERT BANNER: 🟠 Xác nhận kèo 17:45 · 28 phút > */}
+        <button
+          type="button"
+          onClick={() => setIsQrModalOpen(true)}
+          className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 hover:border-amber-500/40 transition-all text-left group"
+        >
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0 animate-pulse" />
+            <span className="text-xs font-bold text-foreground truncate">Xác nhận kèo 17:45</span>
+            <span className="text-xs text-muted-foreground truncate">· 28 phút</span>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform shrink-0" />
+        </button>
+
+        {/* 4. THREE STATS ROW: 38 Buổi · 96% Đúng hẹn · 6 Bạn tập */}
+        <div className="grid grid-cols-3 divide-x divide-border/60 text-center py-1">
+          <div className="px-2">
+            <p className="text-lg font-bold text-foreground">38</p>
+            <p className="text-xs text-muted-foreground">Buổi</p>
+          </div>
+          <div className="px-2">
+            <p className="text-lg font-bold text-foreground">96%</p>
+            <p className="text-xs text-muted-foreground">Đúng hẹn</p>
+          </div>
+          <div className="px-2">
+            <p className="text-lg font-bold text-foreground">6</p>
+            <p className="text-xs text-muted-foreground">Bạn tập</p>
+          </div>
+        </div>
+
+        {/* 5. FOUR QUICK ACTION BUTTONS: [Lịch] [Kèo] [Squad] [Xu] */}
+        <div className="grid grid-cols-4 gap-2">
+          {/* Lịch */}
+          <button
+            type="button"
+            onClick={() => setIsScheduleModalOpen(true)}
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5"
+          >
+            <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
+              <Calendar className="h-4 w-4" />
+            </div>
+            <span className="text-[11px] font-semibold text-foreground">Lịch</span>
+          </button>
+
+          {/* Kèo */}
+          <button
+            type="button"
+            onClick={() => setActiveTab("keo")}
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5"
+          >
+            <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
+              <Zap className="h-4 w-4" />
+            </div>
+            <span className="text-[11px] font-semibold text-foreground">Kèo</span>
+          </button>
+
+          {/* Squad */}
+          <button
+            type="button"
+            onClick={() => setActiveTab("buddies")}
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5"
+          >
+            <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
+              <Users className="h-4 w-4" />
+            </div>
+            <span className="text-[11px] font-semibold text-foreground">Squad</span>
+          </button>
+
+          {/* Xu */}
+          <button
+            type="button"
+            onClick={() => setIsCoinsModalOpen(true)}
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5"
+          >
+            <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
+              <Coins className="h-4 w-4" />
+            </div>
+            <span className="text-[11px] font-semibold text-foreground">Xu</span>
+          </button>
+        </div>
+
+        {/* 6. TWO CARDS: [Uy tín 8,5/10] & [Chuỗi tuần 6 tuần] */}
+        <div className="grid grid-cols-2 gap-2.5">
+          {/* Card Uy Tín */}
+          <button
+            type="button"
+            onClick={() => setIsTrustRulesOpen(true)}
+            className="p-3 rounded-2xl bg-card border border-border/70 text-left shadow-xs space-y-2 hover:border-brand/40 transition-all active:scale-[0.99]"
+          >
+            <p className="text-[11px] text-muted-foreground font-medium">Uy tín</p>
+            <p className="text-base font-bold text-foreground">
+              8,5 <span className="text-xs font-normal text-muted-foreground">/10</span>
+            </p>
+            <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+              <div className="h-full bg-brand rounded-full" style={{ width: "85%" }} />
+            </div>
+          </button>
+
+          {/* Card Chuỗi Tuần */}
+          <div className="p-3 rounded-2xl bg-card border border-border/70 text-left shadow-xs space-y-2">
+            <p className="text-[11px] text-muted-foreground font-medium">Chuỗi tuần</p>
+            <p className="text-base font-bold text-foreground">6 tuần</p>
+            {/* 7 streak dots: 6 active blue, 1 inactive */}
+            <div className="flex items-center gap-1.5 pt-0.5">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <span key={i} className="h-1.5 w-1.5 rounded-full bg-brand" />
+              ))}
+              <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/30" />
+            </div>
+          </div>
+        </div>
+
+        {/* 7. EXP RANK BAR: Cấp 2 · Runner 1.240 / 2.000 EXP */}
+        <div className="p-3.5 rounded-2xl bg-card border border-border/70 shadow-xs space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-bold text-foreground">Cấp 2 · Runner</span>
+            <span className="text-muted-foreground font-mono">1.240 / 2.000 EXP</span>
+          </div>
+          <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+            <div className="h-full bg-brand rounded-full" style={{ width: "62%" }} />
+          </div>
+        </div>
+
+        {/* 8. GHI NHẬN TẬP LUYỆN (HEATMAP) */}
+        <div className="p-3.5 rounded-2xl bg-card border border-border/70 shadow-xs space-y-2.5">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold text-foreground">Ghi nhận tập luyện</h3>
+            <button
+              type="button"
+              onClick={() => setIsScheduleModalOpen(true)}
+              className="text-xs font-semibold text-brand hover:underline flex items-center gap-0.5"
+            >
+              <span>Lịch</span>
+              <ChevronRight className="h-3 w-3" />
             </button>
           </div>
 
-          <div className="flex-1 min-w-0 space-y-1">
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <h1 className="text-base font-extrabold tracking-tight text-white">{profileName}</h1>
-              <TierBadge score={user?.trustScore || 8.5} />
-            </div>
-
-            <div className="flex items-center gap-2 text-[11px] text-brand-200/90 flex-wrap">
-              <div className="flex items-center gap-1">
-                <MapPin className="h-3 w-3 shrink-0 text-white" />
-                <span className="truncate">{profileArea}</span>
-              </div>
-              <div className="flex items-center gap-1 text-white/95 bg-white/15 px-2 py-0.5 rounded-full text-[10.5px]">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                <span className="font-mono">{user?.email || "danghuuphuc183@gmail.com"}</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1.5 text-[10px] text-white/80 pt-0.5">
-              <span className="px-1.5 py-0.5 rounded-md bg-white/15 font-semibold">Tài khoản Google</span>
-              <span>•</span>
-              <span className="text-emerald-300 font-semibold">✓ Đã xác thực</span>
-              <span>•</span>
-              <span className="text-brand-200 font-semibold">CLB Sala Runners</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Athlete Bio snippet - Tinh gọn */}
-        <p className="text-xs text-white/85 leading-relaxed pt-2 relative z-10 line-clamp-2">
-          {profileBio}
-        </p>
-
-        {/* 4 Chỉ số nhanh (Loại bỏ các chú thích rườm rà phía dưới) */}
-        <div className="grid grid-cols-4 gap-1 text-center pt-2.5 mt-2.5 border-t border-white/10 relative z-10">
-          <div className="px-1">
-            <div className="text-base font-black text-white">28</div>
-            <div className="text-[10px] text-brand-200 font-semibold">Kèo tập</div>
-          </div>
-          <div className="px-1 border-l border-white/10">
-            <div className="text-base font-black text-brand-200">96%</div>
-            <div className="text-[10px] text-white/80 font-semibold">Đúng giờ</div>
-          </div>
-          <div className="px-1 border-l border-white/10">
-            <div className="text-base font-black text-white">{(user?.trustScore || 8.5).toFixed(1)}</div>
-            <div className="text-[10px] text-brand-200 font-semibold">Điểm UT</div>
-          </div>
-          <div className="px-1 border-l border-white/10">
-            <div className="text-base font-black text-emerald-300">32.4</div>
-            <div className="text-[10px] text-white/80 font-semibold">km tuần</div>
-          </div>
-        </div>
-      </div>
-
-      {/* =================================================================== */}
-      {/* 2. ĐIỂM UY TÍN (THANH DÀI NGANG TINH GỌN + CHÚ THÍCH CÁCH TÍNH & TRỪ) */}
-      {/* =================================================================== */}
-      <CompactTrustScoreBar score={user?.trustScore || 8.5} />
-
-      {/* =================================================================== */}
-      {/* 3. GHI NHẬN TẬP LUYỆN (ĐƯỢC ĐẨY LÊN TRƯỚC PHẦN CẤP LUYỆN TẬP) */}
-      {/* =================================================================== */}
-      <TrainingLog />
-
-      {/* =================================================================== */}
-      {/* 4. CẤP TẬP LUYỆN (LÀM NHỎ LẠI THEO YÊU CẦU) */}
-      {/* =================================================================== */}
-      <RankCard verifiedSessions={28} compact={true} />
-
-      {/* =================================================================== */}
-      {/* 5. TABS NỘI DUNG TINH GỌN (CHỨA KÈO CỦA BẠN CHUYỂN TỪ TRANG LÊN KÈO) */}
-      {/* =================================================================== */}
-      <div
-        ref={tabsRef}
-        className="scroll-mt-16 flex gap-1 p-1 rounded-2xl bg-muted/70 border border-border/80 overflow-x-auto no-scrollbar"
-        role="tablist"
-      >
-        {(
-          [
-            { id: "bounties", label: `Kèo của bạn ${totalMyKeos > 0 ? `(${totalMyKeos})` : ""}` },
-            { id: "posts", label: "Khoảnh khắc" },
-            { id: "fitness", label: "Thể lực & Thiết bị" },
-            { id: "friends", label: "Bạn bè" },
-            { id: "privacy", label: "Riêng tư" },
-          ] as { id: ProfileTab; label: string }[]
-        ).map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            aria-selected={activeTab === t.id}
-            onClick={() => setActiveTab(t.id)}
-            className={cn(
-              "shrink-0 px-3.5 py-1.5 rounded-xl text-[12px] font-bold text-center whitespace-nowrap transition-all",
-              activeTab === t.id ? "bg-brand text-white shadow-xs" : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* =================================================================== */}
-      {/* TAB 1: KÈO CỦA BẠN (CHUYỂN TỪ TRANG LÊN KÈO SANG) */}
-      {/* =================================================================== */}
-      {activeTab === "bounties" && (
-        <div className="space-y-3">
-          <MyKeosSection />
-        </div>
-      )}
-
-      {/* =================================================================== */}
-      {/* TAB 2: KHOẢNH KHẮC & BÀI VIẾT */}
-      {/* =================================================================== */}
-      {activeTab === "posts" && (
-        <div className="space-y-3">
-          {/* Photos Grid */}
-          <div className="p-3.5 rounded-3xl bg-card border border-border shadow-xs space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-foreground px-0.5">
-              <span>Khoảnh khắc tập luyện ({MY_POSTS_GRID.length})</span>
-              <span className="text-[10px] text-muted-foreground font-normal">Ảnh gần nhất</span>
-            </div>
-            <div className="grid grid-cols-3 gap-1.5">
-              {MY_POSTS_GRID.map((p, i) => (
-                <div
-                  key={i}
-                  className="aspect-square rounded-2xl overflow-hidden bg-muted border border-border relative group shadow-xs"
-                >
-                  <img src={p.src} alt={p.caption} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-1.5">
-                    <span className="text-[9px] font-bold text-white truncate">{p.caption.split("•")[0]}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <MyPosts />
-        </div>
-      )}
-
-      {/* =================================================================== */}
-      {/* TAB 3: THỂ LỰC & THIẾT BỊ (GỒM NHỊP ĐIỆU TUẦN VÀ INBODY) */}
-      {/* =================================================================== */}
-      {activeTab === "fitness" && (
-        <div className="space-y-3">
-          {/* Nhịp Điệu Tập Luyện Tuần Này (7-Day Visual Bars) */}
-          <div className="rounded-3xl border border-border bg-card p-3.5 space-y-2.5 shadow-xs">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs font-black text-foreground flex items-center gap-1.5">
-                  <BarChart2 className="h-4 w-4 text-foreground" />
-                  <span>Nhịp Điệu Tập Luyện Tuần Này</span>
-                </div>
-                <div className="text-[10px] text-muted-foreground">
-                  3 buổi hoàn thành • Chuỗi 14 ngày kỷ luật
-                </div>
-              </div>
-
-              {/* Metric Selector Tabs */}
-              <div className="flex items-center p-0.5 rounded-lg bg-muted text-[10px] font-bold">
-                <button
-                  onClick={() => setMetricTab("distance")}
-                  className={cn(
-                    "px-2 py-0.5 rounded-md transition-all",
-                    metricTab === "distance" ? "bg-brand text-white shadow-xs" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  Cự ly
-                </button>
-                <button
-                  onClick={() => setMetricTab("duration")}
-                  className={cn(
-                    "px-2 py-0.5 rounded-md transition-all",
-                    metricTab === "duration" ? "bg-brand text-white shadow-xs" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  Thời gian
-                </button>
-                <button
-                  onClick={() => setMetricTab("volume")}
-                  className={cn(
-                    "px-2 py-0.5 rounded-md transition-all",
-                    metricTab === "volume" ? "bg-brand text-white shadow-xs" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  Khối lượng
-                </button>
-              </div>
-            </div>
-
-            {/* 7-Day Bars */}
-            <div className="grid grid-cols-7 gap-1 pt-3 pb-1 items-end h-28 border-b border-border/50">
-              {WEEK_DAYS.map((d, index) => {
-                let heightPercent = 10;
-                let displayVal = "0";
-
-                if (metricTab === "distance") {
-                  heightPercent = d.distance > 0 ? Math.min(100, (d.distance / 15) * 100) : 10;
-                  displayVal = d.distance > 0 ? `${d.distance}k` : "—";
-                } else if (metricTab === "duration") {
-                  heightPercent = d.duration > 0 ? Math.min(100, (d.duration / 80) * 100) : 10;
-                  displayVal = d.duration > 0 ? `${d.duration}p` : "—";
-                } else {
-                  heightPercent = d.volume > 0 ? Math.min(100, (d.volume / 10) * 100) : 10;
-                  displayVal = d.volume > 0 ? `${d.volume}T` : "—";
-                }
-
-                return (
-                  <div key={index} className="flex flex-col items-center gap-1.5 h-full justify-end group">
-                    <span className="text-[9px] font-bold text-muted-foreground group-hover:text-foreground transition-colors">
-                      {displayVal}
-                    </span>
-                    <div className="w-full max-w-[26px] bg-muted/60 rounded-t-lg overflow-hidden flex flex-col justify-end h-16">
-                      <div
-                        style={{ height: `${heightPercent}%` }}
-                        className={cn(
-                          "w-full rounded-t-md transition-all duration-300",
-                          d.completed ? "bg-gradient-to-t from-brand to-brand-sky" : "bg-muted-foreground/20"
-                        )}
-                      />
-                    </div>
+          {/* Heatmap Grid 7 rows x 16 cols */}
+          <div className="overflow-x-auto pb-1">
+            <div className="inline-grid grid-rows-7 grid-flow-col gap-[3px] min-w-full">
+              {heatmapData.map((row, rIdx) =>
+                row.map((val, cIdx) => {
+                  const colors = [
+                    "bg-muted/70", // 0
+                    "bg-brand-100 dark:bg-brand-900/40", // 1
+                    "bg-brand-sky/60", // 2
+                    "bg-brand", // 3
+                    "bg-brand-800 dark:bg-brand-400", // 4
+                  ];
+                  return (
                     <div
-                      className={cn(
-                        "text-[10px] font-black rounded-full h-5 w-5 flex items-center justify-center transition-all",
-                        d.completed ? "bg-brand text-white" : "text-muted-foreground"
-                      )}
-                    >
-                      {d.day}
+                      key={`${rIdx}-${cIdx}`}
+                      className={cn("w-3.5 h-3.5 rounded-xs transition-colors", colors[val])}
+                      title={`Buổi tập: ${val > 0 ? `${val} lượt tập` : "Nghỉ ngơi"}`}
+                    />
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          {/* Heatmap Legend: Ít ■ ■ ■ ■ Nhiều */}
+          <div className="flex items-center justify-end gap-1 text-[10px] text-muted-foreground pt-0.5">
+            <span>Ít</span>
+            <span className="w-2.5 h-2.5 rounded-xs bg-muted/70" />
+            <span className="w-2.5 h-2.5 rounded-xs bg-brand-100 dark:bg-brand-900/40" />
+            <span className="w-2.5 h-2.5 rounded-xs bg-brand-sky/60" />
+            <span className="w-2.5 h-2.5 rounded-xs bg-brand" />
+            <span className="w-2.5 h-2.5 rounded-xs bg-brand-800 dark:bg-brand-400" />
+            <span>Nhiều</span>
+          </div>
+        </div>
+
+        {/* 9. NHỊP TUẦN NÀY (WEEKLY BAR CHART) */}
+        <div className="p-3.5 rounded-2xl bg-card border border-border/70 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold text-foreground">Nhịp tuần này</h3>
+            <span className="text-xs font-bold text-foreground">105&apos;</span>
+          </div>
+
+          <div className="grid grid-cols-7 gap-2 items-end h-16 pt-2">
+            {/* T2 */}
+            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
+              <div className="w-full bg-brand rounded-sm h-8" />
+              <span className="text-[10px] text-muted-foreground font-semibold">T2</span>
+            </div>
+            {/* T3 */}
+            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
+              <div className="w-full bg-brand rounded-sm h-12" />
+              <span className="text-[10px] text-muted-foreground font-semibold">T3</span>
+            </div>
+            {/* T4 */}
+            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
+              <div className="w-full h-0.5 bg-muted rounded-full" />
+              <span className="text-[10px] text-muted-foreground font-semibold">T4</span>
+            </div>
+            {/* T5 (Dashed planned) */}
+            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
+              <div className="w-full border border-dashed border-muted-foreground/60 rounded-sm h-7" />
+              <span className="text-[10px] text-muted-foreground font-semibold">T5</span>
+            </div>
+            {/* T6 */}
+            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
+              <div className="w-full h-0.5 bg-muted rounded-full" />
+              <span className="text-[10px] text-muted-foreground font-semibold">T6</span>
+            </div>
+            {/* T7 (Dashed planned) */}
+            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
+              <div className="w-full border border-dashed border-muted-foreground/60 rounded-sm h-8" />
+              <span className="text-[10px] text-muted-foreground font-semibold">T7</span>
+            </div>
+            {/* CN */}
+            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
+              <div className="w-full h-0.5 bg-muted rounded-full" />
+              <span className="text-[10px] text-muted-foreground font-semibold">CN</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 10. 2x2 SPECS GRID */}
+        <div className="grid grid-cols-2 gap-2.5">
+          {/* Card 1: Pace & kỷ lục */}
+          <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1">
+            <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+              <span>Pace & kỷ lục</span>
+              <Lock className="h-3 w-3" />
+            </div>
+            <p className="text-xs font-bold text-foreground">{profilePace}</p>
+          </div>
+
+          {/* Card 2: Lịch cố định */}
+          <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1">
+            <p className="text-[11px] text-muted-foreground">Lịch cố định</p>
+            <p className="text-xs font-bold text-foreground">T3 · T5 - 5:30</p>
+          </div>
+
+          {/* Card 3: Cung đường quen */}
+          <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1">
+            <p className="text-[11px] text-muted-foreground">Cung đường quen</p>
+            <p className="text-xs font-bold text-foreground">Thanh Đa</p>
+          </div>
+
+          {/* Card 4: Môn & band */}
+          <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1">
+            <p className="text-[11px] text-muted-foreground">Môn & band</p>
+            <p className="text-xs font-bold text-foreground">R2 · S1</p>
+          </div>
+        </div>
+
+        {/* 11. FOUR TABS: Bài đăng 6 · Kèo 2 · Huy hiệu 7 · Bạn tập 6 */}
+        <div className="pt-2">
+          <div className="flex items-center justify-between border-b border-border/60 text-xs">
+            {[
+              { id: "posts" as const, label: "Bài đăng 6" },
+              { id: "keo" as const, label: "Kèo 2" },
+              { id: "badges" as const, label: "Huy hiệu 7" },
+              { id: "buddies" as const, label: "Bạn tập 6" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "py-2 px-1 font-semibold transition-all relative",
+                  activeTab === tab.id ? "text-brand dark:text-brand-sky font-bold" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <span>{tab.label}</span>
+                {activeTab === tab.id && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand rounded-full" />}
+              </button>
+            ))}
+          </div>
+
+          {/* SUB-BAR: Grid/List View switcher & [+ Đăng] */}
+          <div className="flex items-center justify-between py-2.5">
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                aria-label="Xem lưới"
+                className={cn("p-1.5 rounded-lg transition-colors", viewMode === "grid" ? "text-brand bg-brand/10" : "hover:text-foreground")}
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                aria-label="Xem danh sách"
+                className={cn("p-1.5 rounded-lg transition-colors", viewMode === "list" ? "text-brand bg-brand/10" : "hover:text-foreground")}
+              >
+                <List className="h-4 w-4" />
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsNewPostModalOpen(true)}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-brand text-white font-bold text-xs hover:bg-brand-600 active:scale-95 transition-all shadow-xs"
+            >
+              <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
+              <span>Đăng</span>
+            </button>
+          </div>
+
+          {/* 12. TAB CONTENT */}
+          {activeTab === "posts" && (
+            <div className={cn(viewMode === "grid" ? "grid grid-cols-3 gap-2" : "space-y-2")}>
+              {/* Item 1: 10 km route */}
+              <div className="aspect-square rounded-2xl bg-card border border-border/70 p-2.5 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-all">
+                <div className="flex-1 flex items-center justify-center">
+                  <svg className="w-10 h-10 stroke-brand fill-none stroke-[2]" viewBox="0 0 24 24">
+                    <polygon points="6,4 18,3 21,14 14,20 4,16 6,4" />
+                  </svg>
+                </div>
+                <span className="text-[11px] font-bold text-foreground text-left">10 km</span>
+              </div>
+
+              {/* Item 2: Gym - 45' */}
+              <div className="aspect-square rounded-2xl bg-card border border-border/70 p-2.5 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-all">
+                <div className="flex-1 flex items-center justify-center text-muted-foreground/60">
+                  <Dumbbell className="h-8 w-8" />
+                </div>
+                <span className="text-[11px] font-bold text-foreground text-left">Gym - 45&apos;</span>
+              </div>
+
+              {/* Item 3: 6,2 km graph */}
+              <div className="aspect-square rounded-2xl bg-card border border-border/70 p-2.5 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-all">
+                <div className="flex-1 flex items-center justify-center">
+                  <svg className="w-10 h-10 stroke-brand fill-none stroke-[2]" viewBox="0 0 24 24">
+                    <path d="M3 18 L8 14 L14 17 L21 6" />
+                  </svg>
+                </div>
+                <span className="text-[11px] font-bold text-foreground text-left">6,2 km</span>
+              </div>
+
+              {/* Item 4: Calisthenics */}
+              <div className="aspect-square rounded-2xl bg-card border border-border/70 p-2.5 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-all">
+                <div className="flex-1 flex items-center justify-center text-muted-foreground/60">
+                  <Activity className="h-8 w-8" />
+                </div>
+                <span className="text-[11px] font-bold text-foreground text-left">Calisthenics</span>
+              </div>
+
+              {/* Item 5: 8 km polygon */}
+              <div className="aspect-square rounded-2xl bg-card border border-border/70 p-2.5 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-all">
+                <div className="flex-1 flex items-center justify-center">
+                  <svg className="w-10 h-10 stroke-brand fill-none stroke-[2]" viewBox="0 0 24 24">
+                    <polygon points="12,3 20,8 18,19 6,19 4,8" />
+                  </svg>
+                </div>
+                <span className="text-[11px] font-bold text-foreground text-left">8 km</span>
+              </div>
+
+              {/* Item 6: Squad */}
+              <div className="aspect-square rounded-2xl bg-card border border-border/70 p-2.5 flex flex-col justify-between shadow-xs hover:border-brand/40 transition-all">
+                <div className="flex-1 flex items-center justify-center text-muted-foreground/60">
+                  <Users className="h-8 w-8" />
+                </div>
+                <span className="text-[11px] font-bold text-foreground text-left">Squad</span>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: KÈO (2) */}
+          {activeTab === "keo" && (
+            <div className="space-y-2">
+              <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-foreground">Chạy Bờ Kè Thanh Đa · 10km</span>
+                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full">Sắp tới</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Hôm nay 17:45 · Spot Bờ Kè Bán Đảo Thanh Đa</p>
+                <div className="flex items-center justify-between pt-1 border-t border-border/50 text-[11px]">
+                  <span className="text-muted-foreground">Bạn tập: Hữu Phúc (UT 8.5)</span>
+                  <button
+                    type="button"
+                    onClick={() => setIsQrModalOpen(true)}
+                    className="font-bold text-brand hover:underline"
+                  >
+                    Mã Check-in &gt;
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-foreground">Gym Legday · The New Gym</span>
+                  <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Đã xong</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Hôm qua 06:00 · Quét QR đúng giờ (+0.5 UT)</p>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: HUY HIỆU (7) */}
+          {activeTab === "badges" && (
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              {[
+                { title: "Kỷ lục 10K", desc: "Hoàn thành 10km trong 58 phút", icon: Flame },
+                { title: "Đúng hẹn 100%", desc: "10 kèo liên tiếp không muộn", icon: ShieldCheck },
+                { title: "Chiến binh Chuỗi", desc: "Giữ chuỗi 6 tuần liên tiếp", icon: Award },
+                { title: "Bạn tập Thân thiết", desc: "Ghép đôi thành công 15 bạn", icon: Users },
+                { title: "Early Bird", desc: "Chạy sớm trước 6:00 sáng", icon: Clock },
+                { title: "Khám phá Spot", desc: "Check-in 5 điểm hẹn khác nhau", icon: MapPin },
+                { title: "Zero Cọc Master", desc: "Đạt mốc 8.5 UT miễn cọc 100%", icon: Shield },
+              ].map((badge) => {
+                const Icon = badge.icon;
+                return (
+                  <div key={badge.title} className="p-2.5 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-foreground">
+                      <Icon className="h-4 w-4 text-brand dark:text-brand-sky" />
+                      <span className="truncate">{badge.title}</span>
                     </div>
+                    <p className="text-[10.5px] text-muted-foreground line-clamp-1">{badge.desc}</p>
                   </div>
                 );
               })}
             </div>
+          )}
 
-            <div className="flex items-center justify-between text-[10px] text-muted-foreground px-1">
-              <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-brand inline-block" />
-                <span>Hoàn thành đúng lịch</span>
-              </span>
-              <span>Tổng tuần: 32.4 km • 14.5 Tấn</span>
-            </div>
-          </div>
-
-          {/* Chỉ số nhanh 2x2 InBody */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="p-3 rounded-2xl bg-card border border-border shadow-xs space-y-1">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-                <Activity className="h-3.5 w-3.5 text-foreground" />
-                <span>Chỉ Số Hình Thể</span>
-              </div>
-              <div className="text-xs font-black text-foreground">162 cm • 51 kg</div>
-              <div className="text-[10px] text-muted-foreground">Mỡ: 19.5% • HR Max 182 bpm</div>
-            </div>
-
-            <div className="p-3 rounded-2xl bg-card border border-border shadow-xs space-y-1">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-                <TrendingUp className="h-3.5 w-3.5 text-foreground" />
-                <span>Pace & Kỷ Lục</span>
-              </div>
-              <div className="text-xs font-black text-foreground">{profilePace}</div>
-              <div className="text-[10px] text-muted-foreground">Kỷ lục HM: 21.1km (1h58m)</div>
-            </div>
-          </div>
-
-          {/* Strava & Hevy Connected Apps */}
-          <div className="p-3.5 rounded-3xl bg-card border border-border shadow-xs space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 font-bold text-xs text-foreground">
-                <TrendingUp className="h-4 w-4 text-brand dark:text-brand-sky" />
-                <span>Ứng Dụng Đã Đồng Bộ</span>
-              </div>
-              <span className="text-[10px] text-emerald-600 font-bold">2 ứng dụng liên kết</span>
-            </div>
-
-            <div className="space-y-1.5 text-xs">
-              <div className="flex items-center justify-between p-2 rounded-xl bg-muted/40">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-md bg-[#FC4C02] text-white flex items-center justify-center font-black text-[10px]">
-                    S
+          {/* TAB 4: BẠN TẬP (6) */}
+          {activeTab === "buddies" && (
+            <div className="space-y-2">
+              {[
+                { name: "Đặng Hữu Phúc", role: "Runner · Pace 5:30", ut: "8.5", area: "Bình Thạnh" },
+                { name: "Ngọc Mai", role: "Yoga & Run · Pace 6:15", ut: "9.2", area: "Q.2 Sala" },
+                { name: "Hoàng Nam", role: "Marathoner · Sub 4", ut: "9.6", area: "Landmark 81" },
+                { name: "Khánh Linh", role: "Gym & Fitness", ut: "8.8", area: "Phú Nhuận" },
+                { name: "Tuấn Anh", role: "Calisthenics & Run", ut: "8.2", area: "Thảo Điền" },
+                { name: "Thanh Trúc", role: "Cầu lông & Jogging", ut: "8.9", area: "Q.1 Bến Nghé" },
+              ].map((buddy) => (
+                <div key={buddy.name} className="p-2.5 rounded-2xl bg-card border border-border/70 flex items-center justify-between shadow-xs">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-full bg-brand/10 text-brand font-bold text-xs flex items-center justify-center">
+                      {buddy.name.slice(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-foreground">{buddy.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{buddy.role} · {buddy.area}</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="font-bold text-foreground block text-[11px]">Strava GPS</span>
-                    <span className="text-[9.5px] text-muted-foreground">Pace TB 5:45/km • Tuần 32.4 km</span>
-                  </div>
+                  <span className="text-[11px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-full">
+                    {buddy.ut} UT
+                  </span>
                 </div>
-                <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold">Tự động</Badge>
-              </div>
-
-              <div className="flex items-center justify-between p-2 rounded-xl bg-muted/40">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-md bg-blue-600 text-white flex items-center justify-center font-black text-[10px]">
-                    H
-                  </div>
-                  <div>
-                    <span className="font-bold text-foreground block text-[11px]">Hevy Workout</span>
-                    <span className="text-[9.5px] text-muted-foreground">Volume Load 14.5 Tấn • 4 buổi/tuần</span>
-                  </div>
-                </div>
-                <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold">Tự động</Badge>
-              </div>
+              ))}
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* =================================================================== */}
-      {/* TAB 4: BẠN BÈ & KẾT NỐI */}
+      {/* MODALS */}
       {/* =================================================================== */}
-      {activeTab === "friends" && (
-        <div className="space-y-3">
-          <SocialStatsBar onSelect={openSection} />
-          <MyConnections initialTab={socialTab} />
-        </div>
-      )}
 
-      {/* =================================================================== */}
-      {/* TAB 5: RIÊNG TƯ & CÀI ĐẶT */}
-      {/* =================================================================== */}
-      {activeTab === "privacy" && (
-        <div className="space-y-3">
-          <div className="p-4 rounded-3xl bg-card border border-border shadow-xs space-y-3">
-            <h3 className="text-xs font-bold text-foreground flex items-center gap-1.5">
-              <Shield className="h-4 w-4 text-brand dark:text-brand-sky" />
-              <span>Quyền Riêng Tư & An Toàn PDP 2026</span>
-            </h3>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Dữ liệu vị trí thực và thông tin cá nhân của bạn chỉ hiển thị khi có sự đồng ý song phương trong buổi tập.
-            </p>
-
-            <div className="space-y-2 pt-1 text-xs">
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-muted/40">
-                <div>
-                  <span className="font-bold text-foreground block text-[11.5px]">Ẩn vị trí chính xác</span>
-                  <span className="text-[10px] text-muted-foreground">Chỉ hiển thị bán kính 500m quanh điểm hẹn</span>
-                </div>
-                <span className="text-[11px] font-bold text-emerald-500">Đang bật</span>
-              </div>
-
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-muted/40">
-                <div>
-                  <span className="font-bold text-foreground block text-[11.5px]">Chỉ ghép bạn cùng giới</span>
-                  <span className="text-[10px] text-muted-foreground">Tự động lọc kèo tập theo giới tính</span>
-                </div>
-                <span className="text-[11px] font-bold text-muted-foreground">Tùy chọn</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-card border border-border shadow-xs space-y-2.5">
-            <h3 className="text-xs font-bold text-foreground">Bảo Mật Tài Khoản</h3>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Phương thức đăng nhập:</span>
-              <span className="font-bold text-foreground capitalize">{user?.authProvider || "Số điện thoại / Google"}</span>
-            </div>
-            <div className="pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsLogoutModalOpen(true)}
-                className="w-full text-xs h-9 rounded-xl font-bold text-red-600 dark:text-red-400 border-red-500/30 hover:bg-red-500/10"
-              >
-                <LogOut className="h-3.5 w-3.5 mr-1.5" />
-                Đăng Xuất Khỏi Thiết Bị
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* =================================================================== */}
-      {/* MODAL 1: ĐỔI ẢNH ĐẠI DIỆN (CHỌN AVATAR MẪU HOẶC TẢI ẢNH) */}
-      {/* =================================================================== */}
-      {isAvatarModalOpen && (
-        <div className="fixed inset-0 z-[80] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative text-center">
-            <button
-              onClick={() => setIsAvatarModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full bg-muted text-muted-foreground hover:text-foreground"
-            >
-              <X className="h-4 w-4" />
-            </button>
-
-            <div className="space-y-1">
-              <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-brand dark:text-brand-sky">
-                <Camera className="h-4 w-4" />
-                <span>ẢNH ĐẠI DIỆN HỒ SƠ</span>
-              </div>
-              <h2 className="text-base font-extrabold text-foreground">Thay Đổi Ảnh Đại Diện</h2>
-              <p className="text-[11.5px] text-muted-foreground leading-relaxed">
-                Tính năng tải trực tiếp từ thư viện ảnh thiết bị đang được hoàn thiện. Tạm thời bạn có thể chọn ngay ảnh phong cách thể thao có sẵn dưới đây:
-              </p>
-            </div>
-
-            {/* Avatar hiện tại preview */}
-            <div className="flex flex-col items-center py-1">
-              <div className="w-20 h-20 rounded-2xl p-0.5 bg-gradient-to-tr from-brand-sky to-brand overflow-hidden shadow-md">
-                <img src={profileAvatar} alt="Xem trước avatar" className="w-full h-full object-cover rounded-2xl" />
-              </div>
-              <span className="text-[11px] text-muted-foreground mt-1">Ảnh đại diện đang dùng</span>
-            </div>
-
-            {/* Lưới các Avatar thể thao có sẵn */}
-            <div className="space-y-1.5 text-left">
-              <label className="text-[11px] font-bold text-foreground">Chọn ảnh đại diện thể thao:</label>
-              <div className="grid grid-cols-3 gap-2">
-                {PRESET_AVATARS.map((av) => (
-                  <button
-                    key={av.id}
-                    type="button"
-                    onClick={() => setProfileAvatar(av.url)}
-                    className={cn(
-                      "relative aspect-square rounded-xl overflow-hidden border-2 transition-all p-0.5",
-                      profileAvatar === av.url ? "border-brand dark:border-brand-sky scale-105 shadow-md" : "border-border hover:border-brand/40 opacity-70 hover:opacity-100"
-                    )}
-                  >
-                    <img src={av.url} alt={av.label} className="w-full h-full object-cover rounded-lg" />
-                    {profileAvatar === av.url && (
-                      <span className="absolute bottom-1 right-1 h-4 w-4 rounded-full bg-brand text-white flex items-center justify-center shadow-xs">
-                        <Check className="h-2.5 w-2.5" />
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Nút giả lập tải ảnh từ máy */}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                alert("Tính năng tải ảnh trực tiếp từ bộ nhớ đang được hoàn thiện và sẽ sớm cập nhật trong bản tới. Bạn vui lòng chọn ảnh thể thao có sẵn ở trên nhé!");
-              }}
-              className="w-full text-xs font-semibold h-9 rounded-xl border-dashed"
-            >
-              <Upload className="h-3.5 w-3.5 mr-1.5" />
-              <span>Tải ảnh từ máy (Sắp ra mắt)</span>
-            </Button>
-
-            <Button
-              onClick={() => {
-                updateProfile({ avatar: profileAvatar });
-                setIsAvatarModalOpen(false);
-              }}
-              className="w-full rounded-xl text-xs font-bold bg-brand text-white h-10"
-            >
-              Xác Nhận Đổi Ảnh
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* =================================================================== */}
-      {/* MODAL 2: CHỈNH SỬA HỒ SƠ VĐV */}
-      {/* =================================================================== */}
+      {/* MODAL: SỬA HỒ SƠ */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-[80] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-3.5 shadow-2xl relative">
             <button
               onClick={() => setIsEditModalOpen(false)}
@@ -713,20 +699,17 @@ export default function ProfilePage() {
             >
               <X className="h-4 w-4" />
             </button>
-
             <div className="space-y-0.5">
               <h2 className="text-base font-extrabold text-foreground flex items-center gap-1.5">
                 <Edit3 className="h-4 w-4 text-brand dark:text-brand-sky" />
-                <span>Chỉnh Sửa Hồ Sơ Cá Nhân</span>
+                <span>Chỉnh Sửa Hồ Sơ</span>
               </h2>
-              <p className="text-[11px] text-muted-foreground">
-                Cập nhật thông tin để gợi ý ghép bạn tập chính xác hơn.
-              </p>
+              <p className="text-xs text-muted-foreground">Thông tin cá nhân và định hướng tập luyện.</p>
             </div>
 
             <div className="space-y-2.5 text-xs">
               <div>
-                <label className="text-[11px] font-bold text-foreground block mb-1">Họ và tên hiển thị:</label>
+                <label className="text-[11px] font-bold text-foreground block mb-1">Tên hiển thị:</label>
                 <input
                   type="text"
                   value={profileName}
@@ -736,27 +719,17 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-foreground block mb-1">Giới thiệu ngắn (Bio):</label>
-                <textarea
-                  rows={2}
-                  value={profileBio}
-                  onChange={(e) => setProfileBio(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-xl bg-muted/60 border border-border text-foreground text-xs leading-relaxed outline-none focus:border-brand"
-                />
-              </div>
-
-              <div>
-                <label className="text-[11px] font-bold text-foreground block mb-1">Cự ly & Pace tập quen thuộc:</label>
+                <label className="text-[11px] font-bold text-foreground block mb-1">Username (@handle):</label>
                 <input
                   type="text"
-                  value={profilePace}
-                  onChange={(e) => setProfilePace(e.target.value)}
+                  value={profileHandle}
+                  onChange={(e) => setProfileHandle(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-muted/60 border border-border text-foreground font-semibold outline-none focus:border-brand"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-foreground block mb-1">Khu vực tập luyện thường xuyên:</label>
+                <label className="text-[11px] font-bold text-foreground block mb-1">Khu vực thường tập:</label>
                 <input
                   type="text"
                   value={profileArea}
@@ -764,9 +737,19 @@ export default function ProfilePage() {
                   className="w-full px-3 py-2 rounded-xl bg-muted/60 border border-border text-foreground font-semibold outline-none focus:border-brand"
                 />
               </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-foreground block mb-1">Pace & kỷ lục quen thuộc:</label>
+                <input
+                  type="text"
+                  value={profilePace}
+                  onChange={(e) => setProfilePace(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-muted/60 border border-border text-foreground font-semibold outline-none focus:border-brand"
+                />
+              </div>
             </div>
 
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-1">
               <Button
                 variant="outline"
                 onClick={() => setIsEditModalOpen(false)}
@@ -778,7 +761,7 @@ export default function ProfilePage() {
                 onClick={() => {
                   updateProfile({
                     name: profileName,
-                    avatar: profileAvatar,
+                    handle: profileHandle,
                     sportsProfile: {
                       ...(user?.sportsProfile || {
                         preferredSports: [],
@@ -791,8 +774,8 @@ export default function ProfilePage() {
                         buddyStyle: "",
                         privacyZoneEnabled: true,
                       }),
-                      runningPace: profilePace,
                       preferredArea: profileArea,
+                      runningPace: profilePace,
                     },
                   });
                   setIsEditModalOpen(false);
@@ -806,11 +789,58 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* =================================================================== */}
-      {/* MODAL 3: CHECK-IN QR ĐIỂM HẸN */}
-      {/* =================================================================== */}
+      {/* MODAL: ĐỔI AVATAR */}
+      {isAvatarModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative text-center">
+            <button
+              onClick={() => setIsAvatarModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-muted text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="space-y-1">
+              <h3 className="text-base font-extrabold text-foreground">Chọn Ảnh Đại Diện Thể Thao</h3>
+              <p className="text-xs text-muted-foreground">Chọn hình mẫu phù hợp với phong cách tập luyện của bạn.</p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              {PRESET_AVATARS.map((av) => (
+                <button
+                  key={av.id}
+                  type="button"
+                  onClick={() => setProfileAvatar(av.url)}
+                  className={cn(
+                    "relative aspect-square rounded-xl overflow-hidden border-2 transition-all p-0.5",
+                    profileAvatar === av.url ? "border-brand scale-105 shadow-md" : "border-border hover:border-brand/40 opacity-75 hover:opacity-100"
+                  )}
+                >
+                  <img src={av.url} alt={av.label} className="w-full h-full object-cover rounded-lg" />
+                  {profileAvatar === av.url && (
+                    <span className="absolute bottom-1 right-1 h-4 w-4 rounded-full bg-brand text-white flex items-center justify-center">
+                      <Check className="h-2.5 w-2.5" />
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <Button
+              onClick={() => {
+                updateProfile({ avatar: profileAvatar });
+                setIsAvatarModalOpen(false);
+              }}
+              className="w-full rounded-xl text-xs font-bold bg-brand text-white h-10"
+            >
+              Cập Nhật Avatar
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: CHECK-IN QR ĐIỂM HẸN */}
       {isQrModalOpen && (
-        <div className="fixed inset-0 z-[80] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative text-center">
             <button
               onClick={() => setIsQrModalOpen(false)}
@@ -818,114 +848,194 @@ export default function ProfilePage() {
             >
               <X className="h-4 w-4" />
             </button>
-
             <div className="space-y-1">
-              <div className="flex items-center justify-center gap-1.5 text-xs font-black text-brand dark:text-brand-sky">
+              <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-brand dark:text-brand-sky">
                 <QrCode className="h-4 w-4" />
-                <span>QUÉT MÃ ĐIỂM HẸN 2 CHIỀU</span>
+                <span>QUÉT QR ĐIỂM HẸN 2 CHIỀU</span>
               </div>
-              <h2 className="text-base font-extrabold text-foreground">Điểm Danh Đúng Hẹn</h2>
-              <p className="text-[11px] text-muted-foreground">
-                Cùng đưa mã QR lại gần điện thoại của bạn tập để hệ thống ghi nhận có mặt đúng giờ.
-              </p>
+              <h3 className="text-base font-extrabold text-foreground">Điểm Danh Kèo 17:45</h3>
+              <p className="text-xs text-muted-foreground">Đưa mã QR lại gần bạn tập để xác nhận đúng giờ và hoàn tiền cọc.</p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white border-2 border-brand/20 flex flex-col items-center justify-center space-y-2 shadow-inner mx-auto w-48 h-48">
-              <div className="w-36 h-36 border-4 border-slate-900 rounded-xl p-2 flex flex-col justify-between bg-white relative">
-                <div className="w-8 h-8 bg-slate-900 rounded-xs" />
-                <div className="absolute top-2 right-2 w-8 h-8 bg-slate-900 rounded-xs" />
-                <div className="absolute bottom-2 left-2 w-8 h-8 bg-slate-900 rounded-xs" />
-                <div className="absolute inset-10 grid grid-cols-4 gap-1 p-1">
+            {/* QR Code Graphic */}
+            <div className="p-4 rounded-2xl bg-white border-2 border-brand/20 flex flex-col items-center justify-center space-y-2 shadow-inner mx-auto w-44 h-44">
+              <div className="w-32 h-32 border-4 border-slate-900 rounded-xl p-2 flex flex-col justify-between bg-white relative">
+                <div className="w-7 h-7 bg-slate-900 rounded-xs" />
+                <div className="absolute top-2 right-2 w-7 h-7 bg-slate-900 rounded-xs" />
+                <div className="absolute bottom-2 left-2 w-7 h-7 bg-slate-900 rounded-xs" />
+                <div className="absolute inset-8 grid grid-cols-3 gap-1 p-1">
                   <div className="bg-slate-900 rounded-xs" />
                   <div className="bg-slate-400 rounded-xs" />
                   <div className="bg-slate-900 rounded-xs" />
                   <div className="bg-slate-900 rounded-xs" />
-                  <div className="bg-slate-900 rounded-xs" />
                   <div className="bg-slate-300 rounded-xs" />
                   <div className="bg-slate-900 rounded-xs" />
-                  <div className="bg-slate-900 rounded-xs" />
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-7 h-7 rounded-md bg-muted text-foreground flex items-center justify-center shadow-xs">
-                    <Shield className="h-4 w-4" />
-                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-1">
-              <div className="text-xs font-mono font-bold text-foreground">
-                Mã xác thực: <span className="text-brand dark:text-brand-sky">SYNC-81-MT-2026</span>
-              </div>
-              <div className="text-[10px] text-muted-foreground">
-                Tự động đổi mã sau: <strong className="text-foreground">{qrCountdown}s</strong>
-              </div>
+            <div className="space-y-0.5">
+              <p className="text-xs font-mono font-bold text-foreground">
+                Mã: <span className="text-brand dark:text-brand-sky">SYNC-81-MT-2026</span>
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                Tự làm mới sau: <strong className="text-foreground">{qrCountdown}s</strong>
+              </p>
             </div>
 
-            <div className="flex gap-2 pt-1">
+            <div className="flex gap-2">
               <Button
                 variant="outline"
-                onClick={() => {
-                  alert("Mở camera quét mã QR của bạn tập...");
-                }}
+                onClick={() => alert("Mở camera quét QR bạn tập...")}
                 className="flex-1 rounded-xl text-xs font-bold h-10"
               >
                 <Camera className="h-3.5 w-3.5 mr-1" />
-                <span>Quét mã bạn tập</span>
+                Quét mã
               </Button>
               <Button
                 onClick={() => {
-                  alert("Điểm danh thành công! Cả 2 đã đúng hẹn. +0,5 UT cho mỗi người.");
+                  alert("Điểm danh thành công! Cả 2 đã đúng giờ. +0.5 UT!");
                   setIsQrModalOpen(false);
                 }}
                 className="flex-1 rounded-xl text-xs font-bold bg-brand text-white h-10"
               >
-                Xác nhận đã gặp
+                Xác nhận
               </Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* =================================================================== */}
-      {/* MODAL 4: XÁC NHẬN ĐĂNG XUẤT */}
-      {/* =================================================================== */}
-      {isLogoutModalOpen && (
-        <div className="fixed inset-0 z-[90] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-          <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative text-center">
-            <div className="w-12 h-12 rounded-2xl bg-muted border border-border flex items-center justify-center mx-auto text-foreground">
-              <LogOut className="h-6 w-6" />
-            </div>
-
+      {/* MODAL: CÁCH TÍNH ĐIỂM UY TÍN (UT) */}
+      {isTrustRulesOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative">
+            <button
+              onClick={() => setIsTrustRulesOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-muted text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
             <div className="space-y-1">
-              <h2 className="text-base font-extrabold text-foreground">Đăng Xuất Khỏi SYNESIS?</h2>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Bạn có chắc chắn muốn đăng xuất? Các kèo thể thao đang tham gia và Điểm Uy tín (UT) của bạn vẫn được lưu trữ an toàn.
-              </p>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-brand">
+                <ShieldCheck className="h-4 w-4" />
+                <span>QUY CHUẨN ĐIỂM UY TÍN (UT)</span>
+              </div>
+              <h3 className="text-base font-extrabold text-foreground">Cách Tính & Trừ Điểm</h3>
+              <p className="text-xs text-muted-foreground">Điểm Uy Tín quyết định quyền lợi miễn cọc 0đ trên toàn bộ kèo tập.</p>
             </div>
 
-            <div className="flex gap-2 pt-1">
-              <Button
-                variant="outline"
-                onClick={() => setIsLogoutModalOpen(false)}
-                className="flex-1 rounded-xl text-xs font-semibold h-10"
-              >
-                Ở lại tập tiếp
-              </Button>
-              <Button
-                onClick={() => {
-                  setIsLogoutModalOpen(false);
-                  logout();
-                  router.push("/dang-nhap");
-                }}
-                className="flex-1 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white h-10"
-              >
-                Đăng Xuất
-              </Button>
+            <div className="space-y-2 text-xs">
+              {/* Cộng điểm */}
+              <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-1.5">
+                <p className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  <span>Cách cộng điểm (+UT)</span>
+                </p>
+                <ul className="space-y-1 text-[11px] text-muted-foreground">
+                  <li>• Khởi điểm đăng ký tài khoản: <strong>7.0 UT</strong></li>
+                  <li>• Quét QR điểm danh đúng giờ tại Spot: <strong>+0.5 UT</strong></li>
+                  <li>• Giữ chuỗi 5 buổi tập uy tín liên tiếp: <strong>+0.3 UT</strong></li>
+                </ul>
+              </div>
+
+              {/* Trừ điểm */}
+              <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20 space-y-1.5">
+                <p className="font-bold text-red-600 flex items-center gap-1">
+                  <ShieldAlert className="h-3.5 w-3.5" />
+                  <span>Lý do bị trừ điểm (-UT)</span>
+                </p>
+                <ul className="space-y-1 text-[11px] text-muted-foreground">
+                  <li>• Hủy kèo trong vòng 30 phút trước giờ tập: <strong>-1.5 UT</strong></li>
+                  <li>• Vắng mặt không lý do (No-show): <strong>-3.0 UT</strong></li>
+                  <li>• Điểm UT dưới 5.0: Phải đặt cọc tiền mặt 100% cho các kèo sau.</li>
+                </ul>
+              </div>
             </div>
+
+            <Button onClick={() => setIsTrustRulesOpen(false)} className="w-full rounded-xl bg-brand text-white font-bold text-xs h-10">
+              Tôi Đã Hiểu
+            </Button>
           </div>
         </div>
       )}
+
+      {/* MODAL: XU SYNESIS */}
+      {isCoinsModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative text-center">
+            <button
+              onClick={() => setIsCoinsModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-muted text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto">
+              <Coins className="h-6 w-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-base font-extrabold text-foreground">Ví Xu Thể Thao</h3>
+              <p className="text-2xl font-black text-brand dark:text-brand-sky">320 Xu</p>
+              <p className="text-xs text-muted-foreground">Tích lũy từ các buổi tập đúng giờ và chuỗi tuần.</p>
+            </div>
+            <div className="p-3 rounded-2xl bg-muted/40 text-left text-xs space-y-1.5">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Đổi nước / gel năng lượng:</span>
+                <span className="font-bold text-foreground">50 Xu</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Vé bơi / sân tập đối tác:</span>
+                <span className="font-bold text-foreground">150 Xu</span>
+              </div>
+            </div>
+            <Button onClick={() => setIsCoinsModalOpen(false)} className="w-full rounded-xl bg-brand text-white font-bold text-xs h-10">
+              Đóng
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: ĐĂNG BÀI MỚI */}
+      {isNewPostModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-3.5 shadow-2xl relative">
+            <button
+              onClick={() => setIsNewPostModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-muted text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="space-y-0.5">
+              <h3 className="text-base font-extrabold text-foreground">Chia Sẻ Buổi Tập Mới</h3>
+              <p className="text-xs text-muted-foreground">Đăng cung đường GPS hoặc ảnh check-in lên bảng tin hồ sơ.</p>
+            </div>
+            <textarea
+              rows={3}
+              placeholder="Hôm nay buổi chạy thế nào? Cung đường có đẹp không?..."
+              className="w-full p-3 rounded-2xl bg-muted/60 border border-border text-foreground text-xs leading-relaxed outline-none focus:border-brand"
+            />
+            <Button
+              onClick={() => {
+                alert("Đã đăng bài tập luyện mới thành công!");
+                setIsNewPostModalOpen(false);
+              }}
+              className="w-full rounded-xl bg-brand text-white font-bold text-xs h-10"
+            >
+              Đăng Ngay
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: GHI BUỔI TẬP VÀO LỊCH */}
+      <LogWorkoutSheet
+        open={isScheduleModalOpen}
+        onClose={() => setIsScheduleModalOpen(false)}
+        onSave={(data) => {
+          alert(`Đã ghi nhận buổi tập: ${data.sport} (${data.minutes} phút) vào nhật ký.`);
+          setIsScheduleModalOpen(false);
+        }}
+      />
     </div>
   );
 }
