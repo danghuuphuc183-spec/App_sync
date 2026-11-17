@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { LogWorkoutSheet } from "@/components/activity/log-workout-sheet";
+import { RewardsModal } from "@/components/profile/rewards-modal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -981,40 +982,12 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* MODAL: XU SYNESIS */}
-      {isCoinsModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative text-center">
-            <button
-              onClick={() => setIsCoinsModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full bg-muted text-muted-foreground hover:text-foreground"
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto">
-              <Coins className="h-6 w-6" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-base font-extrabold text-foreground">Ví Xu Thể Thao</h3>
-              <p className="text-2xl font-black text-brand dark:text-brand-sky">320 Xu</p>
-              <p className="text-xs text-muted-foreground">Tích lũy từ các buổi tập đúng giờ và chuỗi tuần.</p>
-            </div>
-            <div className="p-3 rounded-2xl bg-muted/40 text-left text-xs space-y-1.5">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Đổi nước / gel năng lượng:</span>
-                <span className="font-bold text-foreground">50 Xu</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Vé bơi / sân tập đối tác:</span>
-                <span className="font-bold text-foreground">150 Xu</span>
-              </div>
-            </div>
-            <Button onClick={() => setIsCoinsModalOpen(false)} className="w-full rounded-xl bg-brand text-white font-bold text-xs h-10">
-              Đóng
-            </Button>
-          </div>
-        </div>
-      )}
+      {/* MODAL: ĐỔI THƯỞNG EXP, VOUCHER ĐỐI TÁC & HIỆN VẬT SYNESIS */}
+      <RewardsModal
+        isOpen={isCoinsModalOpen}
+        onClose={() => setIsCoinsModalOpen(false)}
+        userRankTitle="Cấp 2 · Runner"
+      />
 
       {/* MODAL: ĐĂNG BÀI MỚI */}
       {isNewPostModalOpen && (
