@@ -314,8 +314,9 @@ function DongDoiContent() {
             <div className="space-y-3.5 animate-in fade-in duration-200">
               {/* Guidance Info Badge */}
               <div className="px-3 py-2 rounded-xl bg-muted/50 border border-border/60 flex items-center justify-between text-[11px] text-muted-foreground">
-                <span className="truncate pr-2">
-                  💡 <strong>Nhóm:</strong> Tự tạo sau khi tập chung (3–6 người) · Giữ chuỗi tuần
+                <span className="truncate pr-2 flex items-center gap-1.5">
+                  <Users className="h-3.5 w-3.5 shrink-0 stroke-[2] text-foreground" />
+                  <span><strong>Nhóm:</strong> Tự tạo sau khi tập chung (3–6 người) · Giữ chuỗi tuần</span>
                 </span>
                 <button
                   type="button"
@@ -631,8 +632,9 @@ function DongDoiContent() {
             <div className="space-y-3.5 animate-in fade-in duration-200">
               {/* Guidance Info Badge */}
               <div className="px-3 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between text-[11px] text-blue-900 dark:text-blue-300">
-                <span className="truncate pr-2">
-                  🛡️ <strong>CLB:</strong> Dành cho CLB chạy bộ & phòng gym · Thành viên, sự kiện & hoạt động
+                <span className="truncate pr-2 flex items-center gap-1.5">
+                  <Shield className="h-3.5 w-3.5 shrink-0 stroke-[2] text-blue-600 dark:text-blue-400" />
+                  <span><strong>CLB:</strong> Dành cho CLB chạy bộ & phòng gym · Thành viên, sự kiện & hoạt động</span>
                 </span>
                 {userClubRole === "leader" && (
                   <Link
@@ -656,7 +658,17 @@ function DongDoiContent() {
                         : "bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30"
                     )}
                   >
-                    {userClubRole === "leader" ? "🛡️ Trưởng CLB / BQL Gym" : "👤 Thành viên CLB"}
+                    {userClubRole === "leader" ? (
+                      <span className="flex items-center gap-1">
+                        <Shield className="h-3 w-3 stroke-[2] text-amber-700 dark:text-amber-400" />
+                        <span>Trưởng CLB / BQL Gym</span>
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1">
+                        <Users className="h-3 w-3 stroke-[2] text-blue-700 dark:text-blue-300" />
+                        <span>Thành viên CLB</span>
+                      </span>
+                    )}
                   </span>
                 </div>
                 <button

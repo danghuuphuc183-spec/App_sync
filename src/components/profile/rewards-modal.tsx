@@ -642,7 +642,7 @@ export function RewardsModal({
                   <li>• Kết nối 1 bạn tập Duo đầu tiên: <strong>+20 EXP</strong></li>
                   <li>• Buổi tập đầu tiên hoàn thành (quét QR): <strong>+40 EXP</strong></li>
                   <li className="text-emerald-600 dark:text-emerald-400 font-semibold pt-0.5">
-                    👉 Đạt ngay mốc 100 EXP trong tuần đầu để đổi Voucher giảm giá!
+                    Mục tiêu: Đạt ngay mốc 100 EXP trong tuần đầu để đổi Voucher giảm giá!
                   </li>
                 </ul>
               </div>
@@ -658,7 +658,7 @@ export function RewardsModal({
                   <li>• Nhóm nhỏ đạt $\ge 75\%$ thành viên: <strong>+15 EXP</strong> / tuần</li>
                   <li>• Thưởng mốc chuỗi Duo 4 tuần: <strong>+60 EXP</strong></li>
                   <li className="text-brand dark:text-brand-sky font-semibold pt-0.5">
-                    👉 Đạt mốc 200 – 300 EXP sau 2–3 tuần tập đều để đổi quà giá trị cao hơn.
+                    Mục tiêu: Đạt mốc 200 – 300 EXP sau 2–3 tuần tập đều để đổi quà giá trị cao hơn.
                   </li>
                 </ul>
               </div>
@@ -674,7 +674,7 @@ export function RewardsModal({
                   <li>• Thưởng chuỗi tuần Duo 26 tuần (nửa năm): <strong>+500 EXP</strong></li>
                   <li>• Host 10 kèo nhóm hoàn thành 100%: <strong>+100 EXP</strong></li>
                   <li className="text-amber-600 dark:text-amber-400 font-semibold pt-0.5">
-                    👉 Vượt 1.000 EXP để nhận Bình nước, Áo tập hoặc Balo Synesis in logo!
+                    Mục tiêu: Vượt 1.000 EXP để nhận Bình nước, Áo tập hoặc Balo Synesis in logo!
                   </li>
                 </ul>
               </div>

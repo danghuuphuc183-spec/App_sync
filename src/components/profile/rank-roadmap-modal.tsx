@@ -22,6 +22,15 @@ import {
   Coffee,
   Dumbbell,
   Package,
+  Crown,
+  VolumeX,
+  HeartHandshake,
+  CalendarDays,
+  Building2,
+  Trophy,
+  Coins,
+  Star,
+  Check,
 } from "lucide-react";
 import {
   RANK_LEVELS,
@@ -43,12 +52,16 @@ interface RankRoadmapModalProps {
   onOpenRewardsModal?: () => void;
 }
 
-// Tóm tắt đặc quyền cốt lõi của từng rank - Tinh chỉnh ngắn gọn, trực quan, dễ nhìn
+// Tóm tắt đặc quyền cốt lõi của từng rank - Chỉ dùng icon vẽ chữ trắng đen (Lucide vector line icons)
 const CONDENSED_RANK_REWARDS: Record<
   number,
   {
     tagline: string;
-    highlights: Array<{ icon: string; title: string; desc: string }>;
+    highlights: Array<{
+      icon: React.ComponentType<{ className?: string }>;
+      title: string;
+      desc: string;
+    }>;
     giftTierUnlocked: string;
     utRule: string;
   }
@@ -56,10 +69,10 @@ const CONDENSED_RANK_REWARDS: Record<
   1: {
     tagline: "Vùng đệm an toàn · Làm quen cộng đồng",
     highlights: [
-      { icon: "🛡️", title: "Vùng đệm 30 ngày", desc: "Miễn phạt trễ dưới 15 phút" },
-      { icon: "👥", title: "Mở kèo tập", desc: "Tham gia nhóm 3-4 & tạo 1 kèo 1:1" },
-      { icon: "💰", title: "Ví tích Xu", desc: "Xu tích lũy vào ví chờ" },
-      { icon: "🤫", title: "Quiet Mode", desc: "Tùy chọn ghép tập yên tĩnh" },
+      { icon: Shield, title: "Vùng đệm 30 ngày", desc: "Miễn phạt trễ dưới 15 phút" },
+      { icon: Users, title: "Mở kèo tập", desc: "Tham gia nhóm 3-4 & tạo 1 kèo 1:1" },
+      { icon: Coins, title: "Ví tích Xu", desc: "Xu tích lũy vào ví chờ" },
+      { icon: VolumeX, title: "Quiet Mode", desc: "Tùy chọn ghép tập yên tĩnh" },
     ],
     giftTierUnlocked: "Xu tích lũy chờ mở khóa",
     utRule: "Khởi điểm 7.0 UT (Tân binh 8.0 UT)",
@@ -67,10 +80,10 @@ const CONDENSED_RANK_REWARDS: Record<
   2: {
     tagline: "Mở Cửa hàng Quà tặng & Kích hoạt Chuỗi Đôi",
     highlights: [
-      { icon: "🎁", title: "Cửa hàng Đổi Quà", desc: "Đổi Voucher Tầng 1 & Tầng 2 hàng tuần" },
-      { icon: "🤝", title: "Chuỗi Đôi (Duo)", desc: "Mở khi tập chung từ 3 buổi" },
-      { icon: "❄️", title: "1 Thẻ Nghỉ/tháng", desc: "Giữ chuỗi không cần lý do" },
-      { icon: "👑", title: "Host nhóm nhỏ", desc: "Tự tạo và dẫn dắt nhóm 3-4 người" },
+      { icon: Gift, title: "Cửa hàng Đổi Quà", desc: "Đổi Voucher Tầng 1 & Tầng 2 hàng tuần" },
+      { icon: Users, title: "Chuỗi Đôi (Duo)", desc: "Mở khi tập chung từ 3 buổi" },
+      { icon: CalendarDays, title: "1 Thẻ Nghỉ/tháng", desc: "Giữ chuỗi không cần lý do" },
+      { icon: Crown, title: "Host nhóm nhỏ", desc: "Tự tạo và dẫn dắt nhóm 3-4 người" },
     ],
     giftTierUnlocked: "Tầng 1 (F&B 10-15%) & Tầng 2 (Day-Pass Gym 50%)",
     utRule: "Yêu cầu UT ≥ 7.0 để kích hoạt đặc quyền",
@@ -78,10 +91,10 @@ const CONDENSED_RANK_REWARDS: Record<
   3: {
     tagline: "Sáng lập Squad & Lập Lịch Định Kỳ Hàng Tuần",
     highlights: [
-      { icon: "🏰", title: "Sáng lập Squad", desc: "Nhóm cố định có tên & nội quy riêng" },
-      { icon: "📅", title: "Lịch định kỳ tuần", desc: "Recurring Slot tự động giữ giờ" },
-      { icon: "⭐", title: "Verified Pacer", desc: "Huy hiệu uy tín nổi bật trên thẻ kèo" },
-      { icon: "⚡", title: "Tối đa 3 kèo/24h", desc: "Mở 3 kèo khi UT đạt 9–10" },
+      { icon: Building2, title: "Sáng lập Squad", desc: "Nhóm cố định có tên & nội quy riêng" },
+      { icon: Calendar, title: "Lịch định kỳ tuần", desc: "Recurring Slot tự động giữ giờ" },
+      { icon: Star, title: "Verified Pacer", desc: "Huy hiệu uy tín nổi bật trên thẻ kèo" },
+      { icon: Zap, title: "Tối đa 3 kèo/24h", desc: "Mở 3 kèo khi UT đạt 9–10" },
     ],
     giftTierUnlocked: "Tầng 1 & Tầng 2 (Ưu tiên đổi voucher sớm)",
     utRule: "Yêu cầu UT ≥ 7.0 (UT 5-6 đóng băng lịch tuần)",
@@ -89,10 +102,10 @@ const CONDENSED_RANK_REWARDS: Record<
   4: {
     tagline: "Mở Kho Quà Hiện Vật & Viền Avatar Kim Loại",
     highlights: [
-      { icon: "🎁", title: "Kho Quà Tầng 3 & 4", desc: "Thẻ tập 100% & Hiện vật Synesis" },
-      { icon: "🎽", title: "Hiện vật độc quyền", desc: "Bình nước Pro, Áo tập, Balo Gym" },
-      { icon: "🛡️", title: "Viền kim loại", desc: "Tag 'Iron Core' & viền Avatar trên CLB" },
-      { icon: "💎", title: "Danh hiệu 0 VNĐ", desc: "Vinh danh kỷ luật thể thao bền bỉ" },
+      { icon: Gift, title: "Kho Quà Tầng 3 & 4", desc: "Thẻ tập 100% & Hiện vật Synesis" },
+      { icon: Package, title: "Hiện vật độc quyền", desc: "Bình nước Pro, Áo tập, Balo Gym" },
+      { icon: Shield, title: "Viền kim loại", desc: "Tag 'Iron Core' & viền Avatar trên CLB" },
+      { icon: Award, title: "Danh hiệu 0 VNĐ", desc: "Vinh danh kỷ luật thể thao bền bỉ" },
     ],
     giftTierUnlocked: "MỞ TOÀN BỘ TẦNG 1, 2, 3 & 4 (Hiện vật)",
     utRule: "Duy trì UT ≥ 7.0 để giữ nhãn hiển thị",
@@ -100,10 +113,10 @@ const CONDENSED_RANK_REWARDS: Record<
   5: {
     tagline: "Danh Hiệu Phát Sáng & Vinh Danh Bảng Vàng",
     highlights: [
-      { icon: "🌟", title: "Synesis Vanguard", desc: "Danh hiệu phát sáng trên trang cá nhân" },
-      { icon: "🏆", title: "Bảng Vàng Kỷ Luật", desc: "Tự động ghi danh CLB & toàn khu vực" },
-      { icon: "⚡", title: "Độ uy tín cao nhất", desc: "Ưu tiên hiển thị khi tìm bạn tập" },
-      { icon: "💎", title: "Vinh dự cộng đồng", desc: "Biểu tượng kiên trì hơn nửa năm" },
+      { icon: Sparkles, title: "Synesis Vanguard", desc: "Danh hiệu phát sáng trên trang cá nhân" },
+      { icon: Trophy, title: "Bảng Vàng Kỷ Luật", desc: "Tự động ghi danh CLB & toàn khu vực" },
+      { icon: Zap, title: "Độ uy tín cao nhất", desc: "Ưu tiên hiển thị khi tìm bạn tập" },
+      { icon: Award, title: "Vinh dự cộng đồng", desc: "Biểu tượng kiên trì hơn nửa năm" },
     ],
     giftTierUnlocked: "Mở toàn bộ Kho Quà & Suất ưu đãi vé BIB",
     utRule: "Tự hào dẫn đầu phong trào thể thao",
@@ -111,10 +124,10 @@ const CONDENSED_RANK_REWARDS: Record<
   6: {
     tagline: "Biểu Tượng Danh Dự Tối Thượng >1 Năm Kỷ Luật",
     highlights: [
-      { icon: "👑", title: "Synesis Legend", desc: "Danh hiệu vĩnh viễn tối cao của nền tảng" },
-      { icon: "💎", title: "Hào quang Kim Cương", desc: "Hào quang đa sắc Prismatic độc quyền" },
-      { icon: "🌌", title: "Huyền thoại sống", desc: "Hơn 1 năm không bỏ cuộc trong thể thao" },
-      { icon: "🤝", title: "Đại sứ kỷ luật", desc: "Biểu tượng truyền cảm hứng cho cộng đồng" },
+      { icon: Crown, title: "Synesis Legend", desc: "Danh hiệu vĩnh viễn tối cao của nền tảng" },
+      { icon: Sparkles, title: "Hào quang Kim Cương", desc: "Hào quang đa sắc Prismatic độc quyền" },
+      { icon: Flame, title: "Huyền thoại sống", desc: "Hơn 1 năm không bỏ cuộc trong thể thao" },
+      { icon: HeartHandshake, title: "Đại sứ kỷ luật", desc: "Biểu tượng truyền cảm hứng cho cộng đồng" },
     ],
     giftTierUnlocked: "Đặc quyền Legend Box & Quà tri ân cá nhân hóa",
     utRule: "Vĩnh viễn lưu danh trong hệ thống",
@@ -399,12 +412,14 @@ export function RankRoadmapModal({
                             Rank {inspectRank.level}: {inspectRank.nameEn}
                           </span>
                           {currentExp >= inspectRank.minExp ? (
-                            <span className="text-[9.5px] font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.2 rounded-full">
-                              ✓ Đã đạt
+                            <span className="text-[9.5px] font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.2 rounded-full flex items-center gap-1">
+                              <Check className="h-2.5 w-2.5 stroke-[2.5]" />
+                              <span>Đã đạt</span>
                             </span>
                           ) : (
-                            <span className="text-[9.5px] font-bold text-muted-foreground bg-muted px-1.5 py-0.2 rounded-full">
-                              🔒 Cần {inspectRank.minExp.toLocaleString("vi-VN")} EXP
+                            <span className="text-[9.5px] font-bold text-muted-foreground bg-muted px-1.5 py-0.2 rounded-full flex items-center gap-1">
+                              <Lock className="h-2.5 w-2.5 stroke-[2]" />
+                              <span>Cần {inspectRank.minExp.toLocaleString("vi-VN")} EXP</span>
                             </span>
                           )}
                         </div>
@@ -420,36 +435,47 @@ export function RankRoadmapModal({
                       </div>
                     </div>
 
-                    {/* 4 Feature Chips (2x2 Grid) - Dễ đọc, thoáng mắt */}
+                    {/* 4 Feature Chips (2x2 Grid) - Chỉ dùng icon vẽ chữ trắng đen */}
                     <div className="grid grid-cols-2 gap-2 relative z-10">
-                      {inspectData.highlights.map((h, i) => (
-                        <div
-                          key={i}
-                          className={cn(
-                            "p-2.5 rounded-xl bg-card/90 backdrop-blur-xs border space-y-0.5 transition-all",
-                            inspectTheme.borderClass,
-                            "hover:scale-[1.02]"
-                          )}
-                        >
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm shrink-0">{h.icon}</span>
-                            <span className="text-xs font-bold text-foreground truncate">{h.title}</span>
+                      {inspectData.highlights.map((h, i) => {
+                        const IconComponent = h.icon;
+                        return (
+                          <div
+                            key={i}
+                            className={cn(
+                              "p-2.5 rounded-xl bg-card/90 backdrop-blur-xs border space-y-1 transition-all",
+                              inspectTheme.borderClass,
+                              "hover:scale-[1.01]"
+                            )}
+                          >
+                            <div className="flex items-center gap-1.5">
+                              <div className="w-5 h-5 rounded-md bg-foreground/10 border border-border flex items-center justify-center text-foreground shrink-0">
+                                <IconComponent className="h-3 w-3 stroke-[2] text-foreground" />
+                              </div>
+                              <span className="text-xs font-bold text-foreground truncate">{h.title}</span>
+                            </div>
+                            <p className="text-[10.5px] text-muted-foreground leading-tight">
+                              {h.desc}
+                            </p>
                           </div>
-                          <p className="text-[10.5px] text-muted-foreground leading-tight">
-                            {h.desc}
-                          </p>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
-                    {/* Status Bar: Kho quà & Điều kiện UT */}
+                    {/* Status Bar: Kho quà & Điều kiện UT - Icon vẽ chữ trắng đen */}
                     <div className="pt-2 border-t border-border/60 space-y-1.5 text-[11px] relative z-10">
                       <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">🎁 Quà mở khóa:</span>
+                        <span className="text-muted-foreground flex items-center gap-1.5">
+                          <Gift className="h-3.5 w-3.5 stroke-[2] text-foreground shrink-0" />
+                          <span>Quà mở khóa:</span>
+                        </span>
                         <strong className="text-foreground text-right">{inspectData.giftTierUnlocked}</strong>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">🛡️ Điều kiện UT:</span>
+                        <span className="text-muted-foreground flex items-center gap-1.5">
+                          <ShieldCheck className="h-3.5 w-3.5 stroke-[2] text-foreground shrink-0" />
+                          <span>Điều kiện UT:</span>
+                        </span>
                         <strong className={cn("text-right", inspectTheme.textClass)}>{inspectData.utRule}</strong>
                       </div>
                     </div>

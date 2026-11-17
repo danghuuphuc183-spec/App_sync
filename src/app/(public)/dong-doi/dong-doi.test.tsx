@@ -121,7 +121,7 @@ describe("Đồng đội & Duo Feature Page", () => {
     fireEvent.click(clbTab);
 
     // DEFAULT VIEW IS MEMBER: Fund balance MUST BE HIDDEN
-    expect(screen.getByText("👤 Thành viên CLB")).toBeInTheDocument();
+    expect(screen.getByText("Thành viên CLB")).toBeInTheDocument();
     expect(screen.queryByText(/Quỹ Sinh Hoạt CLB/i)).not.toBeInTheDocument();
     expect(screen.queryByText("12.450.000đ")).not.toBeInTheDocument();
 
@@ -145,7 +145,7 @@ describe("Đồng đội & Duo Feature Page", () => {
     fireEvent.click(switchRoleBtn);
 
     // LEADER VIEW: Now displays CLB Fund Financial Hub & Balances
-    expect(screen.getByText("🛡️ Trưởng CLB / BQL Gym")).toBeInTheDocument();
+    expect(screen.getByText("Trưởng CLB / BQL Gym")).toBeInTheDocument();
     expect(screen.getByText(/Quỹ Sinh Hoạt CLB/i)).toBeInTheDocument();
     expect(screen.getByText("12.450.000đ")).toBeInTheDocument();
     expect(screen.getAllByText("150.000đ").length).toBeGreaterThanOrEqual(1);
