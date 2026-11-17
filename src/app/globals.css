@@ -339,3 +339,31 @@
 /* Màn chào: logo trôi nhẹ */
 @keyframes welcome-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
 .welcome-float { animation: welcome-float 4s ease-in-out infinite; }
+
+/* Hiệu ứng màu loan Rank Ambient Aura */
+@keyframes rank-aura-pulse {
+  0%, 100% {
+    opacity: 0.65;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.08);
+  }
+}
+.rank-aura-pulse {
+  animation: rank-aura-pulse 4s ease-in-out infinite;
+}
+
+@keyframes rank-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+.rank-shimmer {
+  background-size: 200% 100%;
+  animation: rank-shimmer 3.5s linear infinite;
+}

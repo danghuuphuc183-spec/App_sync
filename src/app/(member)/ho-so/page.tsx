@@ -37,6 +37,7 @@ import { TrainingLog } from "@/components/profile/training-log";
 import { RewardsModal } from "@/components/profile/rewards-modal";
 import { RankRoadmapModal } from "@/components/profile/rank-roadmap-modal";
 import { RankBadgeIcon } from "@/components/profile/rank-badge-icon";
+import { RankAuraGlow, RankPill, getRankTheme } from "@/components/profile/rank-aura";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -122,14 +123,27 @@ export default function ProfilePage() {
     .join("")
     .toUpperCase() || "MT";
 
+  // Cấp Rank hiện tại của người dùng & Bộ màu loan đặc thù
+  const currentRankLevel = 2; // Cấp 2 · Runner / Lifter
+  const rankTheme = getRankTheme(currentRankLevel);
 
   return (
     <div className="flex flex-col w-full min-h-screen bg-background pb-24 max-w-md mx-auto text-foreground relative overflow-hidden">
-      {/* AMBIENT MESH GRADIENTS (Màu loan giao diện nhẹ nhàng, tinh tế) */}
+      {/* AMBIENT MESH GRADIENTS (Màu loan giao diện nhẹ nhàng, thay đổi chuẩn theo Rank) */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute -top-10 -left-20 w-80 h-80 bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-48 -right-20 w-72 h-72 bg-blue-500/10 dark:bg-blue-600/15 rounded-full blur-3xl" />
-        <div className="absolute top-[500px] -left-10 w-80 h-80 bg-purple-500/8 dark:bg-purple-600/12 rounded-full blur-3xl" />
+        <div
+          className={cn(
+            "absolute -top-16 -left-10 w-96 h-96 rounded-full blur-3xl opacity-35 dark:opacity-45 rank-aura-pulse transition-all duration-700",
+            `bg-linear-to-br ${rankTheme.orbGradientPrimary}`
+          )}
+        />
+        <div
+          className={cn(
+            "absolute top-52 -right-16 w-80 h-80 rounded-full blur-3xl opacity-25 dark:opacity-35 transition-all duration-700",
+            `bg-linear-to-bl ${rankTheme.orbGradientSecondary}`
+          )}
+        />
+        <div className="absolute top-[650px] -left-20 w-80 h-80 bg-brand/10 dark:bg-brand/15 rounded-full blur-3xl" />
       </div>
 
       {/* 1. TOP HEADER: Hồ sơ + Share + Sun + Settings */}
@@ -172,14 +186,25 @@ export default function ProfilePage() {
 
       <div className="px-3.5 space-y-3.5">
         {/* 2. PROFILE CARD */}
-        <div className="rounded-3xl bg-card/90 backdrop-blur-md border border-border/70 p-4 shadow-xs space-y-3.5 relative overflow-hidden">
-          {/* Subtle ambient light inside card */}
-          <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-cyan-400/10 blur-2xl pointer-events-none" />
+        <div
+          className={cn(
+            "rounded-3xl bg-card/90 backdrop-blur-md border p-4 shadow-xs space-y-3.5 relative overflow-hidden transition-all duration-300",
+            rankTheme.borderClass
+          )}
+        >
+          {/* Rank Ambient Aura ("Màu loan" lan tỏa theo rank người dùng) */}
+          <RankAuraGlow level={currentRankLevel} variant="dual-mesh" />
 
           <div className="flex items-start gap-3.5 relative z-10">
-            {/* Avatar Circle with initials or photo & Rank 2 Cyan Aura */}
+            {/* Avatar Circle with initials or photo & Rank Aura Halo */}
             <div className="relative shrink-0">
-              <div className="w-14 h-14 rounded-full p-[2px] bg-linear-to-tr from-cyan-400 via-sky-500 to-brand shadow-xs">
+              <RankAuraGlow level={currentRankLevel} variant="avatar-halo" />
+              <div
+                className={cn(
+                  "w-14 h-14 rounded-full p-[2px] shadow-xs relative z-10 bg-linear-to-tr",
+                  rankTheme.avatarRingGradient
+                )}
+              >
                 <div className="w-full h-full rounded-full bg-background overflow-hidden flex items-center justify-center">
                   {profileAvatar ? (
                     <img src={profileAvatar} alt={profileName} className="w-full h-full object-cover" />
@@ -192,7 +217,7 @@ export default function ProfilePage() {
                 type="button"
                 onClick={() => setIsAvatarModalOpen(true)}
                 aria-label="Đổi ảnh đại diện"
-                className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-brand text-white border border-background flex items-center justify-center shadow-xs hover:scale-105 transition-transform"
+                className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-brand text-white border border-background flex items-center justify-center shadow-xs hover:scale-105 transition-transform z-20"
               >
                 <Camera className="h-2.5 w-2.5" />
               </button>
@@ -208,15 +233,12 @@ export default function ProfilePage() {
                 <span className="inline-flex items-center text-[10.5px] font-semibold text-brand dark:text-brand-sky bg-brand/10 dark:bg-brand/20 px-2 py-0.5 rounded-full">
                   Đã xác thực
                 </span>
-                {/* Clickable Rank Badge Pill */}
-                <button
-                  type="button"
+                {/* Clickable Rank Badge Pill with Rank Aura */}
+                <RankPill
+                  level={currentRankLevel}
+                  label="Cấp 2 · Runner"
                   onClick={() => setIsRankRoadmapOpen(true)}
-                  className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 px-2 py-0.5 rounded-full transition-all active:scale-95"
-                >
-                  <RankBadgeIcon level={2} size="xs" />
-                  <span>Cấp 2 · Runner</span>
-                </button>
+                />
                 <span className="inline-flex items-center text-[10.5px] font-medium text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
                   ⚡ 5:45/km
                 </span>
@@ -362,15 +384,24 @@ export default function ProfilePage() {
         <button
           type="button"
           onClick={() => setIsRankRoadmapOpen(true)}
-          className="w-full p-3.5 rounded-2xl bg-card/90 backdrop-blur-md border border-border/70 hover:border-cyan-400/50 shadow-xs space-y-2 text-left group transition-all active:scale-[0.99] relative overflow-hidden"
+          className={cn(
+            "w-full p-3.5 rounded-2xl bg-card/90 backdrop-blur-md border shadow-xs space-y-2 text-left group transition-all active:scale-[0.99] relative overflow-hidden",
+            rankTheme.borderClass,
+            `hover:${rankTheme.activeBorderClass}`
+          )}
         >
-          {/* Subtle ambient cyan glow inside card */}
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-cyan-400/10 blur-xl pointer-events-none group-hover:bg-cyan-400/20 transition-colors" />
+          {/* Rank Ambient Aura ("Màu loan" góc thẻ EXP) */}
+          <RankAuraGlow level={currentRankLevel} variant="corner-orb" />
 
           <div className="flex items-center justify-between text-xs relative z-10">
             <div className="flex items-center gap-2">
-              <RankBadgeIcon level={2} size="xs" showAura animated />
-              <div className="flex items-center gap-1 font-bold text-foreground group-hover:text-cyan-500 transition-colors">
+              <RankBadgeIcon level={currentRankLevel as 1 | 2 | 3 | 4 | 5 | 6} size="xs" showAura animated />
+              <div
+                className={cn(
+                  "flex items-center gap-1 font-bold text-foreground transition-colors",
+                  `group-hover:${rankTheme.textClass}`
+                )}
+              >
                 <span>Cấp 2 · Runner</span>
                 <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
               </div>
@@ -378,7 +409,10 @@ export default function ProfilePage() {
             <span className="text-muted-foreground font-mono text-[11px]">1.240 / 2.000 EXP</span>
           </div>
           <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden relative z-10">
-            <div className="h-full bg-linear-to-r from-cyan-500 to-brand rounded-full" style={{ width: "62%" }} />
+            <div
+              className={cn("h-full rounded-full bg-linear-to-r transition-all duration-500", rankTheme.progressGradient)}
+              style={{ width: "62%" }}
+            />
           </div>
         </button>
 

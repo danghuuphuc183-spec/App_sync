@@ -40,6 +40,8 @@ import { quoteFee, formatVnd, PAYMENT_CONFIG } from "@/features/clubs/payments";
 import { VietQRPaymentModal } from "@/components/payment/vietqr-payment-modal";
 import { SplitPaymentOrder, MOCK_PARTNER_ACCOUNTS, SYNESIS_PLATFORM_ACCOUNT } from "@/features/payment/payos.types";
 import { generateVietQrImageUrl, generateOrderCode } from "@/features/payment/vietqr.service";
+import { RankAuraGlow, getRankTheme } from "@/components/profile/rank-aura";
+import { RankBadgeIcon } from "@/components/profile/rank-badge-icon";
 
 type ScreenView = "main" | "duo" | "nhom";
 type MainCategory = "nhom" | "clb";
@@ -300,40 +302,57 @@ function DongDoiContent() {
                 </button>
               </div>
 
-              {/* Thẻ cá nhân trên cùng (Top status card - Cùng mẫu với CLB) */}
-              <div className="p-3.5 rounded-2xl bg-card border border-border shadow-xs space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-md bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky font-bold text-xs">
-                      {CURRENT_USER_STATUS.rankTitle}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      Đúng hẹn {CURRENT_USER_STATUS.onTime}
-                    </span>
-                  </div>
-                  <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                    {CURRENT_USER_STATUS.trustStatus}
-                  </span>
-                </div>
+              {/* Thẻ cá nhân trên cùng (Top status card - Màu loan Rank 3 Ruby Cùng mẫu với CLB) */}
+              {(() => {
+                const userRankTheme = getRankTheme(3);
+                return (
+                  <div
+                    className={cn(
+                      "p-3.5 rounded-2xl bg-card border shadow-xs space-y-2.5 relative overflow-hidden transition-all duration-300",
+                      userRankTheme.borderClass
+                    )}
+                  >
+                    {/* Hiệu ứng màu loan đa sắc theo Rank 3 Ruby */}
+                    <RankAuraGlow level={3} variant="dual-mesh" />
 
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                    <span className="font-semibold text-foreground">
-                      {CURRENT_USER_STATUS.currentExp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} /{" "}
-                      {CURRENT_USER_STATUS.targetExp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} EXP
-                    </span>
-                    <span>{CURRENT_USER_STATUS.nextRankTitle}</span>
+                    <div className="flex items-center justify-between relative z-10">
+                      <div className="flex items-center gap-2">
+                        <RankBadgeIcon level={3} size="xs" showAura animated />
+                        <span className={cn("px-2 py-0.5 rounded-md font-bold text-xs", userRankTheme.pillClass)}>
+                          {CURRENT_USER_STATUS.rankTitle}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          Đúng hẹn {CURRENT_USER_STATUS.onTime}
+                        </span>
+                      </div>
+                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                        {CURRENT_USER_STATUS.trustStatus}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1 relative z-10">
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                        <span className="font-semibold text-foreground">
+                          {CURRENT_USER_STATUS.currentExp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} /{" "}
+                          {CURRENT_USER_STATUS.targetExp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} EXP
+                        </span>
+                        <span className={userRankTheme.textClass}>{CURRENT_USER_STATUS.nextRankTitle}</span>
+                      </div>
+                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={cn(
+                            "h-full rounded-full transition-all duration-500 bg-linear-to-r",
+                            userRankTheme.progressGradient
+                          )}
+                          style={{
+                            width: `${(CURRENT_USER_STATUS.currentExp / CURRENT_USER_STATUS.targetExp) * 100}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-brand rounded-full transition-all duration-500"
-                      style={{
-                        width: `${(CURRENT_USER_STATUS.currentExp / CURRENT_USER_STATUS.targetExp) * 100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* Việc cần làm hôm nay (Blue solid banner card) */}
               <div className="p-4 rounded-2xl bg-brand text-white shadow-sm space-y-2.5 relative overflow-hidden">

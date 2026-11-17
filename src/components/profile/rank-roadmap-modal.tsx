@@ -31,6 +31,7 @@ import {
   checkRankUtCrossControl,
 } from "@/features/rank/ranking";
 import { RankBadgeIcon } from "./rank-badge-icon";
+import { RankAuraGlow, getRankTheme } from "./rank-aura";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -216,9 +217,12 @@ export function RankRoadmapModal({
           </button>
         </div>
 
-        {/* 2. CURRENT EXP PROGRESS HERO - GỌN GÀNG, ĐẸP MẮT */}
-        <div className="p-3.5 bg-linear-to-b from-brand/10 via-brand/5 to-transparent border-b border-border/60 shrink-0 space-y-2.5">
-          <div className="flex items-center gap-3">
+        {/* 2. CURRENT EXP PROGRESS HERO - GỌN GÀNG, ĐẸP MẮT & MÀU LOAN THEO RANK */}
+        <div className="p-3.5 bg-linear-to-b from-brand/10 via-brand/5 to-transparent border-b border-border/60 shrink-0 space-y-2.5 relative overflow-hidden">
+          <RankAuraGlow level={currentRank.level} variant="top-aurora" />
+          <RankAuraGlow level={currentRank.level} variant="corner-orb" />
+
+          <div className="flex items-center gap-3 relative z-10">
             <div className="shrink-0">
               <RankBadgeIcon
                 level={currentRank.level as 1 | 2 | 3 | 4 | 5 | 6}
@@ -233,7 +237,7 @@ export function RankRoadmapModal({
                 <span className="text-[10px] font-bold text-brand uppercase tracking-wider">
                   Cấp Hiện Tại
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-brand/10 text-brand">
+                <span className={cn("text-[10px] font-bold px-2 py-0.2 rounded-full", getRankTheme(currentRank.level).pillClass)}>
                   {currentRank.nameEn}
                 </span>
               </div>
@@ -246,7 +250,7 @@ export function RankRoadmapModal({
             </div>
 
             <div className="text-right shrink-0">
-              <p className="text-xs font-mono font-black text-brand">
+              <p className={cn("text-xs font-mono font-black", getRankTheme(currentRank.level).textClass)}>
                 {currentExp.toLocaleString("vi-VN")} EXP
               </p>
               {nextRank && (
@@ -258,10 +262,10 @@ export function RankRoadmapModal({
           </div>
 
           {/* Compact Progress Bar */}
-          <div className="space-y-1">
+          <div className="space-y-1 relative z-10">
             <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
               <div
-                className="h-full bg-linear-to-r from-brand via-brand-sky to-cyan-400 rounded-full transition-all duration-500"
+                className={cn("h-full rounded-full transition-all duration-500 bg-linear-to-r", getRankTheme(currentRank.level).progressGradient)}
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -272,7 +276,7 @@ export function RankRoadmapModal({
           </div>
 
           {/* One-Line UT Indicator */}
-          <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-background/80 border border-border/60 text-[11px]">
+          <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-background/80 border border-border/60 text-[11px] relative z-10">
             <div className="flex items-center gap-1.5 text-foreground">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
               <span>Uy tín: <strong>{currentUt.toFixed(1)}/10 UT</strong> ({utCrossCheck.statusLabel})</span>
@@ -329,6 +333,7 @@ export function RankRoadmapModal({
                   const isCurrent = r.level === currentRank.level;
                   const isSelected = r.level === selectedRankLevel;
                   const isAchieved = currentExp >= r.minExp;
+                  const rTheme = getRankTheme(r.level);
 
                   return (
                     <button
@@ -338,17 +343,25 @@ export function RankRoadmapModal({
                       className={cn(
                         "flex flex-col items-center gap-1 py-1.5 px-0.5 rounded-xl transition-all relative",
                         isSelected
-                          ? "bg-card border-2 border-brand shadow-xs scale-105"
+                          ? "bg-card border-2 shadow-xs scale-105"
                           : "hover:bg-muted/70 opacity-75 hover:opacity-100",
                         !isAchieved && "grayscale-50"
                       )}
+                      style={
+                        isSelected
+                          ? {
+                              borderColor: rTheme.primaryColor,
+                              boxShadow: `0 0 16px -3px ${rTheme.auraRgba}`,
+                            }
+                          : undefined
+                      }
                     >
                       <RankBadgeIcon
                         level={r.level as 1 | 2 | 3 | 4 | 5 | 6}
                         size="xs"
                         showAura={isSelected}
                       />
-                      <span className="text-[10px] font-bold text-foreground">
+                      <span className={cn("text-[10px] font-bold", isSelected ? rTheme.textClass : "text-foreground")}>
                         Cấp {r.level}
                       </span>
                       {isCurrent && (
@@ -359,69 +372,90 @@ export function RankRoadmapModal({
                 })}
               </div>
 
-              {/* Inspected Rank Detail Card - Đúc kết ngắn gọn, thoáng mắt */}
-              <div className="rounded-2xl border border-border bg-card p-3.5 shadow-xs space-y-3 relative overflow-hidden">
-                <div className="flex items-center gap-3">
-                  <RankBadgeIcon
-                    level={inspectRank.level as 1 | 2 | 3 | 4 | 5 | 6}
-                    size="md"
-                    showAura
-                  />
+              {/* Inspected Rank Detail Card - Đúc kết ngắn gọn & Màu loan rực rỡ */}
+              {(() => {
+                const inspectTheme = getRankTheme(inspectRank.level);
+                return (
+                  <div
+                    className={cn(
+                      "rounded-2xl border bg-card p-3.5 shadow-xs space-y-3 relative overflow-hidden transition-all duration-500",
+                      inspectTheme.borderClass
+                    )}
+                  >
+                    {/* Hiệu ứng màu loan đa tầng theo đúng màu sắc từng Rank */}
+                    <RankAuraGlow level={inspectRank.level} variant="dual-mesh" />
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10.5px] font-bold text-brand uppercase">
-                        Rank {inspectRank.level}: {inspectRank.nameEn}
-                      </span>
-                      {currentExp >= inspectRank.minExp ? (
-                        <span className="text-[9.5px] font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.2 rounded-full">
-                          ✓ Đã đạt
-                        </span>
-                      ) : (
-                        <span className="text-[9.5px] font-bold text-muted-foreground bg-muted px-1.5 py-0.2 rounded-full">
-                          🔒 Cần {inspectRank.minExp.toLocaleString("vi-VN")} EXP
-                        </span>
-                      )}
-                    </div>
-                    <h4 className="text-sm font-extrabold text-foreground">
-                      {inspectRank.nameVi}
-                    </h4>
-                    <p className="text-[11px] text-muted-foreground">
-                      {inspectData.tagline}
-                    </p>
-                  </div>
-                </div>
+                    <div className="flex items-center gap-3 relative z-10">
+                      <RankBadgeIcon
+                        level={inspectRank.level as 1 | 2 | 3 | 4 | 5 | 6}
+                        size="md"
+                        showAura
+                        animated
+                      />
 
-                {/* 4 Feature Chips (2x2 Grid) - Dễ đọc, thoáng mắt */}
-                <div className="grid grid-cols-2 gap-2">
-                  {inspectData.highlights.map((h, i) => (
-                    <div
-                      key={i}
-                      className="p-2.5 rounded-xl bg-muted/40 border border-border/60 space-y-0.5"
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm shrink-0">{h.icon}</span>
-                        <span className="text-xs font-bold text-foreground truncate">{h.title}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className={cn("text-[10.5px] font-bold uppercase", inspectTheme.textClass)}>
+                            Rank {inspectRank.level}: {inspectRank.nameEn}
+                          </span>
+                          {currentExp >= inspectRank.minExp ? (
+                            <span className="text-[9.5px] font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.2 rounded-full">
+                              ✓ Đã đạt
+                            </span>
+                          ) : (
+                            <span className="text-[9.5px] font-bold text-muted-foreground bg-muted px-1.5 py-0.2 rounded-full">
+                              🔒 Cần {inspectRank.minExp.toLocaleString("vi-VN")} EXP
+                            </span>
+                          )}
+                        </div>
+                        <h4 className="text-sm font-extrabold text-foreground">
+                          {inspectRank.nameVi}{" "}
+                          <span className="text-xs font-normal text-muted-foreground">
+                            ({inspectTheme.metalName})
+                          </span>
+                        </h4>
+                        <p className="text-[11px] text-muted-foreground">
+                          {inspectData.tagline}
+                        </p>
                       </div>
-                      <p className="text-[10.5px] text-muted-foreground leading-tight">
-                        {h.desc}
-                      </p>
                     </div>
-                  ))}
-                </div>
 
-                {/* Status Bar: Kho quà & Điều kiện UT */}
-                <div className="pt-2 border-t border-border/60 space-y-1.5 text-[11px]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">🎁 Quà mở khóa:</span>
-                    <strong className="text-foreground text-right">{inspectData.giftTierUnlocked}</strong>
+                    {/* 4 Feature Chips (2x2 Grid) - Dễ đọc, thoáng mắt */}
+                    <div className="grid grid-cols-2 gap-2 relative z-10">
+                      {inspectData.highlights.map((h, i) => (
+                        <div
+                          key={i}
+                          className={cn(
+                            "p-2.5 rounded-xl bg-card/90 backdrop-blur-xs border space-y-0.5 transition-all",
+                            inspectTheme.borderClass,
+                            "hover:scale-[1.02]"
+                          )}
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm shrink-0">{h.icon}</span>
+                            <span className="text-xs font-bold text-foreground truncate">{h.title}</span>
+                          </div>
+                          <p className="text-[10.5px] text-muted-foreground leading-tight">
+                            {h.desc}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Status Bar: Kho quà & Điều kiện UT */}
+                    <div className="pt-2 border-t border-border/60 space-y-1.5 text-[11px] relative z-10">
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">🎁 Quà mở khóa:</span>
+                        <strong className="text-foreground text-right">{inspectData.giftTierUnlocked}</strong>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">🛡️ Điều kiện UT:</span>
+                        <strong className={cn("text-right", inspectTheme.textClass)}>{inspectData.utRule}</strong>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">🛡️ Điều kiện UT:</span>
-                    <strong className="text-brand text-right">{inspectData.utRule}</strong>
-                  </div>
-                </div>
-              </div>
+                );
+              })()}
             </div>
           )}
 
