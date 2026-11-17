@@ -11,8 +11,12 @@ import {
   type DayPart,
   type FitnessBand,
   type LatLng,
+  type MusicPreference,
   type PartnerProfile,
+  type PostWorkoutPreference,
   type SessionType,
+  type VibeMode,
+  type VibePreferences,
 } from "./partner-match";
 
 const hash = (s: string) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 17);
@@ -74,7 +78,34 @@ export function candidateToPartner(c: MatchCandidate, center: LatLng): PartnerPr
   const style = `${c.habitsAndPreferences.workoutStyle} ${c.habitsAndPreferences.traits.join(" ")}`.toLowerCase();
   const performance = /kỷ luật|nghiêm|tập trung|pace|pr|tempo|sub-/.test(style);
   const chatty = /vui|hài|nói chuyện|trò chuyện|cafe|cà phê|năng lượng/.test(style);
-  const commStyle: CommStyle = performance ? (h % 2 ? "quiet" : "motivating") : chatty ? "chatty" : h % 2 ? "motivating" : "chatty";
+  const flexible = /linh hoạt|tự do|thoải mái/.test(style);
+
+  let vibe: VibeMode = "flexible";
+  if (performance && !chatty) vibe = "performance";
+  else if (chatty && !performance) vibe = "friendly";
+  else if (flexible) vibe = "flexible";
+  else vibe = h % 3 === 0 ? "performance" : h % 3 === 1 ? "friendly" : "flexible";
+
+  const commStyle: CommStyle =
+    vibe === "performance" ? (h % 2 ? "quiet" : "motivating") : vibe === "friendly" ? "chatty" : h % 2 ? "motivating" : "chatty";
+
+  const audio = (c.habitsAndPreferences.audioPreference || "").toLowerCase();
+  const musicPreference: MusicPreference =
+    audio.includes("tai nghe") || audio.includes("riêng") ? "own_music" : audio.includes("loa") ? "shared" : "ambient";
+
+  const after = (c.habitsAndPreferences.afterWorkout || "").toLowerCase();
+  const postWorkout: PostWorkoutPreference =
+    after.includes("cafe") || after.includes("cà phê") || after.includes("ăn") ? "coffee_social" : after.includes("về") ? "leave_immediately" : "flexible";
+
+  const vibePreferences: VibePreferences = {
+    mode: vibe,
+    talkLevel: commStyle === "quiet" ? "quiet" : commStyle === "chatty" ? "social" : "moderate",
+    feedbackStyle: vibe === "performance" ? "concise" : "encouraging",
+    musicPreference,
+    postWorkout,
+    photoCheckin: "flexible",
+    mustHaveVibe: false,
+  };
 
   const rateMatch = c.punctualRate.match(/(\d+)%.*?\((\d+)/);
   const completionRate = rateMatch ? Number(rateMatch[1]) / 100 : 0.9;
@@ -104,7 +135,8 @@ export function candidateToPartner(c: MatchCandidate, center: LatLng): PartnerPr
     workoutTypes,
     availability,
     position,
-    vibe: performance ? "performance" : "friendly",
+    vibe,
+    vibePreferences,
     commStyle,
     sameGenderOnly: !male && h % 3 === 0,
     fitnessBand: BAND_OF_LEVEL[c.capabilities.level] ?? "intermediate",

@@ -85,6 +85,8 @@ export function findPersonalMatches(
     preferredTimeSlot: timeSlotOf(form.time.from),
     maxDistanceKm: 10,
     minTrustScore: form.minTrust,
+    vibe: form.vibe,
+    vibePreferences: form.vibePreferences,
   };
 
   for (const radius of [5, 10]) {
@@ -192,12 +194,35 @@ export function rankKeos(
         social: viewer.friendIds.includes(keo.hostId) ? 1 : 0,
         trust: Math.min(1, ctx.hostTrust(keo.hostId) / 10),
       };
+      const vibeMatch =
+        keo.vibe && viewer.vibe
+          ? keo.vibe === viewer.vibe
+            ? 1
+            : keo.vibe === "flexible" || viewer.vibe === "flexible"
+            ? 0.8
+            : 0.3
+          : 0.7; // neutral khi không có dữ liệu
+
       const score =
-        0.35 * signals.near + 0.3 * signals.interest + 0.15 * signals.time + 0.1 * signals.social + 0.1 * signals.trust;
+        0.30 * signals.near +
+        0.25 * signals.interest +
+        0.15 * signals.time +
+        0.10 * signals.social +
+        0.10 * signals.trust +
+        0.10 * vibeMatch;
 
       const reasons: string[] = [];
       if (d <= 2) reasons.push(`Gần bạn ${d.toFixed(1)} km`);
       if (signals.interest >= 0.8) reasons.push(`Cùng mê ${ctx.sportLabel(keo.sport).toLowerCase()}`);
+      if (keo.vibe && viewer.vibe && keo.vibe === viewer.vibe) {
+        reasons.push(
+          keo.vibe === "performance"
+            ? "Cùng Vibe Performance tập trung"
+            : keo.vibe === "friendly"
+            ? "Cùng Vibe Friendly cởi mở"
+            : "Cùng Vibe linh hoạt"
+        );
+      }
       if (signals.social) reasons.push("Bạn bè của bạn");
       if (signals.time === 1) reasons.push("Khung giờ bạn hay tập");
       if (reasons.length === 0) reasons.push(`Cách ${d.toFixed(1)} km`);

@@ -1,4 +1,5 @@
 import { MatchCandidate, WorkoutHabits } from "./candidates.data";
+import type { VibeMode, VibePreferences } from "./partner-match";
 
 export interface UserPreferences {
   sport: MatchCandidate["sport"];
@@ -8,6 +9,8 @@ export interface UserPreferences {
   areaVi?: string;
   minTrustScore?: number;
   traits?: string[];
+  vibe?: VibeMode;
+  vibePreferences?: VibePreferences;
 }
 
 export interface MatchScoreBreakdown {
@@ -99,9 +102,30 @@ export function calculateCandidateMatch(
     reasons.push(`Khoảng cách di chuyển thuận tiện (${distanceKm} km)`);
   }
 
-  // 5. Vibe & Habit Cosine Similarity (Weight: 8%)
+  // 5. Vibe & Habit Compatibility (Master Spec Section 2.3 & 4.4)
   let vibeScore = 65;
-  if (user.traits && user.traits.length > 0) {
+  const candidateStyle = `${candidate.habitsAndPreferences.workoutStyle} ${candidate.habitsAndPreferences.traits.join(" ")}`.toLowerCase();
+  const candidateIsPerf = /kỷ luật|nghiêm|tập trung|pace|pr|tempo|sub-/.test(candidateStyle);
+  const candidateIsFriendly = /vui|hài|nói chuyện|trò chuyện|cafe|cà phê|năng lượng/.test(candidateStyle);
+  const candidateVibe: VibeMode = candidateIsPerf && !candidateIsFriendly ? "performance" : candidateIsFriendly && !candidateIsPerf ? "friendly" : "flexible";
+
+  if (user.vibe) {
+    if (user.vibe === candidateVibe) {
+      vibeScore = 100;
+      reasons.push(
+        user.vibe === "performance"
+          ? "Cùng Vibe Performance: Tập trung cao độ"
+          : user.vibe === "friendly"
+          ? "Cùng Vibe Friendly: Cởi mở, khích lệ"
+          : "Cùng Vibe linh hoạt, dễ thích nghi"
+      );
+    } else if (user.vibe === "flexible" || candidateVibe === "flexible") {
+      vibeScore = 90;
+      reasons.push("Vibe linh hoạt, dễ dàng hòa nhịp cùng nhau");
+    } else {
+      vibeScore = 45;
+    }
+  } else if (user.traits && user.traits.length > 0) {
     const commonTraits = user.traits.filter((t) =>
       candidate.habitsAndPreferences.traits.some(
         (ct) => ct.toLowerCase().includes(t.toLowerCase()) || t.toLowerCase().includes(ct.toLowerCase())

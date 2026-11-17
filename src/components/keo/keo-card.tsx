@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { CalendarClock, Check, Dumbbell, Lock, MapPin, MessageCircle, Sparkles } from "lucide-react";
+import { CalendarClock, Check, Dumbbell, Flame, Lock, MapPin, MessageCircle, SlidersHorizontal, Smile, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Keo } from "@/features/keo/keo.types";
 import { hostOf, hostTrust } from "@/features/keo/keo.data";
@@ -91,11 +91,23 @@ export function KeoCard({
       <div className="relative aspect-[16/9] bg-muted">
         <img src={keo.place.image} alt={`${SPORT_LABEL[keo.sport]} tại ${keo.place.name}`} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-        <div className="absolute top-2.5 left-2.5 flex gap-1.5">
+        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
           <span className={cn("rounded-lg px-2.5 py-1 text-[11px] font-bold", keo.kind === "group" ? "bg-brand-sky text-black" : "bg-brand text-white")}>
             {keo.kind === "group" ? "Nhóm" : "1:1"}
           </span>
           {keo.mine && <span className="rounded-lg bg-black/70 text-white px-2.5 py-1 text-[11px] font-bold">Kèo của bạn</span>}
+          {keo.vibe && (
+            <span className="rounded-lg bg-black/70 text-white px-2 py-1 text-[10.5px] font-bold flex items-center gap-1 backdrop-blur-xs">
+              {keo.vibe === "performance" ? (
+                <Flame className="h-3 w-3 stroke-[2]" />
+              ) : keo.vibe === "friendly" ? (
+                <Smile className="h-3 w-3 stroke-[2]" />
+              ) : (
+                <SlidersHorizontal className="h-3 w-3 stroke-[2]" />
+              )}
+              {keo.vibe === "performance" ? "Performance" : keo.vibe === "friendly" ? "Friendly" : "Flexible"}
+            </span>
+          )}
         </div>
         {distanceKm !== undefined && (
           <span className="absolute top-2.5 right-2.5 rounded-lg bg-white/90 text-black px-2.5 py-1 text-[11px] font-bold">

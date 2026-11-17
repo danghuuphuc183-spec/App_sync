@@ -11,6 +11,7 @@ import {
   scheduleOverlap,
   slotKey,
   spotterNeed,
+  vibeCompat,
   weatherAdvice,
   workoutCompat,
   type PartnerProfile,
@@ -198,5 +199,50 @@ describe("dữ liệu ứng viên", () => {
   it("khung giờ hẹn → slot", () => {
     expect(windowToSlots(1, 5 * 60, 7 * 60)).toEqual(["1-dawn"]);
     expect(windowToSlots(5, 17 * 60, 21 * 60)).toEqual(["5-evening", "5-night"]);
+  });
+});
+
+describe("VIBE & Cá nhân hoá theo Master Spec Section 2.3 & 4.4", () => {
+  it("VIBE mode: cùng mode hoặc flexible đạt điểm cao", () => {
+    const perf1 = base({ vibe: "performance", commStyle: "quiet" });
+    const perf2 = base({ vibe: "performance", commStyle: "quiet" });
+    const flex = base({ vibe: "flexible", commStyle: "motivating" });
+    const friendly = base({ vibe: "friendly", commStyle: "chatty" });
+
+    expect(vibeCompat(perf1, perf2).score).toBe(1);
+    expect(vibeCompat(perf1, flex).score).toBeGreaterThan(0.8);
+    expect(vibeCompat(perf1, friendly).score).toBeLessThan(0.6);
+  });
+
+  it("Hard filter: mustHaveVibe loại người không khớp VIBE, nhưng chấp nhận flexible", () => {
+    const perfMe = base({ id: "me", vibe: "performance", mustHaveVibe: true });
+    const perfCandidate = base({ id: "p1", vibe: "performance" });
+    const flexCandidate = base({ id: "p2", vibe: "flexible" });
+    const friendlyCandidate = base({ id: "p3", vibe: "friendly" });
+
+    const run = matchPartners(perfMe, [perfCandidate, flexCandidate, friendlyCandidate], { sport: "running" });
+    expect(run.matches.map((m) => m.profile.id)).toEqual(["p1", "p2"]);
+    expect(run.excluded.vibe).toBe(1);
+  });
+
+  it("Lý do ghép có mã reason VIBE có thật", () => {
+    const perfMe = base({
+      id: "me",
+      vibe: "performance",
+      commStyle: "quiet",
+      vibePreferences: { mode: "performance", postWorkout: "leave_immediately", musicPreference: "own_music" },
+    });
+    const perfPartner = base({
+      id: "p1",
+      vibe: "performance",
+      commStyle: "quiet",
+      vibePreferences: { mode: "performance", postWorkout: "leave_immediately", musicPreference: "own_music" },
+    });
+
+    const res = vibeCompat(perfMe, perfPartner);
+    expect(res.reasons).toContain("Cùng Vibe Performance: Tập trung tối đa, ít xã giao");
+    expect(res.reasons).toContain("Cùng Quiet Mode: Ít nói, hạn chế ngắt quãng");
+    expect(res.reasons).toContain("Cùng phong cách tập xong về ngay");
+    expect(res.reasons).toContain("Cùng thói quen nghe tai nghe riêng");
   });
 });

@@ -1,4 +1,5 @@
 import type { SessionDetails } from "./session-details";
+import type { VibeMode, VibePreferences } from "@/features/match/partner-match";
 
 export type LatLng = [number, number];
 export type TimeSlot = "morning_early" | "noon" | "evening" | "night";
@@ -27,6 +28,11 @@ export interface PersonalForm {
   minTrust: number;
   /** Chi tiết buổi tập theo môn: cự ly, pace, nhóm cơ, mức tạ… */
   details?: SessionDetails;
+  /** VIBE & Phong cách tập theo Master Spec Section 2.3 */
+  vibe?: VibeMode;
+  vibePreferences?: VibePreferences;
+  mustHaveVibe?: boolean;
+  sameGenderOnly?: boolean;
 }
 
 /** Kế hoạch tự tập (Cá nhân — một mình): riêng tư, không hiện trên bảng kèo, không cộng/trừ UT */
@@ -37,6 +43,7 @@ export interface SoloPlan {
   time: TimeWindow;
   note: string;
   details?: SessionDetails;
+  vibe?: VibeMode;
   createdAt: string;
   /** đã mở cho người khác tham gia → id kèo 1:1 được tạo */
   openedAsKeoId?: string;
@@ -61,6 +68,10 @@ export interface Keo {
   note: string;
   minTrust: number;
   details?: SessionDetails;
+  vibe?: VibeMode;
+  vibePreferences?: VibePreferences;
+  mustHaveVibe?: boolean;
+  sameGenderOnly?: boolean;
   level?: 1 | 2 | 3 | 4;
   createdAt: string;
   mine?: boolean;
@@ -94,4 +105,5 @@ export interface Viewer {
   usualSlots: TimeSlot[];
   trustScore: number;
   friendIds: string[];
+  vibe?: VibeMode;
 }

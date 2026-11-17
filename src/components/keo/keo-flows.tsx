@@ -121,6 +121,10 @@ export function PersonalFlow() {
     note: form.note,
     minTrust: 0,
     details: form.details,
+    vibe: form.vibe,
+    vibePreferences: form.vibePreferences,
+    mustHaveVibe: form.mustHaveVibe,
+    sameGenderOnly: form.sameGenderOnly,
     createdAt: new Date().toISOString(),
     mine: true,
   });
@@ -220,10 +224,11 @@ export function PersonalFlow() {
             {SPORT_LABEL[form.sport]} · {form.place?.name} · {formatKeoDay(form.time.day)} {form.time.from}–{form.time.to} · ≤ {run?.radiusKm ?? 3} km
           </p>
           {run?.widened && <p className="mt-1 text-[12px] text-amber-600">Không có ai trong 3 km — đã mở rộng tới {run.radiusKm} km.</p>}
-          {run && (run.excluded.locationRestricted > 0 || run.excluded.gender > 0 || run.needsVerification > 0) && (
+          {run && (run.excluded.locationRestricted > 0 || run.excluded.gender > 0 || run.needsVerification > 0 || run.excluded.vibe > 0) && (
             <p className="mt-1 text-[11.5px] text-muted-foreground flex items-center gap-1">
               <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-foreground" />
               {[
+                run.excluded.vibe ? `Đã lọc ${run.excluded.vibe} người không khớp VIBE bắt buộc` : "",
                 run.excluded.locationRestricted ? `Đã lọc ${run.excluded.locationRestricted} tài khoản bị hạn chế vị trí` : "",
                 run.excluded.gender ? `Đã lọc ${run.excluded.gender} khác giới (an toàn)` : "",
                 run.needsVerification ? `${run.needsVerification} người đang chờ xác minh vị trí` : "",
@@ -412,6 +417,10 @@ export function GroupFlow() {
       note: form.note,
       minTrust: 0,
       details: form.details,
+      vibe: form.vibe,
+      vibePreferences: form.vibePreferences,
+      mustHaveVibe: form.mustHaveVibe,
+      sameGenderOnly: form.sameGenderOnly,
       createdAt: new Date().toISOString(),
       mine: true,
     };
@@ -534,6 +543,7 @@ export function SoloFlow() {
       time: form.time,
       note: form.note,
       details: form.details,
+      vibe: form.vibe,
       createdAt: new Date().toISOString(),
     };
     store.addPlan(p);
@@ -555,6 +565,7 @@ export function SoloFlow() {
       note: plan.note,
       minTrust: 0,
       details: plan.details,
+      vibe: plan.vibe,
       createdAt: new Date().toISOString(),
       mine: true,
     });

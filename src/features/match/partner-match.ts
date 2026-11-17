@@ -26,7 +26,26 @@
 
 export type LatLng = [number, number];
 export type Gender = "male" | "female" | "other";
-export type Vibe = "performance" | "friendly";
+export type Vibe = "performance" | "friendly" | "flexible";
+export type VibeMode = Vibe;
+
+/** Chi tiết Vibe & Ranh giới theo Master Spec Mục 2.3 */
+export type TalkLevel = "quiet" | "moderate" | "social";
+export type FeedbackStyle = "concise" | "encouraging" | "silent";
+export type MusicPreference = "own_music" | "shared" | "ambient";
+export type PostWorkoutPreference = "coffee_social" | "leave_immediately" | "flexible";
+export type PhotoCheckinPreference = "yes" | "no" | "flexible";
+
+export interface VibePreferences {
+  mode: VibeMode;
+  talkLevel?: TalkLevel;
+  feedbackStyle?: FeedbackStyle;
+  musicPreference?: MusicPreference;
+  postWorkout?: PostWorkoutPreference;
+  photoCheckin?: PhotoCheckinPreference;
+  mustHaveVibe?: boolean;
+}
+
 /** Cách giao tiếp khi tập — người dùng tự chọn trực tiếp */
 export type CommStyle = "quiet" | "chatty" | "motivating";
 
@@ -123,6 +142,8 @@ export interface PartnerProfile {
   availability: string[];
   position: LatLng;
   vibe: Vibe;
+  vibePreferences?: VibePreferences;
+  mustHaveVibe?: boolean;
   commStyle: CommStyle;
   sameGenderOnly: boolean;
   fitnessBand: FitnessBand;
@@ -296,6 +317,72 @@ export function commCompat(a: CommStyle, b: CommStyle) {
   return COMM_COMPAT[[a, b].sort().join("|")] ?? 0.5;
 }
 
+/**
+ * Đánh giá độ tương thích VIBE & Ranh giới (Master Spec Section 2.3 & 4.4)
+ * - VIBE Mode: Performance Mode / Friendly Companion / Flexible (Linh hoạt)
+ * - Mức độ giao tiếp / Talk level
+ * - Tuỳ chọn chi tiết (Post-workout hangout, Music, Photo checkin)
+ * Missing optional data là neutral (không bị phạt điểm).
+ */
+export function vibeCompat(
+  me: Pick<PartnerProfile, "vibe" | "commStyle" | "vibePreferences">,
+  other: Pick<PartnerProfile, "vibe" | "commStyle" | "vibePreferences">
+): { score: number; reasons: string[] } {
+  const reasons: string[] = [];
+  const myMode: VibeMode = me.vibe ?? "flexible";
+  const otherMode: VibeMode = other.vibe ?? "flexible";
+
+  // 1. Chế độ VIBE chính (0..1)
+  let modeScore = 0.35;
+  if (myMode === otherMode) {
+    modeScore = 1.0;
+    if (myMode === "performance") {
+      reasons.push("Cùng Vibe Performance: Tập trung tối đa, ít xã giao");
+    } else if (myMode === "friendly") {
+      reasons.push("Cùng Vibe Friendly: Cởi mở, khích lệ & đồng hành");
+    } else {
+      reasons.push("Cùng Vibe Flexible: Linh hoạt, dễ thích nghi");
+    }
+  } else if (myMode === "flexible" || otherMode === "flexible") {
+    modeScore = 0.95;
+    reasons.push("Vibe linh hoạt, dễ dàng hòa nhịp cùng phong cách bạn tập");
+  }
+
+  // 2. Mức độ giao tiếp / Talk Level (0..1)
+  const comm = commCompat(me.commStyle, other.commStyle);
+  if (me.commStyle === other.commStyle) {
+    if (me.commStyle === "quiet") reasons.push("Cùng Quiet Mode: Ít nói, hạn chế ngắt quãng");
+    else if (me.commStyle === "chatty") reasons.push("Cùng thích trò chuyện thân thiện khi tập");
+    else if (me.commStyle === "motivating") reasons.push("Cùng tinh thần cổ vũ, thúc đẩy nhau");
+  }
+
+  // 3. Tùy chọn chi tiết (Post-workout, Music) - neutral nếu thiếu (không phạt)
+  let optScore = 1.0;
+  const myPref = me.vibePreferences;
+  const otherPref = other.vibePreferences;
+  if (myPref && otherPref) {
+    if (myPref.postWorkout && otherPref.postWorkout) {
+      if (myPref.postWorkout === otherPref.postWorkout) {
+        if (myPref.postWorkout === "coffee_social") reasons.push("Cùng sở thích cà phê / giao lưu sau tập");
+        else if (myPref.postWorkout === "leave_immediately") reasons.push("Cùng phong cách tập xong về ngay");
+      } else if (myPref.postWorkout !== "flexible" && otherPref.postWorkout !== "flexible") {
+        optScore -= 0.15;
+      }
+    }
+    if (myPref.musicPreference && otherPref.musicPreference) {
+      if (myPref.musicPreference === otherPref.musicPreference) {
+        if (myPref.musicPreference === "own_music") reasons.push("Cùng thói quen nghe tai nghe riêng");
+        else if (myPref.musicPreference === "shared") reasons.push("Cùng thích bật nhạc chia sẻ");
+      } else {
+        optScore -= 0.1;
+      }
+    }
+  }
+
+  const score = Math.max(0.1, Math.min(1.0, 0.5 * modeScore + 0.3 * comm + 0.2 * optScore));
+  return { score, reasons };
+}
+
 const BAND_ORDER: FitnessBand[] = ["beginner", "intermediate", "advanced", "elite"];
 const INTENSITY_ORDER: Intensity[] = ["easy", "moderate", "hard"];
 
@@ -339,12 +426,26 @@ export interface PartnerMatch {
 
 export interface MatchRun {
   matches: PartnerMatch[];
-  excluded: { distance: number; schedule: number; gender: number; locationRestricted: number; sport: number };
+  excluded: {
+    distance: number;
+    schedule: number;
+    gender: number;
+    locationRestricted: number;
+    sport: number;
+    vibe: number;
+  };
   /** số người được ghép nhưng đang chờ xác minh vị trí */
   needsVerification: number;
 }
 
-export const emptyExcluded = (): MatchRun["excluded"] => ({ distance: 0, schedule: 0, gender: 0, locationRestricted: 0, sport: 0 });
+export const emptyExcluded = (): MatchRun["excluded"] => ({
+  distance: 0,
+  schedule: 0,
+  gender: 0,
+  locationRestricted: 0,
+  sport: 0,
+  vibe: 0,
+});
 
 export function matchPartners(
   me: PartnerProfile,
@@ -373,6 +474,19 @@ export function matchPartners(
       excluded.gender++;
       continue;
     }
+
+    // Hard filter: VIBE must-have hai chiều (Master Spec Section 4.3)
+    const myMustHave = me.mustHaveVibe || me.vibePreferences?.mustHaveVibe;
+    const cMustHave = c.mustHaveVibe || c.vibePreferences?.mustHaveVibe;
+    if (myMustHave || cMustHave) {
+      const mV = me.vibe ?? "flexible";
+      const cV = c.vibe ?? "flexible";
+      if (mV !== "flexible" && cV !== "flexible" && mV !== cV) {
+        excluded.vibe++;
+        continue;
+      }
+    }
+
     const d = distanceKm(me.position, c.position);
     if (d > radius) {
       excluded.distance++;
@@ -385,15 +499,24 @@ export function matchPartners(
     }
 
     const work = workoutCompat(sessionTypes, c.workoutTypes);
-    const vibe = me.vibe === c.vibe ? 1 : 0.3;
-    const comm = commCompat(me.commStyle, c.commStyle);
+    const vibeRes = vibeCompat(me, c);
     const cIntensity = intensityOf(c);
     const fit = fitnessCompat(me.fitnessBand, c.fitnessBand, myIntensity, cIntensity);
     const reliability = adjustedReliability(c.completionRate, c.completedSessions);
     const near = Math.exp(-d / 1.5);
     const spot = spotterNeed(me, c, sessionTypes);
 
-    let s = 0.25 * sched.score + 0.2 * work.score + 0.15 * near + 0.1 * vibe + 0.1 * comm + 0.1 * fit + 0.1 * reliability;
+    // Trọng số chuẩn Master Spec Section 4.4:
+    // Time compatibility: 25% | Workout compatibility: 20% | Location: 15% | Fitness/session fit: 15% | Reliability: 15% | VIBE/boundaries: 10%
+    // Tổng = 100%
+    let s =
+      0.25 * sched.score +
+      0.20 * work.score +
+      0.15 * near +
+      0.15 * fit +
+      0.15 * reliability +
+      0.10 * vibeRes.score;
+
     if (!spot.ok) s *= 0.7;
 
     const tier = reliabilityTier(c.completionRate, c.completedSessions);
@@ -401,8 +524,14 @@ export function matchPartners(
     reasons.push(`Rảnh trùng ${sched.common.length} khung giờ`);
     if (work.pair) reasons.push(work.pair[0] === work.pair[1] ? `Cùng ${WORKOUT_LABEL[work.pair[0]]}` : `${WORKOUT_LABEL[work.pair[1]]} hợp với ${WORKOUT_LABEL[work.pair[0]]}`);
     reasons.push(`Cách ${d.toFixed(1)} km`);
-    if (me.vibe === c.vibe) reasons.push(me.vibe === "performance" ? "Cùng mode Hiệu suất" : "Cùng mode Đồng hành");
-    if (comm >= 1) reasons.push(`Cùng kiểu: ${COMM_STYLE_LABEL[c.commStyle]}`);
+    if (vibeRes.reasons.length > 0) {
+      reasons.push(...vibeRes.reasons);
+    } else if (me.vibe === c.vibe) {
+      reasons.push(me.vibe === "performance" ? "Cùng mode Hiệu suất" : me.vibe === "friendly" ? "Cùng mode Đồng hành" : "Cùng phong cách Linh hoạt");
+    }
+    if (commCompat(me.commStyle, c.commStyle) >= 1 && !vibeRes.reasons.some(r => r.includes(COMM_STYLE_LABEL[c.commStyle]))) {
+      reasons.push(`Cùng kiểu: ${COMM_STYLE_LABEL[c.commStyle]}`);
+    }
     if (fit >= 0.85) reasons.push(`Cùng trình độ · cường độ ${INTENSITY_LABEL[cIntensity].toLowerCase()}`);
     if (tier === "reliable") reasons.push(`Hoàn thành ${Math.round(c.completionRate * 100)}% kèo`);
     if (spot.applies && spot.ok) reasons.push("Đỡ tạ được cho buổi nặng");

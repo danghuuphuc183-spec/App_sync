@@ -1,7 +1,20 @@
 "use client";
 
 import * as React from "react";
-import { Check, MapPin, Minus, Plus, Search, Star, X } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Flame,
+  MapPin,
+  Minus,
+  Plus,
+  Search,
+  SlidersHorizontal,
+  Smile,
+  Star,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { KEO_SPORTS, placesForSport } from "@/features/keo/keo.data";
 import { distanceKm, isGroupFormValid, isPersonalFormValid, toMinutes } from "@/features/keo/keo.algo";
@@ -13,6 +26,12 @@ import { SportIcon } from "@/components/shared/sport-icon";
 import { DayCalendar } from "./day-calendar";
 import { addDays, toIsoDay } from "@/features/keo/keo-date";
 import { defaultDetails, fieldsForSport, isDetailsComplete, toggleDetail } from "@/features/keo/session-details";
+import type {
+  MusicPreference,
+  PostWorkoutPreference,
+  TalkLevel,
+  VibeMode,
+} from "@/features/match/partner-match";
 
 export function emptyPersonalForm(): PersonalForm {
   return {
@@ -22,12 +41,60 @@ export function emptyPersonalForm(): PersonalForm {
     note: "",
     minTrust: 0,
     details: defaultDetails("running"),
+    vibe: "friendly",
+    vibePreferences: {
+      mode: "friendly",
+      talkLevel: "moderate",
+      feedbackStyle: "encouraging",
+      musicPreference: "own_music",
+      postWorkout: "coffee_social",
+      photoCheckin: "flexible",
+      mustHaveVibe: false,
+    },
+    mustHaveVibe: false,
+    sameGenderOnly: false,
   };
 }
 
 export function emptyGroupForm(): GroupForm {
   return { ...emptyPersonalForm(), sport: "running", details: defaultDetails("running"), capacity: 4, present: 2 };
 }
+
+const VIBE_MODES = [
+  {
+    id: "performance" as const,
+    label: "Performance",
+    tagline: "Tập trung cao độ",
+    icon: Flame,
+  },
+  {
+    id: "friendly" as const,
+    label: "Thân thiện",
+    tagline: "Cởi mở, kết nối",
+    icon: Smile,
+  },
+  {
+    id: "flexible" as const,
+    label: "Linh hoạt",
+    tagline: "Tự do, thích nghi",
+    icon: SlidersHorizontal,
+  },
+];
+
+const VIBE_INFO: Record<VibeMode, { title: string; desc: string }> = {
+  performance: {
+    title: "Performance Mode",
+    desc: "Tập trung hoàn thành buổi, ít xã giao (Talk low; feedback ngắn gọn; hạn chế tối đa gián đoạn bài tập).",
+  },
+  friendly: {
+    title: "Friendly Companion",
+    desc: "Cởi mở, trao đổi và khích lệ lẫn nhau (Talk medium/high; trò chuyện thân thiện & giao lưu cafe sau tập).",
+  },
+  flexible: {
+    title: "Flexible (Linh hoạt)",
+    desc: "Không yêu cầu khắt khe, thoải mái hòa nhịp và sẵn sàng thích nghi theo phong cách của bạn tập.",
+  },
+};
 
 export type KeoFormKind = "solo" | "personal" | "group";
 
@@ -64,6 +131,7 @@ export function KeoForm<T extends PersonalForm>({
   onClearDefault?: () => void;
 }) {
   const [showAllPlaces, setShowAllPlaces] = React.useState(false);
+  const [showVibeDetails, setShowVibeDetails] = React.useState(false);
   const [placeQuery, setPlaceQuery] = React.useState("");
   // đổi môn → danh sách địa điểm khác → xoá từ khoá cũ
   React.useEffect(() => setPlaceQuery(""), [value.sport]);
@@ -162,6 +230,223 @@ export function KeoForm<T extends PersonalForm>({
           </div>
         </Section>
       )}
+
+      {/* VIBE & Phong cách tập (Master Spec Section 2.3 & 4.4) */}
+      <Section title="Vibe & Phong cách tập" hint="Đồng điệu tính cách để tập bền bỉ">
+        <div className="grid grid-cols-3 gap-2">
+          {VIBE_MODES.map((vm) => {
+            const active = (value.vibe ?? "friendly") === vm.id;
+            const Icon = vm.icon;
+            return (
+              <button
+                key={vm.id}
+                type="button"
+                onClick={() => {
+                  const currentPref = value.vibePreferences ?? {
+                    mode: vm.id,
+                    talkLevel: vm.id === "performance" ? "quiet" : vm.id === "friendly" ? "social" : "moderate",
+                    postWorkout: vm.id === "performance" ? "leave_immediately" : vm.id === "friendly" ? "coffee_social" : "flexible",
+                    musicPreference: "own_music",
+                    mustHaveVibe: value.mustHaveVibe ?? false,
+                  };
+                  set({
+                    vibe: vm.id,
+                    vibePreferences: { ...currentPref, mode: vm.id },
+                  } as Partial<T>);
+                }}
+                aria-pressed={active}
+                className={cn(
+                  "flex flex-col items-center text-center rounded-2xl border p-2.5 transition-all active:scale-[0.98] shadow-2xs relative",
+                  active
+                    ? "bg-foreground text-background border-foreground shadow-xs"
+                    : "border-border text-foreground hover:border-brand-300 hover:bg-muted/50"
+                )}
+              >
+                <div
+                  className={cn(
+                    "w-8 h-8 rounded-xl flex items-center justify-center mb-1.5",
+                    active ? "bg-background/20 text-background" : "bg-muted text-foreground"
+                  )}
+                >
+                  <Icon className="h-4 w-4 stroke-[2]" />
+                </div>
+                <span className="text-[12.5px] font-bold leading-tight">{vm.label}</span>
+                <span className={cn("text-[10px] mt-0.5 line-clamp-1", active ? "text-background/80" : "text-muted-foreground")}>
+                  {vm.tagline}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Mô tả ngắn gọn về VIBE đã chọn */}
+        <div className="rounded-xl bg-muted/60 border border-border/80 px-3 py-2 text-[11.5px] text-muted-foreground leading-snug">
+          <b className="text-foreground">{VIBE_INFO[value.vibe ?? "friendly"].title}: </b>
+          {VIBE_INFO[value.vibe ?? "friendly"].desc}
+        </div>
+
+        {/* Mở rộng tuỳ chỉnh chi tiết Vibe & Ranh giới */}
+        <div className="rounded-2xl border border-border p-3 space-y-3 bg-card/50">
+          <button
+            type="button"
+            onClick={() => setShowVibeDetails((v) => !v)}
+            className="w-full flex items-center justify-between text-left text-[12.5px] font-bold text-foreground"
+          >
+            <span className="flex items-center gap-1.5">
+              <SlidersHorizontal className="h-4 w-4 text-foreground stroke-[2]" />
+              Tuỳ chỉnh chi tiết VIBE & Ranh giới
+            </span>
+            {showVibeDetails ? (
+              <ChevronUp className="h-4 w-4 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            )}
+          </button>
+
+          {showVibeDetails && (
+            <div className="space-y-3 pt-1 border-t border-border/60">
+              {/* Mức độ trò chuyện */}
+              <div>
+                <p className="mb-1.5 text-[11.5px] font-semibold text-foreground">Mức độ trò chuyện (Talk level)</p>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {[
+                    { id: "quiet", label: "Ít nói / Yên tĩnh" },
+                    { id: "moderate", label: "Vừa phải" },
+                    { id: "social", label: "Cởi mở, nhiều" },
+                  ].map((t) => {
+                    const on = (value.vibePreferences?.talkLevel ?? "moderate") === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() =>
+                          set({
+                            vibePreferences: {
+                              ...(value.vibePreferences ?? { mode: value.vibe ?? "friendly" }),
+                              talkLevel: t.id as TalkLevel,
+                            },
+                          } as Partial<T>)
+                        }
+                        className={cn(
+                          "rounded-lg border px-2 py-1.5 text-[11.5px] font-semibold text-center transition-colors",
+                          on ? "bg-foreground border-foreground text-background" : "border-border text-foreground hover:bg-muted"
+                        )}
+                      >
+                        {t.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Sau buổi tập */}
+              <div>
+                <p className="mb-1.5 text-[11.5px] font-semibold text-foreground">Sau buổi tập (Post-workout)</p>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {[
+                    { id: "coffee_social", label: "Giao lưu / Cafe" },
+                    { id: "leave_immediately", label: "Tập xong về ngay" },
+                    { id: "flexible", label: "Tùy hứng" },
+                  ].map((p) => {
+                    const on = (value.vibePreferences?.postWorkout ?? "coffee_social") === p.id;
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() =>
+                          set({
+                            vibePreferences: {
+                              ...(value.vibePreferences ?? { mode: value.vibe ?? "friendly" }),
+                              postWorkout: p.id as PostWorkoutPreference,
+                            },
+                          } as Partial<T>)
+                        }
+                        className={cn(
+                          "rounded-lg border px-2 py-1.5 text-[11.5px] font-semibold text-center transition-colors",
+                          on ? "bg-foreground border-foreground text-background" : "border-border text-foreground hover:bg-muted"
+                        )}
+                      >
+                        {p.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Âm nhạc */}
+              <div>
+                <p className="mb-1.5 text-[11.5px] font-semibold text-foreground">Âm nhạc khi tập</p>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {[
+                    { id: "own_music", label: "Tai nghe riêng" },
+                    { id: "shared", label: "Bật loa chung" },
+                    { id: "ambient", label: "Tự nhiên" },
+                  ].map((m) => {
+                    const on = (value.vibePreferences?.musicPreference ?? "own_music") === m.id;
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() =>
+                          set({
+                            vibePreferences: {
+                              ...(value.vibePreferences ?? { mode: value.vibe ?? "friendly" }),
+                              musicPreference: m.id as MusicPreference,
+                            },
+                          } as Partial<T>)
+                        }
+                        className={cn(
+                          "rounded-lg border px-2 py-1.5 text-[11.5px] font-semibold text-center transition-colors",
+                          on ? "bg-foreground border-foreground text-background" : "border-border text-foreground hover:bg-muted"
+                        )}
+                      >
+                        {m.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Bộ lọc cứng VIBE & Giới tính */}
+              <div className="pt-1.5 space-y-2 border-t border-border/60">
+                <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={!!value.mustHaveVibe}
+                    onChange={(e) =>
+                      set({
+                        mustHaveVibe: e.target.checked,
+                        vibePreferences: {
+                          ...(value.vibePreferences ?? { mode: value.vibe ?? "friendly" }),
+                          mustHaveVibe: e.target.checked,
+                        },
+                      } as Partial<T>)
+                    }
+                    className="mt-0.5 h-4 w-4 rounded accent-brand"
+                  />
+                  <div className="text-left">
+                    <span className="block text-[12px] font-bold text-foreground">Bắt buộc khớp VIBE (Must-have)</span>
+                    <span className="block text-[11px] text-muted-foreground">Bộ lọc cứng: chỉ gợi ý bạn tập có cùng phong cách VIBE đã chọn</span>
+                  </div>
+                </label>
+
+                <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={!!value.sameGenderOnly}
+                    onChange={(e) => set({ sameGenderOnly: e.target.checked } as Partial<T>)}
+                    className="mt-0.5 h-4 w-4 rounded accent-brand"
+                  />
+                  <div className="text-left">
+                    <span className="block text-[12px] font-bold text-foreground">Ưu tiên bạn cùng giới tính</span>
+                    <span className="block text-[11px] text-muted-foreground">Ranh giới an toàn: chỉ kết nối với người tập cùng giới tính</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
+      </Section>
 
       {/* Địa điểm: ô tìm kiếm + gợi ý gần bạn */}
       <Section title="Địa điểm">

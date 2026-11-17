@@ -340,4 +340,31 @@ describe("Kèo đã nhận: xem hồ sơ host và huỷ kèo", () => {
     expect(screen.queryByRole("region", { name: "Kèo của bạn" })).not.toBeInTheDocument();
     expect(screen.getByRole("article", { name: "Chạy 10km ven sông, pace 5:45" })).toBeInTheDocument();
   });
+
+  it("hiển thị 3 chế độ Vibe: Performance, Thân thiện, Linh hoạt và cho phép chọn", () => {
+    render(<PersonalFlow />);
+    expect(screen.getByText("Vibe & Phong cách tập")).toBeInTheDocument();
+    const perfBtn = screen.getByRole("button", { name: /Performance/i });
+    const friendlyBtn = screen.getByRole("button", { name: /Thân thiện/i });
+    const flexBtn = screen.getByRole("button", { name: /Linh hoạt/i });
+
+    expect(perfBtn).toBeInTheDocument();
+    expect(friendlyBtn).toBeInTheDocument();
+    expect(flexBtn).toBeInTheDocument();
+
+    // Chuyển sang Performance
+    fireEvent.click(perfBtn);
+    expect(perfBtn).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByText(/Performance Mode:/i)).toBeInTheDocument();
+
+    // Mở tuỳ chỉnh chi tiết & ranh giới
+    const toggleDetails = screen.getByRole("button", { name: /Tuỳ chỉnh chi tiết VIBE & Ranh giới/i });
+    fireEvent.click(toggleDetails);
+
+    expect(screen.getByText("Mức độ trò chuyện (Talk level)")).toBeInTheDocument();
+    expect(screen.getByText("Sau buổi tập (Post-workout)")).toBeInTheDocument();
+    expect(screen.getByText("Âm nhạc khi tập")).toBeInTheDocument();
+    expect(screen.getByText(/Bắt buộc khớp VIBE/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ưu tiên bạn cùng giới tính/i)).toBeInTheDocument();
+  });
 });

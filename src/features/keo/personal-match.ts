@@ -63,17 +63,44 @@ export function findPersonalMatchesV2(
   });
   const center = form.place.position;
   const pool = eligible.map((c) => candidateToPartner(c, center));
-  const meHere: PartnerProfile = { ...me, position: center, availability: slots, sports: [...new Set([...me.sports, form.sport])] };
+
+  // Suy cường độ buổi tập từ chi tiết form (nếu có)
+  let workoutIntensity = me.intensity;
+  if (form.details?.run_type) {
+    const rt = form.details.run_type;
+    if (rt.includes("Interval") || rt.includes("Tempo")) workoutIntensity = "hard";
+    else if (rt.includes("nhẹ") || rt.includes("Recovery")) workoutIntensity = "easy";
+    else if (rt.includes("dài") || rt.includes("Long")) workoutIntensity = "moderate";
+  }
+
+  // Master Spec Mục 2.3: VIBE Slot Preference có ưu tiên cao hơn User Preference
+  const meHere: PartnerProfile = {
+    ...me,
+    position: center,
+    availability: slots,
+    sports: [...new Set([...me.sports, form.sport])],
+    vibe: form.vibe ?? me.vibe ?? "flexible",
+    vibePreferences: form.vibePreferences,
+    mustHaveVibe: form.mustHaveVibe ?? false,
+    sameGenderOnly: form.sameGenderOnly ?? me.sameGenderOnly,
+    intensity: workoutIntensity,
+  };
 
   const base = opts.radiusKm ?? 3;
   let radius = base;
-  let run = matchPartners(meHere, pool, { sport: form.sport, radiusKm: radius, sessionTypes, limit: opts.limit ?? 3 });
+  let run = matchPartners(meHere, pool, { sport: form.sport, radiusKm: radius, sessionTypes, intensity: workoutIntensity, limit: opts.limit ?? 3 });
   if (run.matches.length === 0 && base < 5) {
     radius = 5;
-    run = matchPartners(meHere, pool, { sport: form.sport, radiusKm: radius, sessionTypes, limit: opts.limit ?? 3 });
+    run = matchPartners(meHere, pool, { sport: form.sport, radiusKm: radius, sessionTypes, intensity: workoutIntensity, limit: opts.limit ?? 3 });
   }
 
-  const prefs = { sport: form.sport as MatchCandidate["sport"], preferredTimeSlot: timeSlotOf(form.time.from), maxDistanceKm: radius };
+  const prefs = {
+    sport: form.sport as MatchCandidate["sport"],
+    preferredTimeSlot: timeSlotOf(form.time.from),
+    maxDistanceKm: radius,
+    vibe: form.vibe,
+    vibePreferences: form.vibePreferences,
+  };
   const matches = run.matches.map((m) => {
     const candidate = eligible.find((c) => c.id === m.profile.id)!;
     return { candidate, partner: m, breakdown: { ...calculateCandidateMatch(prefs, candidate), totalScore: m.score, matchReasonVi: m.reasons } };
