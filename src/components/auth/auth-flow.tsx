@@ -3,12 +3,12 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Turnstile } from "@marsidev/react-turnstile";
-import { ArrowLeft, Check, Loader2, MapPin, Shield, Smartphone, Users, Watch } from "lucide-react";
+import { ArrowLeft, Check, Loader2, Mail, MapPin, Shield, Smartphone, Sparkles, UserPlus, Users, Watch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
-import { formatVnPhone, normalizeVnPhone } from "@/features/auth/accounts";
+import { DEMO_OTP, formatVnPhone, normalizeVnPhone } from "@/features/auth/accounts";
 
-type Step = "welcome" | "phone" | "otp" | "name" | "email";
+type Step = "welcome" | "phone" | "otp" | "name" | "email" | "register_email" | "register_google";
 
 function GoogleIcon() {
   return (
@@ -22,13 +22,14 @@ function GoogleIcon() {
 }
 
 /**
- * Đăng nhập / tạo tài khoản: Google hoặc Số điện thoại (OTP).
- * Cùng một luồng cho cả người cũ và người mới: xác minh xong, nếu tài khoản đã tồn tại → vào app,
- * nếu chưa → tạo tài khoản và chuyển sang thiết lập cá nhân hoá (/bat-dau).
+ * Đăng nhập / Đăng ký tài khoản: Google, Số điện thoại (OTP) hoặc Email.
+ * - Đăng nhập tài khoản cũ (hoặc tài khoản mẫu): vào thẳng ứng dụng (/).
+ * - Đăng ký tài khoản mới: tạo tài khoản và chuyển sang bảng khảo sát cá nhân hoá 10 bước (/bat-dau).
  */
 export function AuthFlow() {
   const router = useRouter();
   const { sendPhoneOtp, loginWithPhone, loginWithSocial, loginWithEmail, register } = useAuth();
+  const [authMode, setAuthMode] = React.useState<"login" | "register">("login");
   const [step, setStep] = React.useState<Step>("welcome");
   const [phoneInput, setPhoneInput] = React.useState("");
   const [emailInput, setEmailInput] = React.useState("danghuuphuc183@gmail.com");
@@ -37,6 +38,8 @@ export function AuthFlow() {
   const [otpError, setOtpError] = React.useState("");
   const [resendIn, setResendIn] = React.useState(0);
   const [name, setName] = React.useState("");
+  const [regName, setRegName] = React.useState("");
+  const [regEmail, setRegEmail] = React.useState("");
   const [busy, setBusy] = React.useState(false);
   const [guideOpen, setGuideOpen] = React.useState(false);
   const [welcomeBack, setWelcomeBack] = React.useState<string | null>(null);
@@ -86,11 +89,16 @@ export function AuthFlow() {
     setAuthError("");
     try {
       const existing = await loginWithPhone(`+84${phone.slice(1)}`, code);
-      if (existing) goHome("bạn");
-      else setStep("name");
+      if (existing) {
+        goHome("bạn");
+      } else {
+        setStep("name");
+      }
     } catch (error) {
       setOtpError(error instanceof Error ? error.message : "Mã OTP không hợp lệ hoặc đã hết hạn.");
-    } finally { setBusy(false); }
+    } finally {
+      setBusy(false);
+    }
   };
 
   const createPhoneAccount = async () => {
@@ -98,11 +106,13 @@ export function AuthFlow() {
     setBusy(true);
     setAuthError("");
     try {
-      await register({ name: name.trim(), phone: `+84${phone.slice(1)}`, provider: "phone" });
+      await register({ name: name.trim(), phone: formatVnPhone(phone), provider: "phone" });
       router.push("/bat-dau");
     } catch (error) {
       setAuthError(error instanceof Error ? error.message : "Không tạo được hồ sơ. Vui lòng thử lại.");
-    } finally { setBusy(false); }
+    } finally {
+      setBusy(false);
+    }
   };
 
   const continueWithGoogle = async () => {
@@ -122,9 +132,43 @@ export function AuthFlow() {
     setAuthError("");
     try {
       await loginWithEmail(emailToLogin);
-      goHome(emailToLogin === "danghuuphuc183@gmail.com" ? "Đặng Hữu Phúc" : (emailToLogin.split("@")[0] || "bạn"));
+      const isOwner = emailToLogin === "danghuuphuc183@gmail.com" || emailToLogin.includes("danghuuphuc");
+      if (isOwner) {
+        goHome("Đặng Hữu Phúc");
+      } else {
+        // Nếu là email mới chưa hoàn tất onboarding thì vào /bat-dau, ngược lại vào trang chủ
+        goHome(emailToLogin.split("@")[0] || "bạn");
+      }
     } catch (error) {
       setAuthError(error instanceof Error ? error.message : "Không thể đăng nhập bằng email.");
+      setBusy(false);
+    }
+  };
+
+  const createEmailAccount = async () => {
+    if (!regName.trim() || !regEmail.includes("@")) return;
+    setBusy(true);
+    setAuthError("");
+    try {
+      await register({ name: regName.trim(), email: regEmail.trim(), provider: "email" });
+      router.push("/bat-dau");
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : "Không tạo được tài khoản. Vui lòng thử lại.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const createGoogleAccount = async () => {
+    if (!regName.trim() || !regEmail.includes("@")) return;
+    setBusy(true);
+    setAuthError("");
+    try {
+      await register({ name: regName.trim(), email: regEmail.trim(), provider: "google" });
+      router.push("/bat-dau");
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : "Không tạo được tài khoản Google. Vui lòng thử lại.");
+    } finally {
       setBusy(false);
     }
   };
@@ -137,95 +181,190 @@ export function AuthFlow() {
       <div className="relative mx-auto flex min-h-dvh max-w-md flex-col px-6 pb-8 pt-[max(24px,env(safe-area-inset-top))]">
         {step !== "welcome" && (
           <button
-            onClick={() => setStep(step === "otp" ? "phone" : step === "name" ? "otp" : step === "email" ? "welcome" : "welcome")}
+            onClick={() => {
+              if (step === "otp") setStep("phone");
+              else if (step === "name") setStep("otp");
+              else setStep("welcome");
+            }}
             aria-label="Quay lại"
-            className="h-10 w-10 -ml-2 rounded-full hover:bg-white/10 flex items-center justify-center"
+            className="h-10 w-10 -ml-2 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
         )}
 
-        {/* ================= MÀN CHÀO ================= */}
+        {/* ================= MÀN CHÀO & CHỌN PHƯƠNG THỨC ================= */}
         {step === "welcome" && (
           <div className="flex flex-1 flex-col animate-in fade-in duration-500">
-            <div className="flex flex-col items-center pt-10">
+            <div className="flex flex-col items-center pt-8">
               <div className="relative welcome-float">
                 <div className="absolute inset-0 rounded-3xl bg-brand-sky/40 blur-2xl" />
-                <img src="/logo-icon-584.png" alt="SYNESIS" className="relative h-24 w-24 rounded-3xl" />
+                <img src="/logo-icon-584.png" alt="SYNESIS" className="relative h-20 w-20 rounded-3xl shadow-xl" />
               </div>
-              <p className="mt-4 text-[28px] font-black tracking-[0.14em] font-display">SYN≡SIS</p>
-              <h1 className="mt-5 text-center text-[24px] font-extrabold leading-tight font-display">
+              <p className="mt-3 text-[26px] font-black tracking-[0.14em] font-display">SYN≡SIS</p>
+              <h1 className="mt-2 text-center text-[22px] font-extrabold leading-tight font-display">
                 Tìm bạn tập hợp nhịp,
                 <br />
                 <span className="bg-gradient-to-r from-brand-sky to-white bg-clip-text text-transparent">giữ kỷ luật cùng nhau</span>
               </h1>
             </div>
 
-            <ul className="mt-7 space-y-2.5">
+            {/* Các tiện ích cốt lõi */}
+            <ul className="mt-5 space-y-2">
               {[
                 [MapPin, "Ghép bạn tập trong bán kính 3 km, trùng giờ rảnh"],
-                [Users, "Hợp loại buổi tập, cường độ, cách giao tiếp và vibe"],
+                [Users, "Hợp môn tập, cường độ, phong cách giao tiếp và vibe"],
                 [Watch, "Đồng bộ Strava, Apple Health, Samsung Health, Hevy"],
                 [Shield, "Điểm uy tín chống bùng kèo, tuỳ chọn chỉ ghép cùng giới"],
               ].map(([Icon, text], i) => {
                 const I = Icon as typeof MapPin;
                 return (
-                  <li key={i} className="flex items-center gap-3 rounded-2xl bg-white/[0.06] border border-white/10 px-3.5 py-2.5 backdrop-blur animate-in fade-in slide-in-from-bottom-2" style={{ animationDelay: `${i * 90}ms`, animationFillMode: "both" }}>
-                    <span className="h-8 w-8 shrink-0 rounded-xl bg-brand/30 flex items-center justify-center">
-                      <I className="h-4 w-4 text-brand-sky" />
+                  <li key={i} className="flex items-center gap-2.5 rounded-xl bg-white/[0.05] border border-white/10 px-3 py-2 backdrop-blur">
+                    <span className="h-7 w-7 shrink-0 rounded-lg bg-brand/30 flex items-center justify-center">
+                      <I className="h-3.5 w-3.5 text-brand-sky" />
                     </span>
-                    <span className="text-[13px] text-white/90">{text as string}</span>
+                    <span className="text-[12.5px] text-white/90">{text as string}</span>
                   </li>
                 );
               })}
             </ul>
 
-            <div className="mt-auto space-y-2.5 pt-6">
-              {/* Nút xác nhận nhanh tài khoản Gmail danghuuphuc183@gmail.com */}
+            {/* Thanh chuyển đổi [ Đăng nhập ] / [ Đăng ký tài khoản mới ] */}
+            <div className="mt-6 p-1 rounded-xl bg-white/[0.08] border border-white/10 flex items-center gap-1">
               <button
                 type="button"
-                onClick={() => void handleQuickEmailLogin("danghuuphuc183@gmail.com")}
-                disabled={busy}
-                className="w-full py-2.5 px-3.5 rounded-xl bg-gradient-to-r from-emerald-500/20 via-brand-sky/20 to-brand/20 border border-emerald-400/40 text-white flex items-center justify-between text-left hover:border-emerald-400 active:scale-[0.98] transition-all shadow-md"
+                onClick={() => setAuthMode("login")}
+                className={cn(
+                  "flex-1 py-2 rounded-lg text-[13px] font-bold transition-all text-center flex items-center justify-center gap-1.5",
+                  authMode === "login"
+                    ? "bg-brand text-white shadow-md"
+                    : "text-white/60 hover:text-white hover:bg-white/[0.04]"
+                )}
               >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-bold text-emerald-300">Tài khoản Google / Gmail</p>
-                    <p className="text-[13px] font-extrabold text-white truncate">danghuuphuc183@gmail.com</p>
-                  </div>
-                </div>
-                <span className="shrink-0 text-xs font-bold px-2.5 py-1 rounded-md bg-white/10 text-brand-sky">
-                  Xác nhận vào →
-                </span>
+                <span>Đăng nhập</span>
               </button>
+              <button
+                type="button"
+                onClick={() => setAuthMode("register")}
+                className={cn(
+                  "flex-1 py-2 rounded-lg text-[13px] font-bold transition-all text-center flex items-center justify-center gap-1.5",
+                  authMode === "register"
+                    ? "bg-gradient-to-r from-emerald-500 to-brand text-white shadow-md"
+                    : "text-white/60 hover:text-white hover:bg-white/[0.04]"
+                )}
+              >
+                <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                <span>Đăng ký mới</span>
+              </button>
+            </div>
 
-              <button
-                onClick={() => void continueWithGoogle()}
-                disabled={busy}
-                className="w-full h-12 rounded-lg bg-white text-black font-bold text-[15px] flex items-center justify-center gap-2.5 hover:bg-neutral-100 active:scale-[0.98] transition-all"
-              >
-                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />} Tiếp tục với Google
-              </button>
-              <button
-                onClick={() => setStep("phone")}
-                className="w-full h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2.5 hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30"
-              >
-                <Smartphone className="h-5 w-5" /> Tiếp tục bằng số điện thoại
-              </button>
-              <button
-                onClick={() => setStep("email")}
-                className="w-full py-1 text-center text-[12.5px] font-semibold text-white/70 hover:text-white transition-colors"
-              >
-                Hoặc đăng nhập bằng Email khác
-              </button>
-              <p className="text-center text-[12px] text-white/60 leading-relaxed">
-                Chưa có tài khoản? Cứ chọn một cách ở trên — tài khoản sẽ được <b className="text-white/90">tạo tự động</b> sau khi xác minh.
-              </p>
-              <button onClick={() => setGuideOpen(true)} className="w-full text-center text-[13px] font-bold text-brand-sky">
+            {/* Khối hành động tương ứng với tab */}
+            <div className="mt-4 space-y-2.5 pt-1">
+              {authMode === "login" ? (
+                <>
+                  {/* Nút xác nhận nhanh tài khoản Gmail danghuuphuc183@gmail.com */}
+                  <button
+                    type="button"
+                    onClick={() => void handleQuickEmailLogin("danghuuphuc183@gmail.com")}
+                    disabled={busy}
+                    className="w-full py-2.5 px-3.5 rounded-xl bg-gradient-to-r from-emerald-500/20 via-brand-sky/20 to-brand/20 border border-emerald-400/40 text-white flex items-center justify-between text-left hover:border-emerald-400 active:scale-[0.98] transition-all shadow-md"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-bold text-emerald-300">Tài khoản Google mẫu</p>
+                        <p className="text-[13px] font-extrabold text-white truncate">danghuuphuc183@gmail.com</p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 text-xs font-bold px-2.5 py-1 rounded-md bg-white/10 text-brand-sky">
+                      Xác nhận vào →
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => void continueWithGoogle()}
+                    disabled={busy}
+                    className="w-full h-11 rounded-lg bg-white text-black font-bold text-[14.5px] flex items-center justify-center gap-2.5 hover:bg-neutral-100 active:scale-[0.98] transition-all"
+                  >
+                    {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />} Tiếp tục với Google
+                  </button>
+
+                  <button
+                    onClick={() => setStep("phone")}
+                    className="w-full h-11 rounded-lg bg-brand text-white font-bold text-[14.5px] flex items-center justify-center gap-2.5 hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30"
+                  >
+                    <Smartphone className="h-4 w-4" /> Tiếp tục bằng số điện thoại
+                  </button>
+
+                  <button
+                    onClick={() => setStep("email")}
+                    className="w-full py-1 text-center text-[12px] font-semibold text-white/70 hover:text-white transition-colors"
+                  >
+                    Hoặc đăng nhập bằng Email khác
+                  </button>
+
+                  <div className="text-center pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode("register")}
+                      className="text-[12.5px] text-white/75 hover:text-white"
+                    >
+                      Chưa có tài khoản? <span className="font-bold text-brand-sky underline underline-offset-2">Đăng ký mới tại đây</span>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="p-3 rounded-xl bg-brand/20 border border-brand-sky/30 text-[12px] text-brand-100 leading-relaxed">
+                    ✨ <b>Tài khoản mới:</b> Sau khi đăng ký, hệ thống sẽ mở bảng <b>khảo sát 10 câu hỏi (~2 phút)</b> để thiết lập môn tập, giờ rảnh và khu vực bạn muốn ghép.
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setRegName("");
+                      setRegEmail("");
+                      setStep("register_google");
+                    }}
+                    disabled={busy}
+                    className="w-full h-11 rounded-lg bg-white text-black font-bold text-[14.5px] flex items-center justify-center gap-2.5 hover:bg-neutral-100 active:scale-[0.98] transition-all"
+                  >
+                    <GoogleIcon /> Đăng ký với Google
+                  </button>
+
+                  <button
+                    onClick={() => setStep("phone")}
+                    className="w-full h-11 rounded-lg bg-brand text-white font-bold text-[14.5px] flex items-center justify-center gap-2.5 hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30"
+                  >
+                    <Smartphone className="h-4 w-4" /> Đăng ký bằng số điện thoại
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setRegName("");
+                      setRegEmail("");
+                      setStep("register_email");
+                    }}
+                    className="w-full h-11 rounded-lg bg-white/[0.08] border border-white/15 text-white font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-white/15 active:scale-[0.98] transition-all"
+                  >
+                    <Mail className="h-4 w-4 text-emerald-400" /> Đăng ký bằng Email
+                  </button>
+
+                  <div className="text-center pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode("login")}
+                      className="text-[12.5px] text-white/75 hover:text-white"
+                    >
+                      Đã có tài khoản? <span className="font-bold text-brand-sky underline underline-offset-2">Đăng nhập tại đây</span>
+                    </button>
+                  </div>
+                </>
+              )}
+
+              <button onClick={() => setGuideOpen(true)} className="w-full text-center text-[12.5px] font-bold text-brand-sky pt-1">
                 Người mới? Xem 4 bước bắt đầu
               </button>
-              <p className="pt-1 text-center text-[10.5px] text-white/40">
+              <p className="text-center text-[10.5px] text-white/40">
                 Tiếp tục nghĩa là bạn đồng ý Điều khoản sử dụng & Chính sách quyền riêng tư của SYNESIS.
               </p>
             </div>
@@ -233,7 +372,121 @@ export function AuthFlow() {
           </div>
         )}
 
-        {/* ================= EMAIL ================= */}
+        {/* ================= ĐĂNG KÝ MỚI VỚI GOOGLE ================= */}
+        {step === "register_google" && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void createGoogleAccount();
+            }}
+            className="flex flex-1 flex-col pt-4 animate-in fade-in slide-in-from-right-4 duration-300"
+          >
+            <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg w-fit">
+              <Sparkles className="h-3.5 w-3.5" /> Tạo tài khoản mới & thiết lập hồ sơ
+            </div>
+            <h1 className="mt-3 text-[24px] font-extrabold font-display">Đăng ký với Google</h1>
+            <p className="mt-1 text-[13px] text-white/60">
+              Nhập tên và địa chỉ Gmail để bắt đầu. Hệ thống sẽ chuyển tiếp đến bảng khảo sát 10 câu hỏi để cá nhân hoá bạn tập.
+            </p>
+
+            <div className="mt-5 space-y-3">
+              <label className="block">
+                <span className="text-[12px] font-semibold text-white/70">Họ và tên hiển thị</span>
+                <input
+                  autoFocus
+                  type="text"
+                  value={regName}
+                  onChange={(e) => setRegName(e.target.value)}
+                  placeholder="VD: Nguyễn Văn A"
+                  required
+                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-[15px] font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-[12px] font-semibold text-white/70">Địa chỉ Gmail</span>
+                <input
+                  type="email"
+                  value={regEmail}
+                  onChange={(e) => setRegEmail(e.target.value)}
+                  placeholder="tenbantam@gmail.com"
+                  required
+                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-[15px] font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
+                />
+              </label>
+            </div>
+
+            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
+
+            <button
+              type="submit"
+              disabled={regName.trim().length < 2 || !regEmail.includes("@") || busy}
+              className="mt-auto h-12 rounded-lg bg-gradient-to-r from-emerald-500 to-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
+            >
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-amber-300" />}
+              Tiếp tục đến khảo sát thiết lập (10 bước) →
+            </button>
+          </form>
+        )}
+
+        {/* ================= ĐĂNG KÝ MỚI VỚI EMAIL ================= */}
+        {step === "register_email" && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void createEmailAccount();
+            }}
+            className="flex flex-1 flex-col pt-4 animate-in fade-in slide-in-from-right-4 duration-300"
+          >
+            <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg w-fit">
+              <UserPlus className="h-3.5 w-3.5" /> Tạo tài khoản mới & thiết lập hồ sơ
+            </div>
+            <h1 className="mt-3 text-[24px] font-extrabold font-display">Đăng ký bằng Email</h1>
+            <p className="mt-1 text-[13px] text-white/60">
+              Nhập họ tên và địa chỉ email của bạn để thiết lập tài khoản mới và trả lời khảo sát bạn tập.
+            </p>
+
+            <div className="mt-5 space-y-3">
+              <label className="block">
+                <span className="text-[12px] font-semibold text-white/70">Họ và tên</span>
+                <input
+                  autoFocus
+                  type="text"
+                  value={regName}
+                  onChange={(e) => setRegName(e.target.value)}
+                  placeholder="VD: Hoàng Long"
+                  required
+                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-[15px] font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
+                />
+              </label>
+
+              <label className="block">
+                <span className="text-[12px] font-semibold text-white/70">Địa chỉ Email</span>
+                <input
+                  type="email"
+                  value={regEmail}
+                  onChange={(e) => setRegEmail(e.target.value)}
+                  placeholder="hoanglong@example.com"
+                  required
+                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-[15px] font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
+                />
+              </label>
+            </div>
+
+            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
+
+            <button
+              type="submit"
+              disabled={regName.trim().length < 2 || !regEmail.includes("@") || busy}
+              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
+            >
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-amber-300" />}
+              Tiếp tục đến khảo sát thiết lập (10 bước) →
+            </button>
+          </form>
+        )}
+
+        {/* ================= ĐĂNG NHẬP EMAIL CŨ ================= */}
         {step === "email" && (
           <form
             onSubmit={(e) => {
@@ -294,6 +547,7 @@ export function AuthFlow() {
               {normalized && <Check className="h-5 w-5 text-white" />}
             </label>
             {phoneInput && !normalized && <p className="mt-2 text-[12px] text-amber-300">Số di động Việt Nam gồm 10 số, bắt đầu bằng 03, 05, 07, 08 hoặc 09.</p>}
+            <p className="mt-3 text-[11.5px] text-white/45">Bản thử nghiệm: 0908 123 456 là tài khoản đã có; số khác sẽ tạo tài khoản mới.</p>
             {captchaSiteKey && <div className="mt-4"><Turnstile key={captchaKey} siteKey={captchaSiteKey} onSuccess={setCaptchaToken} onExpire={() => setCaptchaToken("")} onError={() => { setCaptchaToken(""); setAuthError("Không xác minh được bảo mật. Vui lòng tải lại trang."); }} /></div>}
             {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
             <button
@@ -323,6 +577,9 @@ export function AuthFlow() {
               error={!!otpError}
             />
             {otpError && <p className="mt-2 text-[12.5px] text-red-300">{otpError}</p>}
+            <p className="mt-3 rounded-xl bg-brand/20 border border-brand-sky/30 px-3 py-2 text-[12px] text-brand-100">
+              Bản thử nghiệm: mã OTP là <b className="tracking-widest">{DEMO_OTP}</b>
+            </p>
             {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
             <button
               onClick={() => resendIn <= 0 && void sendOtp()}
@@ -341,7 +598,7 @@ export function AuthFlow() {
           </div>
         )}
 
-        {/* ================= TÊN (TÀI KHOẢN MỚI) ================= */}
+        {/* ================= TÊN (TÀI KHOẢN MỚI TỪ SỐ ĐIỆN THOẠI) ================= */}
         {step === "name" && (
           <form
             onSubmit={(e) => {
@@ -352,7 +609,7 @@ export function AuthFlow() {
           >
             <span className="self-start rounded-lg bg-emerald-400/15 text-emerald-300 px-3 py-1 text-[11.5px] font-bold">✓ Đã xác minh · Tài khoản mới</span>
             <h1 className="mt-3 text-[26px] font-extrabold font-display">Bạn tên là gì?</h1>
-            <p className="mt-1 text-[13.5px] text-white/60">Tên hiển thị với bạn tập. Có thể đổi sau trong hồ sơ.</p>
+            <p className="mt-1 text-[13.5px] text-white/60">Tên hiển thị với bạn tập. Hệ thống sẽ dẫn bạn đến bảng khảo sát 10 câu hỏi để tìm bạn tập phù hợp.</p>
             <input
               autoFocus
               value={name}
@@ -362,39 +619,45 @@ export function AuthFlow() {
               maxLength={40}
               className="mt-6 h-14 rounded-2xl bg-white/[0.07] border border-white/15 px-4 text-[17px] font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
             />
+            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
             <button
               type="submit"
               disabled={name.trim().length < 2 || busy}
               className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 disabled:bg-white/10 disabled:text-white/40"
             >
-              {busy && <Loader2 className="h-4 w-4 animate-spin" />} Tạo tài khoản & thiết lập
+              {busy && <Loader2 className="h-4 w-4 animate-spin" />} Tạo tài khoản & thiết lập (10 bước) →
             </button>
           </form>
         )}
       </div>
 
       {/* ================= HƯỚNG DẪN NGƯỜI MỚI ================= */}
-      {guideOpen && <div role="dialog" aria-label="Bắt đầu với SYNESIS" className="fixed inset-0 z-[1200] flex items-end bg-black/70 p-4" onClick={() => setGuideOpen(false)}><div className="w-full rounded-3xl bg-white p-5 text-black" onClick={(e) => e.stopPropagation()}>
-        <ol className="space-y-3">
-          {[
-            ["Chọn Google hoặc Số điện thoại", "Không cần mật khẩu. Tài khoản được tạo tự động ở lần đầu."],
-            ["Xác minh", "Google: chọn tài khoản · Số điện thoại: nhập mã OTP 6 số qua SMS."],
-            ["Trả lời vài câu hỏi (~2 phút)", "Mục tiêu, loại buổi tập, cường độ, giờ rảnh, khu vực, cách giao tiếp, vibe."],
-            ["Cấp quyền & liên kết app", "GPS để ghép trong 3 km, máy ảnh để check-in, Strava/Apple Health/Samsung Health/Hevy để tự xác thực buổi tập (chỉ bạn thấy)."],
-          ].map(([t, d], i) => (
-            <li key={t} className="flex gap-3">
-              <span className="h-8 w-8 shrink-0 rounded-full bg-brand text-white font-bold flex items-center justify-center">{i + 1}</span>
-              <span>
-                <span className="block text-[14px] font-bold text-foreground">{t}</span>
-                <span className="block text-[12.5px] text-muted-foreground">{d}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-        <button onClick={() => setGuideOpen(false)} className="mt-5 w-full h-11 rounded-lg bg-brand text-white font-bold text-[14px]">
-          Đã hiểu
-        </button>
-      </div></div>}
+      {guideOpen && (
+        <div role="dialog" aria-label="Bắt đầu với SYNESIS" className="fixed inset-0 z-[1200] flex items-end bg-black/70 p-4" onClick={() => setGuideOpen(false)}>
+          <div className="w-full rounded-3xl bg-white p-5 text-black" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-[17px] font-extrabold mb-4 font-display">4 bước bắt đầu với SYNESIS</h3>
+            <ol className="space-y-3">
+              {[
+                ["Chọn Google, Số điện thoại hoặc Email", "Đăng nhập nhanh nếu đã có tài khoản, hoặc chọn Đăng ký mới."],
+                ["Xác minh tài khoản", "Google/Email: chọn hoặc xác nhận email · Số điện thoại: nhận mã OTP 6 số."],
+                ["Trả lời khảo sát cá nhân hoá (10 bước ~2 phút)", "Mục tiêu, môn tập, loại bài tập, cường độ, lịch rảnh, khu vực, cách giao tiếp và vibe."],
+                ["Nhận gợi ý bạn tập chuẩn nhịp", "Hệ thống ghép đôi chính xác trong bán kính 3 km, cùng môn, hợp giờ rảnh."],
+              ].map(([t, d], i) => (
+                <li key={t} className="flex gap-3">
+                  <span className="h-8 w-8 shrink-0 rounded-full bg-brand text-white font-bold flex items-center justify-center text-sm">{i + 1}</span>
+                  <span>
+                    <span className="block text-[14px] font-bold text-foreground">{t}</span>
+                    <span className="block text-[12px] text-muted-foreground">{d}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <button onClick={() => setGuideOpen(false)} className="mt-5 w-full h-11 rounded-lg bg-brand text-white font-bold text-[14px]">
+              Đã hiểu
+            </button>
+          </div>
+        </div>
+      )}
 
       {welcomeBack && (
         <div className="fixed inset-0 z-[1300] flex items-center justify-center bg-[#020611]/90 backdrop-blur animate-in fade-in">

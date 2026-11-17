@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { getSupabaseBrowserClient, getSupabaseConfig, isSupabaseConfigured } from "@/lib/supabase/client";
+import { DEMO_OTP, isKnownAccount, rememberAccount, normalizeVnPhone } from "@/features/auth/accounts";
 
 export interface UserPermissions {
   camera: boolean;
@@ -185,6 +186,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const avatar = authUser.user_metadata?.avatar_url
       || (isOwner ? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=350&auto=format&fit=crop&q=80" : DEFAULT_USER.avatar);
 
+    const isExistingUser = isOwner || Boolean(profile?.onboarding_completed) || isKnownAccount({ email, phone: authUser.phone });
+
     const row: SynesisProfileRow = profile ?? {
       id: authUser.id,
       display_name: displayName,
@@ -192,7 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       phone: authUser.phone ?? (isOwner ? "0908 183 183" : "0908 123 456"),
       auth_provider: provider,
       name_completed: true,
-      onboarding_completed: true,
+      onboarding_completed: isExistingUser,
     };
 
     if (!profile && isSupabaseConfigured()) {
@@ -215,7 +218,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       authProvider: provider,
       trustScore: 8.5,
       tier: "Vàng",
-      isSurveyCompleted: true,
+      isSurveyCompleted: isExistingUser,
       biometricEnabled: true,
       securityPinEnabled: true,
       permissions: { camera: true, gps: true, notifications: true },
@@ -227,13 +230,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     saveUser(mapped);
-    return { user: mapped, isNew: false };
+    return { user: mapped, isNew: !isExistingUser };
   }, []);
 
   React.useEffect(() => {
     if (!isSupabaseConfigured()) {
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
+        const isLoggedOut = localStorage.getItem(LOGGED_OUT_KEY);
         if (stored) {
           const parsed = JSON.parse(stored);
           if (parsed?.id && parsed.id !== "usr_athlete_01" && !parsed.email?.includes("minhthu")) {
@@ -241,6 +245,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           } else {
             saveUser(DEFAULT_USER);
           }
+        } else if (isLoggedOut === "true") {
+          setUser(null);
         } else {
           saveUser(DEFAULT_USER);
         }
@@ -256,6 +262,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!active) return;
       if (!authUser) {
         const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+        const isLoggedOut = typeof window !== "undefined" ? localStorage.getItem(LOGGED_OUT_KEY) : null;
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
@@ -266,7 +273,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
           } catch {}
         }
-        saveUser(DEFAULT_USER);
+        if (isLoggedOut === "true") {
+          setUser(null);
+        } else {
+          saveUser(DEFAULT_USER);
+        }
         setIsLoading(false);
         return;
       }
@@ -318,6 +329,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithEmail = async (email: string): Promise<boolean> => {
     const cleanEmail = email.trim().toLowerCase();
     const isOwner = cleanEmail === "danghuuphuc183@gmail.com" || cleanEmail.includes("danghuuphuc");
+    const isExisting = isOwner || isKnownAccount({ email: cleanEmail });
     const name = isOwner ? "Đặng Hữu Phúc" : (cleanEmail.split("@")[0] || "Vận động viên");
     const handle = isOwner ? "danghuuphuc183" : (cleanEmail.split("@")[0] || "athlete").replace(/[^a-z0-9]+/g, "_");
 
@@ -331,8 +343,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       authProvider: cleanEmail.endsWith("@gmail.com") ? "google" : "email",
       trustScore: 8.5,
       tier: "Vàng",
-      isSurveyCompleted: true,
+      isSurveyCompleted: isExisting,
     };
+    if (!isExisting && typeof window !== "undefined") {
+      window.localStorage.removeItem("sync.onboarding.draft");
+      window.localStorage.removeItem("sync.onboarding.v1");
+    }
     saveUser(userProfile);
 
     if (isSupabaseConfigured() && process.env.NEXT_PUBLIC_ENABLE_MOCK_PROVIDER !== "true") {
@@ -364,8 +380,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginWithPhone = async (phone: string, otp: string): Promise<boolean> => {
     if (!isSupabaseConfigured() || process.env.NEXT_PUBLIC_ENABLE_MOCK_PROVIDER === "true") {
-      if (otp !== "123456") throw new Error("Mã OTP không đúng. Vui lòng kiểm tra lại.");
-      const isExisting = phone.includes("908123456") || phone.includes("0908123456") || phone.includes("183183");
+      if (otp !== DEMO_OTP) throw new Error("Mã OTP không đúng. Vui lòng kiểm tra lại.");
+      const norm = normalizeVnPhone(phone);
+      const isExisting = isKnownAccount({ phone: norm ?? phone });
       if (isExisting) {
         saveUser(DEFAULT_USER);
         return true;
@@ -429,15 +446,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     phone?: string;
     provider?: "email" | "phone" | "facebook" | "google" | "apple" | "strava";
   }): Promise<boolean> => {
-    if (!isSupabaseConfigured()) {
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("sync.onboarding.draft");
+      window.localStorage.removeItem("sync.onboarding.v1");
+    }
+    if (!isSupabaseConfigured() || process.env.NEXT_PUBLIC_ENABLE_MOCK_PROVIDER === "true") {
       const newUser: UserProfile = {
         ...DEFAULT_USER,
         id: `usr_${Date.now()}`,
         name: data.name.trim(),
         handle: data.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_"),
-        phone: data.phone || "",
-        email: data.email || "",
-        authProvider: data.provider || "phone",
+        phone: data.phone || "0908 123 456",
+        email: data.email || (data.phone ? `${data.phone.replace(/\D/g, "")}@phone.synesis.vn` : "athlete@synesis.vn"),
+        authProvider: data.provider || (data.phone ? "phone" : "email"),
         isSurveyCompleted: false,
       };
       saveUser(newUser);
@@ -449,9 +470,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.from("synesis_profiles").upsert({
       id: authUser.id,
       display_name: data.name.trim(),
-      email: authUser.email?.toLowerCase() ?? null,
-      phone: authUser.phone ?? null,
-      auth_provider: authUser.phone ? "phone" : (authUser.app_metadata.provider === "google" ? "google" : "email"),
+      email: authUser.email?.toLowerCase() ?? data.email?.toLowerCase() ?? null,
+      phone: authUser.phone ?? data.phone ?? null,
+      auth_provider: data.provider || (authUser.phone ? "phone" : (authUser.app_metadata.provider === "google" ? "google" : "email")),
       name_completed: true,
       onboarding_completed: false,
       updated_at: new Date().toISOString(),
@@ -495,14 +516,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const completeOnboarding: AuthContextType["completeOnboarding"] = (data) => {
     if (!user) return;
     const displayName = data.name || user.name;
-    saveUser({
+    const completedUser: UserProfile = {
       ...user,
       name: displayName,
       isSurveyCompleted: true,
       sportsProfile: { ...user.sportsProfile, ...data.sportsProfile },
       permissions: { ...user.permissions, ...data.permissions },
       connectedApps: { ...(user.connectedApps || DEFAULT_USER.connectedApps), ...data.connectedApps },
-    });
+    };
+    saveUser(completedUser);
+    if (completedUser.phone) rememberAccount({ phone: completedUser.phone });
+    if (completedUser.email) rememberAccount({ email: completedUser.email });
     if (isSupabaseConfigured()) {
       void getSupabaseBrowserClient().from("synesis_profiles").update({
         display_name: displayName,

@@ -98,4 +98,45 @@ describe("AuthFlow", () => {
     expect(push).toHaveBeenCalledWith("/");
     vi.useRealTimers();
   });
+
+  it("Đăng ký mới: đăng ký bằng Email → tạo tài khoản mới → chuyển đến /bat-dau để trả lời khảo sát", async () => {
+    renderFlow();
+    // Chuyển sang tab Đăng ký mới
+    fireEvent.click(screen.getByRole("button", { name: /^Đăng ký mới$/ }));
+    expect(screen.getByText(/khảo sát 10 câu hỏi/)).toBeInTheDocument();
+
+    // Bấm Đăng ký bằng Email
+    fireEvent.click(screen.getByRole("button", { name: /Đăng ký bằng Email/ }));
+    expect(screen.getByText("Đăng ký bằng Email")).toBeInTheDocument();
+
+    const nameInput = screen.getByPlaceholderText("VD: Hoàng Long");
+    const emailInput = screen.getByPlaceholderText("hoanglong@example.com");
+
+    fireEvent.change(nameInput, { target: { value: "Nguyễn Hoàng Long" } });
+    fireEvent.change(emailInput, { target: { value: "hoanglong@example.com" } });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /Tiếp tục đến khảo sát thiết lập/ }));
+    });
+    expect(push).toHaveBeenCalledWith("/bat-dau");
+  });
+
+  it("Đăng ký mới: đăng ký với Google → tạo tài khoản mới → chuyển đến /bat-dau để trả lời khảo sát", async () => {
+    renderFlow();
+    fireEvent.click(screen.getByRole("button", { name: /^Đăng ký mới$/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Đăng ký với Google/ }));
+
+    expect(screen.getByText("Đăng ký với Google")).toBeInTheDocument();
+
+    const nameInput = screen.getByPlaceholderText("VD: Nguyễn Văn A");
+    const emailInput = screen.getByPlaceholderText("tenbantam@gmail.com");
+
+    fireEvent.change(nameInput, { target: { value: "Nguyễn Thị Mai" } });
+    fireEvent.change(emailInput, { target: { value: "mai.nguyen@gmail.com" } });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /Tiếp tục đến khảo sát thiết lập/ }));
+    });
+    expect(push).toHaveBeenCalledWith("/bat-dau");
+  });
 });
