@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/auth-context";
 import { LogWorkoutSheet } from "@/components/activity/log-workout-sheet";
+import { TrainingLog } from "@/components/profile/training-log";
 import { RewardsModal } from "@/components/profile/rewards-modal";
 import { RankRoadmapModal } from "@/components/profile/rank-roadmap-modal";
 import { RankBadgeIcon } from "@/components/profile/rank-badge-icon";
@@ -121,19 +122,6 @@ export default function ProfilePage() {
     .join("")
     .toUpperCase() || "MT";
 
-  // Mocked Heatmap Matrix (7 days x 16 weeks)
-  const heatmapData = React.useMemo(() => {
-    // 0: empty, 1: light, 2: medium, 3: dark, 4: intense
-    return [
-      [0, 1, 0, 0, 2, 0, 1, 0, 0, 0, 1, 0, 0, 1, 2, 0], // T2
-      [0, 0, 2, 0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 0, 0, 3], // T3
-      [0, 1, 0, 0, 0, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0], // T4
-      [0, 0, 0, 1, 0, 0, 0, 2, 2, 0, 0, 0, 3, 4, 0, 0], // T5
-      [0, 0, 1, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0], // T6
-      [1, 0, 3, 0, 1, 0, 2, 0, 2, 0, 0, 0, 1, 2, 3, 0], // T7
-      [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0], // CN
-    ];
-  }, []);
 
   return (
     <div className="flex flex-col w-full min-h-screen bg-background pb-24 max-w-md mx-auto text-foreground relative overflow-hidden">
@@ -394,101 +382,8 @@ export default function ProfilePage() {
           </div>
         </button>
 
-        {/* 8. GHI NHẬN TẬP LUYỆN (HEATMAP) */}
-        <div className="p-3.5 rounded-2xl bg-card border border-border/70 shadow-xs space-y-2.5">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-foreground">Ghi nhận tập luyện</h3>
-            <button
-              type="button"
-              onClick={() => setIsScheduleModalOpen(true)}
-              className="text-xs font-semibold text-brand hover:underline flex items-center gap-0.5"
-            >
-              <span>Lịch</span>
-              <ChevronRight className="h-3 w-3" />
-            </button>
-          </div>
-
-          {/* Heatmap Grid 7 rows x 16 cols */}
-          <div className="overflow-x-auto pb-1">
-            <div className="inline-grid grid-rows-7 grid-flow-col gap-[3px] min-w-full">
-              {heatmapData.map((row, rIdx) =>
-                row.map((val, cIdx) => {
-                  const colors = [
-                    "bg-muted/70", // 0
-                    "bg-brand-100 dark:bg-brand-900/40", // 1
-                    "bg-brand-sky/60", // 2
-                    "bg-brand", // 3
-                    "bg-brand-800 dark:bg-brand-400", // 4
-                  ];
-                  return (
-                    <div
-                      key={`${rIdx}-${cIdx}`}
-                      className={cn("w-3.5 h-3.5 rounded-xs transition-colors", colors[val])}
-                      title={`Buổi tập: ${val > 0 ? `${val} lượt tập` : "Nghỉ ngơi"}`}
-                    />
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          {/* Heatmap Legend: Ít ■ ■ ■ ■ Nhiều */}
-          <div className="flex items-center justify-end gap-1 text-[10px] text-muted-foreground pt-0.5">
-            <span>Ít</span>
-            <span className="w-2.5 h-2.5 rounded-xs bg-muted/70" />
-            <span className="w-2.5 h-2.5 rounded-xs bg-brand-100 dark:bg-brand-900/40" />
-            <span className="w-2.5 h-2.5 rounded-xs bg-brand-sky/60" />
-            <span className="w-2.5 h-2.5 rounded-xs bg-brand" />
-            <span className="w-2.5 h-2.5 rounded-xs bg-brand-800 dark:bg-brand-400" />
-            <span>Nhiều</span>
-          </div>
-        </div>
-
-        {/* 9. NHỊP TUẦN NÀY (WEEKLY BAR CHART) */}
-        <div className="p-3.5 rounded-2xl bg-card border border-border/70 shadow-xs space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-foreground">Nhịp tuần này</h3>
-            <span className="text-xs font-bold text-foreground">105&apos;</span>
-          </div>
-
-          <div className="grid grid-cols-7 gap-2 items-end h-16 pt-2">
-            {/* T2 */}
-            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
-              <div className="w-full bg-brand rounded-sm h-8" />
-              <span className="text-[10px] text-muted-foreground font-semibold">T2</span>
-            </div>
-            {/* T3 */}
-            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
-              <div className="w-full bg-brand rounded-sm h-12" />
-              <span className="text-[10px] text-muted-foreground font-semibold">T3</span>
-            </div>
-            {/* T4 */}
-            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
-              <div className="w-full h-0.5 bg-muted rounded-full" />
-              <span className="text-[10px] text-muted-foreground font-semibold">T4</span>
-            </div>
-            {/* T5 (Dashed planned) */}
-            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
-              <div className="w-full border border-dashed border-muted-foreground/60 rounded-sm h-7" />
-              <span className="text-[10px] text-muted-foreground font-semibold">T5</span>
-            </div>
-            {/* T6 */}
-            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
-              <div className="w-full h-0.5 bg-muted rounded-full" />
-              <span className="text-[10px] text-muted-foreground font-semibold">T6</span>
-            </div>
-            {/* T7 (Dashed planned) */}
-            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
-              <div className="w-full border border-dashed border-muted-foreground/60 rounded-sm h-8" />
-              <span className="text-[10px] text-muted-foreground font-semibold">T7</span>
-            </div>
-            {/* CN */}
-            <div className="flex flex-col items-center gap-1.5 h-full justify-end">
-              <div className="w-full h-0.5 bg-muted rounded-full" />
-              <span className="text-[10px] text-muted-foreground font-semibold">CN</span>
-            </div>
-          </div>
-        </div>
+        {/* 8. GHI NHẬN TẬP LUYỆN (CHUẨN CHI TIẾT: THỐNG KÊ THÁNG, BẢN ĐỒ NHIỆT 20 TUẦN, BIỂU ĐỒ PHÂN BỐ & GHI BUỔI TẬP) */}
+        <TrainingLog className="rounded-3xl bg-card/90 backdrop-blur-md border border-border/70 shadow-xs" />
 
         {/* 9.5 CLB CỦA TÔI (Chuyển từ tab Nhóm vào Bạn) */}
         <Link

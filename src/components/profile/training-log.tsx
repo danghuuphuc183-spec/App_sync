@@ -113,53 +113,55 @@ export function TrainingLog({ className }: { className?: string }) {
       </div>
 
       {/* Bản đồ nhiệt */}
-      <div>
-        <div className="grid gap-[3px] text-[10.5px] text-muted-foreground mb-1" style={{ gridTemplateColumns: `24px repeat(${WEEKS}, minmax(0, 1fr))` }}>
-          <span />
-          {data.labels.map((m) => (
-            <span key={`${m.col}-${m.label}`} className="whitespace-nowrap font-semibold" style={{ gridColumn: `${m.col + 2} / span 4`, gridRow: 1 }}>
-              {m.label}
-            </span>
-          ))}
-        </div>
-        <div
-          className="grid gap-[3px]"
-          style={{ gridTemplateColumns: `24px repeat(${WEEKS}, minmax(0, 1fr))`, gridTemplateRows: "repeat(7, auto)", gridAutoFlow: "column" }}
-          role="grid"
-          aria-label={`Số buổi tập mỗi ngày trong ${WEEKS} tuần gần nhất`}
-        >
-          {ROW_LABELS.map((l, r) => (
-            <span key={`row-${r}`} className="text-[10.5px] text-muted-foreground flex items-center" style={{ gridColumn: 1, gridRow: r + 1 }}>
-              {l}
-            </span>
-          ))}
-          {data.heat.columns.map((col, c) =>
-            col.map((cell, r) => {
-              const lvl = levelOf(cell.count);
-              const isSel = cell.key === selected;
-              return (
-                <button
-                  key={cell.key}
-                  type="button"
-                  role="gridcell"
-                  disabled={cell.future}
-                  onClick={() => setSelected(cell.key)}
-                  aria-label={`${fmtDay(cell.date)}: ${cell.count} buổi${cell.partner ? ", có tập cùng bạn" : ""}`}
-                  aria-selected={isSel}
-                  style={{ gridColumn: c + 2, gridRow: r + 1 }}
-                  className={cn(
-                    "relative aspect-square rounded-[4px] text-[8.5px] font-bold leading-none flex items-center justify-center transition-transform",
-                    cell.future ? "bg-transparent border border-dashed border-neutral-200 dark:border-neutral-800 cursor-default" : LEVEL_CLASS[lvl],
-                    !cell.future && "hover:scale-110",
-                    isSel && "ring-2 ring-black dark:ring-white ring-offset-1 ring-offset-card"
-                  )}
-                >
-                  {cell.count > 0 ? cell.count : ""}
-                  {cell.partner && <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-brand-sky ring-1 ring-white" />}
-                </button>
-              );
-            })
-          )}
+      <div className="overflow-x-auto pb-1">
+        <div className="min-w-[380px]">
+          <div className="grid gap-[3px] text-[10.5px] text-muted-foreground mb-1" style={{ gridTemplateColumns: `24px repeat(${WEEKS}, minmax(0, 1fr))` }}>
+            <span />
+            {data.labels.map((m) => (
+              <span key={`${m.col}-${m.label}`} className="whitespace-nowrap font-semibold" style={{ gridColumn: `${m.col + 2} / span 4`, gridRow: 1 }}>
+                {m.label}
+              </span>
+            ))}
+          </div>
+          <div
+            className="grid gap-[3px]"
+            style={{ gridTemplateColumns: `24px repeat(${WEEKS}, minmax(0, 1fr))`, gridTemplateRows: "repeat(7, auto)", gridAutoFlow: "column" }}
+            role="grid"
+            aria-label={`Số buổi tập mỗi ngày trong ${WEEKS} tuần gần nhất`}
+          >
+            {ROW_LABELS.map((l, r) => (
+              <span key={`row-${r}`} className="text-[10.5px] text-muted-foreground flex items-center" style={{ gridColumn: 1, gridRow: r + 1 }}>
+                {l}
+              </span>
+            ))}
+            {data.heat.columns.map((col, c) =>
+              col.map((cell, r) => {
+                const lvl = levelOf(cell.count);
+                const isSel = cell.key === selected;
+                return (
+                  <button
+                    key={cell.key}
+                    type="button"
+                    role="gridcell"
+                    disabled={cell.future}
+                    onClick={() => setSelected(cell.key)}
+                    aria-label={`${fmtDay(cell.date)}: ${cell.count} buổi${cell.partner ? ", có tập cùng bạn" : ""}`}
+                    aria-selected={isSel}
+                    style={{ gridColumn: c + 2, gridRow: r + 1 }}
+                    className={cn(
+                      "relative aspect-square rounded-[4px] text-[8.5px] font-bold leading-none flex items-center justify-center transition-transform",
+                      cell.future ? "bg-transparent border border-dashed border-neutral-200 dark:border-neutral-800 cursor-default" : LEVEL_CLASS[lvl],
+                      !cell.future && "hover:scale-110",
+                      isSel && "ring-2 ring-black dark:ring-white ring-offset-1 ring-offset-card"
+                    )}
+                  >
+                    {cell.count > 0 ? cell.count : ""}
+                    {cell.partner && <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-brand-sky ring-1 ring-white" />}
+                  </button>
+                );
+              })
+            )}
+          </div>
         </div>
 
         {/* Chú thích */}

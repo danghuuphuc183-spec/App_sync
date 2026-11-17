@@ -19,19 +19,19 @@ describe("RankRoadmapModal Component", () => {
     );
 
     // Tiêu đề modal
-    expect(screen.getByText("Hành Trình EXP & 6 Bậc Rank")).toBeDefined();
+    expect(screen.getByText("Lộ Trình Rank & Điểm Thưởng EXP")).toBeDefined();
     // Rank hiện tại
     expect(screen.getByText("Cấp 2 · Thành Viên Chính Thức")).toBeDefined();
     // Số EXP
-    expect(screen.getByText(/1\.240 \/ 2\.000 EXP/)).toBeDefined();
+    expect(screen.getAllByText(/1\.240 EXP/).length).toBeGreaterThanOrEqual(1);
     // Số EXP còn thiếu
-    expect(screen.getByText(/Còn 760 EXP/)).toBeDefined();
+    expect(screen.getByText(/Thiếu 760 EXP/)).toBeDefined();
     // Trạng thái UT kiểm soát chéo
     expect(screen.getByText(/8\.5\/10 UT/)).toBeDefined();
-    expect(screen.getByText(/Đạt chuẩn UT ≥ 7\.0/)).toBeDefined();
+    expect(screen.getByText(/Đủ chuẩn UT ≥ 7/)).toBeDefined();
   });
 
-  it("chuyển tab xem bí kíp cày EXP và công thức trần tuần", () => {
+  it("chuyển tab xem cách kiếm EXP ngắn gọn", () => {
     render(
       <RankRoadmapModal
         isOpen={true}
@@ -41,14 +41,13 @@ describe("RankRoadmapModal Component", () => {
       />
     );
 
-    const earnTabBtn = screen.getByText("Bí kíp cày EXP & Luật chuỗi");
+    const earnTabBtn = screen.getByText("Cách Kiếm EXP");
     fireEvent.click(earnTabBtn);
 
     // Nội dung công thức
-    expect(screen.getByText(/Nguyên Lý Tích Lũy EXP Một Chiều/)).toBeDefined();
-    expect(screen.getByText(/3 buổi nhận EXP\/tuần = 300 EXP\/tuần/)).toBeDefined();
-    expect(screen.getByText(/Duy trì Chuỗi Tuần \(Weekly Streak\)/)).toBeDefined();
-    expect(screen.getByText(/Chuỗi Đôi \(Duo Streak\) hoặc Host nhóm/)).toBeDefined();
+    expect(screen.getByText("Buổi tập hợp lệ")).toBeDefined();
+    expect(screen.getByText(/Duy trì Chuỗi Tuần/)).toBeDefined();
+    expect(screen.getByText(/Chuỗi Đôi \(Duo\) hoặc Host nhóm/)).toBeDefined();
     expect(screen.getByText(/350 – 400 EXP \/ tuần/)).toBeDefined();
   });
 
@@ -66,13 +65,13 @@ describe("RankRoadmapModal Component", () => {
       />
     );
 
-    const perksTabBtn = screen.getByText("Đổi thưởng & Hiện vật");
+    const perksTabBtn = screen.getByText("Kho Quà Đổi EXP");
     fireEvent.click(perksTabBtn);
 
-    expect(screen.getByText(/Danh Mục Phần Thưởng Đổi Từ EXP & Xu/)).toBeDefined();
-    expect(screen.getByText(/Tầng 4: Hiện Vật Độc Quyền Synesis/)).toBeDefined();
+    expect(screen.getByText("Tầng 1: Giải Nhiệt F&B")).toBeDefined();
+    expect(screen.getByText("Tầng 4: Hiện Vật Độc Quyền Synesis")).toBeDefined();
 
-    const ctaBtn = screen.getByText("Vào Cửa Hàng Đổi Thưởng Ngay");
+    const ctaBtn = screen.getByText("Vào Cửa Hàng Đổi Quà (Xu & EXP)");
     fireEvent.click(ctaBtn);
 
     expect(handleClose).toHaveBeenCalled();
@@ -94,7 +93,7 @@ describe("RankRoadmapModal Component", () => {
     fireEvent.click(cap4Btn);
 
     expect(screen.getByText("Rank 4: IRON CORE")).toBeDefined();
-    expect(screen.getAllByText(/Kỷ Luật Thép/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText(/Tag 'Iron Core – Kỷ Luật Thép' kèm viền Avatar kim loại/)).toBeDefined();
+    expect(screen.getByText("Kỷ Luật Thép")).toBeDefined();
+    expect(screen.getByText("Kho Quà Tầng 3 & 4")).toBeDefined();
   });
 });
