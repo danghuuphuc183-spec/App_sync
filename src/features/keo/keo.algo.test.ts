@@ -11,6 +11,8 @@ import {
 } from "./keo.algo";
 import { DEMO_VIEWER, SEED_KEOS, hostTrust, placesForSport } from "./keo.data";
 import { CANDIDATES_DATA } from "@/features/match/candidates.data";
+import { findPersonalMatchesV2 } from "./personal-match";
+import { DEFAULT_ME } from "@/features/match/partner-pool";
 import type { GroupForm, PersonalForm } from "./keo.types";
 
 const runPlace = placesForSport("running")[0]!;
@@ -98,5 +100,32 @@ describe("rankKeos", () => {
   it("đánh dấu kèo yêu cầu uy tín cao hơn mình", () => {
     const res = rankKeos(SEED_KEOS, { ...DEMO_VIEWER, trustScore: 4 }, ctx);
     expect(res.find((r) => r.keo.id === "k-8")!.eligible).toBe(false);
+  });
+});
+
+describe("findPersonalMatchesV2 - thuật toán ghép theo điểm uy tín", () => {
+  it("chỉ ghép ứng viên chênh lệch điểm uy tín tối đa -+1 điểm, không ghép uy tín cao với uy tín thấp", () => {
+    const meProfile = { ...DEFAULT_ME, position: runPlace.position };
+    const res = findPersonalMatchesV2(personal, CANDIDATES_DATA, meProfile, { myTrustScore: 8.5, radiusKm: 10 });
+    expect(res.matches.length).toBeGreaterThan(0);
+    for (const m of res.matches) {
+      expect(Math.abs(m.candidate.trustScore - 8.5)).toBeLessThanOrEqual(1.0);
+      expect(m.candidate.trustScore).toBeGreaterThanOrEqual(7.5);
+    }
+  });
+
+  it("người dùng uy tín cao không ghép với ứng viên uy tín thấp", () => {
+    const meProfile = { ...DEFAULT_ME, position: runPlace.position };
+    const candidatesWithLow = [
+      ...CANDIDATES_DATA,
+      {
+        ...CANDIDATES_DATA[0]!,
+        id: "low_trust_cand",
+        name: "Low Trust",
+        trustScore: 6.0,
+      },
+    ];
+    const res = findPersonalMatchesV2(personal, candidatesWithLow, meProfile, { myTrustScore: 9.0, radiusKm: 10 });
+    expect(res.matches.find((m) => m.candidate.id === "low_trust_cand")).toBeUndefined();
   });
 });

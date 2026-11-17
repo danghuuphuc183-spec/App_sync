@@ -30,7 +30,7 @@ export function findPersonalMatchesV2(
   form: PersonalForm,
   candidates: ReadonlyArray<MatchCandidate>,
   me: PartnerProfile,
-  opts: { now?: Date; radiusKm?: number; limit?: number; excludeIds?: string[] } = {}
+  opts: { now?: Date; radiusKm?: number; limit?: number; excludeIds?: string[]; myTrustScore?: number } = {}
 ): PersonalRun {
   if (!form.place) return { matches: [], excluded: emptyExcluded(), needsVerification: 0, radiusKm: opts.radiusKm ?? 3, widened: false };
   const now = opts.now ?? new Date();
@@ -41,7 +41,26 @@ export function findPersonalMatchesV2(
   const sessionTypes: SessionType[] = mine.length ? mine : sportTypes;
 
   const exclude = new Set(opts.excludeIds ?? []);
-  const eligible = candidates.filter((c) => c.sport === form.sport && c.trustScore >= form.minTrust && !exclude.has(c.id));
+  const myTrust = opts.myTrustScore ?? 8.5;
+
+  // Lọc ghép theo thuật toán uy tín:
+  // 1. Chỉ ghép người có điểm uy tín chênh lệch nhau trong khoảng -+1 điểm uy tín (|c.trustScore - myTrust| <= 1.0)
+  // 2. Không ghép người uy tín cao (>= 8.0) với người uy tín thấp (< 7.5)
+  const eligible = candidates.filter((c) => {
+    if (c.sport !== form.sport) return false;
+    if (form.minTrust && c.trustScore < form.minTrust) return false;
+    if (exclude.has(c.id)) return false;
+
+    // Chênh lệch điểm uy tín tối đa -+1 điểm uy tín
+    const trustDiff = Math.abs(c.trustScore - myTrust);
+    if (trustDiff > 1.0) return false;
+
+    // Không ghép người điểm uy tín cao với điểm uy tín thấp
+    if (myTrust >= 8.0 && c.trustScore < 7.5) return false;
+    if (c.trustScore >= 8.0 && myTrust < 7.5) return false;
+
+    return true;
+  });
   const center = form.place.position;
   const pool = eligible.map((c) => candidateToPartner(c, center));
   const meHere: PartnerProfile = { ...me, position: center, availability: slots, sports: [...new Set([...me.sports, form.sport])] };

@@ -1,5 +1,4 @@
 import { MatchCandidate, WorkoutHabits } from "./candidates.data";
-import { formatUt } from "@/features/trust/config";
 
 export interface UserPreferences {
   sport: MatchCandidate["sport"];
@@ -121,7 +120,9 @@ export function calculateCandidateMatch(
   const normalizedUt = Math.min(100, (candidate.trustScore / 10) * 100);
   const trustBoost = Math.round(normalizedUt);
   if (candidate.trustScore >= 9) {
-    reasons.push(`Uy tín cao: ${formatUt(candidate.trustScore)} UT`);
+    reasons.push("Uy tín rất tốt");
+  } else if (candidate.trustScore >= 8) {
+    reasons.push("Uy tín phù hợp");
   }
 
   // Multi-Objective Weighted Sum (TikTok Two-Tower Ranking Model)

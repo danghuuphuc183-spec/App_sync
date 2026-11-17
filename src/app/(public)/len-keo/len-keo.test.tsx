@@ -22,6 +22,7 @@ describe("Lên kèo 1:1", () => {
     expect(accepts.length).toBeGreaterThan(0);
     expect(accepts.length).toBeLessThanOrEqual(3);
     expect(screen.getAllByText("tương thích").length).toBe(accepts.length);
+    expect(screen.queryByText(/UT ·/)).not.toBeInTheDocument();
 
     fireEvent.click(accepts[0]!);
     expect(screen.getByText(/Đã ghép kèo với/)).toBeInTheDocument();

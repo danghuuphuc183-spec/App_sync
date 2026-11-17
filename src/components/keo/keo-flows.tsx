@@ -23,7 +23,6 @@ import { useViewerPosition } from "./use-viewer-position";
 import { SessionPlanBlock } from "./session-plan-card";
 import { formatKeoDay, normalizeKeoDay } from "@/features/keo/keo-date";
 import { INDOOR_SPOTS, pendingConfirmations, proposeVenueChange, spotToPlace } from "@/features/keo/venue-change";
-import { formatUt } from "@/features/trust/config";
 import { defaultDetails, summarizeDetails } from "@/features/keo/session-details";
 import { ReminderList } from "./reminder-list";
 import { AcceptKeoSheet, KeoChatSheet } from "./keo-chat-sheet";
@@ -95,7 +94,11 @@ export function PersonalFlow() {
   const run = React.useMemo(() => {
     if (step === "form" || !form.place) return null;
     const me = toPartnerProfile(onboarding, form.place.position);
-    return findPersonalMatchesV2(form, CANDIDATES_DATA, me, { excludeIds: skipped, radiusKm: onboarding?.completedAt ? onboarding.radiusKm : 3 });
+    return findPersonalMatchesV2(form, CANDIDATES_DATA, me, {
+      excludeIds: skipped,
+      radiusKm: onboarding?.completedAt ? onboarding.radiusKm : 3,
+      myTrustScore: MY_TRUST,
+    });
   }, [form, skipped, step, onboarding]);
   const matches = run?.matches ?? [];
   const sessionDate = React.useMemo(() => (form.place ? resolveDay(form.time.day, new Date()) : null), [form.place, form.time.day]);
@@ -275,7 +278,7 @@ export function PersonalFlow() {
                     {c.capabilities.level} · {c.capabilities.paceOrWeight}
                   </p>
                   <p className="text-[12px] text-muted-foreground">
-                    {formatUt(c.trustScore)} UT · {c.punctualRate.split(" (")[0]} · cách {c.distanceKm} km
+                    Đúng hẹn {c.punctualRate.split(" (")[0]} · cách {c.distanceKm} km
                   </p>
                 </div>
                 <div className="text-center shrink-0">

@@ -55,7 +55,7 @@ export const DEMO_VIEWER: Viewer = {
   sports: ["running", "gym"],
   level: 2,
   usualSlots: ["morning_early", "evening"],
-  trustScore: PEOPLE.me?.trustScore ?? 125,
+  trustScore: PEOPLE.me?.trustScore ?? 8.5,
   friendIds: ["hoangnam"],
 };
 
