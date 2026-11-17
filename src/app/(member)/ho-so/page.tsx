@@ -34,6 +34,8 @@ import {
 import { useAuth } from "@/context/auth-context";
 import { LogWorkoutSheet } from "@/components/activity/log-workout-sheet";
 import { RewardsModal } from "@/components/profile/rewards-modal";
+import { RankRoadmapModal } from "@/components/profile/rank-roadmap-modal";
+import { RankBadgeIcon } from "@/components/profile/rank-badge-icon";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -62,6 +64,7 @@ export default function ProfilePage() {
   const [isTrustRulesOpen, setIsTrustRulesOpen] = React.useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = React.useState(false);
   const [isCoinsModalOpen, setIsCoinsModalOpen] = React.useState(false);
+  const [isRankRoadmapOpen, setIsRankRoadmapOpen] = React.useState(false);
   const [isNewPostModalOpen, setIsNewPostModalOpen] = React.useState(false);
   const [copiedLink, setCopiedLink] = React.useState(false);
   const [qrCountdown, setQrCountdown] = React.useState(30);
@@ -133,7 +136,14 @@ export default function ProfilePage() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-background pb-24 max-w-md mx-auto text-foreground">
+    <div className="flex flex-col w-full min-h-screen bg-background pb-24 max-w-md mx-auto text-foreground relative overflow-hidden">
+      {/* AMBIENT MESH GRADIENTS (Màu loan giao diện nhẹ nhàng, tinh tế) */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute -top-10 -left-20 w-80 h-80 bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-48 -right-20 w-72 h-72 bg-blue-500/10 dark:bg-blue-600/15 rounded-full blur-3xl" />
+        <div className="absolute top-[500px] -left-10 w-80 h-80 bg-purple-500/8 dark:bg-purple-600/12 rounded-full blur-3xl" />
+      </div>
+
       {/* 1. TOP HEADER: Hồ sơ + Share + Sun + Settings */}
       <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-md px-4 py-3 flex items-center justify-between">
         <h1 className="text-xl font-bold tracking-tight text-foreground">Hồ sơ</h1>
@@ -174,22 +184,27 @@ export default function ProfilePage() {
 
       <div className="px-3.5 space-y-3.5">
         {/* 2. PROFILE CARD */}
-        <div className="rounded-3xl bg-card border border-border/70 p-4 shadow-xs space-y-3.5">
-          <div className="flex items-start gap-3.5">
-            {/* Avatar Circle with initials or photo */}
+        <div className="rounded-3xl bg-card/90 backdrop-blur-md border border-border/70 p-4 shadow-xs space-y-3.5 relative overflow-hidden">
+          {/* Subtle ambient light inside card */}
+          <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-cyan-400/10 blur-2xl pointer-events-none" />
+
+          <div className="flex items-start gap-3.5 relative z-10">
+            {/* Avatar Circle with initials or photo & Rank 2 Cyan Aura */}
             <div className="relative shrink-0">
-              <div className="w-14 h-14 rounded-full bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky font-bold text-base flex items-center justify-center overflow-hidden border border-brand/20">
-                {profileAvatar ? (
-                  <img src={profileAvatar} alt={profileName} className="w-full h-full object-cover" />
-                ) : (
-                  <span>{userInitials}</span>
-                )}
+              <div className="w-14 h-14 rounded-full p-[2px] bg-linear-to-tr from-cyan-400 via-sky-500 to-brand shadow-xs">
+                <div className="w-full h-full rounded-full bg-background overflow-hidden flex items-center justify-center">
+                  {profileAvatar ? (
+                    <img src={profileAvatar} alt={profileName} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="font-bold text-brand dark:text-brand-sky text-base">{userInitials}</span>
+                  )}
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsAvatarModalOpen(true)}
                 aria-label="Đổi ảnh đại diện"
-                className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-brand text-white border border-background flex items-center justify-center shadow-xs"
+                className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-brand text-white border border-background flex items-center justify-center shadow-xs hover:scale-105 transition-transform"
               >
                 <Camera className="h-2.5 w-2.5" />
               </button>
@@ -201,12 +216,21 @@ export default function ProfilePage() {
               <p className="text-xs text-muted-foreground truncate">
                 @{profileHandle} · {profileArea}
               </p>
-              <div className="flex items-center gap-1.5 pt-0.5">
+              <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
                 <span className="inline-flex items-center text-[10.5px] font-semibold text-brand dark:text-brand-sky bg-brand/10 dark:bg-brand/20 px-2 py-0.5 rounded-full">
                   Đã xác thực
                 </span>
-                <span className="inline-flex items-center text-[10.5px] font-semibold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                  Cấp 2
+                {/* Clickable Rank Badge Pill */}
+                <button
+                  type="button"
+                  onClick={() => setIsRankRoadmapOpen(true)}
+                  className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 hover:bg-cyan-500/20 px-2 py-0.5 rounded-full transition-all active:scale-95"
+                >
+                  <RankBadgeIcon level={2} size="xs" />
+                  <span>Cấp 2 · Runner</span>
+                </button>
+                <span className="inline-flex items-center text-[10.5px] font-medium text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
+                  ⚡ 5:45/km
                 </span>
               </div>
             </div>
@@ -346,16 +370,29 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 7. EXP RANK BAR: Cấp 2 · Runner 1.240 / 2.000 EXP */}
-        <div className="p-3.5 rounded-2xl bg-card border border-border/70 shadow-xs space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-foreground">Cấp 2 · Runner</span>
-            <span className="text-muted-foreground font-mono">1.240 / 2.000 EXP</span>
+        {/* 7. EXP RANK BAR: Cấp 2 · Runner 1.240 / 2.000 EXP (CLICKABLE -> MỞ LỘ TRÌNH EXP & 6 RANK) */}
+        <button
+          type="button"
+          onClick={() => setIsRankRoadmapOpen(true)}
+          className="w-full p-3.5 rounded-2xl bg-card/90 backdrop-blur-md border border-border/70 hover:border-cyan-400/50 shadow-xs space-y-2 text-left group transition-all active:scale-[0.99] relative overflow-hidden"
+        >
+          {/* Subtle ambient cyan glow inside card */}
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-cyan-400/10 blur-xl pointer-events-none group-hover:bg-cyan-400/20 transition-colors" />
+
+          <div className="flex items-center justify-between text-xs relative z-10">
+            <div className="flex items-center gap-2">
+              <RankBadgeIcon level={2} size="xs" showAura animated />
+              <div className="flex items-center gap-1 font-bold text-foreground group-hover:text-cyan-500 transition-colors">
+                <span>Cấp 2 · Runner</span>
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </div>
+            <span className="text-muted-foreground font-mono text-[11px]">1.240 / 2.000 EXP</span>
           </div>
-          <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
-            <div className="h-full bg-brand rounded-full" style={{ width: "62%" }} />
+          <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden relative z-10">
+            <div className="h-full bg-linear-to-r from-cyan-500 to-brand rounded-full" style={{ width: "62%" }} />
           </div>
-        </div>
+        </button>
 
         {/* 8. GHI NHẬN TẬP LUYỆN (HEATMAP) */}
         <div className="p-3.5 rounded-2xl bg-card border border-border/70 shadow-xs space-y-2.5">
@@ -928,10 +965,10 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* MODAL: CÁCH TÍNH ĐIỂM UY TÍN (UT) */}
+      {/* MODAL: CÁCH TÍNH ĐIỂM UY TÍN (UT) - CHUẨN MASTER SPEC MỤC 9 */}
       {isTrustRulesOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative">
+          <div className="bg-card border border-border w-full max-w-sm rounded-3xl p-5 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setIsTrustRulesOpen(false)}
               className="absolute top-4 right-4 p-1.5 rounded-full bg-muted text-muted-foreground hover:text-foreground"
@@ -943,34 +980,47 @@ export default function ProfilePage() {
                 <ShieldCheck className="h-4 w-4" />
                 <span>QUY CHUẨN ĐIỂM UY TÍN (UT)</span>
               </div>
-              <h3 className="text-base font-extrabold text-foreground">Cách Tính & Trừ Điểm</h3>
-              <p className="text-xs text-muted-foreground">Điểm Uy Tín quyết định quyền lợi miễn cọc 0đ trên toàn bộ kèo tập.</p>
+              <h3 className="text-base font-extrabold text-foreground">Thang Điểm 0–10 & Phục Hồi</h3>
+              <p className="text-xs text-muted-foreground">Điểm Uy Tín quản lý cam kết đúng hẹn và mở/khóa đặc quyền công cụ.</p>
             </div>
 
             <div className="space-y-2 text-xs">
+              {/* Phân tầng UT */}
+              <div className="p-3 rounded-2xl bg-muted/40 border border-border/80 space-y-1">
+                <p className="font-bold text-foreground text-[11px] uppercase tracking-wide">Thang điểm UT hệ thống</p>
+                <ul className="space-y-1 text-[11px] text-muted-foreground">
+                  <li>• <strong>9–10 UT:</strong> Uy tín cao (mở tối đa 3 kèo/24h)</li>
+                  <li>• <strong>7–8 UT:</strong> Cần chú ý (tạo tối đa 2 kèo/24h)</li>
+                  <li>• <strong>5–6 UT:</strong> Hạn chế (chỉ tạo 1 kèo/24h, đóng băng lịch định kỳ)</li>
+                  <li>• <strong>0–4 UT:</strong> Uy tín thấp (tạm khóa kèo 1-1, chỉ vào kèo nhóm)</li>
+                </ul>
+              </div>
+
               {/* Cộng điểm */}
-              <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-1.5">
+              <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-1">
                 <p className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   <ShieldCheck className="h-3.5 w-3.5" />
-                  <span>Cách cộng điểm (+UT)</span>
+                  <span>Cộng điểm & Phục hồi (+UT)</span>
                 </p>
                 <ul className="space-y-1 text-[11px] text-muted-foreground">
-                  <li>• Khởi điểm đăng ký tài khoản: <strong>7.0 UT</strong></li>
-                  <li>• Quét QR điểm danh đúng giờ tại Spot: <strong>+0.5 UT</strong></li>
-                  <li>• Giữ chuỗi 5 buổi tập uy tín liên tiếp: <strong>+0.3 UT</strong></li>
+                  <li>• Khởi điểm đăng ký: <strong>7.0 UT</strong> (Tân binh: <strong>8.0 UT</strong>)</li>
+                  <li>• Buổi tập đúng hẹn: <strong>+0.5 UT</strong> (tối đa 1 lần/ngày)</li>
+                  <li>• Lời xin lỗi được bạn tập chấp nhận: <strong>+0.5 UT</strong> (1 lần/kèo)</li>
                 </ul>
               </div>
 
               {/* Trừ điểm */}
-              <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20 space-y-1.5">
+              <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20 space-y-1">
                 <p className="font-bold text-red-600 flex items-center gap-1">
                   <ShieldAlert className="h-3.5 w-3.5" />
-                  <span>Lý do bị trừ điểm (-UT)</span>
+                  <span>Trừ điểm vi phạm (-UT)</span>
                 </p>
                 <ul className="space-y-1 text-[11px] text-muted-foreground">
-                  <li>• Hủy kèo trong vòng 30 phút trước giờ tập: <strong>-1.5 UT</strong></li>
-                  <li>• Vắng mặt không lý do (No-show): <strong>-3.0 UT</strong></li>
-                  <li>• Điểm UT dưới 5.0: Phải đặt cọc tiền mặt 100% cho các kèo sau.</li>
+                  <li>• Hủy trong vòng 30 phút trước giờ hẹn: <strong>-0.5 UT</strong></li>
+                  <li>• Đến trễ trong vòng 15 phút: <strong>-0.25 UT</strong> (sau 15p tính vắng)</li>
+                  <li>• Vắng có khai báo trong 24 giờ: <strong>-1.0 UT</strong></li>
+                  <li>• Vắng im lặng (không báo): <strong>-1.5 UT</strong></li>
+                  <li>• Mưa bão chính thức hoặc địa điểm đóng cửa: <strong>Không trừ UT</strong></li>
                 </ul>
               </div>
             </div>
@@ -981,6 +1031,15 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+
+      {/* MODAL: HÀNH TRÌNH EXP & 6 BẬC RANK (CHUẨN MASTER SPEC III.9) */}
+      <RankRoadmapModal
+        isOpen={isRankRoadmapOpen}
+        onClose={() => setIsRankRoadmapOpen(false)}
+        currentExp={1240}
+        currentUt={8.5}
+        onOpenRewardsModal={() => setIsCoinsModalOpen(true)}
+      />
 
       {/* MODAL: ĐỔI THƯỞNG EXP, VOUCHER ĐỐI TÁC & HIỆN VẬT SYNESIS */}
       <RewardsModal

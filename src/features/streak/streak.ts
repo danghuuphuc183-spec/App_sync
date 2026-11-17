@@ -1,13 +1,27 @@
 /**
- * Chuỗi liên tiếp theo TUẦN (weekly streak) — logic kiểu Strava.
+ * CHUỖI LIÊN TIẾP & THUẬT TOÁN TÍNH EXP / DUO STREAK
+ * Chuẩn Master Spec: PHẦN III, MỤC 9. TRUST, REWARDS VÀ FEEDBACK
  *
- * Quy tắc:
- * - Tuần bắt đầu từ Thứ Hai (00:00 giờ địa phương) và kết thúc Chủ Nhật.
- * - Một tuần "đạt" khi có >= `weeklyGoal` hoạt động (mặc định 1).
- * - Chuỗi hiện tại = số tuần đạt liên tiếp, tính ngược từ tuần này.
- * - Tuần hiện tại CHƯA đạt thì chuỗi KHÔNG bị mất (vẫn còn thời gian tới Chủ Nhật):
- *   chuỗi được tính từ tuần trước và trạng thái là "atRisk" (cần ghi hoạt động để giữ).
- * - Chuỗi chỉ về 0 khi có một tuần đã KẾT THÚC mà không đạt.
+ * 1. Chuỗi tuần cá nhân (Weekly Streak):
+ * - Tuần bắt đầu từ Thứ Hai (00:00) đến Chủ Nhật (23:59:59).
+ * - Đạt khi có >= 1 buổi hợp lệ hoặc buổi tự tập có xác thực trong tuần.
+ * - Thẻ nghỉ (Streak Freeze): 1 thẻ/tháng mở từ Cấp 2, không cần khai báo lý do.
+ * - Bảo vệ chuỗi: Tối đa 2 lần/tháng khi bị đối tác bùng kèo hoặc thời tiết xấu.
+ *
+ * 2. Chuỗi đôi (Duo Streak):
+ * - Mở khóa từ Cấp 2 (Runner - ≥ 6 buổi hợp lệ).
+ * - Hai người có từ 3 buổi hợp lệ chung trở lên sẽ kích hoạt Chuỗi Đôi.
+ * - Yêu cầu 1 buổi tập chung hợp lệ mỗi tuần để duy trì chuỗi.
+ * - Mỗi Duo có 2 lá chắn/tháng, tự động kích hoạt nếu tuần trôi qua chưa kịp hẹn.
+ * - Huy hiệu mốc: 5, 10, 25 buổi chung.
+ * - Chống cày: Thưởng chỉ tính cho tối đa 3 Duo hoạt động và 2 buổi chung/tuần.
+ *
+ * 3. Công thức tích lũy EXP hàng tuần (Chuẩn Master Spec [S6]):
+ * - +100 EXP / buổi tập hợp lệ (trần tối đa 3 buổi/tuần = 300 EXP/tuần).
+ * - +50 EXP / tuần khi duy trì Chuỗi tuần cá nhân.
+ * - +50 EXP / tuần khi hoàn thành buổi tập cùng Chuỗi đôi hoặc làm Host nhóm nhỏ.
+ * - Tốc độ cày tiêu chuẩn: 350 – 400 EXP/tuần (~1.500 EXP/tháng).
+ * - EXP không bao giờ bị trừ, không mua bằng tiền.
  */
 
 export interface StreakWeek {
@@ -35,6 +49,8 @@ export interface WeeklyStreakResult {
   activeDaysThisWeek: boolean[];
   /** Lịch sử N tuần gần nhất, cũ -> mới (tuần cuối là tuần hiện tại). */
   history: StreakWeek[];
+  /** Số thẻ nghỉ (Streak Freeze) khả dụng trong tháng */
+  streakFreezesAvailable: number;
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -63,10 +79,11 @@ export function startOfWeek(d: Date): Date {
 export function computeWeeklyStreak(
   activityDates: ReadonlyArray<Date | string>,
   now: Date = new Date(),
-  options: { weeklyGoal?: number; historyWeeks?: number } = {}
+  options: { weeklyGoal?: number; historyWeeks?: number; userRankLevel?: number } = {}
 ): WeeklyStreakResult {
   const weeklyGoal = Math.max(1, options.weeklyGoal ?? 1);
   const historyWeeks = Math.max(1, options.historyWeeks ?? 12);
+  const userRankLevel = options.userRankLevel ?? 2;
 
   const nowWeek = weekIndex(now);
   const counts = new Map<number, number>();
@@ -115,6 +132,9 @@ export function computeWeeklyStreak(
     history.push({ weekStart, count: counts.get(w) ?? 0, met: isMet(w), isCurrent: i === 0 });
   }
 
+  // Streak Freeze: Cấp 1 = 0, Cấp 2 = 1, Cấp 3+ = 2 thẻ/tháng
+  const streakFreezesAvailable = userRankLevel >= 3 ? 2 : userRankLevel >= 2 ? 1 : 0;
+
   return {
     current,
     longest,
@@ -124,5 +144,96 @@ export function computeWeeklyStreak(
     daysLeftInWeek: 7 - weekdayIndex(now),
     activeDaysThisWeek,
     history,
+    streakFreezesAvailable,
+  };
+}
+
+// =========================================================================
+// DUO STREAK (CHUỖI ĐÔI BẠN TẬP)
+// =========================================================================
+
+export interface DuoPartner {
+  partnerId: string;
+  partnerName: string;
+  partnerAvatar?: string;
+  jointSessionsCount: number;
+  consecutiveWeeks: number;
+  lastSessionDate: string;
+  shieldsRemaining: number; // Mặc định 2 lá chắn mỗi tháng
+  status: "active" | "atRisk" | "eligible" | "locked";
+  unlockedBadges: string[];
+}
+
+export const DUO_MILESTONES = [
+  { sessions: 5, badgeName: "Đồng Đội Thấu Hiểu (5 Buổi)", icon: "🤝" },
+  { sessions: 10, badgeName: "Cặp Đôi Bền Bỉ (10 Buổi)", icon: "🔥" },
+  { sessions: 25, badgeName: "Tri Kỷ Phòng Tập (25 Buổi)", icon: "👑" },
+];
+
+/** Kiểm tra điều kiện mở khóa Chuỗi Đôi (Cần >= 3 buổi hợp lệ chung và user Rank >= 2) */
+export function canFormDuoStreak(userRankLevel: number, jointSessionsCount: number): {
+  canForm: boolean;
+  reason?: string;
+} {
+  if (userRankLevel < 2) {
+    return {
+      canForm: false,
+      reason: "Cần đạt Cấp 2 · Runner (≥ 6 buổi hợp lệ) để mở khóa Chuỗi Đôi.",
+    };
+  }
+  if (jointSessionsCount < 3) {
+    return {
+      canForm: false,
+      reason: `Cần hoàn thành tối thiểu 3 buổi tập chung (hiện tại: ${jointSessionsCount}/3 buổi).`,
+    };
+  }
+  return { canForm: true };
+}
+
+// =========================================================================
+// EXP WEEKLY ACCUMULATION ALGORITHM (CÔNG THỨC EXP MỤC 9.2)
+// =========================================================================
+
+export interface WeeklyExpBreakdown {
+  sessionCount: number;
+  cappedSessionCount: number;
+  sessionExp: number; // +100 EXP / buổi, trần 3 buổi/tuần = 300 EXP
+  weeklyStreakMet: boolean;
+  weeklyStreakExp: number; // +50 EXP
+  duoOrHostMet: boolean;
+  duoOrHostExp: number; // +50 EXP
+  totalWeeklyExp: number;
+}
+
+/**
+ * Tính EXP nhận được trong tuần theo chuẩn Master Spec S6
+ * - 1 buổi hợp lệ: +100 EXP (max 3 buổi = 300 EXP/tuần)
+ * - Duy trì Chuỗi tuần: +50 EXP/tuần
+ * - Hoàn thành buổi tập Duo hoặc Host nhóm nhỏ: +50 EXP/tuần
+ * - Tối đa 1 tuần = 400 EXP
+ */
+export function calculateWeeklyExp(input: {
+  validSessions: number;
+  weeklyStreakMet: boolean;
+  hasDuoSessionOrHost: boolean;
+}): WeeklyExpBreakdown {
+  const sessionCount = Math.max(0, input.validSessions);
+  const cappedSessionCount = Math.min(3, sessionCount);
+  const sessionExp = cappedSessionCount * 100;
+
+  const weeklyStreakExp = input.weeklyStreakMet ? 50 : 0;
+  const duoOrHostExp = input.hasDuoSessionOrHost ? 50 : 0;
+
+  const totalWeeklyExp = sessionExp + weeklyStreakExp + duoOrHostExp;
+
+  return {
+    sessionCount,
+    cappedSessionCount,
+    sessionExp,
+    weeklyStreakMet: input.weeklyStreakMet,
+    weeklyStreakExp,
+    duoOrHostMet: input.hasDuoSessionOrHost,
+    duoOrHostExp,
+    totalWeeklyExp,
   };
 }
