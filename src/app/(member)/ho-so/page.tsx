@@ -290,17 +290,16 @@ export default function ProfilePage() {
             <span className="text-[11px] font-semibold text-foreground">Kèo</span>
           </button>
 
-          {/* Squad */}
-          <button
-            type="button"
-            onClick={() => setActiveTab("buddies")}
-            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5"
+          {/* CLB của tôi */}
+          <Link
+            href="/cau-lac-bo"
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5 group"
           >
-            <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center group-hover:scale-105 transition-transform">
               <Users className="h-4 w-4" />
             </div>
-            <span className="text-[11px] font-semibold text-foreground">Squad</span>
-          </button>
+            <span className="text-[11px] font-semibold text-foreground">CLB</span>
+          </Link>
 
           {/* Xu */}
           <button
@@ -452,6 +451,28 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+
+        {/* 9.5 CLB CỦA TÔI (Chuyển từ tab Nhóm vào Bạn) */}
+        <Link
+          href="/cau-lac-bo"
+          className="p-3.5 rounded-2xl bg-card border border-border/80 hover:border-brand/50 shadow-xs flex items-center justify-between group transition-all"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center font-bold shadow-xs group-hover:scale-105 transition-transform">
+              <Users className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold text-foreground">CLB của tôi</span>
+                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-brand/15 text-brand dark:text-brand-sky">
+                  Quản lý & Quỹ
+                </span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">Thành viên, quỹ sinh hoạt, sự kiện & giải đấu</p>
+            </div>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
+        </Link>
 
         {/* 10. 2x2 SPECS GRID */}
         <div className="grid grid-cols-2 gap-2.5">

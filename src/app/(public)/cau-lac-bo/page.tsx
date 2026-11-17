@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Users, ShieldCheck, Key, Trophy, GraduationCap, MessageCircle, CalendarDays, Settings2, Mail } from "lucide-react";
+import { Users, ShieldCheck, Key, Trophy, GraduationCap, MessageCircle, CalendarDays, Settings2, Mail, ChevronLeft } from "lucide-react";
 import { useClubOs } from "@/features/clubs/use-club-os";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -159,33 +159,42 @@ export default function ClubsPage() {
 
   return (
     <div className="flex flex-col w-full px-4 pt-4 space-y-4 pb-28">
-      <header>
-        <h1 className="text-[24px] font-extrabold tracking-tight text-foreground">Nhóm</h1>
-        <p className="text-[13px] text-muted-foreground">Câu lạc bộ bạn tham gia và huấn luyện viên đồng hành</p>
+      <header className="space-y-1">
+        <Link
+          href="/ho-so"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors mb-1"
+        >
+          <ChevronLeft className="h-4 w-4" /> Quay lại Hồ sơ
+        </Link>
+        <h1 className="text-[24px] font-extrabold tracking-tight text-foreground">CLB của tôi</h1>
+        <p className="text-[13px] text-muted-foreground">Quản lý câu lạc bộ, quỹ, sự kiện, giải đấu và thành viên</p>
       </header>
 
-      <div className="grid grid-cols-2 gap-1 p-1 rounded-full bg-muted" role="tablist">
-        {(
-          [
-            { id: "clb", label: "Câu lạc bộ", icon: Users },
-            { id: "hlv", label: "Huấn luyện viên", icon: GraduationCap },
-          ] as const
-        ).map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            aria-selected={activeTab === t.id}
-            onClick={() => setActiveTab(t.id)}
-            className={cn(
-              "flex items-center justify-center gap-1.5 rounded-lg py-2.5 text-[13.5px] font-bold transition-colors",
-              activeTab === t.id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            <t.icon className="h-4 w-4" />
-            {t.label}
-          </button>
-        ))}
-      </div>
+      {/* Tab HLV tạm ẩn trong UI chính vì đang ở giai đoạn 1, mã nguồn giữ nguyên bên dưới */}
+      {false && (
+        <div className="grid grid-cols-2 gap-1 p-1 rounded-full bg-muted" role="tablist">
+          {(
+            [
+              { id: "clb", label: "Câu lạc bộ", icon: Users },
+              { id: "hlv", label: "Huấn luyện viên", icon: GraduationCap },
+            ] as const
+          ).map((t) => (
+            <button
+              key={t.id}
+              role="tab"
+              aria-selected={activeTab === t.id}
+              onClick={() => setActiveTab(t.id)}
+              className={cn(
+                "flex items-center justify-center gap-1.5 rounded-lg py-2.5 text-[13.5px] font-bold transition-colors",
+                activeTab === t.id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <t.icon className="h-4 w-4" />
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {activeTab === "clb" && (
         <div className="space-y-4">

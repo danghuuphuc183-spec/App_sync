@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import ClubsPage from "./page";
+import { CoachSection } from "@/components/coaching/coach-section";
 
 describe("ClubsPage & Coaching Integration", () => {
-  it("trang Nhóm chỉ có 2 chức năng: Câu lạc bộ và Huấn luyện viên, không có tạo kèo", () => {
+  it("trang CLB của tôi tập trung quản lý câu lạc bộ, quỹ và sự kiện", () => {
     render(<ClubsPage />);
 
-    expect(screen.getByRole("heading", { name: "Nhóm" })).toBeInTheDocument();
-    expect(screen.getAllByRole("tab").map((t) => t.textContent)).toEqual(["Câu lạc bộ", "Huấn luyện viên"]);
+    expect(screen.getByRole("heading", { name: "CLB của tôi" })).toBeInTheDocument();
     expect(screen.queryByText(/Tạo kèo/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Lên Kèo Squad/i)).not.toBeInTheDocument();
     expect(screen.getByText("Khám phá câu lạc bộ")).toBeInTheDocument();
@@ -19,12 +19,8 @@ describe("ClubsPage & Coaching Integration", () => {
     expect(screen.getByRole("button", { name: "Đã gửi yêu cầu" })).toBeDisabled();
   });
 
-  it("switches to HLV & Coach tab and displays personalized matchmaker and coaches", () => {
-    render(<ClubsPage />);
-
-    // Click on "HLV & Coach" tab
-    const coachTabButton = screen.getByRole("tab", { name: "Huấn luyện viên" });
-    fireEvent.click(coachTabButton);
+  it("CoachSection component renders personalized matchmaker and coaches when activated in phase 2", () => {
+    render(<CoachSection />);
 
     // Verify Coaching Section header is rendered
     expect(screen.getByText("Huấn Luyện Viên 1:1 & Ghép Nhóm Tập Luyện")).toBeInTheDocument();
@@ -35,11 +31,8 @@ describe("ClubsPage & Coaching Integration", () => {
     expect(screen.getByText("Nguyễn Mai Linh")).toBeInTheDocument();
   });
 
-  it("allows switching filter mode from 1:1 to Nhóm Squad in coaching tab", () => {
-    render(<ClubsPage />);
-
-    // Switch to coaching tab
-    fireEvent.click(screen.getByRole("tab", { name: "Huấn luyện viên" }));
+  it("allows switching filter mode from 1:1 to Nhóm Squad in CoachSection", () => {
+    render(<CoachSection />);
 
     // Click on "Hỗ trợ Nhóm (Tiết kiệm 60%)" filter button
     const groupFilterBtn = screen.getByText("Hỗ trợ Nhóm (Tiết kiệm 60%)");

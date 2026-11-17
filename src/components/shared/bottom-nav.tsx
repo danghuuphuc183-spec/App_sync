@@ -10,7 +10,7 @@ export const FIVE_MAIN_TABS = [
   { title: "Trang Chủ", href: "/", icon: Home, exact: true },
   { title: "Bản Đồ", href: "/ban-do", icon: Map },
   { title: "Lên Kèo", href: "/len-keo", icon: Zap, isHighlight: true }, // Chính giữa - Tính năng cốt lõi
-  { title: "Nhóm", href: "/cau-lac-bo", icon: Users },
+  { title: "Đồng đội", href: "/dong-doi", icon: Users },
   { title: "Bạn", href: "/ho-so", icon: User },
 ];
 
