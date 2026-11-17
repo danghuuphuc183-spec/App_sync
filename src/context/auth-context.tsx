@@ -129,13 +129,6 @@ const DEFAULT_USER: UserProfile = {
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
 const STORAGE_KEY = "sync_sport_auth_session_v1";
-/**
- * Tự đăng nhập tài khoản khi chưa có phiên.
- * Mặc định: BẬT khi chạy dev/test, TẮT ở bản production (Hostinger) để người mới phải đăng ký.
- * Ép bật/tắt bằng biến môi trường NEXT_PUBLIC_DEMO_AUTOLOGIN=true|false.
- */
-const DEMO_AUTOLOGIN =
-  process.env.NEXT_PUBLIC_DEMO_AUTOLOGIN === "true" || process.env.NODE_ENV !== "production";
 const LOGGED_OUT_KEY = "sync_sport_logged_out_flag";
 
 /**

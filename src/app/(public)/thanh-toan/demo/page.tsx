@@ -5,16 +5,11 @@ import Link from "next/link";
 import {
   CreditCard,
   Building2,
-  Users,
-  Dumbbell,
-  Sparkles,
-  ArrowRight,
   ShieldCheck,
   QrCode,
   CheckCircle2,
   ChevronRight,
   Receipt,
-  RotateCcw,
 } from "lucide-react";
 import { SplitPaymentKind, SplitPaymentOrder } from "@/features/payment/payos.types";
 import { VietQRPaymentModal } from "@/components/payment/vietqr-payment-modal";
