@@ -59,7 +59,8 @@ describe("RewardsModal Component", () => {
 
     // Bấm đổi quà đầu tiên (100 EXP)
     const redeemButtons = screen.getAllByRole("button", { name: "Đổi ngay" });
-    fireEvent.click(redeemButtons[0]);
+    expect(redeemButtons.length).toBeGreaterThan(0);
+    fireEvent.click(redeemButtons[0]!);
 
     // Hiện modal xác nhận
     expect(screen.getByText("Xác Nhận Đổi Phần Thưởng")).toBeInTheDocument();
