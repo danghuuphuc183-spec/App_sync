@@ -303,15 +303,15 @@ export default function ProfilePage() {
             <span className="text-[11px] font-semibold text-foreground">Kèo</span>
           </button>
 
-          {/* CLB */}
+          {/* Nhóm */}
           <Link
-            href="/cau-lac-bo"
+            href="/dong-doi?tab=nhom"
             className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5 group"
           >
             <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center group-hover:scale-105 transition-transform">
               <Users className="h-4 w-4" />
             </div>
-            <span className="text-[11px] font-semibold text-foreground">CLB</span>
+            <span className="text-[11px] font-semibold text-foreground">Nhóm</span>
           </Link>
 
           {/* Xu */}
@@ -385,9 +385,9 @@ export default function ProfilePage() {
         {/* 8. GHI NHẬN TẬP LUYỆN (CHUẨN CHI TIẾT: THỐNG KÊ THÁNG, BẢN ĐỒ NHIỆT 20 TUẦN, BIỂU ĐỒ PHÂN BỐ & GHI BUỔI TẬP) */}
         <TrainingLog className="rounded-3xl bg-card/90 backdrop-blur-md border border-border/70 shadow-xs" />
 
-        {/* 9.5 CLB CỦA TÔI (Chuyển từ tab Nhóm vào Bạn) */}
+        {/* 9.5 CLB CỦA TÔI */}
         <Link
-          href="/cau-lac-bo"
+          href="/dong-doi?tab=clb"
           className="p-3.5 rounded-2xl bg-card border border-border/80 hover:border-brand/50 shadow-xs flex items-center justify-between group transition-all"
         >
           <div className="flex items-center gap-3">

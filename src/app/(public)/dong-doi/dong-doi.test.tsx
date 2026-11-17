@@ -106,4 +106,69 @@ describe("Đồng đội & Duo Feature Page", () => {
     fireEvent.click(confirmBtn);
     expect(screen.getByText("Đã xác nhận tham gia")).toBeInTheDocument();
   });
+
+  it("switches to CLB & Quỹ tab and renders financial management, fees, and VietQR payment modal", () => {
+    render(<DongDoiPage />);
+
+    // Check header category switcher
+    const nhomTab = screen.getByRole("tab", { name: /Nhóm tập/i });
+    const clbTab = screen.getByRole("tab", { name: /CLB & Quỹ/i });
+    expect(nhomTab).toBeInTheDocument();
+    expect(clbTab).toBeInTheDocument();
+
+    // Click on CLB & Quỹ tab
+    fireEvent.click(clbTab);
+
+    // Should display CLB Fund Financial Hub
+    expect(screen.getByText(/Quỹ Sinh Hoạt CLB/i)).toBeInTheDocument();
+    expect(screen.getByText("12.450.000đ")).toBeInTheDocument();
+    expect(screen.getAllByText("150.000đ").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/41\/50/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/82%/i).length).toBeGreaterThanOrEqual(1);
+
+    // Check transparent fee quote breakdown
+    expect(screen.getByText(/Phí thành viên đóng:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Phí nền tảng SYNESIS/i)).toBeInTheDocument();
+    expect(screen.getByText(/Phí cổng đối tác VietQR/i)).toBeInTheDocument();
+    expect(screen.getByText(/CLB thực nhận/i)).toBeInTheDocument();
+
+    // Check Club card
+    expect(screen.getAllByText(/FTU2 Run Club/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("Quản lý Quỹ & CLB")).toBeInTheDocument();
+
+    // Check other clubs & invite code
+    expect(screen.getByText("Khám phá CLB Chạy bộ & Gym")).toBeInTheDocument();
+    expect(screen.getByText(/Saigon Runners Community/i)).toBeInTheDocument();
+    expect(screen.getByText("Gia nhập bằng mã mời CLB")).toBeInTheDocument();
+    expect(screen.getByText("BXH Kỷ Luật CLB (Tuần này)")).toBeInTheDocument();
+
+    // Test opening VietQR payment modal
+    const payBtn = screen.getByText("Nộp quỹ qua VietQR");
+    fireEvent.click(payBtn);
+
+    // Modal should appear
+    expect(screen.getByText("Hội phí CLB FTU2 Runners - Quý IV")).toBeInTheDocument();
+    expect(screen.getByText(/payOS · VietQR Chuẩn NAPAS/i)).toBeInTheDocument();
+    expect(screen.getByText(/Cơ chế Split Payment tự động:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Mô phỏng Chuyển khoản thành công/i)).toBeInTheDocument();
+
+    // Close modal
+    const closeBtn = screen.getByLabelText("Đóng cửa sổ thanh toán");
+    fireEvent.click(closeBtn);
+    expect(screen.queryByText("Hội phí CLB FTU2 Runners - Quý IV")).not.toBeInTheDocument();
+  });
+
+  it("opens create group modal when clicking '+ Tạo nhóm' button", () => {
+    render(<DongDoiPage />);
+
+    // Click on + Tạo nhóm
+    const createGroupBtn = screen.getByText("+ Tạo nhóm");
+    fireEvent.click(createGroupBtn);
+
+    // Modal should be open
+    expect(screen.getByRole("heading", { name: "Tạo Nhóm Tập Mới" })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Runners Sáng Bờ Kè Thanh Đa/i)).toBeInTheDocument();
+    expect(screen.getByText(/Thành viên vừa tập chung/i)).toBeInTheDocument();
+    expect(screen.getByText("Tạo nhóm ngay")).toBeInTheDocument();
+  });
 });

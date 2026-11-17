@@ -376,3 +376,122 @@ export const SAMPLE_RECENT_PARTNERS: RecentPartnerItem[] = [
     onTimeRecord: "Đúng hẹn 22/22",
   },
 ];
+
+export interface ClubListItem {
+  id: string;
+  name: string;
+  sportName: string;
+  avatar: string;
+  memberCount: number;
+  active30DaysCount: number;
+  checkInRate: string;
+  openBountiesThisWeek: number;
+  avgTs: number;
+  description: string;
+  areaName: string;
+  weeklySchedule: string;
+  isVerified: boolean;
+  myRole?: "Owner" | "Admin" | "Mentor" | "Member" | null;
+  duesPerQuarterVnd: number;
+  fundBalanceVnd: number;
+  paidMembersCount: number;
+  totalDuesMembersCount: number;
+  challengeTitle?: string;
+  challengeProgress?: { currentKm: number; targetKm: number; daysLeft: number };
+  internalBounties: Array<{
+    id: string;
+    title: string;
+    timeVi: string;
+    location: string;
+    intensity: string;
+    hostName: string;
+    slotsLeft: number;
+  }>;
+}
+
+export const SAMPLE_CLUBS_LIST: ClubListItem[] = [
+  {
+    id: "club-1",
+    name: "FTU2 Run Club (Ngoại Thương Runners)",
+    sportName: "Chạy bộ",
+    avatar: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=200&auto=format&fit=crop&q=80",
+    memberCount: 1240,
+    active30DaysCount: 320,
+    checkInRate: "86%",
+    openBountiesThisWeek: 12,
+    avgTs: 8.5,
+    description: "Cộng đồng chạy bộ rèn luyện sức bền sinh viên và cựu sinh viên Ngoại Thương quanh bờ kè Thanh Đa và Landmark 81.",
+    areaName: "Bình Thạnh & Q.1",
+    weeklySchedule: "05:30 AM • Thứ Tư & Chủ Nhật",
+    isVerified: true,
+    myRole: "Admin",
+    duesPerQuarterVnd: 150000,
+    fundBalanceVnd: 12450000,
+    paidMembersCount: 41,
+    totalDuesMembersCount: 50,
+    challengeTitle: "Cả đội chạy 500km trong 7 ngày",
+    challengeProgress: { currentKm: 340, targetKm: 500, daysLeft: 3 },
+    internalBounties: [
+      {
+        id: "bounty-1",
+        title: "10km pace 6:00 quanh bờ kè Thanh Đa",
+        timeVi: "05:30 AM • Thứ Tư",
+        location: "Cổng bến du thuyền Landmark 81",
+        intensity: "10km • Pace 6:00",
+        hostName: "Minh Anh (Mentor)",
+        slotsLeft: 2,
+      },
+      {
+        id: "bounty-2",
+        title: "Easy Run 5km phục hồi cuối tuần",
+        timeVi: "18:00 PM • Thứ Năm",
+        location: "Khuôn viên Vinhomes Central Park",
+        intensity: "5km • Pace 6:30",
+        hostName: "Quốc Hưng (Admin)",
+        slotsLeft: 4,
+      },
+    ],
+  },
+  {
+    id: "club-2",
+    name: "Saigon Runners Community (SRC)",
+    sportName: "Chạy bộ Marathon",
+    avatar: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=200&auto=format&fit=crop&q=80",
+    memberCount: 2150,
+    active30DaysCount: 680,
+    checkInRate: "92%",
+    openBountiesThisWeek: 18,
+    avgTs: 9.0,
+    description: "Cộng đồng chạy bộ bán chuyên hàng đầu Sài Gòn, chuyên kéo pace dài 21km - 42km cho các giải marathon.",
+    areaName: "Toàn TP.HCM",
+    weeklySchedule: "05:00 AM • Thứ Bảy & Chủ Nhật",
+    isVerified: true,
+    myRole: null,
+    duesPerQuarterVnd: 200000,
+    fundBalanceVnd: 28500000,
+    paidMembersCount: 95,
+    totalDuesMembersCount: 110,
+    internalBounties: [],
+  },
+  {
+    id: "club-3",
+    name: "The New Gym Runners & Lifters Club",
+    sportName: "Gym & Calisthenics",
+    avatar: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=200&auto=format&fit=crop&q=80",
+    memberCount: 890,
+    active30DaysCount: 380,
+    checkInRate: "88%",
+    openBountiesThisWeek: 10,
+    avgTs: 8.8,
+    description: "CLB kết nối hội viên phòng tập The New Gym chi nhánh Điện Biên Phủ & Ung Văn Khiêm, kèm cặp tạ và bổ trợ thể lực.",
+    areaName: "Bình Thạnh",
+    weeklySchedule: "18:30 PM • Thứ Ba & Thứ Năm",
+    isVerified: true,
+    myRole: null,
+    duesPerQuarterVnd: 100000,
+    fundBalanceVnd: 9800000,
+    paidMembersCount: 45,
+    totalDuesMembersCount: 50,
+    internalBounties: [],
+  },
+];
