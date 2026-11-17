@@ -67,44 +67,49 @@ function Hub() {
   const plans = store.plans.filter((p) => !p.openedAsKeoId).slice(0, 3);
 
   return (
-    <div className="px-4 pt-4 pb-28">
-      <h1 className="text-[24px] font-extrabold tracking-tight text-foreground">Lên kèo</h1>
-      <p className="text-[13px] text-muted-foreground mb-4">Tạo kèo mới hoặc nhận kèo gần bạn</p>
+    <div className="px-4 pt-3.5 pb-28 space-y-4">
+      {/* Header */}
+      <div>
+        <h1 className="text-[22px] font-extrabold tracking-tight text-foreground">Lên kèo</h1>
+        <p className="text-[12.5px] text-muted-foreground mt-0.5">Tạo kèo mới hoặc nhận kèo gần bạn</p>
+      </div>
 
+      {/* Nút Tạo kèo: Căn lề giữa, chữ tinh tế nhỏ gọn nhưng thu hút với gradient & shadow */}
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        className="w-full flex items-center gap-4 rounded-2xl bg-brand hover:bg-brand-700 text-white p-4 shadow-md shadow-brand/20 active:scale-[0.99] transition-all"
+        className="w-full flex flex-col items-center justify-center text-center rounded-2xl bg-gradient-to-r from-brand via-[#0f74f2] to-brand hover:opacity-95 text-white py-3.5 px-4 shadow-sm shadow-brand/25 border border-white/15 active:scale-[0.99] transition-all group"
       >
-        <span className="h-12 w-12 shrink-0 rounded-xl bg-white/15 flex items-center justify-center">
-          <Plus className="h-7 w-7" />
-        </span>
-        <span className="flex-1 text-left">
-          <span className="block text-[19px] font-extrabold">Tạo kèo</span>
-          <span className="block text-[12.5px] text-white/85">Cá nhân · Nhóm · 1:1</span>
-        </span>
-        <ChevronRight className="h-5 w-5 shrink-0" />
+        <div className="flex items-center justify-center gap-2">
+          <span className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
+            <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
+          </span>
+          <span className="text-[15px] font-bold tracking-tight">Tạo kèo</span>
+        </div>
+        <p className="text-[11.5px] text-white/85 font-medium mt-0.5">
+          Cá nhân · Nhóm · 1:1
+        </p>
       </button>
 
-      {/* Lối tắt xem Kèo của bạn (đã chuyển sang trang Bạn / Profile theo yêu cầu) */}
-      <div className="mt-4 flex items-center justify-between rounded-2xl bg-muted/40 border border-border px-3.5 py-2.5">
+      {/* Lối tắt xem Kèo của bạn (toàn bộ card có thể bấm được) */}
+      <Link
+        href="/ho-so?tab=bounties"
+        className="flex items-center justify-between rounded-2xl bg-card border border-border/80 hover:border-brand/40 px-3.5 py-2.5 shadow-xs transition-all active:scale-[0.99] group"
+      >
         <div className="flex items-center gap-2.5">
-          <span className="h-8 w-8 rounded-xl bg-brand/10 text-brand dark:text-brand-sky flex items-center justify-center">
+          <span className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
             <UsersRound className="h-4 w-4" />
           </span>
-          <div>
-            <span className="block text-[13px] font-bold text-foreground">Kèo của bạn</span>
+          <div className="text-left">
+            <span className="block text-[12.5px] font-bold text-foreground">Kèo của bạn</span>
             <span className="block text-[11px] text-muted-foreground">Quản lý kèo đã tạo & đã nhận tại trang Bạn</span>
           </div>
         </div>
-        <Link
-          href="/ho-so?tab=bounties"
-          className="text-[12px] font-bold text-brand dark:text-brand-sky hover:underline flex items-center gap-1"
-        >
+        <span className="text-[12px] font-bold text-brand dark:text-brand-sky flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
           Xem kèo →
-        </Link>
-      </div>
+        </span>
+      </Link>
 
       {plans.length > 0 && (
         <section className="mt-4" aria-label="Kế hoạch tự tập của bạn">
@@ -129,25 +134,27 @@ function Hub() {
         </section>
       )}
 
-      <h2 className="mt-6 mb-2 text-[16px] font-extrabold text-foreground">Kèo đang mở</h2>
-      <BrowseKeos />
+      <div className="pt-1">
+        <h2 className="mb-2.5 text-[15.5px] font-extrabold tracking-tight text-foreground">Kèo đang mở</h2>
+        <BrowseKeos />
+      </div>
 
-      <BottomSheet open={open} onClose={() => setOpen(false)} title="Tạo kèo" bodyClassName="p-3 pb-8 space-y-2">
+      <BottomSheet open={open} onClose={() => setOpen(false)} title="Tạo kèo mới" bodyClassName="p-3.5 pb-8 space-y-2.5">
         {OPTIONS.map((o) => (
           <Link
             key={o.id}
             href={`/len-keo?loai=${o.id}`}
             onClick={() => setOpen(false)}
-            className="flex items-center gap-3.5 rounded-2xl border border-border p-3.5 hover:bg-muted active:scale-[0.99] transition-all text-foreground"
+            className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-3.5 hover:border-brand/40 shadow-xs active:scale-[0.99] transition-all text-foreground group"
           >
-            <span className="h-12 w-12 shrink-0 rounded-2xl border border-foreground/80 flex items-center justify-center">
-              <o.icon className="h-6 w-6" />
+            <span className="w-11 h-11 shrink-0 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center group-hover:scale-105 transition-transform">
+              <o.icon className="h-5 w-5" />
             </span>
             <span className="flex-1 min-w-0">
-              <span className="block text-[16px] font-bold">{o.title}</span>
-              <span className="block text-[12.5px] text-muted-foreground">{o.desc}</span>
+              <span className="block text-[15px] font-bold text-foreground">{o.title}</span>
+              <span className="block text-[12px] text-muted-foreground mt-0.5">{o.desc}</span>
             </span>
-            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
           </Link>
         ))}
       </BottomSheet>

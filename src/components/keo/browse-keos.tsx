@@ -56,12 +56,12 @@ export function BrowseKeos({ initialTab = "for-you" }: { initialTab?: Tab } = {}
   return (
     <div>
       {/* Vị trí + sắp xếp (thay cho 2 tab cũ "Dành cho bạn" / "Gần nhất") */}
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="flex min-w-0 items-center gap-1.5 text-[11.5px] text-muted-foreground">
-          <LocateFixed className="h-3.5 w-3.5 shrink-0" />
+      <div className="mb-2.5 flex items-center justify-between gap-2">
+        <p className="flex min-w-0 items-center gap-1.5 text-[11.5px] text-muted-foreground font-medium">
+          <LocateFixed className="h-3.5 w-3.5 shrink-0 text-brand" />
           <span className="truncate">{source === "gps" ? "Vị trí hiện tại của bạn" : "Mặc định: Bình Thạnh"}</span>
         </p>
-        <div className="flex shrink-0 rounded-lg bg-muted p-0.5" role="radiogroup" aria-label="Sắp xếp kèo">
+        <div className="flex shrink-0 rounded-xl bg-muted/70 p-0.5 border border-border/60" role="radiogroup" aria-label="Sắp xếp kèo">
           {(
             [
               ["for-you", "Phù hợp"],
@@ -74,8 +74,8 @@ export function BrowseKeos({ initialTab = "for-you" }: { initialTab?: Tab } = {}
               aria-checked={tab === id}
               onClick={() => setTab(id)}
               className={cn(
-                "rounded-md px-2.5 py-1 text-[11.5px] font-bold transition-colors",
-                tab === id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                "rounded-lg px-2.5 py-1 text-[11.5px] font-bold transition-all",
+                tab === id ? "bg-card text-foreground shadow-xs border border-border/40" : "text-muted-foreground hover:text-foreground"
               )}
             >
               {label}
@@ -85,7 +85,7 @@ export function BrowseKeos({ initialTab = "for-you" }: { initialTab?: Tab } = {}
       </div>
 
       {/* Bộ lọc */}
-      <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1 mb-3 -mx-4 px-4">
+      <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1 mb-3.5 -mx-4 px-4 items-center">
         {(
           [
             ["all", "Tất cả"],
@@ -97,7 +97,7 @@ export function BrowseKeos({ initialTab = "for-you" }: { initialTab?: Tab } = {}
             {label}
           </Chip>
         ))}
-        <span className="w-px bg-border mx-1 shrink-0" />
+        <span className="h-4 w-px bg-border/80 mx-0.5 shrink-0" />
         <Chip on={sport === "all"} onClick={() => setSport("all")}>
           Mọi môn
         </Chip>
@@ -149,8 +149,10 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       onClick={onClick}
       aria-pressed={on}
       className={cn(
-        "shrink-0 rounded-lg border px-3 py-1.5 text-[12px] font-semibold whitespace-nowrap transition-colors",
-        on ? "bg-brand border-brand text-white" : "border-border text-foreground hover:bg-muted"
+        "shrink-0 rounded-xl border px-3 py-1.5 text-[12px] font-semibold whitespace-nowrap transition-all active:scale-95",
+        on
+          ? "bg-brand border-brand text-white shadow-xs"
+          : "border-border/80 bg-card text-foreground hover:bg-muted/70 hover:border-border"
       )}
     >
       {children}
