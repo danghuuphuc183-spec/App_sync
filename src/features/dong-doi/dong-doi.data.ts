@@ -377,6 +377,35 @@ export const SAMPLE_RECENT_PARTNERS: RecentPartnerItem[] = [
   },
 ];
 
+export interface ClubEventItem {
+  id: string;
+  title: string;
+  eventType: "race" | "long_run" | "workshop" | "social";
+  eventTypeName: string;
+  dateVi: string;
+  timeVi: string;
+  location: string;
+  distanceOrDuration: string;
+  hostName: string;
+  participantsCount: number;
+  maxParticipants?: number;
+  isRegistered?: boolean;
+  rewardExp: number;
+  badgeText?: string;
+}
+
+export interface ClubLeaderItem {
+  id: string;
+  name: string;
+  roleTitle: string; // Trưởng CLB / Chủ nhiệm / Chủ phòng gym / Mentor
+  avatarText: string;
+  avatarBgColor: string;
+  weeklyKm: string;
+  trustScore: string;
+  badge: string;
+  rankVi: string;
+}
+
 export interface ClubListItem {
   id: string;
   name: string;
@@ -391,13 +420,21 @@ export interface ClubListItem {
   areaName: string;
   weeklySchedule: string;
   isVerified: boolean;
-  myRole?: "Owner" | "Admin" | "Mentor" | "Member" | null;
+  myRole?: "Owner" | "Admin" | "Leader" | "Mentor" | "Member" | null;
   duesPerQuarterVnd: number;
   fundBalanceVnd: number;
   paidMembersCount: number;
   totalDuesMembersCount: number;
+  myDuesStatus?: {
+    isPaid: boolean;
+    quarterText: string;
+    paidDate?: string;
+    amountVnd: number;
+  };
   challengeTitle?: string;
   challengeProgress?: { currentKm: number; targetKm: number; daysLeft: number };
+  events?: ClubEventItem[];
+  leadership?: ClubLeaderItem[];
   internalBounties: Array<{
     id: string;
     title: string;
@@ -429,8 +466,99 @@ export const SAMPLE_CLUBS_LIST: ClubListItem[] = [
     fundBalanceVnd: 12450000,
     paidMembersCount: 41,
     totalDuesMembersCount: 50,
+    myDuesStatus: {
+      isPaid: true,
+      quarterText: "Quý IV/2026",
+      paidDate: "15/10/2026",
+      amountVnd: 150000,
+    },
     challengeTitle: "Cả đội chạy 500km trong 7 ngày",
     challengeProgress: { currentKm: 340, targetKm: 500, daysLeft: 3 },
+    leadership: [
+      {
+        id: "lead-1",
+        name: "Quốc Hưng",
+        roleTitle: "Trưởng CLB (Chủ nhiệm)",
+        avatarText: "QH",
+        avatarBgColor: "bg-blue-600 text-white",
+        weeklyKm: "48.5 km",
+        trustScore: "9.5 UT",
+        badge: "Chủ nhiệm sáng lập",
+        rankVi: "Cấp 5 · Master",
+      },
+      {
+        id: "lead-2",
+        name: "Minh Anh",
+        roleTitle: "Phó chủ nhiệm & Pacer Trưởng",
+        avatarText: "MA",
+        avatarBgColor: "bg-emerald-600 text-white",
+        weeklyKm: "42.0 km",
+        trustScore: "9.0 UT",
+        badge: "Pacer 5:30",
+        rankVi: "Cấp 4 · Elite",
+      },
+      {
+        id: "lead-3",
+        name: "Trần Bảo",
+        roleTitle: "BQL Phòng Gym & Hậu cần",
+        avatarText: "TB",
+        avatarBgColor: "bg-purple-600 text-white",
+        weeklyKm: "36.0 km",
+        trustScore: "8.8 UT",
+        badge: "BQL CSVC",
+        rankVi: "Cấp 3 · Pacer",
+      },
+    ],
+    events: [
+      {
+        id: "event-1",
+        title: "Giải Chạy Nội Bộ FTU2 Autumn Half Marathon",
+        eventType: "race",
+        eventTypeName: "Giải chạy nội bộ",
+        dateVi: "Chủ Nhật, 24/11",
+        timeVi: "05:00 AM",
+        location: "Khu Đô Thị Sala & Cầu Ba Son, TP. Thủ Đức",
+        distanceOrDuration: "21km & 10km",
+        hostName: "Ban Chủ Nhiệm FTU2",
+        participantsCount: 48,
+        maxParticipants: 60,
+        isRegistered: true,
+        rewardExp: 50,
+        badgeText: "Huy chương Finisher",
+      },
+      {
+        id: "event-2",
+        title: "Long Run Cuối Tuần: Bờ Kè Thanh Đa - Landmark 81",
+        eventType: "long_run",
+        eventTypeName: "Chạy dài cuối tuần",
+        dateVi: "Thứ Bảy, 16/11",
+        timeVi: "05:30 AM",
+        location: "Cổng Công Viên Central Park, Bình Thạnh",
+        distanceOrDuration: "15km · Pace 5:45 - 6:15",
+        hostName: "Minh Anh (Pacer)",
+        participantsCount: 26,
+        maxParticipants: 35,
+        isRegistered: false,
+        rewardExp: 25,
+        badgeText: "Kèm pacer giữ nhịp",
+      },
+      {
+        id: "event-3",
+        title: "Workshop: Kỹ Thuật Tiếp Đất & Phòng Tránh Chấn Thương Gối",
+        eventType: "workshop",
+        eventTypeName: "Workshop kỹ thuật",
+        dateVi: "Thứ Tư, 20/11",
+        timeVi: "19:00 PM",
+        location: "Phòng Sinh Hoạt Thể Thao ĐH Ngoại Thương CS2",
+        distanceOrDuration: "90 phút chuyên sâu",
+        hostName: "HLV Quốc Hưng & Bác sĩ Thể thao",
+        participantsCount: 38,
+        maxParticipants: 50,
+        isRegistered: false,
+        rewardExp: 20,
+        badgeText: "Miễn phí hội viên",
+      },
+    ],
     internalBounties: [
       {
         id: "bounty-1",

@@ -25,6 +25,10 @@ import {
   Building2,
   Sparkles,
   Search,
+  MapPin,
+  Clock,
+  UserCheck,
+  Award,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -85,6 +89,9 @@ function DongDoiContent() {
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
 
   // CLB Interaction States
+  const [userClubRole, setUserClubRole] = React.useState<"member" | "leader">("member");
+  const [registeredEventIds, setRegisteredEventIds] = React.useState<string[]>(["event-1"]);
+  const [eventCategoryFilter, setEventCategoryFilter] = React.useState<string>("all");
   const [joinedClubIds, setJoinedClubIds] = React.useState<string[]>([]);
   const [clubInviteCode, setClubInviteCode] = React.useState<string>("");
   const [duesPaid, setDuesPaid] = React.useState<boolean>(false);
@@ -103,6 +110,13 @@ function DongDoiContent() {
       setActiveCategory("nhom");
     }
 
+    const roleParam = searchParams?.get("role");
+    if (roleParam === "leader") {
+      setUserClubRole("leader");
+    } else if (roleParam === "member") {
+      setUserClubRole("member");
+    }
+
     const viewParam = searchParams?.get("view");
     const idParam = searchParams?.get("id");
     if (viewParam === "duo") {
@@ -115,6 +129,16 @@ function DongDoiContent() {
       setCurrentView("main");
     }
   }, [searchParams]);
+
+  const handleToggleEventRsvp = (eventId: string, title: string) => {
+    if (registeredEventIds.includes(eventId)) {
+      setRegisteredEventIds((prev) => prev.filter((id) => id !== eventId));
+      showToast(`Đã huỷ đăng ký tham gia: ${title}`);
+    } else {
+      setRegisteredEventIds((prev) => [...prev, eventId]);
+      showToast(`Đã đăng ký tham gia thành công: ${title} (+50 EXP)!`);
+    }
+  };
 
   const switchCategory = (cat: MainCategory) => {
     setActiveCategory(cat);
@@ -276,9 +300,9 @@ function DongDoiContent() {
               )}
             >
               <Shield className="h-4 w-4 text-blue-500" />
-              <span>CLB & Quỹ</span>
+              <span>Câu Lạc Bộ</span>
               <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold">
-                VietQR
+                CLB
               </span>
             </button>
           </div>
@@ -601,117 +625,354 @@ function DongDoiContent() {
           )}
 
           {/* ============================================================== */}
-          {/* TAB 2: CLB & QUỸ (DÀNH CHO CLB CHẠY BỘ / PHÒNG GYM - CÙNG MẪU) */}
+          {/* TAB 2: CÂU LẠC BỘ (CHẠY BỘ / PHÒNG GYM - PHÂN QUYỀN THÀNH VIÊN VS TRƯỞNG CLB) */}
           {/* ============================================================== */}
           {activeCategory === "clb" && (
             <div className="space-y-3.5 animate-in fade-in duration-200">
               {/* Guidance Info Badge */}
               <div className="px-3 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between text-[11px] text-blue-900 dark:text-blue-300">
                 <span className="truncate pr-2">
-                  🛡️ <strong>CLB:</strong> Dành cho CLB chạy bộ & phòng gym · Quỹ, sự kiện & thu phí
+                  🛡️ <strong>CLB:</strong> Dành cho CLB chạy bộ & phòng gym · Thành viên, sự kiện & hoạt động
                 </span>
-                <Link
-                  href="/cau-lac-bo/quan-ly"
-                  className="font-bold underline shrink-0 text-blue-600 dark:text-blue-400"
-                >
-                  Quản lý
-                </Link>
+                {userClubRole === "leader" && (
+                  <Link
+                    href="/cau-lac-bo/quan-ly"
+                    className="font-bold underline shrink-0 text-blue-600 dark:text-blue-400"
+                  >
+                    Quản lý Quỹ
+                  </Link>
+                )}
               </div>
 
-              {/* THẺ QUẢN LÝ QUỸ & THU PHÍ CLB (FINANCIAL HUB - CÙNG MẪU THIẾT KẾ) */}
-              <div className="p-4 rounded-3xl bg-card border border-border/80 shadow-xs space-y-3 relative overflow-hidden">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
-                      <CreditCard className="h-4 w-4" />
+              {/* BỘ CHỌN PHÂN QUYỀN (DEMO / THỰC TẾ: THÀNH VIÊN VS TRƯỞNG CLB / BQL PHÒNG GYM) */}
+              <div className="flex items-center justify-between p-2.5 rounded-2xl bg-card border border-border/80 text-xs shadow-xs">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-muted-foreground text-[11px]">Vai trò của bạn:</span>
+                  <span
+                    className={cn(
+                      "px-2 py-0.5 rounded-full font-bold text-[10.5px]",
+                      userClubRole === "leader"
+                        ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30"
+                        : "bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30"
+                    )}
+                  >
+                    {userClubRole === "leader" ? "🛡️ Trưởng CLB / BQL Gym" : "👤 Thành viên CLB"}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setUserClubRole(userClubRole === "leader" ? "member" : "leader")}
+                  className="text-[11px] font-semibold text-brand dark:text-brand-sky hover:underline"
+                >
+                  Chuyển sang: {userClubRole === "leader" ? "Thành viên" : "Trưởng CLB"}
+                </button>
+              </div>
+
+              {/* TRƯỜNG HỢP 1: TRƯỞNG CÂU LẠC BỘ / BQL PHÒNG GYM (ĐƯỢC QUẢN LÝ QUỸ & THU CHI) */}
+              {userClubRole === "leader" && (
+                <div className="p-4 rounded-3xl bg-card border border-border/80 shadow-xs space-y-3 relative overflow-hidden animate-in fade-in duration-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+                        <CreditCard className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <h2 className="text-xs font-bold text-foreground">Quỹ Sinh Hoạt CLB</h2>
+                        <p className="text-[10px] text-muted-foreground">{myClub.name}</p>
+                      </div>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 font-bold text-[10.5px] border border-amber-500/30">
+                      Vai trò: Trưởng CLB / Admin
+                    </span>
+                  </div>
+
+                  {/* 3 Chỉ số tài chính nhanh */}
+                  <div className="grid grid-cols-3 gap-2 p-2.5 rounded-2xl bg-muted/50 border border-border/60 text-center">
+                    <div>
+                      <p className="text-base font-black text-brand dark:text-brand-sky">
+                        {formatVnd(myClub.fundBalanceVnd)}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">Số dư quỹ hiện tại</p>
                     </div>
                     <div>
-                      <h2 className="text-xs font-bold text-foreground">Quỹ Sinh Hoạt CLB</h2>
-                      <p className="text-[10px] text-muted-foreground">{myClub.name}</p>
+                      <p className="text-base font-black text-foreground">
+                        {formatVnd(myClub.duesPerQuarterVnd)}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">Phí Quý IV / tv</p>
+                    </div>
+                    <div>
+                      <p className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                        {myClub.paidMembersCount}/{myClub.totalDuesMembersCount}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">Đã nộp quỹ (82%)</p>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-[10.5px]">
-                    Vai trò: {myClub.myRole || "Admin"}
+
+                  {/* Thanh tiến độ nộp quỹ thành viên */}
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-foreground">Tiến độ thu quỹ Quý IV</span>
+                      <span className="text-[11px] text-muted-foreground">
+                        {Math.round((myClub.paidMembersCount / myClub.totalDuesMembersCount) * 100)}% hoàn thành
+                      </span>
+                    </div>
+                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-linear-to-r from-blue-500 to-brand rounded-full transition-all duration-500"
+                        style={{
+                          width: `${(myClub.paidMembersCount / myClub.totalDuesMembersCount) * 100}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Cách tính tiền CLB minh bạch (Transparent Fee Breakdown) */}
+                  <div className="p-2.5 rounded-2xl bg-muted/40 border border-border/50 text-[11px] space-y-1">
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span>Phí thành viên đóng:</span>
+                      <span className="font-semibold text-foreground">{formatVnd(clbDuesFee.amountVnd)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span>Phí nền tảng SYNESIS ({PAYMENT_CONFIG.platformPercent.club_membership}%):</span>
+                      <span className="font-mono text-foreground">−{formatVnd(clbDuesFee.platformFeeVnd)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span>Phí cổng đối tác VietQR ({PAYMENT_CONFIG.processing.percent}%):</span>
+                      <span className="font-mono text-foreground">−{formatVnd(clbDuesFee.processingFeeVnd)}</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-1 border-t border-border/50 font-bold text-emerald-600 dark:text-emerald-400">
+                      <span>CLB thực nhận (94%):</span>
+                      <span>{formatVnd(clbDuesFee.clubReceivesVnd)} / tv</span>
+                    </div>
+                  </div>
+
+                  {/* 2 Nút Hành động Quỹ dành cho Trưởng CLB */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setIsPaymentModalOpen(true)}
+                      className="py-2.5 px-3 rounded-xl bg-brand hover:bg-brand-600 active:scale-95 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5"
+                    >
+                      <QrCode className="h-4 w-4" />
+                      <span>Thu quỹ qua VietQR</span>
+                    </button>
+                    <Link
+                      href="/cau-lac-bo/quan-ly"
+                      className="py-2.5 px-3 rounded-xl border border-border hover:bg-muted active:scale-95 text-xs font-semibold text-foreground transition-all flex items-center justify-center gap-1 text-center"
+                    >
+                      <span>Quản lý Quỹ & CLB</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+
+                  <p className="text-[10px] text-muted-foreground pt-1 flex items-center gap-1">
+                    <Lock className="h-3 w-3 shrink-0" />
+                    <span>Chỉ Trưởng CLB và Ban quản lý phòng gym mới có thẩm quyền xem và quản lý quỹ.</span>
+                  </p>
+                </div>
+              )}
+
+              {/* TRƯỜNG HỢP 2: THÀNH VIÊN THƯỜNG (CHỈ XEM TƯ CÁCH HỘI VIÊN, KHÔNG THẤY TIỀN QUỸ CLB) */}
+              {userClubRole === "member" && (
+                <div className="p-3.5 rounded-2xl bg-card border border-border/80 shadow-xs space-y-2.5 animate-in fade-in duration-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+                        <UserCheck className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <h2 className="text-xs font-bold text-foreground">Tư cách hội viên: {myClub.name}</h2>
+                        <p className="text-[10px] text-muted-foreground">Mã hội viên: FTU-8821 · Sinh hoạt định kỳ</p>
+                      </div>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[10.5px]">
+                      Hội viên chính thức
+                    </span>
+                  </div>
+
+                  {/* Trạng thái nộp hội phí cá nhân */}
+                  <div className="p-2.5 rounded-xl bg-muted/40 border border-border/50 text-[11px] flex items-center justify-between">
+                    <div>
+                      <span className="text-muted-foreground">Hội phí cá nhân Quý IV: </span>
+                      <strong className="text-foreground">150.000đ</strong>
+                      <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
+                        {duesPaid ? "✓ Đã đóng phí (Hiệu lực đến 31/12/2026)" : "Chưa đóng phí"}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsPaymentModalOpen(true)}
+                      className="px-3 py-1.5 rounded-lg bg-brand hover:bg-brand-600 active:scale-95 text-white font-bold text-xs transition-all shadow-xs flex items-center gap-1"
+                    >
+                      <QrCode className="h-3.5 w-3.5" />
+                      <span>{duesPaid ? "Biên nhận" : "Nộp hội phí"}</span>
+                    </button>
+                  </div>
+
+                  <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                    <Lock className="h-3 w-3 shrink-0" />
+                    <span>Số dư quỹ tổng CLB chỉ hiển thị cho Trưởng CLB và Ban quản lý phòng gym.</span>
+                  </p>
+                </div>
+              )}
+
+              {/* SỰ KIỆN & HOẠT ĐỘNG CLB (HIỂN THỊ ĐẦY ĐỦ CHO THÀNH VIÊN & TRƯỞNG CLB) */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <CalendarDays className="h-4 w-4 text-brand" />
+                    <h2 className="text-sm font-bold text-foreground">Sự kiện & Hoạt động CLB</h2>
+                  </div>
+                  <span className="text-[11px] font-semibold text-brand dark:text-brand-sky">
+                    {myClub.events?.length || 3} hoạt động
                   </span>
                 </div>
 
-                {/* 4 Chỉ số tài chính nhanh */}
-                <div className="grid grid-cols-3 gap-2 p-2.5 rounded-2xl bg-muted/50 border border-border/60 text-center">
-                  <div>
-                    <p className="text-base font-black text-brand dark:text-brand-sky">
-                      {formatVnd(myClub.fundBalanceVnd)}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">Số dư quỹ hiện tại</p>
-                  </div>
-                  <div>
-                    <p className="text-base font-black text-foreground">
-                      {formatVnd(myClub.duesPerQuarterVnd)}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">Phí Quý IV / tv</p>
-                  </div>
-                  <div>
-                    <p className="text-base font-black text-emerald-600 dark:text-emerald-400">
-                      {myClub.paidMembersCount}/{myClub.totalDuesMembersCount}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">Đã nộp quỹ (82%)</p>
-                  </div>
+                {/* Filter badges */}
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
+                  {[
+                    { id: "all", label: "Tất cả" },
+                    { id: "race", label: "Giải chạy nội bộ" },
+                    { id: "long_run", label: "Long Run" },
+                    { id: "workshop", label: "Workshop" },
+                  ].map((f) => (
+                    <button
+                      key={f.id}
+                      type="button"
+                      onClick={() => setEventCategoryFilter(f.id)}
+                      className={cn(
+                        "px-2.5 py-1 rounded-full text-[11px] font-semibold shrink-0 transition-all",
+                        eventCategoryFilter === f.id
+                          ? "bg-brand text-white shadow-xs"
+                          : "bg-muted/70 text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
                 </div>
 
-                {/* Thanh tiến độ nộp quỹ thành viên */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-foreground">Tiến độ thu quỹ Quý IV</span>
-                    <span className="text-[11px] text-muted-foreground">
-                      {Math.round((myClub.paidMembersCount / myClub.totalDuesMembersCount) * 100)}% hoàn thành
-                    </span>
+                {/* Danh sách Event Cards */}
+                <div className="space-y-2.5">
+                  {(myClub.events || [])
+                    .filter((ev) => eventCategoryFilter === "all" || ev.eventType === eventCategoryFilter)
+                    .map((ev) => {
+                      const isRsvped = registeredEventIds.includes(ev.id);
+                      return (
+                        <div
+                          key={ev.id}
+                          className="p-3.5 rounded-2xl bg-card border border-border/80 hover:border-brand/40 shadow-xs space-y-2.5 transition-all"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <div className="flex items-center gap-1.5 mb-1">
+                                <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-[10px]">
+                                  {ev.eventTypeName}
+                                </span>
+                                {ev.badgeText && (
+                                  <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-[10px]">
+                                    {ev.badgeText}
+                                  </span>
+                                )}
+                              </div>
+                              <h3 className="text-sm font-bold text-foreground leading-snug">{ev.title}</h3>
+                            </div>
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] shrink-0">
+                              +{ev.rewardExp} EXP
+                            </span>
+                          </div>
+
+                          <div className="space-y-1 text-[11px] text-muted-foreground">
+                            <div className="flex items-center gap-1.5">
+                              <Clock className="h-3.5 w-3.5 text-brand shrink-0" />
+                              <span>
+                                {ev.dateVi} · {ev.timeVi}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                              <span className="truncate">{ev.location}</span>
+                            </div>
+                            <div className="flex items-center justify-between pt-0.5">
+                              <span className="font-medium text-foreground">
+                                {ev.distanceOrDuration} · Chủ trì: {ev.hostName}
+                              </span>
+                              <span className="text-muted-foreground font-semibold">
+                                {ev.participantsCount + (isRsvped && !ev.isRegistered ? 1 : 0)}/{ev.maxParticipants} vđv
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="pt-1 border-t border-border/50 flex items-center justify-between">
+                            <span className="text-[10px] text-muted-foreground">
+                              {isRsvped ? "✓ Đã đăng ký tham gia" : "Mở cho toàn thể hội viên CLB"}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleEventRsvp(ev.id, ev.title)}
+                              className={cn(
+                                "px-3 py-1.5 rounded-xl font-bold text-xs transition-all active:scale-95 shadow-xs",
+                                isRsvped
+                                  ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                                  : "bg-brand text-white hover:bg-brand-600"
+                              )}
+                            >
+                              {isRsvped ? "Đã đăng ký ✓" : "Đăng ký tham gia (RSVP)"}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+
+              {/* BAN CHỦ NHIỆM & THÀNH VIÊN CLB */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Users className="h-4 w-4 text-brand" />
+                    <h2 className="text-sm font-bold text-foreground">Ban Chủ Nhiệm & Thành Viên</h2>
                   </div>
-                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                  <span className="text-[11px] font-semibold text-muted-foreground">
+                    {myClub.memberCount} thành viên
+                  </span>
+                </div>
+
+                {/* Danh sách Ban Quản Trị & Ban Chủ Nhiệm */}
+                <div className="space-y-2">
+                  {(myClub.leadership || []).map((lead) => (
                     <div
-                      className="h-full bg-linear-to-r from-blue-500 to-brand rounded-full transition-all duration-500"
-                      style={{
-                        width: `${(myClub.paidMembersCount / myClub.totalDuesMembersCount) * 100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
+                      key={lead.id}
+                      className="p-3 rounded-2xl bg-card border border-border/80 shadow-xs flex items-center justify-between gap-2"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div
+                          className={cn(
+                            "w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shrink-0",
+                            lead.avatarBgColor
+                          )}
+                        >
+                          {lead.avatarText}
+                        </div>
+                        <div className="truncate">
+                          <div className="flex items-center gap-1.5">
+                            <h4 className="text-xs font-bold text-foreground truncate">{lead.name}</h4>
+                            <span className="px-1.5 py-0.2 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-[9.5px]">
+                              {lead.badge}
+                            </span>
+                          </div>
+                          <p className="text-[10.5px] text-muted-foreground truncate">{lead.roleTitle}</p>
+                        </div>
+                      </div>
 
-                {/* Cách tính tiền CLB minh bạch (Transparent Fee Breakdown) */}
-                <div className="p-2.5 rounded-2xl bg-muted/40 border border-border/50 text-[11px] space-y-1">
-                  <div className="flex items-center justify-between text-muted-foreground">
-                    <span>Phí thành viên đóng:</span>
-                    <span className="font-semibold text-foreground">{formatVnd(clbDuesFee.amountVnd)}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-muted-foreground">
-                    <span>Phí nền tảng SYNESIS ({PAYMENT_CONFIG.platformPercent.club_membership}%):</span>
-                    <span className="font-mono text-foreground">−{formatVnd(clbDuesFee.platformFeeVnd)}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-muted-foreground">
-                    <span>Phí cổng đối tác VietQR ({PAYMENT_CONFIG.processing.percent}%):</span>
-                    <span className="font-mono text-foreground">−{formatVnd(clbDuesFee.processingFeeVnd)}</span>
-                  </div>
-                  <div className="flex items-center justify-between pt-1 border-t border-border/50 font-bold text-emerald-600 dark:text-emerald-400">
-                    <span>CLB thực nhận (94%):</span>
-                    <span>{formatVnd(clbDuesFee.clubReceivesVnd)} / tv</span>
-                  </div>
-                </div>
-
-                {/* 2 Nút Hành động Quỹ */}
-                <div className="grid grid-cols-2 gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => setIsPaymentModalOpen(true)}
-                    className="py-2.5 px-3 rounded-xl bg-brand hover:bg-brand-600 active:scale-95 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5"
-                  >
-                    <QrCode className="h-4 w-4" />
-                    <span>Nộp quỹ qua VietQR</span>
-                  </button>
-                  <Link
-                    href="/cau-lac-bo/quan-ly"
-                    className="py-2.5 px-3 rounded-xl border border-border hover:bg-muted active:scale-95 text-xs font-semibold text-foreground transition-all flex items-center justify-center gap-1 text-center"
-                  >
-                    <span>Quản lý Quỹ & CLB</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
+                      <div className="text-right shrink-0">
+                        <span className="text-xs font-black text-brand font-mono">{lead.weeklyKm}</span>
+                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                          {lead.trustScore}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 

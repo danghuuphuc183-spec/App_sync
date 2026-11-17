@@ -107,50 +107,67 @@ describe("Đồng đội & Duo Feature Page", () => {
     expect(screen.getByText("Đã xác nhận tham gia")).toBeInTheDocument();
   });
 
-  it("switches to CLB & Quỹ tab and renders financial management, fees, and VietQR payment modal", () => {
+  it("switches to Câu Lạc Bộ tab and enforces role-based permissions (member vs leader)", () => {
     render(<DongDoiPage />);
 
-    // Check header category switcher
+    // Check header category switcher - no 'Quỹ' in tab name
     const nhomTab = screen.getByRole("tab", { name: /Nhóm tập/i });
-    const clbTab = screen.getByRole("tab", { name: /CLB & Quỹ/i });
+    const clbTab = screen.getByRole("tab", { name: /Câu Lạc Bộ/i });
     expect(nhomTab).toBeInTheDocument();
     expect(clbTab).toBeInTheDocument();
+    expect(screen.queryByRole("tab", { name: /CLB & Quỹ/i })).not.toBeInTheDocument();
 
-    // Click on CLB & Quỹ tab
+    // Click on Câu Lạc Bộ tab
     fireEvent.click(clbTab);
 
-    // Should display CLB Fund Financial Hub
+    // DEFAULT VIEW IS MEMBER: Fund balance MUST BE HIDDEN
+    expect(screen.getByText("👤 Thành viên CLB")).toBeInTheDocument();
+    expect(screen.queryByText(/Quỹ Sinh Hoạt CLB/i)).not.toBeInTheDocument();
+    expect(screen.queryByText("12.450.000đ")).not.toBeInTheDocument();
+
+    // MEMBER VIEW: Shows Member status, Events & Activities, and Leadership/Members roster
+    expect(screen.getByText(/Tư cách hội viên: FTU2 Run Club/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hội viên chính thức/i)).toBeInTheDocument();
+    expect(screen.getByText("Sự kiện & Hoạt động CLB")).toBeInTheDocument();
+    expect(screen.getByText("Giải Chạy Nội Bộ FTU2 Autumn Half Marathon")).toBeInTheDocument();
+    expect(screen.getByText("Ban Chủ Nhiệm & Thành Viên")).toBeInTheDocument();
+    expect(screen.getAllByText("Quốc Hưng").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("Chủ nhiệm sáng lập")).toBeInTheDocument();
+
+    // Test Event RSVP toggle
+    const rsvpBtn = screen.getByText("Đã đăng ký ✓");
+    expect(rsvpBtn).toBeInTheDocument();
+    fireEvent.click(rsvpBtn);
+    expect(screen.getAllByText("Đăng ký tham gia (RSVP)").length).toBe(3);
+
+    // SWITCH TO LEADER VIEW (Trưởng CLB / BQL Gym)
+    const switchRoleBtn = screen.getByText("Chuyển sang: Trưởng CLB");
+    fireEvent.click(switchRoleBtn);
+
+    // LEADER VIEW: Now displays CLB Fund Financial Hub & Balances
+    expect(screen.getByText("🛡️ Trưởng CLB / BQL Gym")).toBeInTheDocument();
     expect(screen.getByText(/Quỹ Sinh Hoạt CLB/i)).toBeInTheDocument();
     expect(screen.getByText("12.450.000đ")).toBeInTheDocument();
     expect(screen.getAllByText("150.000đ").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/41\/50/i)).toBeInTheDocument();
     expect(screen.getAllByText(/82%/i).length).toBeGreaterThanOrEqual(1);
 
-    // Check transparent fee quote breakdown
+    // Check transparent fee quote breakdown for Leader
     expect(screen.getByText(/Phí thành viên đóng:/i)).toBeInTheDocument();
     expect(screen.getByText(/Phí nền tảng SYNESIS/i)).toBeInTheDocument();
     expect(screen.getByText(/Phí cổng đối tác VietQR/i)).toBeInTheDocument();
     expect(screen.getByText(/CLB thực nhận/i)).toBeInTheDocument();
-
-    // Check Club card
-    expect(screen.getAllByText(/FTU2 Run Club/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("Quản lý Quỹ & CLB")).toBeInTheDocument();
 
-    // Check other clubs & invite code
-    expect(screen.getByText("Khám phá CLB Chạy bộ & Gym")).toBeInTheDocument();
-    expect(screen.getByText(/Saigon Runners Community/i)).toBeInTheDocument();
-    expect(screen.getByText("Gia nhập bằng mã mời CLB")).toBeInTheDocument();
-    expect(screen.getByText("BXH Kỷ Luật CLB (Tuần này)")).toBeInTheDocument();
-
     // Test opening VietQR payment modal
-    const payBtn = screen.getByText("Nộp quỹ qua VietQR");
+    const payBtn = screen.getByText("Thu quỹ qua VietQR");
     fireEvent.click(payBtn);
 
     // Modal should appear
     expect(screen.getByText("Hội phí CLB FTU2 Runners - Quý IV")).toBeInTheDocument();
     expect(screen.getByText(/payOS · VietQR Chuẩn NAPAS/i)).toBeInTheDocument();
-    expect(screen.getByText(/Cơ chế Split Payment tự động:/i)).toBeInTheDocument();
-    expect(screen.getByText(/Mô phỏng Chuyển khoản thành công/i)).toBeInTheDocument();
+    expect(screen.getByText(/Split Payment/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Mô phỏng Chuyển khoản/i })).toBeInTheDocument();
 
     // Close modal
     const closeBtn = screen.getByLabelText("Đóng cửa sổ thanh toán");
