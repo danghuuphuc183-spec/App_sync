@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, ChevronRight, Lock, Plus, UserRound, Users, UsersRound } from "lucide-react";
+import { ArrowLeft, ChevronRight, Lock, UserRound, Users, UsersRound } from "lucide-react";
 import { BottomSheet } from "@/components/feed/bottom-sheet";
 import { BrowseKeos } from "@/components/keo/browse-keos";
 import { GroupFlow, PersonalFlow, SoloFlow } from "@/components/keo/keo-flows";
@@ -74,19 +74,14 @@ function Hub() {
         <p className="text-[12.5px] text-muted-foreground mt-0.5">Tạo kèo mới hoặc nhận kèo gần bạn</p>
       </div>
 
-      {/* Nút Tạo kèo: Căn lề giữa, chữ tinh tế nhỏ gọn nhưng thu hút với gradient & shadow */}
+      {/* Nút Tạo kèo: Căn lề giữa, chữ tinh tế nhỏ gọn nhưng thu hút với gradient & shadow (không có icon dấu cộng) */}
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         className="w-full flex flex-col items-center justify-center text-center rounded-2xl bg-gradient-to-r from-brand via-[#0f74f2] to-brand hover:opacity-95 text-white py-3.5 px-4 shadow-sm shadow-brand/25 border border-white/15 active:scale-[0.99] transition-all group"
       >
-        <div className="flex items-center justify-center gap-2">
-          <span className="w-6 h-6 rounded-lg bg-white/20 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
-            <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
-          </span>
-          <span className="text-[15px] font-bold tracking-tight">Tạo kèo</span>
-        </div>
+        <span className="text-[15px] font-bold tracking-tight">Tạo kèo</span>
         <p className="text-[11.5px] text-white/85 font-medium mt-0.5">
           Cá nhân · Nhóm · 1:1
         </p>
