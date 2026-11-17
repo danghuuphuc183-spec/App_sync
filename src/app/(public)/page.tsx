@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { PlusCircle, X, Zap, Search, Camera } from "lucide-react";
+import { X, Zap, Search, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { WeeklyStreakCard } from "@/components/home/weekly-streak-card";
@@ -18,41 +18,6 @@ const DEFAULT_SPORT_PHOTO: Record<string, string> = {
   gym: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=900&auto=format&fit=crop&q=80",
   cycling: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=900&auto=format&fit=crop&q=80",
 };
-
-const STORIES = [
-  {
-    id: "story-1",
-    name: "Bạn",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-    isAdd: true,
-    tag: "Đăng tin",
-  },
-  {
-    id: "story-2",
-    name: "Hoàng Nam",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-    tag: "Chạy 5h sáng",
-    isLive: true,
-  },
-  {
-    id: "story-3",
-    name: "Thuỳ Dung",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
-    tag: "Gym Legday",
-  },
-  {
-    id: "story-4",
-    name: "Đức Trọng",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
-    tag: "Sala 10km",
-  },
-  {
-    id: "story-5",
-    name: "Yến Nhi",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
-    tag: "Ghost Mode",
-  },
-];
 
 export default function HomePage() {
   const [posts, setPosts] = React.useState<FeedPost[]>(INITIAL_FEED);
@@ -133,45 +98,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 2. STORIES BAR - ATHLETES ACTIVE */}
-      <div className="w-full overflow-x-auto no-scrollbar px-3">
-        <div className="flex items-center gap-3">
-          {STORIES.map((story) => (
-            <div
-              key={story.id}
-              className="flex flex-col items-center gap-1 shrink-0 cursor-pointer group"
-              onClick={() => {
-                if (story.isAdd) setIsCreateModalOpen(true);
-              }}
-            >
-              <div
-                className={cn(
-                  "relative p-[2px] rounded-full transition-transform active:scale-95 group-hover:scale-105",
-                  story.isAdd
-                    ? "border-2 border-dashed border-brand dark:border-brand-sky"
-                    : "ring-2 ring-brand/60 dark:ring-brand-sky"
-                )}
-              >
-                <img
-                  src={story.avatar}
-                  alt={story.name}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-background"
-                />
-                {story.isAdd && (
-                  <div className="absolute bottom-0 right-0 bg-brand text-white rounded-full p-0.5 border border-background">
-                    <PlusCircle className="w-3.5 h-3.5 stroke-[2]" />
-                  </div>
-                )}
-              </div>
-              <span className="text-[10px] font-medium text-foreground tracking-tight max-w-[56px] truncate text-center">
-                {story.name}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 3. CHUỖI LIÊN TIẾP THEO TUẦN (giữ chuỗi kiểu Strava) */}
+      {/* 2. CHUỖI LIÊN TIẾP THEO TUẦN (giữ chuỗi kiểu Strava) */}
       <WeeklyStreakCard />
 
       {/* 4. NÊN THEO DÕI — gợi ý người nổi tiếng & người có điểm chung */}

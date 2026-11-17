@@ -37,7 +37,7 @@ export function PublicHeader() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (pathname === "/cai-dat" || pathname === "/ho-so") {
+  if (pathname === "/cai-dat" || pathname === "/ho-so" || pathname?.startsWith("/dong-doi")) {
     return null;
   }
 

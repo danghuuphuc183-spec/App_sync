@@ -23,10 +23,10 @@ describe("activityHistogram", () => {
   });
 
   it("kèo thật đang mở làm khung giờ đó cao hơn", () => {
-    const without = activityHistogram("pickleball", "Hôm nay", []);
-    const withKeo = activityHistogram("pickleball", "Hôm nay", SEED_KEOS);
-    const busy = timeToBucket("18:15"); // có 3 kèo pickleball hôm nay quanh giờ này
-    const quiet = timeToBucket("09:00");
+    const without = activityHistogram("running", "Ngày mai", []);
+    const withKeo = activityHistogram("running", "Ngày mai", SEED_KEOS);
+    const busy = timeToBucket("05:30"); // có kèo running ngày mai quanh giờ này
+    const quiet = timeToBucket("14:00");
     expect(withKeo[busy]! / withKeo[quiet]!).toBeGreaterThan(without[busy]! / without[quiet]!);
   });
 

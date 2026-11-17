@@ -62,7 +62,10 @@ export function PostCard({
   const longCaption = post.caption.length > 140;
 
   return (
-    <article className="bg-white dark:bg-card border-y sm:border sm:rounded-2xl border-neutral-200/80 dark:border-neutral-800" aria-label={`Bài viết của ${author.name}`}>
+    <article
+      className="mx-3 rounded-2xl bg-card border border-border/80 shadow-xs overflow-hidden"
+      aria-label={`Bài viết của ${author.name}`}
+    >
       {/* ===== HEADER: avatar · tên · thời gian · địa điểm · ⋯ ===== */}
       <header className="flex items-center gap-2.5 px-3.5 pt-3 pb-2">
         <Link href={profileHref(author)} className="shrink-0" aria-label={`Xem hồ sơ ${author.name}`}>

@@ -3,11 +3,15 @@ import { render, screen } from "@testing-library/react";
 import HomePage from "./page";
 
 describe("HomePage - Community Controlled Activity Feed", () => {
-  it("render trang chủ hoạt động thể thao thành công với chuỗi tuần, gợi ý theo dõi, stories và 5 loại card", () => {
+  it("render trang chủ hoạt động thể thao thành công với chuỗi tuần, gợi ý theo dõi, và bài viết cộng đồng (đã bỏ stories và reels)", () => {
     render(<HomePage />);
 
-    // Kiểm tra thanh Stories các bạn tập (có thể xuất hiện ở story và card)
-    expect(screen.getAllByText("Hoàng Nam").length).toBeGreaterThan(0);
+    // Đã bỏ hoàn toàn Stories bar
+    expect(screen.queryByText("Đăng tin")).not.toBeInTheDocument();
+    expect(screen.queryByText("Ghost Mode")).not.toBeInTheDocument();
+
+    // Bài viết cộng đồng từ bạn bè (Minh Anh, Thuỳ Dung trong feed)
+    expect(screen.getAllByText("Minh Anh").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Thuỳ Dung").length).toBeGreaterThan(0);
 
     // Mục chuỗi liên tiếp theo tuần

@@ -23,12 +23,12 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
   if (suggestions.length === 0) return null;
 
   return (
-    <section aria-label="Nên theo dõi" className="py-1">
-      <div className="flex items-center justify-between px-4 mb-2.5">
-        <h2 className="text-[17px] font-bold text-foreground">Nên theo dõi</h2>
+    <section aria-label="Nên theo dõi" className="py-0.5">
+      <div className="flex items-center justify-between px-3.5 mb-2">
+        <h2 className="text-sm font-bold text-foreground">Nên theo dõi</h2>
         <button
           onClick={() => setShowAll((v) => !v)}
-          className="text-[13px] font-bold text-brand dark:text-brand-sky hover:underline"
+          className="text-xs font-semibold text-brand dark:text-brand-sky hover:underline"
         >
           {showAll ? "Thu gọn" : "Xem tất cả"}
         </button>
@@ -36,7 +36,7 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
 
       <div
         className={cn(
-          "px-4",
+          "px-3",
           showAll ? "grid grid-cols-2 gap-2.5" : "flex gap-2.5 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-1"
         )}
       >
@@ -46,7 +46,7 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
             <article
               key={c.id}
               className={cn(
-                "rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-card shadow-xs p-3 flex flex-col items-center text-center",
+                "rounded-2xl border border-border/80 bg-card shadow-xs p-3.5 flex flex-col items-center text-center",
                 !showAll && "w-[44%] min-w-[150px] shrink-0 snap-start"
               )}
             >

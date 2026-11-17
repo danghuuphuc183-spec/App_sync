@@ -290,7 +290,7 @@ export default function ProfilePage() {
             <span className="text-[11px] font-semibold text-foreground">Kèo</span>
           </button>
 
-          {/* CLB của tôi */}
+          {/* CLB */}
           <Link
             href="/cau-lac-bo"
             className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5 group"
