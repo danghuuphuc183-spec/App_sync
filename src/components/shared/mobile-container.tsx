@@ -54,10 +54,10 @@ export function MobileContainer({ children }: { children: React.ReactNode }) {
       >
         {/* Fake iOS Dynamic Island / Notch on Desktop Frame */}
         {isPhoneFrame && (
-          <div className="hidden lg:flex w-full h-7 bg-slate-900 items-center justify-between px-6 text-[11px] text-white select-none z-50">
+          <div className="hidden lg:flex w-full h-7 bg-slate-900 items-center justify-between px-6 text-caption text-white select-none z-50">
             <span className="font-semibold">09:41</span>
             <div className="w-20 h-4 bg-black rounded-full" />
-            <div className="flex items-center gap-1 text-[10px]">
+            <div className="flex items-center gap-1 text-micro">
               <span>5G</span>
               <span>100%</span>
             </div>

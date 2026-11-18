@@ -62,14 +62,14 @@ export function LiveSessionPanel({
           <span className="relative inline-flex h-3 w-3 rounded-full bg-brand-600" />
         </span>
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-bold text-foreground truncate">Đang tập · {state.spot?.name}</p>
-          <p className="text-[11px] text-muted-foreground">
-            Đang chia sẻ vị trí · <span className="font-mono">{elapsed}</span>
+          <p className="text-label font-bold text-foreground truncate">Đang tập · {state.spot?.name}</p>
+          <p className="text-caption text-muted-foreground">
+            Đang chia sẻ vị trí · <span className="font-numeric font-bold text-foreground">{elapsed}</span>
           </p>
         </div>
         <button
           onClick={onStop}
-          className="shrink-0 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-3.5 py-1.5 text-[12px] font-bold active:scale-95"
+          className="btn-electric shrink-0 rounded-lg px-3.5 py-1.5 text-xs font-bold"
         >
           Kết thúc
         </button>
@@ -97,20 +97,20 @@ export function LiveSessionPanel({
                 <div className="flex items-center gap-3">
                   <img src={a.avatar} alt={a.name} className="h-11 w-11 rounded-full object-cover ring-2 ring-brand-600" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-bold text-foreground">{a.name} mời bạn ghép đội</p>
-                    <p className="text-[11.5px] text-muted-foreground truncate">{a.focus}</p>
+                    <p className="text-label font-bold text-foreground">{a.name} mời bạn ghép đội</p>
+                    <p className="text-caption text-muted-foreground truncate">{a.focus}</p>
                   </div>
                 </div>
                 <div className="flex gap-2 mt-2.5">
                   <button
                     onClick={() => onAnswerIncoming(a.id, false)}
-                    className="flex-1 rounded-lg border border-border bg-background py-2 text-[12.5px] font-bold text-foreground"
+                    className="flex-1 rounded-lg border border-border bg-background py-2 text-xs font-bold text-foreground"
                   >
                     Từ chối
                   </button>
                   <button
                     onClick={() => onAnswerIncoming(a.id, true)}
-                    className="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white py-2 text-[12.5px] font-bold"
+                    className="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white py-2 text-xs font-bold"
                   >
                     Đồng ý
                   </button>
@@ -120,13 +120,13 @@ export function LiveSessionPanel({
 
             {/* Danh sách người đang tập gần */}
             <div className="px-4 pt-3 pb-1 flex items-center justify-between">
-              <p className="text-[13px] font-bold text-foreground flex items-center gap-1.5">
+              <p className="text-label font-bold text-foreground flex items-center gap-1.5">
                 <Users className="h-4 w-4" /> Đang tập gần bạn ({nearby.length})
               </p>
-              <p className="text-[11px] text-muted-foreground">Cùng môn · trong 2 km</p>
+              <p className="text-caption text-muted-foreground">Cùng môn · trong 2 km</p>
             </div>
             {nearby.length === 0 ? (
-              <p className="px-4 pb-4 text-[12.5px] text-muted-foreground">
+              <p className="px-4 pb-4 text-xs text-muted-foreground">
                 Chưa có ai đang tập quanh đây. Vị trí của bạn vẫn đang hiển thị để người khác tìm thấy bạn.
               </p>
             ) : (
@@ -139,10 +139,10 @@ export function LiveSessionPanel({
                         <img src={a.avatar} alt={a.name} className="h-10 w-10 rounded-full object-cover ring-2 ring-brand-400/70" />
                       </button>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-foreground truncate">
-                          {a.name} <span className="text-[11px] font-normal text-muted-foreground">· {LEVEL_VI[a.level]}</span>
+                        <p className="text-label font-semibold text-foreground truncate">
+                          {a.name} <span className="text-caption font-normal text-muted-foreground">· {LEVEL_VI[a.level]}</span>
                         </p>
-                        <p className="text-[11.5px] text-muted-foreground truncate">
+                        <p className="text-caption text-muted-foreground truncate">
                           {formatDistance(a.distanceM)} · {a.focus}
                         </p>
                       </div>
@@ -150,7 +150,7 @@ export function LiveSessionPanel({
                         onClick={() => onInvite(a.id)}
                         disabled={!!status}
                         className={cn(
-                          "shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-bold flex items-center gap-1 transition-all active:scale-95",
+                          "shrink-0 rounded-lg px-3 py-1.5 text-xs font-bold flex items-center gap-1 transition-all active:scale-95",
                           !status && "bg-brand hover:bg-brand-700 text-white dark:bg-brand-sky dark:text-black",
                           status === "pending" && "bg-muted text-muted-foreground",
                           status === "declined" && "bg-muted text-muted-foreground line-through"
@@ -201,42 +201,42 @@ function MatchedCard({
           </span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-600">
+          <p className="text-caption font-bold uppercase tracking-wider text-emerald-600">
             {met ? "Đã gặp nhau" : "Đã ghép đội"}
           </p>
-          <p className="text-[15px] font-bold text-foreground truncate">{partner.name}</p>
-          <p className="text-[12px] text-muted-foreground truncate">{partner.focus}</p>
+          <p className="text-body font-bold text-foreground truncate">{partner.name}</p>
+          <p className="text-xs text-muted-foreground truncate">{partner.focus}</p>
         </div>
       </div>
 
       {met ? (
         <div className="rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 p-3 flex gap-2.5 items-center">
           <PartyPopper className="h-6 w-6 text-foreground shrink-0" />
-          <p className="text-[13px] text-foreground leading-snug">
+          <p className="text-label text-foreground leading-snug">
             Hai bạn đã ở cạnh nhau. Chúc buổi tập vui vẻ — nhớ check-in để cùng được +0,5 UT!
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2 text-center">
           <div className="rounded-2xl bg-muted/70 py-2">
-            <p className="text-[10.5px] text-muted-foreground">Khoảng cách</p>
-            <p className="text-[17px] font-black text-foreground font-mono">{formatDistance(distanceM)}</p>
+            <p className="text-caption text-muted-foreground">Khoảng cách</p>
+            <p className="text-[17px] font-black text-foreground font-numeric">{formatDistance(distanceM)}</p>
           </div>
           <div className="rounded-2xl bg-muted/70 py-2">
-            <p className="text-[10.5px] text-muted-foreground">Đi bộ khoảng</p>
-            <p className="text-[17px] font-black text-foreground font-mono">{walkingMinutes(distanceM)} phút</p>
+            <p className="text-caption text-muted-foreground">Đi bộ khoảng</p>
+            <p className="text-[17px] font-black text-foreground font-numeric">{walkingMinutes(distanceM)} phút</p>
           </div>
         </div>
       )}
 
-      <p className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
+      <p className="flex items-center gap-1.5 text-caption text-muted-foreground">
         <Radio className="h-3.5 w-3.5 text-foreground" />
         Hai bạn đang chia sẻ vị trí chính xác cho nhau để tìm đến nhau.
       </p>
 
       <div className="flex gap-2">
         {met ? (
-          <button onClick={onFinish} className="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white py-2.5 text-[13px] font-bold">
+          <button onClick={onFinish} className="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white py-2.5 text-label font-bold">
             Bắt đầu tập cùng & tắt chia sẻ
           </button>
         ) : (
@@ -245,13 +245,13 @@ function MatchedCard({
               href={directionsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white py-2.5 text-[13px] font-bold flex items-center justify-center gap-1.5"
+              className="flex-1 rounded-lg bg-brand-600 hover:bg-brand-700 text-white py-2.5 text-label font-bold flex items-center justify-center gap-1.5"
             >
               <Navigation className="h-4 w-4" /> Chỉ đường
             </a>
             <Link
               href="/chat"
-              className="flex-1 rounded-lg border border-border py-2.5 text-[13px] font-bold text-foreground flex items-center justify-center gap-1.5 hover:bg-muted"
+              className="flex-1 rounded-lg border border-border py-2.5 text-label font-bold text-foreground flex items-center justify-center gap-1.5 hover:bg-muted"
             >
               <MessageCircle className="h-4 w-4" /> Nhắn tin
             </Link>

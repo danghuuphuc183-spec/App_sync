@@ -162,32 +162,32 @@ export default function PaymentDemoPage() {
               <Building2 className="h-4 w-4" />
               Tài Khoản Thụ Hưởng Nền Tảng (Synesis Platform)
             </span>
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/20 text-primary font-medium">
+            <span className="text-caption px-2 py-0.5 rounded-full bg-primary/20 text-primary font-medium">
               Chế độ Thí Nghiệm
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
             <div className="p-2.5 rounded-xl bg-card/80 border border-border/60">
-              <span className="text-muted-foreground block text-[11px]">Chủ tài khoản:</span>
+              <span className="text-muted-foreground block text-caption">Chủ tài khoản:</span>
               <span className="font-bold text-foreground text-sm">
                 CÔNG TY TNHH SYNISIS
               </span>
             </div>
             <div className="p-2.5 rounded-xl bg-card/80 border border-border/60">
-              <span className="text-muted-foreground block text-[11px]">Ngân hàng:</span>
+              <span className="text-muted-foreground block text-caption">Ngân hàng:</span>
               <span className="font-bold text-foreground text-sm">
                 Vietcombank (VCB)
               </span>
             </div>
             <div className="p-2.5 rounded-xl bg-card/80 border border-border/60">
-              <span className="text-muted-foreground block text-[11px]">Số tài khoản (STK):</span>
+              <span className="text-muted-foreground block text-caption">Số tài khoản (STK):</span>
               <span className="font-mono font-extrabold text-primary text-sm tracking-wider">
                 09090909
               </span>
             </div>
           </div>
-          <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+          <p className="text-caption text-muted-foreground flex items-center gap-1">
             <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
             Tiền phí hoa hồng/dịch vụ của mọi giao dịch sẽ tự động được phân tách về STK trên.
           </p>
@@ -216,10 +216,10 @@ export default function PaymentDemoPage() {
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-2">
-                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
+                      <span className="text-caption font-semibold px-2 py-0.5 rounded-md bg-muted text-muted-foreground">
                         {sc.category}
                       </span>
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20">
+                      <span className="text-caption font-bold px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20">
                         {sc.badge}
                       </span>
                     </div>
@@ -232,7 +232,7 @@ export default function PaymentDemoPage() {
                     </p>
 
                     {/* Phân tách dòng tiền mô phỏng */}
-                    <div className="p-2.5 rounded-xl bg-muted/30 border border-border/40 text-[11px] space-y-1">
+                    <div className="p-2.5 rounded-xl bg-muted/30 border border-border/40 text-caption space-y-1">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Tổng tiền thanh toán:</span>
                         <span className="font-extrabold text-foreground">
@@ -303,17 +303,17 @@ export default function PaymentDemoPage() {
                       </span>
                       <span className="font-medium text-foreground">{o.title}</span>
                     </div>
-                    <div className="text-[11px] text-muted-foreground">
+                    <div className="text-caption text-muted-foreground">
                       Đối tác: {o.partnerAccount.accountName} ({formatVnd(o.breakdown.partnerReceiveVnd)}) ·
                       Synesis: {formatVnd(o.breakdown.platformFeeVnd)}
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-micro font-bold bg-emerald-500/10 text-emerald-600">
                       <CheckCircle2 className="h-3 w-3" />
                       ĐÃ THANH TOÁN
                     </span>
-                    <div className="text-[11px] font-bold text-foreground mt-0.5">
+                    <div className="text-caption font-bold text-foreground mt-0.5">
                       {formatVnd(o.totalAmount)}
                     </div>
                   </div>

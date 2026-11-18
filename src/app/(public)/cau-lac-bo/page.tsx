@@ -166,8 +166,8 @@ export default function ClubsPage() {
         >
           <ChevronLeft className="h-4 w-4" /> Quay lại Hồ sơ
         </Link>
-        <h1 className="text-[24px] font-extrabold tracking-tight text-foreground">CLB của tôi</h1>
-        <p className="text-[13px] text-muted-foreground">Quản lý câu lạc bộ, quỹ, sự kiện, giải đấu và thành viên</p>
+        <h1 className="text-title text-foreground">CLB của tôi</h1>
+        <p className="text-label text-muted-foreground">Quản lý câu lạc bộ, quỹ, sự kiện, giải đấu và thành viên</p>
       </header>
 
       {/* Tab HLV tạm ẩn trong UI chính vì đang ở giai đoạn 1, mã nguồn giữ nguyên bên dưới */}
@@ -185,7 +185,7 @@ export default function ClubsPage() {
               aria-selected={activeTab === t.id}
               onClick={() => setActiveTab(t.id)}
               className={cn(
-                "flex items-center justify-center gap-1.5 rounded-lg py-2.5 text-[13.5px] font-bold transition-colors",
+                "flex items-center justify-center gap-1.5 rounded-lg py-2.5 text-label font-bold transition-colors",
                 activeTab === t.id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -204,41 +204,41 @@ export default function ClubsPage() {
               <div className="flex items-center gap-3">
                 <img src={myClub.avatar} alt={myClub.name} className="w-14 h-14 rounded-2xl object-cover border border-border" />
                 <div className="min-w-0">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-brand dark:text-brand-sky">CLB của bạn</p>
-                  <h2 className="text-[16px] font-extrabold text-foreground flex items-center gap-1.5">
+                  <p className="text-caption font-bold uppercase tracking-wider text-brand dark:text-brand-sky">CLB của bạn</p>
+                  <h2 className="text-base font-extrabold text-foreground flex items-center gap-1.5">
                     {myClub.name} <ShieldCheck className="h-4 w-4 text-foreground" />
                   </h2>
-                  <p className="text-[12px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {myClub.areaName} · {myClub.sportName} · {myClub.myRole}
                   </p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-2 rounded-2xl bg-muted/60 p-2.5 text-center">
                 <div>
-                  <p className="text-[16px] font-extrabold font-display text-foreground">{myClub.memberCount}</p>
-                  <p className="text-[10.5px] text-muted-foreground">Thành viên</p>
+                  <p className="text-base font-extrabold font-display text-foreground">{myClub.memberCount}</p>
+                  <p className="text-caption text-muted-foreground">Thành viên</p>
                 </div>
                 <div>
-                  <p className="text-[16px] font-extrabold font-display text-foreground">{myClub.active30DaysCount}</p>
-                  <p className="text-[10.5px] text-muted-foreground">Hoạt động 30 ngày</p>
+                  <p className="text-base font-extrabold font-display text-foreground">{myClub.active30DaysCount}</p>
+                  <p className="text-caption text-muted-foreground">Hoạt động 30 ngày</p>
                 </div>
                 <div>
-                  <p className="text-[16px] font-extrabold font-display text-brand dark:text-brand-sky">{myClub.checkInRate}</p>
-                  <p className="text-[10.5px] text-muted-foreground">Tỷ lệ check-in</p>
+                  <p className="text-base font-extrabold font-display text-brand dark:text-brand-sky">{myClub.checkInRate}</p>
+                  <p className="text-caption text-muted-foreground">Tỷ lệ check-in</p>
                 </div>
               </div>
-              <p className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground"><CalendarDays className="h-3.5 w-3.5 shrink-0 text-foreground" />Lịch sinh hoạt: {myClub.weeklySchedule}</p>
+              <p className="flex items-center gap-1.5 text-xs text-muted-foreground"><CalendarDays className="h-3.5 w-3.5 shrink-0 text-foreground" />Lịch sinh hoạt: {myClub.weeklySchedule}</p>
               <div className="grid grid-cols-2 gap-2">
                 <Link
                   href="/chat"
-                  className="flex items-center justify-center gap-1.5 rounded-lg border border-border py-2.5 text-[13px] font-bold text-foreground hover:bg-muted"
+                  className="flex items-center justify-center gap-1.5 rounded-lg border border-border bg-card py-2.5 text-label font-bold text-foreground hover:border-brand/40 hover:text-brand transition-colors"
                 >
                   <MessageCircle className="h-4 w-4" /> Chat CLB
                 </Link>
                 {(myClub.myRole === "Owner" || myClub.myRole === "Admin") && (
                   <Link
                     href="/cau-lac-bo/quan-ly"
-                    className="flex items-center justify-center gap-1.5 rounded-lg bg-foreground text-background py-2.5 text-[13px] font-bold hover:opacity-90"
+                    className="btn-electric flex items-center justify-center gap-1.5 rounded-lg py-2.5 text-label font-bold"
                   >
                     <Settings2 className="h-4 w-4" /> Quản lý CLB
                   </Link>
@@ -249,15 +249,15 @@ export default function ClubsPage() {
             {/* Thử thách tháng của CLB */}
             <div className="border-t border-border p-4 space-y-2.5">
               <div className="flex items-center justify-between">
-                <h3 className="text-[14px] font-bold text-foreground flex items-center gap-1.5">
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
                   <Trophy className="h-4 w-4 text-foreground" /> Thử thách tháng 11: 100 km
                 </h3>
-                <Badge className="bg-brand text-white text-[10px] font-bold">Còn 12 ngày</Badge>
+                <Badge className="bg-brand text-white text-micro font-bold">Còn 12 ngày</Badge>
               </div>
               <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-brand to-brand-sky rounded-full" style={{ width: "64%" }} />
               </div>
-              <div className="flex justify-between text-[11.5px] text-muted-foreground">
+              <div className="flex justify-between text-caption text-muted-foreground">
                 <span>Bạn đã chạy 64/100 km</span>
                 <span className="font-bold text-brand dark:text-brand-sky">+0,5 UT khi đúng hẹn</span>
               </div>
@@ -273,12 +273,12 @@ export default function ClubsPage() {
 
             {/* BXH kỷ luật trong CLB */}
             <div className="border-t border-border p-4 space-y-2">
-              <h3 className="text-[14px] font-bold text-foreground">Bảng xếp hạng kỷ luật tuần</h3>
+              <h3 className="text-sm font-bold text-foreground">Bảng xếp hạng kỷ luật tuần</h3>
               {LEADERBOARD.map((item) => (
-                <div key={item.rank} className="flex items-center gap-2.5 text-[12.5px]">
+                <div key={item.rank} className="flex items-center gap-2.5 text-xs">
                   <span
                     className={cn(
-                      "h-6 w-6 shrink-0 rounded-full flex items-center justify-center text-[11px] font-bold",
+                      "h-6 w-6 shrink-0 rounded-full flex items-center justify-center text-caption font-bold",
                       item.rank === 1 ? "bg-brand text-white" : item.rank <= 3 ? "bg-brand-sky text-black" : "bg-muted text-foreground"
                     )}
                   >
@@ -295,20 +295,20 @@ export default function ClubsPage() {
           {/* A2. LỜI MỜI GỬI TỚI BẠN — phải tự Chấp nhận mới vào CLB */}
           {pendingInvites.length > 0 && (
             <section className="space-y-2" aria-label="Lời mời CLB">
-              <h2 className="text-[15px] font-bold text-foreground px-1 flex items-center gap-1.5">
+              <h2 className="text-body font-bold text-foreground px-1 flex items-center gap-1.5">
                 <Mail className="h-4 w-4" /> Lời mời đang chờ bạn
               </h2>
               {pendingInvites.map((inv) => (
                 <div key={inv.id} className="p-3.5 rounded-2xl border border-border bg-card space-y-2.5">
                   <div>
-                    <p className="text-[14px] font-bold text-foreground">{inv.clubName}</p>
-                    {inv.note && <p className="text-[12px] text-muted-foreground">{inv.note}</p>}
+                    <p className="text-sm font-bold text-foreground">{inv.clubName}</p>
+                    {inv.note && <p className="text-xs text-muted-foreground">{inv.note}</p>}
                   </div>
                   <div className="flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => respondMine(inv.id, false)} className="flex-1 rounded-lg h-9 text-[13px] font-bold">
+                    <Button size="sm" variant="outline" onClick={() => respondMine(inv.id, false)} className="flex-1 rounded-lg h-9 text-label font-bold">
                       Từ chối
                     </Button>
-                    <Button size="sm" onClick={() => respondMine(inv.id, true)} className="flex-1 rounded-lg h-9 bg-brand hover:bg-brand-700 text-white text-[13px] font-bold">
+                    <Button size="sm" onClick={() => respondMine(inv.id, true)} className="flex-1 rounded-lg h-9 bg-brand hover:bg-brand-700 text-white text-label font-bold">
                       Chấp nhận
                     </Button>
                   </div>
@@ -319,7 +319,7 @@ export default function ClubsPage() {
 
           {/* B. GIA NHẬP BẰNG MÃ MỜI */}
           <form onSubmit={handleJoinByCode} className="p-4 rounded-3xl bg-muted/60 border border-border space-y-2.5">
-            <div className="flex items-center gap-1.5 text-[13px] font-bold text-foreground">
+            <div className="flex items-center gap-1.5 text-label font-bold text-foreground">
               <Key className="h-4 w-4" /> Gia nhập CLB kín bằng mã mời
             </div>
             <div className="flex gap-2">
@@ -329,18 +329,18 @@ export default function ClubsPage() {
                 aria-label="Mã mời CLB"
                 value={inviteCode}
                 onChange={(e) => setInviteCode(e.target.value)}
-                className="flex-1 rounded-lg border border-border bg-background px-3.5 py-2 text-[13px] text-foreground focus:outline-hidden focus:ring-2 focus:ring-brand/30"
+                className="flex-1 rounded-lg border border-border bg-background px-3.5 py-2 text-label text-foreground focus:outline-hidden focus:ring-2 focus:ring-brand/30"
               />
-              <Button type="submit" disabled={!inviteCode.trim()} className="rounded-lg bg-brand hover:bg-brand-700 text-white font-bold text-[13px] h-9 px-4">
+              <Button type="submit" disabled={!inviteCode.trim()} className="rounded-lg bg-brand hover:bg-brand-700 text-white font-bold text-label h-9 px-4">
                 Gia nhập
               </Button>
             </div>
-            {joinMessage && <p className="text-[12px] font-semibold text-brand dark:text-brand-sky animate-in fade-in">{joinMessage}</p>}
+            {joinMessage && <p className="text-xs font-semibold text-brand dark:text-brand-sky animate-in fade-in">{joinMessage}</p>}
           </form>
 
           {/* C. KHÁM PHÁ CLB */}
           <section className="space-y-2.5" aria-label="Khám phá câu lạc bộ">
-            <h2 className="text-[15px] font-bold text-foreground px-1">Khám phá câu lạc bộ</h2>
+            <h2 className="text-body font-bold text-foreground px-1">Khám phá câu lạc bộ</h2>
             {SAMPLE_CLUBS.filter((c) => c.id !== myClub.id).map((club) => {
               const sent = requested.includes(club.id);
               return (
@@ -348,18 +348,18 @@ export default function ClubsPage() {
                   <div className="flex items-center gap-3">
                     <img src={club.avatar} alt={club.name} className="w-12 h-12 rounded-2xl object-cover border border-border" />
                     <div className="min-w-0">
-                      <h3 className="text-[14px] font-bold text-foreground flex items-center gap-1">
+                      <h3 className="text-sm font-bold text-foreground flex items-center gap-1">
                         {club.name}
                         {club.isVerified && <ShieldCheck className="h-4 w-4 text-foreground" />}
                       </h3>
-                      <p className="text-[12px] text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         {club.areaName} · {club.sportName}
                       </p>
                     </div>
                   </div>
-                  <p className="text-[12.5px] text-muted-foreground leading-relaxed">{club.description}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{club.description}</p>
                   <div className="flex items-center justify-between pt-1 border-t border-border/60">
-                    <span className="text-[12px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       <strong className="text-foreground">{club.memberCount}</strong> thành viên · check-in <strong className="text-foreground">{club.checkInRate}</strong>
                     </span>
                     <Button
@@ -367,7 +367,7 @@ export default function ClubsPage() {
                       variant="outline"
                       disabled={sent}
                       onClick={() => setRequested((r) => [...r, club.id])}
-                      className="rounded-lg text-[12px] h-8 px-3.5 font-bold border-brand/40 text-brand dark:text-brand-sky"
+                      className="rounded-lg text-xs h-8 px-3.5 font-bold border-brand/40 text-brand dark:text-brand-sky"
                     >
                       {sent ? "Đã gửi yêu cầu" : "Xin gia nhập"}
                     </Button>

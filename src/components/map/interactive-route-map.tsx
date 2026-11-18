@@ -13,6 +13,7 @@ import {
   LocateFixed,
   MapPin,
   Milestone,
+  Mountain,
   Navigation,
   Pause,
   Play,
@@ -239,19 +240,19 @@ export function InteractiveRouteMap() {
     baseLayerRef.current =
       baseLayer === "satellite"
         ? [
-            L.tileLayer("https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}&hl=vi", {
-              maxZoom: 20,
-              subdomains: ["mt0", "mt1", "mt2", "mt3"],
-              attribution: "&copy; Google Maps",
-            }),
-          ]
+          L.tileLayer("https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}&hl=vi", {
+            maxZoom: 20,
+            subdomains: ["mt0", "mt1", "mt2", "mt3"],
+            attribution: "&copy; Google Maps",
+          }),
+        ]
         : [
-            L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=vi", {
-              maxZoom: 20,
-              subdomains: ["mt0", "mt1", "mt2", "mt3"],
-              attribution: "&copy; Google Maps",
-            }),
-          ];
+          L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=vi", {
+            maxZoom: 20,
+            subdomains: ["mt0", "mt1", "mt2", "mt3"],
+            attribution: "&copy; Google Maps",
+          }),
+        ];
     baseLayerRef.current.forEach((l) => {
       l.addTo(map);
       (l as Leaflet.TileLayer).bringToBack();
@@ -505,7 +506,7 @@ export function InteractiveRouteMap() {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={isRouteMode ? `${sportMeta?.nameVi ?? ""}: tìm cung đường, quận...` : "Tìm sân, phòng tập, tên đường..."}
               aria-label="Tìm kiếm trên bản đồ"
-              className="w-full h-full bg-transparent pl-9 pr-8 text-[13.5px] text-foreground placeholder:text-muted-foreground outline-none"
+              className="w-full h-full bg-transparent pl-9 pr-8 text-label text-foreground placeholder:text-muted-foreground outline-none"
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery("")} aria-label="Xoá tìm kiếm" className="absolute right-2 p-1 text-muted-foreground">
@@ -517,7 +518,7 @@ export function InteractiveRouteMap() {
             onClick={() => setSavedOnly((v) => !v)}
             aria-pressed={savedOnly}
             className={cn(
-              "flex items-center gap-1 px-3.5 rounded-r-full text-[12.5px] font-bold border-l border-border transition-colors",
+              "flex items-center gap-1 px-3.5 rounded-r-full text-xs font-bold border-l border-border transition-colors",
               savedOnly ? "bg-brand-600 text-white" : "bg-muted/60 text-foreground"
             )}
           >
@@ -530,8 +531,8 @@ export function InteractiveRouteMap() {
         {isSportMenuOpen && (
           <div className="rounded-2xl bg-background/98 backdrop-blur shadow-xl border border-border p-2 space-y-1.5 animate-in fade-in slide-in-from-top-1">
             <div className="flex items-center justify-between px-2 pt-1 pb-0.5">
-              <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Môn Giai đoạn 1</span>
-              <span className="text-[10px] text-brand font-semibold">3 môn chính</span>
+              <span className="text-caption font-bold text-muted-foreground uppercase tracking-wider">Môn Giai đoạn 1</span>
+              <span className="text-micro text-brand font-semibold">3 môn chính</span>
             </div>
             <div className="grid grid-cols-1 gap-1">
               {POPULAR_GROUP_SPORTS.filter((s) => s.key && ["running", "gym", "cycling"].includes(s.key)).map((s) => (
@@ -544,19 +545,19 @@ export function InteractiveRouteMap() {
                     setIsSportMenuOpen(false);
                   }}
                   className={cn(
-                    "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-semibold text-left transition-colors",
+                    "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-label font-semibold text-left transition-colors",
                     selectedSport === s.key ? "bg-brand text-white" : "hover:bg-muted text-foreground"
                   )}
                 >
                   <SportIcon sport={s.key!} className="h-4 w-4" />
                   <span className="flex-1 font-bold">{s.nameVi}</span>
-                  <span className={cn("text-[10.5px] px-2 py-0.5 rounded-full font-medium", selectedSport === s.key ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
+                  <span className={cn("text-caption px-2 py-0.5 rounded-full font-medium", selectedSport === s.key ? "bg-white/20 text-white" : "bg-muted text-muted-foreground")}>
                     {s.requiresVenue ? "Phòng tập & Sân" : "Cung đường mở"}
                   </span>
                 </button>
               ))}
             </div>
-            <p className="text-[10.5px] text-muted-foreground/80 px-2 pb-1 text-center italic">
+            <p className="text-caption text-muted-foreground/80 px-2 pb-1 text-center italic">
               Các môn khác (Pickleball, Cầu lông, Bóng đá...) sẽ được mở ở giai đoạn sau.
             </p>
           </div>
@@ -572,7 +573,7 @@ export function InteractiveRouteMap() {
                   <button
                     onClick={() => setOpenPopover((p) => (p === "route" ? null : "route"))}
                     className={cn(
-                      "shrink-0 h-9 px-3.5 rounded-xl text-[12.5px] font-bold shadow-sm border transition-all flex items-center gap-1.5",
+                      "shrink-0 h-9 px-3.5 rounded-xl text-xs font-bold shadow-sm border transition-all flex items-center gap-1.5",
                       openPopover === "route" || selectedRoute
                         ? "bg-brand-600 border-brand-600 text-white"
                         : "bg-background/95 border-border text-foreground hover:bg-muted"
@@ -587,7 +588,7 @@ export function InteractiveRouteMap() {
                   <button
                     onClick={() => setOpenPopover((p) => (p === "length" ? null : "length"))}
                     className={cn(
-                      "shrink-0 h-9 px-3.5 rounded-xl text-[12.5px] font-bold shadow-sm border transition-all flex items-center gap-1.5",
+                      "shrink-0 h-9 px-3.5 rounded-xl text-xs font-bold shadow-sm border transition-all flex items-center gap-1.5",
                       openPopover === "length" || minDistance !== null || maxDistance !== null
                         ? "bg-brand-600 border-brand-600 text-white"
                         : "bg-background/95 border-border text-foreground hover:bg-muted"
@@ -602,7 +603,7 @@ export function InteractiveRouteMap() {
                   <button
                     onClick={() => setOpenPopover((p) => (p === "difficulty" ? null : "difficulty"))}
                     className={cn(
-                      "shrink-0 h-9 px-3.5 rounded-xl text-[12.5px] font-bold shadow-sm border transition-all flex items-center gap-1.5",
+                      "shrink-0 h-9 px-3.5 rounded-xl text-xs font-bold shadow-sm border transition-all flex items-center gap-1.5",
                       openPopover === "difficulty" || selectedDifficulty !== "Tất cả"
                         ? "bg-brand-600 border-brand-600 text-white"
                         : "bg-background/95 border-border text-foreground hover:bg-muted"
@@ -622,7 +623,7 @@ export function InteractiveRouteMap() {
                         setSelectedDistancePreset("all");
                         setSelectedDifficulty("Tất cả");
                       }}
-                      className="shrink-0 h-9 px-2 rounded-xl text-[11.5px] font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1"
+                      className="shrink-0 h-9 px-2 rounded-xl text-caption font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1"
                       title="Đặt lại bộ lọc"
                     >
                       <RotateCcw className="h-3 w-3" />
@@ -642,11 +643,11 @@ export function InteractiveRouteMap() {
               <div className="absolute top-full left-0 right-0 mt-1.5 z-[800] rounded-2xl bg-background/98 backdrop-blur-md shadow-2xl border border-border p-3 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
                 <div className="flex items-center justify-between border-b border-border/60 pb-2">
                   <div>
-                    <h3 className="text-[13.5px] font-bold text-foreground flex items-center gap-1.5">
+                    <h3 className="text-label font-bold text-foreground flex items-center gap-1.5">
                       <Navigation className="h-4 w-4 text-brand-600" />
                       Chọn Cung Đường & Lộ Trình
                     </h3>
-                    <p className="text-[11px] text-muted-foreground">Bấm để định vị & hiển thị trực tiếp trên bản đồ</p>
+                    <p className="text-caption text-muted-foreground">Bấm để định vị & hiển thị trực tiếp trên bản đồ</p>
                   </div>
                   <button onClick={() => setOpenPopover(null)} className="p-1 text-muted-foreground hover:text-foreground">
                     <X className="h-4 w-4" />
@@ -655,12 +656,12 @@ export function InteractiveRouteMap() {
 
                 {/* Chế độ hiển thị bản đồ */}
                 <div className="flex items-center justify-between bg-muted/50 rounded-xl px-2.5 py-1.5 text-xs">
-                  <span className="text-[11px] font-semibold text-muted-foreground">Bản đồ Google:</span>
+                  <span className="text-caption font-semibold text-muted-foreground">Bản đồ Google:</span>
                   <div className="flex gap-1">
                     <button
                       onClick={() => setBaseLayer("map")}
                       className={cn(
-                        "px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all",
+                        "px-2.5 py-1 rounded-lg font-bold text-caption transition-all",
                         baseLayer === "map" ? "bg-background text-brand font-extrabold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground"
                       )}
                     >
@@ -669,7 +670,7 @@ export function InteractiveRouteMap() {
                     <button
                       onClick={() => setBaseLayer("satellite")}
                       className={cn(
-                        "px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all",
+                        "px-2.5 py-1 rounded-lg font-bold text-caption transition-all",
                         baseLayer === "satellite" ? "bg-background text-brand font-extrabold shadow-xs border border-border" : "text-muted-foreground hover:text-foreground"
                       )}
                     >
@@ -701,21 +702,21 @@ export function InteractiveRouteMap() {
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[12.5px] font-bold text-foreground truncate">{r.name}</span>
+                            <span className="text-xs font-bold text-foreground truncate">{r.name}</span>
                             <span
                               className={cn(
-                                "text-[9.5px] font-bold px-1.5 py-0.2 rounded-md shrink-0",
+                                "text-micro font-bold px-1.5 py-0.2 rounded-md shrink-0",
                                 r.difficulty === "Dễ"
                                   ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400"
                                   : r.difficulty === "Vừa phải"
-                                  ? "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400"
-                                  : "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400"
+                                    ? "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400"
+                                    : "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400"
                               )}
                             >
                               {r.difficulty}
                             </span>
                           </div>
-                          <p className="text-[11px] text-muted-foreground truncate">
+                          <p className="text-caption text-muted-foreground truncate">
                             {r.areaVi} • {r.distanceKm} km • {r.estimatedTime}
                           </p>
                         </div>
@@ -732,11 +733,11 @@ export function InteractiveRouteMap() {
               <div className="absolute top-full left-0 right-0 mt-1.5 z-[800] rounded-2xl bg-background/98 backdrop-blur-md shadow-2xl border border-border p-3.5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-150">
                 <div className="flex items-center justify-between border-b border-border/60 pb-2">
                   <div>
-                    <h3 className="text-[13.5px] font-bold text-foreground flex items-center gap-1.5">
+                    <h3 className="text-label font-bold text-foreground flex items-center gap-1.5">
                       <Milestone className="h-4 w-4 text-brand-600" />
                       Tự Điều Chỉnh Độ Dài Cung Đường
                     </h3>
-                    <p className="text-[11px] text-muted-foreground">Kéo thanh trượt hoặc chọn cự ly mục tiêu của bạn</p>
+                    <p className="text-caption text-muted-foreground">Kéo thanh trượt hoặc chọn cự ly mục tiêu của bạn</p>
                   </div>
                   <button onClick={() => setOpenPopover(null)} className="p-1 text-muted-foreground hover:text-foreground">
                     <X className="h-4 w-4" />
@@ -764,7 +765,7 @@ export function InteractiveRouteMap() {
                     }}
                     className="w-full accent-brand-600 cursor-pointer h-2 bg-neutral-200 dark:bg-neutral-700 rounded-lg"
                   />
-                  <div className="flex justify-between text-[10px] text-muted-foreground">
+                  <div className="flex justify-between text-micro text-muted-foreground">
                     <span>3 km (Khởi động)</span>
                     <span>12 km (10K)</span>
                     <span>30+ km (Long Run)</span>
@@ -773,7 +774,7 @@ export function InteractiveRouteMap() {
 
                 {/* Nút chọn nhanh */}
                 <div className="space-y-1.5">
-                  <p className="text-[11px] font-semibold text-muted-foreground">Mốc cự ly nhanh phổ biến:</p>
+                  <p className="text-caption font-semibold text-muted-foreground">Mốc cự ly nhanh phổ biến:</p>
                   <div className="grid grid-cols-4 gap-1.5">
                     {[
                       { id: "all", label: "Tất cả", min: null, max: null },
@@ -827,11 +828,11 @@ export function InteractiveRouteMap() {
               <div className="absolute top-full left-0 right-0 mt-1.5 z-[800] rounded-2xl bg-background/98 backdrop-blur-md shadow-2xl border border-border p-3.5 space-y-3 animate-in fade-in slide-in-from-top-2 duration-150">
                 <div className="flex items-center justify-between border-b border-border/60 pb-2">
                   <div>
-                    <h3 className="text-[13.5px] font-bold text-foreground flex items-center gap-1.5">
+                    <h3 className="text-label font-bold text-foreground flex items-center gap-1.5">
                       <ShieldCheck className="h-4 w-4 text-brand-600" />
                       Khung Đánh Giá Độ Khó Thực Tế
                     </h3>
-                    <p className="text-[11px] text-muted-foreground">Chuẩn hóa 4 tiêu chí cho runner phong trào & bán chuyên</p>
+                    <p className="text-caption text-muted-foreground">Chuẩn hóa 4 tiêu chí cho runner phong trào & bán chuyên</p>
                   </div>
                   <button onClick={() => setOpenPopover(null)} className="p-1 text-muted-foreground hover:text-foreground">
                     <X className="h-4 w-4" />
@@ -856,22 +857,34 @@ export function InteractiveRouteMap() {
                   ))}
                 </div>
 
-                {/* 4 tiêu chí chuẩn chạy bộ thực tế */}
-                <div className="space-y-1.5 bg-muted/40 p-2.5 rounded-xl border border-border/50 text-[11px]">
+                {/* 4 tiêu chí chuẩn chạy bộ thực tế (Chỉ dùng icon vector đen trắng SVG) */}
+                <div className="space-y-1.5 bg-muted/40 p-2.5 rounded-xl border border-border/50 text-caption">
                   <div className="flex items-start gap-1.5">
-                    <span className="font-bold text-foreground shrink-0 w-20">⛰️ Độ dốc:</span>
+                    <span className="font-bold text-foreground shrink-0 w-24 flex items-center gap-1">
+                      <Mountain className="h-3 w-3 stroke-[2] text-foreground" />
+                      <span>Độ dốc:</span>
+                    </span>
                     <span className="text-muted-foreground">Dễ (&lt;15m) • Vừa phải (15-30m) • Thử thách (&gt;30m dốc cầu)</span>
                   </div>
                   <div className="flex items-start gap-1.5">
-                    <span className="font-bold text-foreground shrink-0 w-20">🛣️ Mặt đường:</span>
+                    <span className="font-bold text-foreground shrink-0 w-24 flex items-center gap-1">
+                      <Milestone className="h-3 w-3 stroke-[2] text-foreground" />
+                      <span>Mặt đường:</span>
+                    </span>
                     <span className="text-muted-foreground">Đá công viên phẳng / Nhựa mịn ven sông (êm chân, bảo vệ gối)</span>
                   </div>
                   <div className="flex items-start gap-1.5">
-                    <span className="font-bold text-foreground shrink-0 w-20">🛡️ An toàn:</span>
+                    <span className="font-bold text-foreground shrink-0 w-24 flex items-center gap-1">
+                      <ShieldCheck className="h-3 w-3 stroke-[2] text-foreground" />
+                      <span>An toàn:</span>
+                    </span>
                     <span className="text-muted-foreground">Không xe máy, đèn chiếu sáng ban đêm, vòi nước công cộng & SOS</span>
                   </div>
                   <div className="flex items-start gap-1.5">
-                    <span className="font-bold text-foreground shrink-0 w-20">⭐ Đánh giá:</span>
+                    <span className="font-bold text-foreground shrink-0 w-24 flex items-center gap-1">
+                      <Star className="h-3 w-3 stroke-[2] text-foreground" />
+                      <span>Đánh giá:</span>
+                    </span>
                     <span className="text-muted-foreground">4.7★ – 4.9★ vote từ cộng đồng runner phong trào</span>
                   </div>
                 </div>
@@ -897,7 +910,7 @@ export function InteractiveRouteMap() {
 
         {/* Trạng thái chia sẻ */}
         {isLive && (
-          <div className="inline-flex items-center gap-2 rounded-lg bg-brand-600 text-white px-3.5 py-1.5 text-[12px] font-bold shadow-lg">
+          <div className="inline-flex items-center gap-2 rounded-lg bg-brand-600 text-white px-3.5 py-1.5 text-xs font-bold shadow-lg">
             <Radio className="h-3.5 w-3.5 animate-pulse" />
             Đang chia sẻ vị trí · {live.nearby.length} người tập gần bạn
           </div>
@@ -927,7 +940,7 @@ export function InteractiveRouteMap() {
         )}
       </div>
 
-      <p className="absolute left-2 bottom-[70px] z-[500] text-[9px] text-neutral-600 dark:text-neutral-300 bg-white/60 dark:bg-black/40 px-1 rounded">
+      <p className="absolute left-2 bottom-[70px] z-[500] text-micro text-neutral-600 dark:text-neutral-300 bg-white/60 dark:bg-black/40 px-1 rounded">
         {baseLayer === "satellite" ? "© Google Vệ tinh" : "© Google Maps"}
       </p>
 
@@ -956,37 +969,37 @@ export function InteractiveRouteMap() {
               <h2 className="text-[17px] font-bold text-foreground">
                 {isRouteMode ? `Cung đường ${sportMeta?.nameVi.toLowerCase()}` : "Sân bãi & phòng tập"}
               </h2>
-              <span className="text-[12px] text-muted-foreground">{itemCount} kết quả</span>
+              <span className="text-xs text-muted-foreground">{itemCount} kết quả</span>
             </div>
             <div className="overflow-y-auto px-3 pb-4 space-y-2.5">
               {isRouteMode
                 ? routes.map((r) => (
-                    <RouteDetailCard
-                      key={r.id}
-                      route={r}
-                      selected={r.id === selectedId}
-                      saved={savedIds.includes(r.id)}
-                      onSelect={() => setSelectedId(r.id)}
-                      onToggleSave={() => toggleSaved(r.id)}
-                      onStartLive={() => setCheckInSpot(spotFromRoute(r))}
-                      simulator={
-                        r.id === selectedId
-                          ? { isPlaying, progress: runnerProgress, onToggle: () => setIsPlaying((p) => !p), onReset: resetSimulator }
-                          : null
-                      }
-                    />
-                  ))
+                  <RouteDetailCard
+                    key={r.id}
+                    route={r}
+                    selected={r.id === selectedId}
+                    saved={savedIds.includes(r.id)}
+                    onSelect={() => setSelectedId(r.id)}
+                    onToggleSave={() => toggleSaved(r.id)}
+                    onStartLive={() => setCheckInSpot(spotFromRoute(r))}
+                    simulator={
+                      r.id === selectedId
+                        ? { isPlaying, progress: runnerProgress, onToggle: () => setIsPlaying((p) => !p), onReset: resetSimulator }
+                        : null
+                    }
+                  />
+                ))
                 : venues.map((v) => (
-                    <VenueDetailCard
-                      key={v.id}
-                      venue={v}
-                      selected={v.id === selectedId}
-                      saved={savedIds.includes(v.id)}
-                      onSelect={() => setSelectedId(v.id)}
-                      onToggleSave={() => toggleSaved(v.id)}
-                      onStartLive={() => setCheckInSpot(spotFromVenue(v))}
-                    />
-                  ))}
+                  <VenueDetailCard
+                    key={v.id}
+                    venue={v}
+                    selected={v.id === selectedId}
+                    saved={savedIds.includes(v.id)}
+                    onSelect={() => setSelectedId(v.id)}
+                    onToggleSave={() => toggleSaved(v.id)}
+                    onStartLive={() => setCheckInSpot(spotFromVenue(v))}
+                  />
+                ))}
               {itemCount === 0 && <EmptyResult />}
               <SafetyNote />
             </div>
@@ -996,47 +1009,47 @@ export function InteractiveRouteMap() {
             <div ref={carouselRef} className="flex gap-2.5 overflow-x-auto snap-x snap-mandatory no-scrollbar px-3 pb-2">
               {isRouteMode
                 ? routes.map((r) => (
-                    <PeekCard
-                      key={r.id}
-                      id={r.id}
-                      selected={r.id === selectedId}
-                      saved={savedIds.includes(r.id)}
-                      onSelect={() => setSelectedId(r.id)}
-                      onToggleSave={() => toggleSaved(r.id)}
-                      onStartLive={() => setCheckInSpot(spotFromRoute(r))}
-                      thumb={<ElevationSpark points={r.elevationPoints} className="w-full h-full" />}
-                      title={r.name}
-                      badge={r.difficulty}
-                      rating={r.rating}
-                      reviewCount={r.reviewCount}
-                      meta={`${r.distanceKm} km · +${r.elevationGainM} m · ${r.estimatedTime}`}
-                      sub={`${r.district} · An toàn ${r.safetyScore}%`}
-                    />
-                  ))
+                  <PeekCard
+                    key={r.id}
+                    id={r.id}
+                    selected={r.id === selectedId}
+                    saved={savedIds.includes(r.id)}
+                    onSelect={() => setSelectedId(r.id)}
+                    onToggleSave={() => toggleSaved(r.id)}
+                    onStartLive={() => setCheckInSpot(spotFromRoute(r))}
+                    thumb={<ElevationSpark points={r.elevationPoints} className="w-full h-full" />}
+                    title={r.name}
+                    badge={r.difficulty}
+                    rating={r.rating}
+                    reviewCount={r.reviewCount}
+                    meta={`${r.distanceKm} km · +${r.elevationGainM} m · ${r.estimatedTime}`}
+                    sub={`${r.district} · An toàn ${r.safetyScore}%`}
+                  />
+                ))
                 : venues.map((v) => (
-                    <PeekCard
-                      key={v.id}
-                      id={v.id}
-                      selected={v.id === selectedId}
-                      saved={savedIds.includes(v.id)}
-                      onSelect={() => setSelectedId(v.id)}
-                      onToggleSave={() => toggleSaved(v.id)}
-                      onStartLive={() => setCheckInSpot(spotFromVenue(v))}
-                      thumb={
-                        <div className="w-full h-full flex flex-col items-center justify-center bg-brand-50 dark:bg-brand-950/40">
-                          <SportIcon sport={v.sport} className="h-6 w-6 text-foreground" />
-                          <span className="text-[11px] font-black text-brand-700 flex items-center gap-0.5">
-                            <Star className="h-3 w-3 fill-current" />
-                            {v.rating.toFixed(1)}
-                          </span>
-                        </div>
-                      }
-                      title={v.name}
-                      badge={v.district}
-                      meta={`${v.priceRange} · ${v.openHours}`}
-                      sub={v.address}
-                    />
-                  ))}
+                  <PeekCard
+                    key={v.id}
+                    id={v.id}
+                    selected={v.id === selectedId}
+                    saved={savedIds.includes(v.id)}
+                    onSelect={() => setSelectedId(v.id)}
+                    onToggleSave={() => toggleSaved(v.id)}
+                    onStartLive={() => setCheckInSpot(spotFromVenue(v))}
+                    thumb={
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-brand-50 dark:bg-brand-950/40">
+                        <SportIcon sport={v.sport} className="h-6 w-6 text-foreground" />
+                        <span className="text-caption font-black text-brand-700 flex items-center gap-0.5">
+                          <Star className="h-3 w-3 fill-current" />
+                          {v.rating.toFixed(1)}
+                        </span>
+                      </div>
+                    }
+                    title={v.name}
+                    badge={v.district}
+                    meta={`${v.priceRange} · ${v.openHours}`}
+                    sub={v.address}
+                  />
+                ))}
               {itemCount === 0 && (
                 <div className="w-full rounded-3xl bg-background shadow-xl p-4">
                   <EmptyResult />
@@ -1050,7 +1063,7 @@ export function InteractiveRouteMap() {
                 aria-label="Mở rộng danh sách"
               >
                 <span className="h-1.5 w-10 rounded-full bg-neutral-300 dark:bg-neutral-600" />
-                <span className="text-[13px] font-bold text-foreground">
+                <span className="text-label font-bold text-foreground">
                   {itemCount} {isRouteMode ? "cung đường" : "địa điểm"} · Xem danh sách
                 </span>
               </button>
@@ -1092,7 +1105,7 @@ function FilterChip({
     <button
       onClick={onClick}
       className={cn(
-        "shrink-0 h-9 px-4 rounded-lg text-[13px] font-semibold shadow-sm border transition-colors flex items-center gap-1",
+        "shrink-0 h-9 px-4 rounded-lg text-label font-semibold shadow-sm border transition-colors flex items-center gap-1",
         active ? "bg-brand-600 border-brand-600 text-white" : "bg-background/95 border-border text-foreground"
       )}
     >
@@ -1137,7 +1150,7 @@ function StartLiveButton({ onClick, compact }: { onClick: () => void; compact?: 
       }}
       className={cn(
         "rounded-full bg-brand-600 hover:bg-brand-700 text-white font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all",
-        compact ? "h-8 px-3 text-[12px]" : "h-9 px-4 text-[13px] flex-1"
+        compact ? "h-8 px-3 text-xs" : "h-9 px-4 text-label flex-1"
       )}
     >
       <Radio className="h-3.5 w-3.5" />
@@ -1157,7 +1170,7 @@ function SaveButton({ saved, onClick }: { saved: boolean; onClick: () => void })
       aria-pressed={saved}
       className="h-8 w-8 shrink-0 rounded-full bg-muted flex items-center justify-center"
     >
-      <Bookmark className={cn("h-4 w-4", saved ?"fill-foreground text-foreground" :"text-foreground")} />
+      <Bookmark className={cn("h-4 w-4", saved ? "fill-foreground text-foreground" : "text-foreground")} />
     </button>
   );
 }
@@ -1189,24 +1202,24 @@ function PeekCard(props: {
       <div className="w-[74px] shrink-0 bg-muted/50 p-2 flex items-end justify-center">{props.thumb}</div>
       <div className="flex-1 min-w-0 p-3 space-y-1.5">
         <div className="flex items-start gap-2 justify-between">
-          <h3 className="flex-1 text-[14px] font-bold text-foreground leading-snug line-clamp-1">{props.title}</h3>
+          <h3 className="flex-1 text-sm font-bold text-foreground leading-snug line-clamp-1">{props.title}</h3>
           <SaveButton saved={props.saved} onClick={props.onToggleSave} />
         </div>
-        <div className="flex items-center gap-2 text-[11.5px] text-muted-foreground">
+        <div className="flex items-center gap-2 text-caption text-muted-foreground">
           <span
             className={cn(
-              "shrink-0 rounded-md px-1.5 py-0.5 text-[10.5px] font-bold",
+              "shrink-0 rounded-md px-1.5 py-0.5 text-caption font-bold",
               props.badge === "Dễ"
                 ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400"
                 : props.badge === "Vừa phải"
-                ? "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400"
-                : "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400"
+                  ? "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400"
+                  : "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400"
             )}
           >
             {props.badge}
           </span>
           {props.rating && (
-            <span className="flex items-center gap-0.5 font-bold text-foreground text-[11px]">
+            <span className="flex items-center gap-0.5 font-bold text-foreground text-caption">
               <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
               {props.rating.toFixed(1)}
             </span>
@@ -1214,9 +1227,9 @@ function PeekCard(props: {
           <span className="truncate">{props.meta}</span>
         </div>
         <div className="flex items-center justify-between gap-2 pt-0.5">
-          <p className="flex-1 min-w-0 text-[11.5px] text-muted-foreground truncate flex items-center gap-1">
+          <p className="flex-1 min-w-0 text-caption text-muted-foreground flex items-center gap-1">
             <MapPin className="h-3 w-3 shrink-0" />
-            {props.sub}
+            <span className="truncate">{props.sub}</span>
           </p>
           <StartLiveButton onClick={props.onStartLive} compact />
         </div>
@@ -1252,12 +1265,12 @@ function RouteDetailCard({
     >
       <div className="flex items-start gap-2">
         <div className="flex-1 min-w-0">
-          <h3 className="text-[14.5px] font-bold text-foreground leading-snug">{route.name}</h3>
-          <p className="flex items-center gap-1 text-[11.5px] text-muted-foreground"><MapPin className="h-3 w-3 shrink-0 text-foreground" />{route.areaVi} ({route.district})</p>
+          <h3 className="text-sm font-bold text-foreground leading-snug">{route.name}</h3>
+          <p className="flex items-center gap-1 text-caption text-muted-foreground"><MapPin className="h-3 w-3 shrink-0 text-foreground" />{route.areaVi} ({route.district})</p>
         </div>
         <SaveButton saved={saved} onClick={onToggleSave} />
       </div>
-      <p className="text-[12px] text-muted-foreground leading-relaxed">{route.subtitle}</p>
+      <p className="text-xs text-muted-foreground leading-relaxed">{route.subtitle}</p>
       <ElevationSpark points={route.elevationPoints} className="w-full h-8" />
       <div className="grid grid-cols-4 gap-1.5 text-center">
         {[
@@ -1267,14 +1280,14 @@ function RouteDetailCard({
           ["Đánh giá", `${route.rating ?? 4.8}★ (${route.reviewCount ?? 120})`],
         ].map(([k, v]) => (
           <div key={k} className="rounded-xl bg-muted/60 py-1.5 px-1">
-            <p className="text-[9.5px] text-muted-foreground">{k}</p>
-            <p className="text-[11.5px] font-bold text-foreground truncate">{v}</p>
+            <p className="text-micro text-muted-foreground">{k}</p>
+            <p className="text-caption font-bold text-foreground truncate">{v}</p>
           </div>
         ))}
       </div>
       {/* Khung đánh giá độ khó thực tế theo 4 tiêu chí */}
-      <div className="rounded-2xl bg-muted/40 p-2.5 border border-border/60 text-[11px] space-y-1">
-        <p className="font-bold text-foreground text-[11.5px] flex items-center gap-1">
+      <div className="rounded-2xl bg-muted/40 p-2.5 border border-border/60 text-caption space-y-1">
+        <p className="font-bold text-foreground text-caption flex items-center gap-1">
           <ShieldCheck className="h-3.5 w-3.5 text-brand-600" /> Khung đánh giá độ khó thực tế:
         </p>
         <p className="text-muted-foreground">
@@ -1286,18 +1299,18 @@ function RouteDetailCard({
       </div>
       <div className="flex flex-wrap gap-1">
         {route.highlights.map((h) => (
-          <span key={h} className="px-2 py-0.5 rounded-lg bg-muted/60 text-[10.5px] text-muted-foreground">
+          <span key={h} className="px-2 py-0.5 rounded-lg bg-muted/60 text-caption text-muted-foreground">
             {h}
           </span>
         ))}
       </div>
-      <div className="flex items-center justify-between text-[11px] text-muted-foreground border-t border-border/60 pt-2">
+      <div className="flex items-center justify-between text-caption text-muted-foreground border-t border-border/60 pt-2">
         <span className="flex items-center gap-1">
           <ShieldCheck className="h-3.5 w-3.5 text-foreground" />
           An toàn {route.safetyScore}% · {route.waterStations} trạm nước · {route.surface}
         </span>
       </div>
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-caption text-muted-foreground">
         Kỷ lục: <b className="text-foreground">{route.bestRecord.holder}</b> ({route.bestRecord.time})
       </p>
 
@@ -1314,8 +1327,8 @@ function RouteDetailCard({
             <RotateCcw className="h-3.5 w-3.5" />
           </button>
           <div className="flex-1">
-            <p className="text-[10px] text-brand-200 font-bold">Mô phỏng GPS cung đường</p>
-            <p className="text-[12px] font-mono font-bold">
+            <p className="text-micro text-brand-200 font-bold">Mô phỏng GPS cung đường</p>
+            <p className="text-xs font-numeric font-bold">
               {((simulator.progress / (route.coordinates.length || 1)) * route.distanceKm).toFixed(1)} / {route.distanceKm} km
             </p>
           </div>
@@ -1326,7 +1339,7 @@ function RouteDetailCard({
         <StartLiveButton onClick={onStartLive} />
         <Link
           href="/len-keo"
-          className="flex-1 h-9 rounded-lg bg-brand hover:bg-brand-700 text-white text-[13px] font-bold flex items-center justify-center gap-1"
+          className="flex-1 h-9 rounded-lg bg-brand hover:bg-brand-700 text-white text-label font-bold flex items-center justify-center gap-1"
         >
           <Zap className="h-3.5 w-3.5" /> Lên kèo
         </Link>
@@ -1360,30 +1373,30 @@ function VenueDetailCard({
     >
       <div className="flex items-start gap-2">
         <div className="flex-1 min-w-0">
-          <h3 className="text-[14.5px] font-bold text-foreground leading-snug">{venue.name}</h3>
-          <p className="text-[11.5px] text-muted-foreground flex items-center gap-1">
+          <h3 className="text-sm font-bold text-foreground leading-snug">{venue.name}</h3>
+          <p className="text-caption text-muted-foreground flex items-center gap-1">
             <MapPin className="h-3 w-3 shrink-0" />
             <span className="truncate">{venue.address}</span>
           </p>
         </div>
         <div className="flex flex-col items-end shrink-0">
-          <span className="flex items-center gap-0.5 rounded-lg bg-brand-600 text-white px-2 py-0.5 text-[12px] font-bold">
+          <span className="flex items-center gap-0.5 rounded-lg bg-brand-600 text-white px-2 py-0.5 text-xs font-bold">
             <Star className="h-3 w-3 fill-current" />
             {venue.rating.toFixed(1)}
           </span>
-          <span className="text-[10px] text-muted-foreground">({venue.reviewCount} đánh giá)</span>
+          <span className="text-micro text-muted-foreground">({venue.reviewCount} đánh giá)</span>
         </div>
         <SaveButton saved={saved} onClick={onToggleSave} />
       </div>
-      <p className="text-[12px] text-muted-foreground leading-relaxed">{venue.highlights}</p>
+      <p className="text-xs text-muted-foreground leading-relaxed">{venue.highlights}</p>
       <div className="grid grid-cols-2 gap-1.5 rounded-2xl bg-muted/60 p-2">
         <div>
-          <p className="text-[9.5px] text-muted-foreground">Mức giá tham khảo</p>
-          <p className="text-[12px] font-bold text-foreground">{venue.priceRange}</p>
+          <p className="text-micro text-muted-foreground">Mức giá tham khảo</p>
+          <p className="text-xs font-bold text-foreground">{venue.priceRange}</p>
         </div>
         <div>
-          <p className="text-[9.5px] text-muted-foreground">Giờ hoạt động</p>
-          <p className="text-[12px] font-semibold text-foreground flex items-center gap-1">
+          <p className="text-micro text-muted-foreground">Giờ hoạt động</p>
+          <p className="text-xs font-semibold text-foreground flex items-center gap-1">
             <Clock className="h-3 w-3" />
             {venue.openHours}
           </p>
@@ -1391,7 +1404,7 @@ function VenueDetailCard({
       </div>
       <div className="flex flex-wrap gap-1">
         {venue.amenities.map((a) => (
-          <span key={a} className="px-2 py-0.5 rounded-lg bg-muted/60 text-[10.5px] text-muted-foreground">
+          <span key={a} className="px-2 py-0.5 rounded-lg bg-muted/60 text-caption text-muted-foreground">
             {a}
           </span>
         ))}
@@ -1402,7 +1415,7 @@ function VenueDetailCard({
           href={venue.googleMapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="h-9 px-3 rounded-lg border border-border text-foreground text-[12px] font-bold flex items-center gap-1 hover:bg-muted"
+          className="h-9 px-3 rounded-lg border border-border text-foreground text-xs font-bold flex items-center gap-1 hover:bg-muted"
         >
           <ExternalLink className="h-3.5 w-3.5" /> Chỉ đường
         </a>
@@ -1420,7 +1433,7 @@ function VenueDetailCard({
 
 function EmptyResult() {
   return (
-    <p className="text-center text-[13px] text-muted-foreground py-3">
+    <p className="text-center text-label text-muted-foreground py-3">
       Không có kết quả phù hợp. Thử đổi bộ lọc hoặc từ khoá.
     </p>
   );
@@ -1428,7 +1441,7 @@ function EmptyResult() {
 
 function SafetyNote() {
   return (
-    <div className="rounded-2xl bg-muted/50 p-3 text-[11.5px] text-muted-foreground space-y-1">
+    <div className="rounded-2xl bg-muted/50 p-3 text-caption text-muted-foreground space-y-1">
       <p className="font-bold text-foreground flex items-center gap-1.5">
         <ShieldCheck className="h-4 w-4" /> Tiêu chuẩn cung đường an toàn
       </p>

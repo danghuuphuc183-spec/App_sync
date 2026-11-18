@@ -69,7 +69,7 @@ export function AiHelpAssistant({ open, onClose }: { open: boolean; onClose: () 
             </div>
             <div>
               <p className="text-sm font-bold text-foreground leading-tight">Trợ lý SYNC</p>
-              <p className="text-[11px] text-emerald-600 font-medium leading-tight">Hỗ trợ sử dụng app</p>
+              <p className="text-caption text-emerald-600 font-medium leading-tight">Hỗ trợ sử dụng app</p>
             </div>
           </div>
           <button
@@ -86,7 +86,7 @@ export function AiHelpAssistant({ open, onClose }: { open: boolean; onClose: () 
             <div key={m.id} className={cn("flex", m.from === "user" ? "justify-end" : "justify-start")}>
               <div
                 className={cn(
-                  "max-w-[82%] rounded-2xl px-3 py-2 text-[13px] leading-relaxed",
+                  "max-w-[82%] rounded-2xl px-3 py-2 text-label leading-relaxed",
                   m.from === "user"
                     ? "bg-brand text-white rounded-br-md"
                     : "bg-muted text-foreground rounded-bl-md"
@@ -97,7 +97,7 @@ export function AiHelpAssistant({ open, onClose }: { open: boolean; onClose: () 
                   <Link
                     href={m.link.href}
                     onClick={onClose}
-                    className="mt-1.5 inline-block text-[12px] font-bold text-brand dark:text-brand-sky hover:underline"
+                    className="mt-1.5 inline-block text-xs font-bold text-brand dark:text-brand-sky hover:underline"
                   >
                     {m.link.label} →
                   </Link>
@@ -112,7 +112,7 @@ export function AiHelpAssistant({ open, onClose }: { open: boolean; onClose: () 
             <button
               key={s}
               onClick={() => ask(s)}
-              className="shrink-0 rounded-lg border border-border px-3 py-1 text-[11px] font-medium text-foreground hover:bg-muted"
+              className="shrink-0 rounded-lg border border-border px-3 py-1 text-caption font-medium text-foreground hover:bg-muted"
             >
               {s}
             </button>
@@ -131,7 +131,7 @@ export function AiHelpAssistant({ open, onClose }: { open: boolean; onClose: () 
             onChange={(e) => setInput(e.target.value)}
             placeholder="Hỏi cách sử dụng app..."
             aria-label="Câu hỏi cho trợ lý"
-            className="flex-1 rounded-lg bg-muted px-4 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-brand/30"
+            className="flex-1 rounded-lg bg-muted px-4 py-2.5 text-label outline-none focus:ring-2 focus:ring-brand/30"
           />
           <button
             type="submit"

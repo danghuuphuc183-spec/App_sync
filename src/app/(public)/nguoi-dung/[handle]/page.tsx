@@ -135,18 +135,18 @@ function ProfileView({ handle }: { handle: string }) {
             {person.name}
             {person.verified && <BadgeCheck className="h-5 w-5 text-background fill-foreground" aria-label="Đã xác minh" />}
           </h1>
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-label text-muted-foreground">
             @{person.handle}
             {isClub && " · Câu lạc bộ"}
             {person.kind === "brand" && " · Nhãn hàng"}
           </p>
-          <p className="mt-2 text-[14px] text-foreground leading-relaxed">{person.bio}</p>
-          <p className="mt-1.5 text-[12.5px] text-muted-foreground flex items-center gap-1">
+          <p className="mt-2 text-sm text-foreground leading-relaxed">{person.bio}</p>
+          <p className="mt-1.5 text-xs text-muted-foreground flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5" /> {person.area}
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {person.sports.map((s) => (
-              <span key={s} className="rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-2.5 py-0.5 text-[11.5px] font-semibold">
+              <span key={s} className="rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-2.5 py-0.5 text-caption font-semibold">
                 {SPORT_LABEL[s] ?? s}
               </span>
             ))}
@@ -162,8 +162,8 @@ function ProfileView({ handle }: { handle: string }) {
             isClub ? ["Thành viên", formatCount(person.stats.members ?? 0)] : ["km/tuần", person.stats.weeklyKm ?? "—"],
           ].map(([k, v]) => (
             <div key={String(k)} className="py-2.5 text-center">
-              <p className="text-[16px] font-extrabold font-display text-foreground">{v}</p>
-              <p className="text-[10.5px] text-muted-foreground">{k}</p>
+              <p className="text-base font-extrabold font-display text-foreground">{v}</p>
+              <p className="text-caption text-muted-foreground">{k}</p>
             </div>
           ))}
         </div>
@@ -175,7 +175,7 @@ function ProfileView({ handle }: { handle: string }) {
               <button
                 onClick={onFriendClick}
                 className={cn(
-                  "flex-1 h-10 rounded-xl text-[13.5px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98]",
+                  "flex-1 h-10 rounded-xl text-label font-bold flex items-center justify-center gap-1.5 active:scale-[0.98]",
                   friendStatus === "none" ? "bg-brand hover:bg-brand-700 text-white" : "bg-muted text-foreground"
                 )}
               >
@@ -186,7 +186,7 @@ function ProfileView({ handle }: { handle: string }) {
               </button>
               <button
                 onClick={() => setInviteOpen(true)}
-                className="flex-1 h-10 rounded-xl border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky text-[13.5px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                className="flex-1 h-10 rounded-xl border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky text-label font-bold flex items-center justify-center gap-1.5 active:scale-[0.98]"
               >
                 <CalendarPlus className="h-4 w-4" /> Hẹn đi tập
               </button>
@@ -198,7 +198,7 @@ function ProfileView({ handle }: { handle: string }) {
                 toast.show(isFollowing ? "Đã rời / bỏ theo dõi" : isClub ? `Đã tham gia ${person.name}` : `Đang theo dõi ${person.name}`);
               }}
               className={cn(
-                "flex-1 h-10 rounded-xl text-[13.5px] font-bold flex items-center justify-center gap-1.5",
+                "flex-1 h-10 rounded-xl text-label font-bold flex items-center justify-center gap-1.5",
                 isFollowing ? "bg-muted text-foreground" : "bg-brand hover:bg-brand-700 text-white"
               )}
             >
@@ -217,14 +217,14 @@ function ProfileView({ handle }: { handle: string }) {
               prefs.toggleFollow(person.id);
               toast.show(isFollowing ? `Đã bỏ theo dõi ${person.name}` : `Đang theo dõi ${person.name}`);
             }}
-            className="mt-2 w-full text-[12.5px] font-semibold text-muted-foreground"
+            className="mt-2 w-full text-xs font-semibold text-muted-foreground"
           >
             {isFollowing ? "✓ Đang theo dõi · bấm để bỏ theo dõi" : "+ Theo dõi để xem bài viết trên bảng tin"}
           </button>
         )}
 
         {isHidden && (
-          <div className="mt-3 rounded-xl bg-muted p-3 flex items-center gap-3 text-[12.5px]">
+          <div className="mt-3 rounded-xl bg-muted p-3 flex items-center gap-3 text-xs">
             <EyeOff className="h-4 w-4 shrink-0" />
             <span className="flex-1">Bạn đã ẩn bài viết của {person.name} khỏi bảng tin.</span>
             <button onClick={() => prefs.unhideAuthor(person.id)} className="font-bold text-brand dark:text-brand-sky">
@@ -240,7 +240,7 @@ function ProfileView({ handle }: { handle: string }) {
           <Grid3x3 className="h-5 w-5" aria-label="Bài viết" />
         </div>
         {posts.length === 0 ? (
-          <p className="py-12 text-center text-[13px] text-muted-foreground">Chưa có bài viết nào.</p>
+          <p className="py-12 text-center text-label text-muted-foreground">Chưa có bài viết nào.</p>
         ) : (
           <div className="grid grid-cols-3 gap-0.5">
             {posts.map((p) => {
@@ -354,7 +354,7 @@ function ProfileView({ handle }: { handle: string }) {
                   o.onClick();
                   setMenuOpen(false);
                 }}
-                className={cn("w-full flex items-center gap-3.5 px-4 py-3 text-left hover:bg-muted text-[14px] font-semibold", o.danger && "text-red-600")}
+                className={cn("w-full flex items-center gap-3.5 px-4 py-3 text-left hover:bg-muted text-sm font-semibold", o.danger && "text-red-600")}
               >
                 <span className="h-9 w-9 rounded-full bg-muted flex items-center justify-center">{o.icon}</span>
                 {o.label}

@@ -179,7 +179,7 @@ export default function BountyBoardPage() {
               <Plus className="mr-1.5 h-4 w-4" />
               <span>Tạo kèo mới</span>
             </Button>
-            <span className="text-[11px] text-muted-foreground">{quota.reasonVi}</span>
+            <span className="text-caption text-muted-foreground">{quota.reasonVi}</span>
           </div>
         }
       />
@@ -274,7 +274,7 @@ export default function BountyBoardPage() {
                       {bounty.sportName}
                     </Badge>
                     {bounty.isGhostMode && (
-                      <Badge variant="secondary" className="flex items-center gap-1 text-[11px]">
+                      <Badge variant="secondary" className="flex items-center gap-1 text-caption">
                         <Ghost className="h-3 w-3" />
                         <span>Ghost Mode</span>
                       </Badge>
@@ -305,7 +305,7 @@ export default function BountyBoardPage() {
               </CardContent>
 
               <CardFooter className="pt-0 border-t border-border/60 mt-2 flex items-center justify-between">
-                <span className="text-[11px] text-muted-foreground">
+                <span className="text-caption text-muted-foreground">
                   Đúng hẹn +{formatUt(UT_CONFIG.RECOVERY.ON_TIME)} UT
                 </span>
                 <Button size="sm" onClick={() => handleAcceptBounty(bounty)}>

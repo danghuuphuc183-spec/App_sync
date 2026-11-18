@@ -123,7 +123,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col w-full h-[calc(100vh-112px)] max-w-md mx-auto bg-background">
+    <div className="flex flex-col w-full h-dvh -mb-20 max-w-md mx-auto bg-background">
       {/* 1. TOP HEADER INSTAGRAM CHAT */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-200 dark:border-neutral-800 bg-background/95">
         <div className="flex items-center gap-2">
@@ -135,14 +135,14 @@ export default function ChatPage() {
           </Link>
           <div>
             <h2 className="text-sm font-black text-foreground">Tin Nhắn Đồng Đội</h2>
-            <p className="text-[10px] text-muted-foreground">Instagram Direct Thể Thao</p>
+            <p className="text-micro text-muted-foreground">Instagram Direct Thể Thao</p>
           </div>
         </div>
 
         <div className="flex items-center gap-1.5">
           <Link
             href="/len-keo"
-            className="px-2.5 py-1 rounded-lg bg-brand text-white text-[11px] font-bold flex items-center gap-1 hover:bg-brand-700"
+            className="px-2.5 py-1 rounded-lg bg-brand text-white text-caption font-bold flex items-center gap-1 hover:bg-brand-700"
           >
             <Plus className="h-3 w-3 stroke-[2]" />
             <span>Tìm Bạn Mới</span>
@@ -182,7 +182,7 @@ export default function ChatPage() {
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] font-semibold max-w-[64px] truncate text-center",
+                    "text-micro font-semibold max-w-[64px] truncate text-center",
                     isSelected ? "text-foreground font-bold" : "text-muted-foreground"
                   )}
                 >
@@ -208,11 +208,11 @@ export default function ChatPage() {
             <div>
               <div className="font-bold text-foreground flex items-center gap-1.5">
                 <span>{activeConv.partner.name}</span>
-                <span className="text-[10px] text-muted-foreground font-mono">
+                <span className="text-micro text-muted-foreground font-mono">
                   {formatUt(activeConv.partner.trustScore)} UT
                 </span>
               </div>
-              <p className="text-[10px] text-muted-foreground">{activeConv.partner.sportVi}</p>
+              <p className="text-micro text-muted-foreground">{activeConv.partner.sportVi}</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -277,23 +277,23 @@ export default function ChatPage() {
                       className="w-full h-24 object-cover rounded-lg"
                     />
                   )}
-                  <div className="space-y-0.5 text-[11px]">
+                  <div className="space-y-0.5 text-caption">
                     <div className="font-semibold text-foreground flex items-center gap-1">
                       <MapPin className="h-3 w-3 text-neutral-500" />
                       <span>{msg.attachment.subTitle}</span>
                     </div>
-                    <p className="text-muted-foreground text-[10px] pl-4">{msg.attachment.detail}</p>
+                    <p className="text-muted-foreground text-micro pl-4">{msg.attachment.detail}</p>
                   </div>
 
                   <div className="flex items-center justify-between pt-1 border-t border-neutral-100 dark:border-neutral-800">
-                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                    <span className="text-micro font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                       <CheckCircle2 className="h-3 w-3 stroke-[2]" />
                       Đã chốt kèo
                     </span>
                     {msg.attachment.actionHref && (
                       <Link
                         href={msg.attachment.actionHref}
-                        className="text-[10px] font-bold text-brand dark:text-brand-sky hover:underline flex items-center gap-0.5"
+                        className="text-micro font-bold text-brand dark:text-brand-sky hover:underline flex items-center gap-0.5"
                       >
                         <span>{msg.attachment.actionLabel}</span>
                         <ExternalLink className="h-2.5 w-2.5" />
@@ -303,7 +303,7 @@ export default function ChatPage() {
                 </div>
               )}
 
-              <span className="text-[9px] text-muted-foreground mt-0.5 px-1 font-mono">
+              <span className="text-micro text-muted-foreground mt-0.5 px-1 font-mono">
                 {msg.timestamp} {isMe && (msg.isRead ? "• Đã xem" : "• Đã gửi")}
               </span>
             </div>

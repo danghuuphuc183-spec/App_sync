@@ -11,7 +11,7 @@ import { AiHelpAssistant } from "@/components/assistant/ai-help-assistant";
 import { NotificationsPanel, INITIAL_NOTIFICATIONS, type AppNotification } from "@/components/shared/notifications-panel";
 
 const ICON_BTN =
-  "h-10 w-10 rounded-full relative text-foreground bg-neutral-100/80 dark:bg-neutral-800/80 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all active:scale-95";
+  "h-10 w-10 rounded-full relative text-foreground bg-card shadow-xs ring-1 ring-border/70 hover:ring-brand/30 hover:text-brand dark:hover:text-brand-glow transition-all active:scale-95";
 
 /**
  * Header trên cùng: logo bên trái; bên phải chỉ có Trợ lý AI, Tin nhắn và Thông báo.
@@ -37,12 +37,18 @@ export function PublicHeader() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (pathname === "/cai-dat" || pathname === "/ho-so" || pathname?.startsWith("/dong-doi")) {
+  // Các màn có header riêng (tiêu đề + nút quay lại) → không chồng 2 header
+  if (
+    pathname === "/cai-dat" ||
+    pathname === "/ho-so" ||
+    pathname?.startsWith("/dong-doi") ||
+    pathname?.startsWith("/chat")
+  ) {
     return null;
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/70 bg-background/90 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-40 w-full border-b border-border/70 bg-background/85 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70">
       <div ref={notifRef} className="max-w-md mx-auto flex h-14 items-center justify-between px-3 relative">
         {/* LEFT: Logo */}
         <Link href="/" aria-label="Trang chủ" className="shrink-0 active:scale-95 transition-transform">
@@ -72,7 +78,7 @@ export function PublicHeader() {
             title="Trợ lý AI hỗ trợ sử dụng"
           >
             <Bot className="h-5 w-5 stroke-[1.9]" />
-            <span className="absolute -top-0.5 -right-0.5 rounded-lg bg-gradient-to-r from-brand to-brand-500 px-1 text-[8px] font-black text-white leading-[14px]">
+            <span className="absolute -top-0.5 -right-0.5 rounded-md bg-brand-gradient px-1 text-[8px] font-black text-white leading-[14px] shadow-glow">
               AI
             </span>
           </Button>
@@ -105,7 +111,7 @@ export function PublicHeader() {
           >
             <Bell className="h-5 w-5 stroke-[1.9]" />
             {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-lg bg-red-500 text-white text-[9px] font-bold leading-4 text-center ring-2 ring-background">
+              <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-lg bg-red-500 text-white text-micro font-bold leading-4 text-center ring-2 ring-background">
                 {unreadCount}
               </span>
             )}

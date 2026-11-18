@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import DongDoiPage from "./page";
+import { SAMPLE_CLUBS_LIST } from "@/features/dong-doi/dong-doi.data";
 
 const mockSearchParams = new URLSearchParams();
 
@@ -21,11 +22,12 @@ describe("Đồng đội & Duo Feature Page", () => {
     expect(screen.getByText("Tập tiếp, giữ chuỗi, cùng tiến bộ")).toBeInTheDocument();
 
     // Personal card
-    expect(screen.getByText("Hạng 3 · Reliable")).toBeInTheDocument();
+    // Hạng phải khớp nguồn duy nhất ranking.ts (cùng giá trị trang Hồ sơ): 1.240 EXP → Cấp 2 · Runner
+    expect(screen.getByText("Cấp 2 · Runner")).toBeInTheDocument();
     expect(screen.getAllByText(/Đúng hẹn 18\/19/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("Uy tín tốt")).toBeInTheDocument();
-    expect(screen.getByText("1.240 / 3.500 EXP")).toBeInTheDocument();
-    expect(screen.getByText("Lên hạng 4 · Elite")).toBeInTheDocument();
+    expect(screen.getByText("1.240 / 2.000 EXP")).toBeInTheDocument();
+    expect(screen.getByText("Lên cấp 3 · Pacer")).toBeInTheDocument();
 
     // Urgent card
     expect(screen.getByText("VIỆC CẦN LÀM HÔM NAY")).toBeInTheDocument();
@@ -138,7 +140,8 @@ describe("Đồng đội & Duo Feature Page", () => {
     const rsvpBtn = screen.getByText("Đã đăng ký ✓");
     expect(rsvpBtn).toBeInTheDocument();
     fireEvent.click(rsvpBtn);
-    expect(screen.getAllByText("Đăng ký tham gia (RSVP)").length).toBe(3);
+    // Bỏ đăng ký sự kiện duy nhất đã đăng ký → mọi sự kiện CLB đều hiện nút đăng ký
+    expect(screen.getAllByText("Đăng ký tham gia (RSVP)").length).toBe(SAMPLE_CLUBS_LIST[0]!.events!.length);
 
     // SWITCH TO LEADER VIEW (Trưởng CLB / BQL Gym)
     const switchRoleBtn = screen.getByText("Chuyển sang: Trưởng CLB");
@@ -189,3 +192,29 @@ describe("Đồng đội & Duo Feature Page", () => {
     expect(screen.getByText("Tạo nhóm ngay")).toBeInTheDocument();
   });
 });
+
+describe("Sự kiện CLB FTU2 (dữ liệu mẫu)", () => {
+  const events = SAMPLE_CLUBS_LIST[0]!.events!;
+
+  it("có 13 sự kiện, sắp theo ngày diễn ra, id không trùng", () => {
+    expect(events).toHaveLength(13);
+    const starts = events.map((e) => e.startsAt!);
+    expect([...starts].sort()).toEqual(starts);
+    expect(new Set(events.map((e) => e.id)).size).toBe(events.length);
+  });
+
+  it("thứ trong tuần được suy ra từ ngày, không viết tay (28/11/2026 là Thứ Bảy)", () => {
+    const night = events.find((e) => e.title === "Giải Chạy Đêm Ven Sông Thủ Thiêm 10K")!;
+    expect(night.dateVi).toBe("Thứ Bảy, 28/11");
+    expect(night.timeVi).toBe("19:30");
+  });
+
+  it("mọi sự kiện có ảnh Unsplash, mô tả ảnh và tên tác giả", () => {
+    for (const e of events) {
+      expect(e.image).toMatch(/^https:\/\/images\.unsplash\.com\/photo-/);
+      expect(e.imageAlt?.length).toBeGreaterThan(5);
+      expect(e.imageCredit?.length).toBeGreaterThan(1);
+    }
+  });
+});
+

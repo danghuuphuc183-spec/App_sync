@@ -27,12 +27,12 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
       <div className="flex items-center justify-between px-3.5 mb-1.5">
         <div className="flex items-center gap-1.5">
           <h2 className="text-xs font-bold text-foreground">Nên theo dõi</h2>
-          <span className="text-[10px] text-muted-foreground font-medium">· Gợi ý bạn tập</span>
+          <span className="text-micro text-muted-foreground font-medium">· Gợi ý bạn tập</span>
         </div>
         <button
           type="button"
           onClick={() => setShowAll((v) => !v)}
-          className="text-[11px] font-semibold text-brand dark:text-brand-sky hover:underline"
+          className="text-caption font-semibold text-brand dark:text-brand-sky hover:underline"
         >
           {showAll ? "Thu gọn" : "Xem tất cả"}
         </button>
@@ -95,7 +95,7 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
               <h3 className="mt-1.5 text-xs font-bold text-foreground leading-tight line-clamp-1 w-full px-0.5">
                 {c.name}
               </h3>
-              <p className="mt-0.5 text-[10px] text-muted-foreground leading-tight line-clamp-1 w-full px-0.5">
+              <p className="mt-0.5 text-micro text-muted-foreground leading-tight line-clamp-1 w-full px-0.5">
                 {reason}
               </p>
 
@@ -106,10 +106,10 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
                   onClick={() => toggleFollow(c.id)}
                   aria-pressed={isFollowing}
                   className={cn(
-                    "w-full rounded-lg py-1 px-1.5 text-[11px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1 shadow-2xs",
+                    "w-full rounded-xl py-1 px-1.5 text-caption font-bold transition-all duration-150 active:scale-95 flex items-center justify-center gap-1 shadow-2xs select-none",
                     isFollowing
-                      ? "bg-muted text-foreground border border-border"
-                      : "bg-brand hover:bg-brand-600 text-white dark:bg-brand-sky dark:text-black"
+                      ? "bg-muted text-foreground border border-border hover:bg-muted/80"
+                      : "bg-brand-gradient text-white shadow-xs shadow-blue-500/20 hover:brightness-105"
                   )}
                 >
                   {isFollowing && <UserCheck className="h-3 w-3" />}

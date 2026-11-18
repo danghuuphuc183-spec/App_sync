@@ -49,8 +49,8 @@ export function PostOptionsSheet({
       <div className="flex items-center gap-3 px-4 pb-3 border-b border-border">
         <img src={author.avatar} alt="" className="h-10 w-10 rounded-full object-cover" />
         <div className="min-w-0">
-          <p className="text-[14px] font-bold text-foreground truncate">{author.name}</p>
-          <p className="text-[12px] text-muted-foreground">{isAd ? "Quảng cáo · Được tài trợ" : `@${author.handle}`}</p>
+          <p className="text-sm font-bold text-foreground truncate">{author.name}</p>
+          <p className="text-xs text-muted-foreground">{isAd ? "Quảng cáo · Được tài trợ" : `@${author.handle}`}</p>
         </div>
       </div>
       <ul className="py-1">
@@ -71,7 +71,7 @@ export function PostOptionsSheet({
             <SheetItem icon={<EyeOff />} label="Ẩn quảng cáo" description="Bạn sẽ không thấy quảng cáo này nữa" onClick={run(onHideAd)} />
             <SheetItem icon={<Info />} label="Tại sao tôi thấy quảng cáo này?" onClick={() => setShowWhy((v) => !v)} />
             {showWhy && (
-              <li className="mx-4 mb-2 rounded-xl bg-muted p-3 text-[12.5px] text-muted-foreground">
+              <li className="mx-4 mb-2 rounded-xl bg-muted p-3 text-xs text-muted-foreground">
                 Quảng cáo được hiển thị dựa trên môn thể thao bạn quan tâm (chạy bộ, gym) và khu vực TP.HCM. Chúng tôi không chia sẻ
                 vị trí chính xác của bạn với nhà quảng cáo.
               </li>
@@ -113,8 +113,8 @@ function SheetItem({
           {React.cloneElement(icon, { className: cn("h-[18px] w-[18px]", icon.props.className) })}
         </span>
         <span className="min-w-0">
-          <span className={cn("block text-[14px] font-semibold", danger ? "text-red-600" : "text-foreground")}>{label}</span>
-          {description && <span className="block text-[12px] text-muted-foreground">{description}</span>}
+          <span className={cn("block text-sm font-semibold", danger ? "text-red-600" : "text-foreground")}>{label}</span>
+          {description && <span className="block text-xs text-muted-foreground">{description}</span>}
         </span>
       </button>
     </li>
@@ -151,8 +151,8 @@ export function CommentsSheet({
       <ul ref={listRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
         {comments.length === 0 && (
           <li className="text-center py-10">
-            <p className="text-[15px] font-bold text-foreground">Chưa có bình luận</p>
-            <p className="text-[13px] text-muted-foreground">Hãy là người đầu tiên bình luận.</p>
+            <p className="text-body font-bold text-foreground">Chưa có bình luận</p>
+            <p className="text-label text-muted-foreground">Hãy là người đầu tiên bình luận.</p>
           </li>
         )}
         {comments.map((c) => {
@@ -167,11 +167,11 @@ export function CommentsSheet({
                 <span className="h-9 w-9 rounded-full bg-muted shrink-0" />
               )}
               <div className="min-w-0">
-                <p className="text-[12.5px]">
+                <p className="text-xs">
                   <b className="text-foreground">{a?.name ?? "Ẩn danh"}</b>{" "}
                   <span className="text-muted-foreground">{formatPostTime(c.createdAt)}</span>
                 </p>
-                <p className="text-[13.5px] text-foreground leading-snug">{c.text}</p>
+                <p className="text-label text-foreground leading-snug">{c.text}</p>
               </div>
             </li>
           );
@@ -192,9 +192,9 @@ export function CommentsSheet({
           onChange={(e) => setText(e.target.value)}
           placeholder="Thêm bình luận..."
           aria-label="Nội dung bình luận"
-          className="flex-1 min-w-0 rounded-lg bg-muted px-4 py-2.5 text-[13.5px] outline-none focus:ring-2 focus:ring-brand/30"
+          className="flex-1 min-w-0 rounded-lg bg-muted px-4 py-2.5 text-label outline-none focus:ring-2 focus:ring-brand/30"
         />
-        <button type="submit" disabled={!text.trim()} className="text-[14px] font-bold text-brand dark:text-brand-sky disabled:opacity-40">
+        <button type="submit" disabled={!text.trim()} className="text-sm font-bold text-brand dark:text-brand-sky disabled:opacity-40">
           Đăng
         </button>
       </form>
@@ -253,14 +253,14 @@ export function ShareSheet({
 
   return (
     <BottomSheet open={open} onClose={onClose} title="Chia sẻ" bodyClassName="pb-6">
-      <p className="px-4 pt-3 pb-2 text-[12.5px] font-semibold text-muted-foreground">Gửi cho bạn bè</p>
+      <p className="px-4 pt-3 pb-2 text-xs font-semibold text-muted-foreground">Gửi cho bạn bè</p>
       <div className="flex gap-3 overflow-x-auto no-scrollbar px-4 pb-3">
         {friends.map((f) => {
           const sent = sentTo.includes(f.id);
           return (
             <div key={f.id} className="flex flex-col items-center gap-1 w-16 shrink-0">
               <img src={f.avatar} alt={f.name} className="h-14 w-14 rounded-full object-cover" />
-              <span className="text-[11px] text-foreground truncate w-full text-center">{f.name}</span>
+              <span className="text-caption text-foreground truncate w-full text-center">{f.name}</span>
               <button
                 onClick={() => {
                   setSentTo((s) => [...s, f.id]);
@@ -269,7 +269,7 @@ export function ShareSheet({
                 }}
                 disabled={sent}
                 className={cn(
-                  "rounded-lg px-2.5 py-0.5 text-[11px] font-bold",
+                  "rounded-lg px-2.5 py-0.5 text-caption font-bold",
                   sent ? "bg-muted text-muted-foreground" : "bg-brand text-white"
                 )}
               >
@@ -288,12 +288,12 @@ export function ShareSheet({
           o.href ? (
             <Link key={o.label} href={o.href} onClick={onClose} className="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-muted">
               <span className="h-12 w-12 rounded-full bg-muted flex items-center justify-center [&>svg]:h-5 [&>svg]:w-5">{o.icon}</span>
-              <span className="text-[12px] text-foreground">{o.label}</span>
+              <span className="text-xs text-foreground">{o.label}</span>
             </Link>
           ) : (
             <button key={o.label} onClick={o.onClick} className="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-muted">
               <span className="h-12 w-12 rounded-full bg-muted flex items-center justify-center [&>svg]:h-5 [&>svg]:w-5">{o.icon}</span>
-              <span className="text-[12px] text-foreground">{o.label}</span>
+              <span className="text-xs text-foreground">{o.label}</span>
             </button>
           )
         )}

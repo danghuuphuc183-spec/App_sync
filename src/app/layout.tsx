@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Be_Vietnam_Pro, Montserrat } from "next/font/google";
+import { Barlow_Condensed, Be_Vietnam_Pro, Montserrat } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/auth-context";
 
@@ -18,6 +18,15 @@ const display = Montserrat({
   display: "swap",
 });
 
+// Font số liệu: chữ số hẹp, đậm như số trên bib chạy / bảng tỉ số (pace, km, chuỗi, EXP)
+const numeric = Barlow_Condensed({
+  subsets: ["vietnamese", "latin"],
+  weight: ["600", "700", "800"],
+  style: ["normal", "italic"],
+  variable: "--font-numeric",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Khế Ước Kỷ Luật Thể Thao | Nền Tảng Kết Nối Bạn Tập & Cam Kết Uy Tín",
   description:
@@ -30,7 +39,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#0567E1",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F6F8FC" },
+    { media: "(prefers-color-scheme: dark)", color: "#070B1A" },
+  ],
 };
 
 export default function RootLayout({
@@ -39,7 +51,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`${beVietnamPro.variable} ${display.variable}`}>
+    <html lang="vi" className={`${beVietnamPro.variable} ${display.variable} ${numeric.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Giữ chế độ sáng/tối người dùng đã chọn qua các lần tải lại, áp trước khi vẽ để không nháy màu */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("sync_theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-screen bg-background font-sans antialiased text-foreground">
         <AuthProvider>{children}</AuthProvider>
       </body>

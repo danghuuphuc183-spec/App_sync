@@ -32,7 +32,7 @@ export function MyKeosSection() {
   );
   if (hosting.length === 0 && taken.length === 0) {
     return notice ? (
-      <p role="status" className="mt-5 rounded-xl bg-muted px-3 py-2.5 text-[12.5px] font-semibold text-foreground">
+      <p role="status" className="mt-5 rounded-xl bg-muted px-3 py-2.5 text-xs font-semibold text-foreground">
         {notice}
       </p>
     ) : null;
@@ -40,16 +40,16 @@ export function MyKeosSection() {
 
   return (
     <section className="mt-5 space-y-3" aria-label="Kèo của bạn">
-      <h2 className="text-[16px] font-extrabold text-foreground">Kèo của bạn</h2>
+      <h2 className="text-base font-extrabold text-foreground">Kèo của bạn</h2>
       {notice && (
-        <p role="status" className="rounded-xl bg-muted px-3 py-2.5 text-[12.5px] font-semibold text-foreground">
+        <p role="status" className="rounded-xl bg-muted px-3 py-2.5 text-xs font-semibold text-foreground">
           {notice}
         </p>
       )}
 
       {hosting.length > 0 && (
         <div className="space-y-1.5">
-          <p className="flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wider text-muted-foreground">
+          <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
             <Crown className="h-3.5 w-3.5" /> Bạn tạo
           </p>
           {hosting.map((k) => {
@@ -68,7 +68,7 @@ export function MyKeosSection() {
 
       {taken.length > 0 && (
         <div className="space-y-1.5">
-          <p className="text-[12px] font-bold uppercase tracking-wider text-muted-foreground">Bạn đã nhận</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Bạn đã nhận</p>
           {taken.map((k) => (
             <Row
               key={k.id}
@@ -98,14 +98,14 @@ function Row({ keo, status, onChat, onCancel }: { keo: Keo; status: string; onCh
       <div className="flex items-start gap-3">
         <SportIcon sport={keo.sport} className="h-5 w-5 shrink-0 mt-0.5" />
         <div className="min-w-0 flex-1">
-          <p className="text-[13.5px] font-semibold text-foreground truncate">
+          <p className="text-label font-semibold text-foreground truncate">
             {keo.kind === "group" ? "Nhóm · " : "1:1 · "}
             {displayTitle(keo)}
           </p>
-          <p className="text-[11.5px] text-muted-foreground">
+          <p className="text-caption text-muted-foreground">
             {formatKeoDay(keo.time.day)} {keo.time.from}
           </p>
-          <p className="text-[11.5px] font-semibold text-foreground leading-snug">{status}</p>
+          <p className="text-caption font-semibold text-foreground leading-snug">{status}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
@@ -116,7 +116,7 @@ function Row({ keo, status, onChat, onCancel }: { keo: Keo; status: string; onCh
             className="flex min-w-0 flex-1 items-center gap-1.5 rounded-lg px-1 py-1 hover:bg-muted"
           >
             <img src={host.avatar} alt="" className="h-6 w-6 shrink-0 rounded-full object-cover" />
-            <span className="truncate text-[12px] font-semibold text-foreground underline-offset-2 hover:underline">Host {host.name}</span>
+            <span className="truncate text-xs font-semibold text-foreground underline-offset-2 hover:underline">Host {host.name}</span>
           </Link>
         )}
         {!host && <span className="flex-1" />}
@@ -124,7 +124,7 @@ function Row({ keo, status, onChat, onCancel }: { keo: Keo; status: string; onCh
           type="button"
           onClick={onChat}
           aria-label={`Mở chat ${displayTitle(keo)}`}
-          className="h-8 shrink-0 rounded-lg border border-border px-2.5 text-[12.5px] font-bold text-foreground flex items-center gap-1 hover:bg-muted"
+          className="h-8 shrink-0 rounded-lg border border-border px-2.5 text-xs font-bold text-foreground flex items-center gap-1 hover:bg-muted"
         >
           <MessageCircle className="h-4 w-4" /> Chat
         </button>
@@ -132,7 +132,7 @@ function Row({ keo, status, onChat, onCancel }: { keo: Keo; status: string; onCh
           type="button"
           onClick={onCancel}
           aria-label={`Huỷ kèo ${displayTitle(keo)}`}
-          className="h-8 shrink-0 rounded-lg border border-destructive/40 px-2.5 text-[12.5px] font-bold text-destructive flex items-center gap-1 hover:bg-destructive/5"
+          className="h-8 shrink-0 rounded-lg border border-destructive/40 px-2.5 text-xs font-bold text-destructive flex items-center gap-1 hover:bg-destructive/5"
         >
           <XCircle className="h-4 w-4" /> Huỷ
         </button>

@@ -79,23 +79,23 @@ export function PostCard({
         </Link>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1 min-w-0">
-            <Link href={profileHref(author)} className="text-[14px] font-bold text-foreground truncate hover:underline">
+            <Link href={profileHref(author)} className="text-sm font-bold text-foreground truncate hover:underline">
               {author.name}
             </Link>
             {author.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-background fill-foreground" aria-label="Đã xác minh" />}
             {isClub && (
-              <span className="shrink-0 rounded-md bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-200 px-1.5 text-[10px] font-bold">CLB</span>
+              <span className="shrink-0 rounded-md bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-200 px-1.5 text-micro font-bold">CLB</span>
             )}
             {!isAd && !author.isMe && !isFollowing && (
               <>
-                <span className="text-muted-foreground text-[12px]">·</span>
-                <button onClick={onToggleFollow} className="shrink-0 text-[13px] font-bold text-brand dark:text-brand-sky">
+                <span className="text-muted-foreground text-xs">·</span>
+                <button onClick={onToggleFollow} className="shrink-0 text-label font-bold text-brand dark:text-brand-sky">
                   Theo dõi
                 </button>
               </>
             )}
           </div>
-          <p className="text-[12px] text-muted-foreground truncate">
+          <p className="text-xs text-muted-foreground truncate">
             {isAd ? (
               "Được tài trợ"
             ) : (
@@ -113,14 +113,14 @@ export function PostCard({
 
       {/* ===== CÂU NGƯỜI DÙNG MUỐN NÓI ===== */}
       <div className="px-3.5 pb-2.5">
-        <p className={cn("text-[14px] leading-relaxed text-foreground whitespace-pre-line", !expanded && longCaption && "line-clamp-3")}>
+        <p className={cn("text-sm leading-relaxed text-foreground whitespace-pre-line", !expanded && longCaption && "line-clamp-3")}>
           {post.caption}
           {post.tags && post.tags.length > 0 && (
             <span className="text-brand dark:text-brand-sky"> {post.tags.join(" ")}</span>
           )}
         </p>
         {longCaption && !expanded && (
-          <button onClick={() => setExpanded(true)} className="text-[13px] font-semibold text-muted-foreground">
+          <button onClick={() => setExpanded(true)} className="text-label font-semibold text-muted-foreground">
             Xem thêm
           </button>
         )}
@@ -133,14 +133,14 @@ export function PostCard({
       {post.location && (
         <Link
           href="/ban-do"
-          className="flex items-center gap-1.5 px-3.5 pt-2.5 text-[12.5px] font-medium text-foreground hover:text-brand"
+          className="flex items-center gap-1.5 px-3.5 pt-2.5 text-xs font-medium text-foreground hover:text-brand"
         >
           <MapPin className="h-3.5 w-3.5 shrink-0 text-foreground" />
           <span className="truncate">
             {post.location.name}
             {post.location.area && <span className="text-muted-foreground"> · {post.location.area}</span>}
           </span>
-          <span className="ml-auto shrink-0 rounded-lg bg-muted px-2 py-0.5 text-[10.5px] font-semibold text-muted-foreground">
+          <span className="ml-auto shrink-0 rounded-lg bg-muted px-2 py-0.5 text-caption font-semibold text-muted-foreground">
             {SPORT_LABEL[post.sport] ?? post.sport}
           </span>
         </Link>
@@ -152,8 +152,8 @@ export function PostCard({
           href={post.ad.href}
           className="mx-3.5 mt-2.5 flex items-center justify-between rounded-xl bg-brand hover:bg-brand-700 text-white px-3.5 py-2.5"
         >
-          <span className="text-[13px] font-semibold truncate">{post.ad.headline}</span>
-          <span className="flex items-center text-[13px] font-bold shrink-0">
+          <span className="text-label font-semibold truncate">{post.ad.headline}</span>
+          <span className="flex items-center text-label font-bold shrink-0">
             {post.ad.ctaLabel} <ChevronRight className="h-4 w-4" />
           </span>
         </Link>
@@ -163,10 +163,10 @@ export function PostCard({
       {post.challenge && (
         <div className="mx-3.5 mt-2.5 rounded-xl border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-950/40 p-3 space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-[13px] font-bold text-foreground flex items-center gap-1.5">
+            <p className="text-label font-bold text-foreground flex items-center gap-1.5">
               <Trophy className="h-4 w-4 text-foreground" /> {post.challenge.title}
             </p>
-            <span className="text-[11px] text-muted-foreground">Còn {post.challenge.daysLeft} ngày</span>
+            <span className="text-caption text-muted-foreground">Còn {post.challenge.daysLeft} ngày</span>
           </div>
           <div className="h-2 rounded-full bg-brand-100 dark:bg-brand-900 overflow-hidden">
             <div
@@ -174,7 +174,7 @@ export function PostCard({
               style={{ width: `${Math.min(100, (post.challenge.currentKm / post.challenge.targetKm) * 100)}%` }}
             />
           </div>
-          <div className="flex items-center justify-between text-[11.5px] text-muted-foreground">
+          <div className="flex items-center justify-between text-caption text-muted-foreground">
             <span>
               <b className="text-foreground">{post.challenge.currentKm.toLocaleString("vi-VN")}</b> / {post.challenge.targetKm.toLocaleString("vi-VN")} km
             </span>
@@ -192,13 +192,13 @@ export function PostCard({
             <Zap className="h-5 w-5 text-foreground" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-bold text-foreground truncate">{post.invite.dateTimeVi}</p>
-            <p className="text-[11.5px] text-muted-foreground truncate">
+            <p className="text-label font-bold text-foreground truncate">{post.invite.dateTimeVi}</p>
+            <p className="text-caption text-muted-foreground truncate">
               {post.invite.intensity} · Còn {post.invite.slotsLeft} chỗ
             </p>
           </div>
           {onJoinInvite && (
-            <button onClick={onJoinInvite} className="shrink-0 rounded-lg bg-brand hover:bg-brand-700 text-white text-[12.5px] font-bold px-3.5 py-1.5">
+            <button onClick={onJoinInvite} className="shrink-0 rounded-lg bg-brand hover:bg-brand-700 text-white text-xs font-bold px-3.5 py-1.5">
               Nhận kèo
             </button>
           )}
@@ -222,17 +222,17 @@ export function PostCard({
       {/* ===== BÌNH LUẬN ===== */}
       <div className="px-3.5 pb-3 pt-0.5 space-y-0.5">
         {post.comments.length > 1 && (
-          <button onClick={onOpenComments} className="text-[13px] text-muted-foreground">
+          <button onClick={onOpenComments} className="text-label text-muted-foreground">
             Xem tất cả {post.comments.length} bình luận
           </button>
         )}
         {lastComment && (
-          <p className="text-[13px] text-foreground line-clamp-2">
+          <p className="text-label text-foreground line-clamp-2">
             <b>{people[lastComment.authorId]?.name ?? "Ẩn danh"}</b> {lastComment.text}
           </p>
         )}
         {post.comments.length === 0 && (
-          <button onClick={onOpenComments} className="text-[13px] text-muted-foreground">
+          <button onClick={onOpenComments} className="text-label text-muted-foreground">
             Viết bình luận đầu tiên...
           </button>
         )}
@@ -262,7 +262,7 @@ function ActionButton({
       className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-foreground hover:bg-muted active:scale-95 transition-all"
     >
       {icon}
-      <span className="text-[13.5px] font-semibold">{formatCount(count)}</span>
+      <span className="text-label font-semibold">{formatCount(count)}</span>
     </button>
   );
 }
@@ -308,7 +308,7 @@ function MediaCarousel({ post, onDoubleTap }: { post: FeedPost; onDoubleTap: () 
 
       {total > 1 && (
         <>
-          <span className="absolute top-3 right-3 rounded-lg bg-black/60 text-white text-[11px] font-semibold px-2 py-0.5">
+          <span className="absolute top-3 right-3 rounded-lg bg-black/60 text-white text-caption font-semibold px-2 py-0.5">
             {index + 1}/{total}
           </span>
           <div className="absolute -bottom-0 inset-x-0 flex justify-center gap-1 pb-2 pointer-events-none">
@@ -320,7 +320,7 @@ function MediaCarousel({ post, onDoubleTap }: { post: FeedPost; onDoubleTap: () 
       )}
 
       {post.activity?.source && (
-        <span className="absolute top-3 left-3 rounded-lg bg-black/60 text-white text-[10.5px] font-semibold px-2 py-0.5 pointer-events-none" style={{ display: post.media[index]?.type === "route" ? "none" : undefined }}>
+        <span className="absolute top-3 left-3 rounded-lg bg-black/60 text-white text-caption font-semibold px-2 py-0.5 pointer-events-none" style={{ display: post.media[index]?.type === "route" ? "none" : undefined }}>
           ✓ {post.activity.source}
         </span>
       )}

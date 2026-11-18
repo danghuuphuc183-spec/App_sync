@@ -124,7 +124,7 @@ export default function HomePage() {
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <label className="font-semibold text-foreground">Loại hình thể thao (Giai đoạn 1)</label>
-                  <span className="text-[10px] text-muted-foreground">3 môn chính</span>
+                  <span className="text-micro text-muted-foreground">3 môn chính</span>
                 </div>
                 <div className="grid grid-cols-3 gap-1.5">
                   {[
@@ -164,14 +164,14 @@ export default function HomePage() {
               {/* Ảnh đính kèm / Chụp trực tiếp từ điện thoại */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="font-semibold text-foreground text-[11px]">
+                  <label className="font-semibold text-foreground text-caption">
                     Hình ảnh buổi tập (Tùy chọn)
                   </label>
                   {newPostImage && (
                     <button
                       type="button"
                       onClick={() => setNewPostImage(null)}
-                      className="text-[10px] text-red-500 font-bold hover:underline"
+                      className="text-micro text-red-500 font-bold hover:underline"
                     >
                       Xóa ảnh
                     </button>

@@ -62,8 +62,8 @@ export function CancelKeoSheet({
   return (
     <BottomSheet open={open} onClose={onClose} title={stage === "locked" ? "Huỷ kèo đã chốt" : "Rút khỏi kèo"} bodyClassName="p-4 pb-6 space-y-3">
       <div>
-        <p className="text-[14px] font-bold text-foreground">{keo.title}</p>
-        <p className="text-[12.5px] text-muted-foreground">
+        <p className="text-sm font-bold text-foreground">{keo.title}</p>
+        <p className="text-xs text-muted-foreground">
           {stage === "locked" ? "Đã chốt" : stage === "pending" ? "Có người nhận, chưa chốt" : "Chưa ai nhận"} ·{" "}
           {minutesLeft > 0 ? `còn ${minutesLeft >= 120 ? `${Math.round(minutesLeft / 60)} giờ` : `${minutesLeft} phút`}` : "đã tới giờ tập"}
         </p>
@@ -72,7 +72,7 @@ export function CancelKeoSheet({
       <div
         role="status"
         className={cn(
-          "rounded-xl border p-3 text-[13px] font-bold flex items-start gap-2",
+          "rounded-xl border p-3 text-label font-bold flex items-start gap-2",
           preview.nowDelta < 0 ? "border-destructive/40 bg-destructive/5 text-destructive" : "border-border bg-muted text-foreground"
         )}
       >
@@ -83,19 +83,19 @@ export function CancelKeoSheet({
       {stage !== "locked" ? (
         <button
           onClick={() => onDone({ type: "withdraw_free" })}
-          className="w-full rounded-lg border border-border py-3 text-[14px] font-bold text-foreground hover:bg-muted"
+          className="w-full rounded-lg border border-border py-3 text-sm font-bold text-foreground hover:bg-muted"
         >
           {keo.role === "host" ? "Huỷ kèo (không bị trừ điểm)" : "Rút khỏi kèo (không bị trừ điểm)"}
         </button>
       ) : (
         <>
-          <p className="text-[12px] font-semibold text-muted-foreground">Thử cách khác trước khi huỷ</p>
+          <p className="text-xs font-semibold text-muted-foreground">Thử cách khác trước khi huỷ</p>
           <button
             onClick={() => onDone({ type: "shift_requested" })}
             className="w-full rounded-xl border border-border p-3 text-left hover:bg-muted flex gap-3"
           >
             <CalendarClock className="h-5 w-5 shrink-0 text-foreground" />
-            <span className="text-[13px]">
+            <span className="text-label">
               <b className="block text-foreground">Đề nghị dời 5–10 phút</b>
               <span className="text-muted-foreground">Bạn tập đồng ý trong chat kèo thì không ai bị trừ điểm.</span>
             </span>
@@ -106,7 +106,7 @@ export function CancelKeoSheet({
             className="w-full rounded-xl border border-border p-3 text-left hover:bg-muted flex gap-3 disabled:opacity-50"
           >
             <Handshake className="h-5 w-5 shrink-0 text-foreground" />
-            <span className="text-[13px]">
+            <span className="text-label">
               <b className="block text-foreground">Đề nghị cùng huỷ</b>
               <span className="text-muted-foreground">
                 {keo.kind === "group"
@@ -119,7 +119,7 @@ export function CancelKeoSheet({
           </button>
 
           {keo.role === "host" && (
-            <div className="rounded-xl bg-muted p-3 text-[12.5px] text-foreground flex gap-2">
+            <div className="rounded-xl bg-muted p-3 text-xs text-foreground flex gap-2">
               <Crown className="h-4 w-4 shrink-0 mt-0.5" />
               <span>
                 Bạn là host: kèo <b>không bị huỷ</b>.{" "}
@@ -135,7 +135,7 @@ export function CancelKeoSheet({
 
           <label className={cn("flex items-center gap-3 rounded-xl border border-border p-3", !grace.ok && "opacity-50")}>
             <Ticket className="h-5 w-5 shrink-0 text-foreground" />
-            <span className="flex-1 text-[12.5px]">
+            <span className="flex-1 text-xs">
               <b className="block text-foreground">Dùng thẻ ân hạn</b>
               <span className="text-muted-foreground">{grace.ok ? `Còn ${UT_CONFIG.GRACE_PASSES_PER_MONTH - graceUsedThisMonth} thẻ tháng này, xoá mức phạt lần này.` : grace.reasonVi}</span>
             </span>
@@ -151,11 +151,11 @@ export function CancelKeoSheet({
 
           <button
             onClick={() => onDone({ type: "cancelled", delta: finalDelta, usedGrace: useGrace && grace.ok, newHostName: newHost?.name })}
-            className="w-full rounded-lg bg-destructive hover:bg-destructive/90 text-white py-3 text-[14px] font-bold"
+            className="w-full rounded-lg bg-destructive hover:bg-destructive/90 text-white py-3 text-sm font-bold"
           >
             {keo.role === "host" ? "Rút khỏi kèo" : "Huỷ một phía"} · {finalDelta === 0 ? "0 UT" : `${formatUt(finalDelta)} UT`}
           </button>
-          <p className="text-[11.5px] text-muted-foreground text-center">
+          <p className="text-caption text-muted-foreground text-center">
             Không huỷ mà không đến: {formatUt(UT_CONFIG.PENALTY.ABSENT_DECLARED)} UT nếu báo trong 24h, {formatUt(UT_CONFIG.PENALTY.ABSENT_SILENT)} UT nếu im lặng.
           </p>
         </>

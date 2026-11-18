@@ -80,15 +80,15 @@ export function TrainingLog({ className }: { className?: string }) {
     <section className={cn("rounded-3xl border border-border bg-card p-4 space-y-4 shadow-xs", className)} aria-label="Ghi nhận tập luyện">
       <div className="flex items-center justify-between">
         <div className="min-w-0">
-          <h2 className="text-[16px] font-extrabold text-foreground">Ghi nhận tập luyện</h2>
-          <p className="text-[12px] text-muted-foreground">Chuỗi {data.streak.current} tuần · dài nhất {data.streak.longest}</p>
+          <h2 className="text-base font-extrabold text-foreground">Ghi nhận tập luyện</h2>
+          <p className="text-xs text-muted-foreground">Chuỗi {data.streak.current} tuần · dài nhất {data.streak.longest}</p>
         </div>
         <button
           onClick={() => {
             setSelected(dateKey(now));
             setLogOpen(true);
           }}
-          className="shrink-0 whitespace-nowrap rounded-lg bg-brand hover:bg-brand-700 active:scale-95 text-white text-[12.5px] font-bold px-3.5 py-2 flex items-center gap-1.5"
+          className="shrink-0 whitespace-nowrap rounded-lg bg-brand hover:bg-brand-700 active:scale-95 text-white text-xs font-bold px-3.5 py-2 flex items-center gap-1.5"
         >
           <CalendarPlus className="h-4 w-4" /> Ghi buổi tập
         </button>
@@ -96,7 +96,7 @@ export function TrainingLog({ className }: { className?: string }) {
 
       {/* Tháng này */}
       <div className="rounded-2xl bg-muted/60 pt-2">
-        <p className="text-center text-[11px] font-semibold text-muted-foreground">Tháng {now.getMonth() + 1}</p>
+        <p className="text-center text-caption font-semibold text-muted-foreground">Tháng {now.getMonth() + 1}</p>
         <div className="grid grid-cols-4 divide-x divide-border text-center">
           {[
             ["Buổi tập", data.stats.sessions],
@@ -106,7 +106,7 @@ export function TrainingLog({ className }: { className?: string }) {
           ].map(([k, v]) => (
             <div key={String(k)} className="py-1.5">
               <p className="text-[17px] font-extrabold font-display text-foreground">{v}</p>
-              <p className="text-[10.5px] text-muted-foreground">{k}</p>
+              <p className="text-caption text-muted-foreground">{k}</p>
             </div>
           ))}
         </div>
@@ -115,7 +115,7 @@ export function TrainingLog({ className }: { className?: string }) {
       {/* Bản đồ nhiệt */}
       <div className="overflow-x-auto pb-1">
         <div className="min-w-[380px]">
-          <div className="grid gap-[3px] text-[10.5px] text-muted-foreground mb-1" style={{ gridTemplateColumns: `24px repeat(${WEEKS}, minmax(0, 1fr))` }}>
+          <div className="grid gap-[3px] text-caption text-muted-foreground mb-1" style={{ gridTemplateColumns: `24px repeat(${WEEKS}, minmax(0, 1fr))` }}>
             <span />
             {data.labels.map((m) => (
               <span key={`${m.col}-${m.label}`} className="whitespace-nowrap font-semibold" style={{ gridColumn: `${m.col + 2} / span 4`, gridRow: 1 }}>
@@ -130,7 +130,7 @@ export function TrainingLog({ className }: { className?: string }) {
             aria-label={`Số buổi tập mỗi ngày trong ${WEEKS} tuần gần nhất`}
           >
             {ROW_LABELS.map((l, r) => (
-              <span key={`row-${r}`} className="text-[10.5px] text-muted-foreground flex items-center" style={{ gridColumn: 1, gridRow: r + 1 }}>
+              <span key={`row-${r}`} className="text-caption text-muted-foreground flex items-center" style={{ gridColumn: 1, gridRow: r + 1 }}>
                 {l}
               </span>
             ))}
@@ -165,7 +165,7 @@ export function TrainingLog({ className }: { className?: string }) {
         </div>
 
         {/* Chú thích */}
-        <div className="mt-2.5 flex items-center justify-between text-[11.5px] text-muted-foreground">
+        <div className="mt-2.5 flex items-center justify-between text-caption text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <Users className="h-3.5 w-3.5 text-foreground" /> Tập cùng bạn × {data.partnerDays}
           </span>
@@ -181,18 +181,18 @@ export function TrainingLog({ className }: { className?: string }) {
 
       {/* Theo ngày trong tuần */}
       <div>
-        <p className="text-[13px] font-bold text-foreground mb-2">
+        <p className="text-label font-bold text-foreground mb-2">
           Theo ngày trong tuần <span className="font-normal text-muted-foreground">· bạn hay tập nhất {WEEKDAY_FULL[topDay]}</span>
         </p>
         <div className="grid grid-cols-7 gap-2 items-end h-20">
           {data.dist.map((v, i) => (
             <div key={i} className="flex flex-col items-center justify-end h-full gap-1">
-              <span className="text-[10.5px] font-semibold text-foreground">{v}</span>
+              <span className="text-caption font-semibold text-foreground">{v}</span>
               <div
                 className={cn("w-full rounded-t-md", i === topDay ? "bg-brand" : "bg-brand-200 dark:bg-brand-800")}
                 style={{ height: `${Math.max(6, (v / maxDist) * 70)}%` }}
               />
-              <span className="text-[10.5px] text-muted-foreground">{WEEKDAY_SHORT[i]}</span>
+              <span className="text-caption text-muted-foreground">{WEEKDAY_SHORT[i]}</span>
             </div>
           ))}
         </div>
@@ -202,22 +202,22 @@ export function TrainingLog({ className }: { className?: string }) {
       {selCell && (
         <div className="rounded-2xl border border-border p-3 space-y-2" aria-live="polite">
           <div className="flex items-center justify-between">
-            <p className="text-[13.5px] font-bold text-foreground">{fmtDay(selCell.date)}</p>
+            <p className="text-label font-bold text-foreground">{fmtDay(selCell.date)}</p>
             {!selCell.future && (
-              <button onClick={() => setLogOpen(true)} className="text-[12.5px] font-bold text-brand dark:text-brand-sky">
+              <button onClick={() => setLogOpen(true)} className="text-xs font-bold text-brand dark:text-brand-sky">
                 + Ghi cho ngày này
               </button>
             )}
           </div>
           {selItems.length === 0 ? (
-            <p className="text-[12.5px] text-muted-foreground">Chưa có buổi tập nào.</p>
+            <p className="text-xs text-muted-foreground">Chưa có buổi tập nào.</p>
           ) : (
             <ul className="space-y-1.5">
               {selItems.map((e) => (
-                <li key={e.id} className="flex items-center gap-2 text-[13px]">
+                <li key={e.id} className="flex items-center gap-2 text-label">
                   <span className="flex-1 text-foreground">
                     {SPORT_LOG_LABEL[e.sport] ?? e.sport} · {e.minutes} phút
-                    {e.withPartner && <span className="ml-1.5 rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-1.5 py-0.5 text-[10.5px] font-semibold">cùng bạn</span>}
+                    {e.withPartner && <span className="ml-1.5 rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-1.5 py-0.5 text-caption font-semibold">cùng bạn</span>}
                   </span>
                   <button onClick={() => removeEntry(e.id)} aria-label="Xoá buổi tập" className="h-7 w-7 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground">
                     <Trash2 className="h-3.5 w-3.5" />

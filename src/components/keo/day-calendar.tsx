@@ -60,7 +60,7 @@ export function DayCalendar({
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <p className="text-[14px] font-bold text-foreground" aria-live="polite">
+        <p className="text-sm font-bold text-foreground" aria-live="polite">
           Tháng {month + 1}, {year}
         </p>
         <button
@@ -76,7 +76,7 @@ export function DayCalendar({
 
       <div className="grid grid-cols-7 gap-1 text-center" role="grid" aria-label={`Lịch tháng ${month + 1} năm ${year}`}>
         {HEAD.map((h) => (
-          <span key={h} className={cn("text-[11px] font-semibold py-1", h === "CN" || h === "T7" ? "text-foreground" : "text-muted-foreground")}>
+          <span key={h} className={cn("text-caption font-semibold py-1", h === "CN" || h === "T7" ? "text-foreground" : "text-muted-foreground")}>
             {h}
           </span>
         ))}
@@ -96,13 +96,13 @@ export function DayCalendar({
               aria-pressed={isSel}
               aria-label={`${WEEKDAY_LONG[d.getDay()]}, ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}${tag}`}
               className={cn(
-                "relative h-10 rounded-lg text-[13.5px] font-semibold transition-colors",
+                "relative h-10 rounded-xl text-label font-semibold transition-all duration-150 active:scale-95",
                 isSel
-                  ? "bg-brand text-white"
+                  ? "bg-brand-gradient text-white font-bold shadow-md shadow-blue-500/25 scale-[1.04]"
                   : disabled
                     ? "text-muted-foreground/40 cursor-not-allowed"
-                    : "text-foreground hover:bg-muted",
-                isToday && !isSel && "ring-1 ring-inset ring-foreground/60"
+                    : "text-foreground hover:bg-brand-50/60 dark:hover:bg-brand-950/40",
+                isToday && !isSel && "ring-1.5 ring-brand/70 text-brand font-bold"
               )}
             >
               {d.getDate()}
@@ -114,7 +114,7 @@ export function DayCalendar({
         })}
       </div>
 
-      <p className="mt-2.5 flex items-center gap-1.5 border-t border-border pt-2.5 text-[12.5px] text-muted-foreground">
+      <p className="mt-2.5 flex items-center gap-1.5 border-t border-border pt-2.5 text-xs text-muted-foreground">
         <CalendarDays className="h-3.5 w-3.5 shrink-0 text-foreground" />
         Đã chọn:{" "}
         <b className="text-foreground">

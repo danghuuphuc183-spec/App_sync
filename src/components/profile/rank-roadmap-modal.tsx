@@ -217,7 +217,7 @@ export function RankRoadmapModal({
               <h2 className="text-sm font-bold text-foreground tracking-tight">
                 Lộ Trình Rank & Điểm Thưởng EXP
               </h2>
-              <p className="text-[10.5px] text-muted-foreground">Tích lũy 1 chiều · Giữ nhịp kỷ luật</p>
+              <p className="text-caption text-muted-foreground">Tích lũy 1 chiều · Giữ nhịp kỷ luật</p>
             </div>
           </div>
           <button
@@ -231,7 +231,7 @@ export function RankRoadmapModal({
         </div>
 
         {/* 2. CURRENT EXP PROGRESS HERO - GỌN GÀNG, ĐẸP MẮT & MÀU LOAN THEO RANK */}
-        <div className="p-3.5 bg-linear-to-b from-brand/10 via-brand/5 to-transparent border-b border-border/60 shrink-0 space-y-2.5 relative overflow-hidden">
+        <div className="p-3.5 bg-gradient-to-b from-brand/10 via-brand/5 to-transparent border-b border-border/60 shrink-0 space-y-2.5 relative overflow-hidden">
           <RankAuraGlow level={currentRank.level} variant="top-aurora" />
           <RankAuraGlow level={currentRank.level} variant="corner-orb" />
 
@@ -247,27 +247,27 @@ export function RankRoadmapModal({
 
             <div className="flex-1 min-w-0 space-y-0.5">
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold text-brand uppercase tracking-wider">
+                <span className="text-micro font-bold text-brand uppercase tracking-wider">
                   Cấp Hiện Tại
                 </span>
-                <span className={cn("text-[10px] font-bold px-2 py-0.2 rounded-full", getRankTheme(currentRank.level).pillClass)}>
+                <span className={cn("text-micro font-bold px-2 py-0.2 rounded-full", getRankTheme(currentRank.level).pillClass)}>
                   {currentRank.nameEn}
                 </span>
               </div>
               <h3 className="text-sm font-extrabold text-foreground truncate">
                 Cấp {currentRank.level} · {currentRank.nameVi}
               </h3>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-caption text-muted-foreground">
                 Chuẩn: {currentRank.timeToAchieve.split("(")[0]}
               </p>
             </div>
 
             <div className="text-right shrink-0">
-              <p className={cn("text-xs font-mono font-black", getRankTheme(currentRank.level).textClass)}>
+              <p className={cn("text-xs font-numeric font-black", getRankTheme(currentRank.level).textClass)}>
                 {currentExp.toLocaleString("vi-VN")} EXP
               </p>
               {nextRank && (
-                <p className="text-[10.5px] text-muted-foreground">
+                <p className="text-caption text-muted-foreground">
                   Thiếu {remainingExp.toLocaleString("vi-VN")} EXP
                 </p>
               )}
@@ -278,23 +278,23 @@ export function RankRoadmapModal({
           <div className="space-y-1 relative z-10">
             <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
               <div
-                className={cn("h-full rounded-full transition-all duration-500 bg-linear-to-r", getRankTheme(currentRank.level).progressGradient)}
+                className={cn("h-full rounded-full transition-all duration-500 bg-gradient-to-r", getRankTheme(currentRank.level).progressGradient)}
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            <div className="flex items-center justify-between text-[10.5px] text-muted-foreground">
+            <div className="flex items-center justify-between text-caption text-muted-foreground">
               <span>Tiến độ: <strong>{progressPercent}%</strong></span>
               <span>{nextRank ? `Lên Cấp ${nextRank.level} · ${nextRank.nameVi}` : "Đạt cấp tối đa"}</span>
             </div>
           </div>
 
           {/* One-Line UT Indicator */}
-          <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-background/80 border border-border/60 text-[11px] relative z-10">
+          <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-background/80 border border-border/60 text-caption relative z-10">
             <div className="flex items-center gap-1.5 text-foreground">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
               <span>Uy tín: <strong>{currentUt.toFixed(1)}/10 UT</strong> ({utCrossCheck.statusLabel})</span>
             </div>
-            <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+            <span className="text-micro font-semibold text-emerald-600 dark:text-emerald-400">
               {utCrossCheck.isPrivilegeActive ? "✓ Đủ chuẩn UT ≥ 7" : "Hạn chế"}
             </span>
           </div>
@@ -374,7 +374,7 @@ export function RankRoadmapModal({
                         size="xs"
                         showAura={isSelected}
                       />
-                      <span className={cn("text-[10px] font-bold", isSelected ? rTheme.textClass : "text-foreground")}>
+                      <span className={cn("text-micro font-bold", isSelected ? rTheme.textClass : "text-foreground")}>
                         Cấp {r.level}
                       </span>
                       {isCurrent && (
@@ -408,16 +408,16 @@ export function RankRoadmapModal({
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className={cn("text-[10.5px] font-bold uppercase", inspectTheme.textClass)}>
+                          <span className={cn("text-caption font-bold uppercase", inspectTheme.textClass)}>
                             Rank {inspectRank.level}: {inspectRank.nameEn}
                           </span>
                           {currentExp >= inspectRank.minExp ? (
-                            <span className="text-[9.5px] font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.2 rounded-full flex items-center gap-1">
+                            <span className="text-micro font-bold text-emerald-600 bg-emerald-500/10 px-1.5 py-0.2 rounded-full flex items-center gap-1">
                               <Check className="h-2.5 w-2.5 stroke-[2.5]" />
                               <span>Đã đạt</span>
                             </span>
                           ) : (
-                            <span className="text-[9.5px] font-bold text-muted-foreground bg-muted px-1.5 py-0.2 rounded-full flex items-center gap-1">
+                            <span className="text-micro font-bold text-muted-foreground bg-muted px-1.5 py-0.2 rounded-full flex items-center gap-1">
                               <Lock className="h-2.5 w-2.5 stroke-[2]" />
                               <span>Cần {inspectRank.minExp.toLocaleString("vi-VN")} EXP</span>
                             </span>
@@ -429,7 +429,7 @@ export function RankRoadmapModal({
                             ({inspectTheme.metalName})
                           </span>
                         </h4>
-                        <p className="text-[11px] text-muted-foreground">
+                        <p className="text-caption text-muted-foreground">
                           {inspectData.tagline}
                         </p>
                       </div>
@@ -454,7 +454,7 @@ export function RankRoadmapModal({
                               </div>
                               <span className="text-xs font-bold text-foreground truncate">{h.title}</span>
                             </div>
-                            <p className="text-[10.5px] text-muted-foreground leading-tight">
+                            <p className="text-caption text-muted-foreground leading-tight">
                               {h.desc}
                             </p>
                           </div>
@@ -463,7 +463,7 @@ export function RankRoadmapModal({
                     </div>
 
                     {/* Status Bar: Kho quà & Điều kiện UT - Icon vẽ chữ trắng đen */}
-                    <div className="pt-2 border-t border-border/60 space-y-1.5 text-[11px] relative z-10">
+                    <div className="pt-2 border-t border-border/60 space-y-1.5 text-caption relative z-10">
                       <div className="flex items-center justify-between">
                         <span className="text-muted-foreground flex items-center gap-1.5">
                           <Gift className="h-3.5 w-3.5 stroke-[2] text-foreground shrink-0" />
@@ -502,14 +502,14 @@ export function RankRoadmapModal({
                       <div className="flex-1 min-w-0 space-y-1">
                         <div className="flex items-center justify-between gap-1">
                           <h5 className="text-xs font-bold text-foreground truncate">{tier.title}</h5>
-                          <span className={cn("text-[9.5px] font-bold px-2 py-0.5 rounded-full border shrink-0", tier.badgeColor)}>
+                          <span className={cn("text-micro font-bold px-2 py-0.5 rounded-full border shrink-0", tier.badgeColor)}>
                             {tier.unlockRank}
                           </span>
                         </div>
-                        <p className="text-[11px] text-muted-foreground leading-snug">
+                        <p className="text-caption text-muted-foreground leading-snug">
                           {tier.summary}
                         </p>
-                        <p className="text-[10.5px] font-mono font-semibold text-brand">
+                        <p className="text-caption font-numeric font-semibold text-brand">
                           Mức đổi: {tier.cost}
                         </p>
                       </div>
@@ -544,7 +544,7 @@ export function RankRoadmapModal({
                 </div>
                 <div className="flex-1 text-xs">
                   <p className="font-bold text-foreground">Buổi tập hợp lệ</p>
-                  <p className="text-[11px] text-muted-foreground">Tối đa 3 buổi/tuần = 300 EXP (nghỉ ngơi phục hồi)</p>
+                  <p className="text-caption text-muted-foreground">Tối đa 3 buổi/tuần = 300 EXP (nghỉ ngơi phục hồi)</p>
                 </div>
               </div>
 
@@ -554,7 +554,7 @@ export function RankRoadmapModal({
                 </div>
                 <div className="flex-1 text-xs">
                   <p className="font-bold text-foreground">Duy trì Chuỗi Tuần (Weekly Streak)</p>
-                  <p className="text-[11px] text-muted-foreground">Có ít nhất 1 buổi hợp lệ từ Thứ 2 đến Chủ Nhật</p>
+                  <p className="text-caption text-muted-foreground">Có ít nhất 1 buổi hợp lệ từ Thứ 2 đến Chủ Nhật</p>
                 </div>
               </div>
 
@@ -564,20 +564,20 @@ export function RankRoadmapModal({
                 </div>
                 <div className="flex-1 text-xs">
                   <p className="font-bold text-foreground">Chuỗi Đôi (Duo) hoặc Host nhóm</p>
-                  <p className="text-[11px] text-muted-foreground">Tập cùng partner Duo (+10 EXP/buổi) hoặc dẫn dắt nhóm nhỏ</p>
+                  <p className="text-caption text-muted-foreground">Tập cùng partner Duo (+10 EXP/buổi) hoặc dẫn dắt nhóm nhỏ</p>
                 </div>
               </div>
 
               {/* Tốc độ chuẩn */}
               <div className="p-3 rounded-2xl bg-muted/40 border border-border/80 text-center space-y-1">
-                <p className="text-[11px] text-muted-foreground">Tốc độ cày chuẩn (3 buổi/tuần):</p>
-                <p className="text-sm font-extrabold text-brand font-mono">
+                <p className="text-caption text-muted-foreground">Tốc độ cày chuẩn (3 buổi/tuần):</p>
+                <p className="text-sm font-extrabold text-brand font-numeric">
                   350 – 400 EXP / tuần &nbsp;(≈ 1.500 EXP / tháng)
                 </p>
               </div>
 
               {/* Cam kết 1 chiều */}
-              <div className="p-2.5 rounded-xl bg-background border border-border/60 flex items-center gap-2 text-[11px] text-muted-foreground">
+              <div className="p-2.5 rounded-xl bg-background border border-border/60 flex items-center gap-2 text-caption text-muted-foreground">
                 <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
                 <span>EXP tích lũy <strong>1 chiều</strong>, không bao giờ mất khi nghỉ ốm, không mua bằng tiền.</span>
               </div>
@@ -588,8 +588,8 @@ export function RankRoadmapModal({
 
         {/* 5. MODAL FOOTER */}
         <div className="p-3 border-t border-border/80 bg-muted/20 shrink-0 flex items-center justify-between text-xs">
-          <span className="text-[11px] text-muted-foreground">
-            Khả dụng: <strong className="text-brand font-mono">{currentExp.toLocaleString("vi-VN")} EXP</strong>
+          <span className="text-caption text-muted-foreground">
+            Khả dụng: <strong className="text-brand font-numeric">{currentExp.toLocaleString("vi-VN")} EXP</strong>
           </span>
           <Button
             variant="outline"

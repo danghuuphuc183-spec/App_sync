@@ -119,7 +119,7 @@ export default function AdminDashboardPage() {
             <Users className="h-4 w-4 text-foreground" />
           </div>
           <p className="text-2xl font-bold font-mono">162</p>
-          <span className="text-[10px] text-muted-foreground">Dữ liệu từ Postgres thật</span>
+          <span className="text-micro text-muted-foreground">Dữ liệu từ Postgres thật</span>
         </Card>
 
         <Card className="p-4 space-y-1">
@@ -128,7 +128,7 @@ export default function AdminDashboardPage() {
             <Flame className="h-4 w-4 text-foreground" />
           </div>
           <p className="text-2xl font-bold font-mono">18</p>
-          <span className="text-[10px] text-muted-foreground">Khu vực TP.HCM</span>
+          <span className="text-micro text-muted-foreground">Khu vực TP.HCM</span>
         </Card>
 
         <Card className="p-4 space-y-1">
@@ -137,7 +137,7 @@ export default function AdminDashboardPage() {
             <Clock className="h-4 w-4 text-foreground" />
           </div>
           <p className="text-2xl font-bold font-mono">{pendingClubs.length}</p>
-          <span className="text-[10px] text-amber-600 font-semibold">Cần xử lý</span>
+          <span className="text-micro text-amber-600 font-semibold">Cần xử lý</span>
         </Card>
 
         <Card className="p-4 space-y-1">
@@ -146,7 +146,7 @@ export default function AdminDashboardPage() {
             <CheckCircle className="h-4 w-4 text-foreground" />
           </div>
           <p className="text-2xl font-bold font-mono">3</p>
-          <span className="text-[10px] text-muted-foreground">Điểm công cộng</span>
+          <span className="text-micro text-muted-foreground">Điểm công cộng</span>
         </Card>
       </div>
 
@@ -283,9 +283,9 @@ export default function AdminDashboardPage() {
                 <div key={log.id} className="p-3.5 space-y-0.5">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-primary font-mono">{log.action}</span>
-                    <span className="text-[11px] text-muted-foreground">{log.createdAtVi}</span>
+                    <span className="text-caption text-muted-foreground">{log.createdAtVi}</span>
                   </div>
-                  <p className="text-muted-foreground text-[11px]">
+                  <p className="text-muted-foreground text-caption">
                     Thực hiện bởi: {log.actor} • Đối tượng: {log.entity} (#{log.entityId})
                   </p>
                 </div>

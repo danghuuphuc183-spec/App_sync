@@ -124,13 +124,13 @@ export function ReelItem(p: ReelItemProps) {
         <div className="flex items-center gap-2.5">
           <Link href={p.authorHref} className="flex items-center gap-2 min-w-0">
             <img src={reel.author.avatar} alt={reel.author.name} className="h-9 w-9 rounded-full object-cover border border-white/70" />
-            <span className="text-[14px] font-bold truncate">{reel.author.handle.replace(/^@/, "")}</span>
+            <span className="text-sm font-bold truncate">{reel.author.handle.replace(/^@/, "")}</span>
           </Link>
           {!p.isMine && (
             <button
               onClick={p.onFollow}
               className={cn(
-                "shrink-0 rounded-lg border px-3 py-1 text-[12.5px] font-bold",
+                "shrink-0 rounded-lg border px-3 py-1 text-xs font-bold",
                 p.isFollowing ? "border-white/40 text-white/80" : "border-white text-white"
               )}
             >
@@ -140,21 +140,21 @@ export function ReelItem(p: ReelItemProps) {
         </div>
 
         <button onClick={() => setExpanded((v) => !v)} className="block text-left">
-          <p className={cn("text-[13.5px] leading-snug", !expanded && "line-clamp-2")}>
+          <p className={cn("text-label leading-snug", !expanded && "line-clamp-2")}>
             <b>{reel.title}.</b> {reel.caption}
           </p>
         </button>
 
         <div className="flex flex-wrap gap-1.5">
-          <span className="inline-flex items-center gap-1 rounded-lg bg-white/20 backdrop-blur px-2.5 py-1 text-[11.5px] font-semibold">
+          <span className="inline-flex items-center gap-1 rounded-lg bg-white/20 backdrop-blur px-2.5 py-1 text-caption font-semibold">
             <MapPin className="h-3.5 w-3.5" /> {reel.routeLocation.split(" - ")[0]}
           </span>
-          <span className="inline-flex items-center rounded-lg bg-brand px-2.5 py-1 text-[11.5px] font-bold">
+          <span className="inline-flex items-center rounded-lg bg-brand px-2.5 py-1 text-caption font-bold">
             {reel.distanceKm} km · {reel.sportNameVi}
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[12.5px] overflow-hidden">
+        <div className="flex items-center gap-1.5 text-xs overflow-hidden">
           <Music2 className="h-3.5 w-3.5 shrink-0" />
           <div className="overflow-hidden whitespace-nowrap max-w-[220px]">
             <span className="reel-marquee inline-block" style={{ animationPlayState: playing ? "running" : "paused" }}>
@@ -176,7 +176,7 @@ function RailButton({ label, onClick, count, children }: { label: string; onClic
   return (
     <button onClick={onClick} aria-label={label} className="flex flex-col items-center gap-1 drop-shadow active:scale-90 transition-transform">
       {children}
-      {count !== undefined && <span className="text-[12px] font-semibold">{formatCount(count)}</span>}
+      {count !== undefined && <span className="text-xs font-semibold">{formatCount(count)}</span>}
     </button>
   );
 }

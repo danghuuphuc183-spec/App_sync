@@ -141,7 +141,7 @@ export default function AccountSettingsPage() {
             >
               <span className="text-xs font-medium text-foreground">Người liên hệ tin cậy</span>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-                <span className="px-1.5 py-0.5 rounded-full bg-brand/10 text-brand font-bold text-[11px]">1</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-brand/10 text-brand font-bold text-caption">1</span>
                 <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
               </div>
             </button>
@@ -154,7 +154,7 @@ export default function AccountSettingsPage() {
             >
               <span className="text-xs font-medium text-foreground">Danh sách chặn</span>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
-                <span className="px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-bold text-[11px]">
+                <span className="px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-bold text-caption">
                   {blockedList.length}
                 </span>
                 <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
@@ -255,7 +255,7 @@ export default function AccountSettingsPage() {
             <div className="flex items-center justify-between px-3.5 py-3">
               <div className="pr-2">
                 <span className="text-xs font-medium text-foreground block">Chia sẻ vị trí khi đến Spot</span>
-                <span className="text-[10px] text-muted-foreground">Tự động kích hoạt trong bán kính 300m</span>
+                <span className="text-micro text-muted-foreground">Tự động kích hoạt trong bán kính 300m</span>
               </div>
               <button
                 type="button"
@@ -280,7 +280,7 @@ export default function AccountSettingsPage() {
             <div className="flex items-center justify-between px-3.5 py-3">
               <div className="pr-2">
                 <span className="text-xs font-medium text-foreground block">Kết nối Apple Health / Health Connect</span>
-                <span className="text-[10px] text-muted-foreground">Đồng bộ bước chân và nhịp tim</span>
+                <span className="text-micro text-muted-foreground">Đồng bộ bước chân và nhịp tim</span>
               </div>
               <button
                 type="button"
@@ -336,7 +336,7 @@ export default function AccountSettingsPage() {
             <div className="flex items-center justify-between px-3.5 py-3">
               <div className="pr-2">
                 <span className="text-xs font-medium text-foreground block">Nhắc xác nhận trước 31 phút</span>
-                <span className="text-[10px] text-muted-foreground">Theo quy chuẩn cọc 0đ của SYNESIS</span>
+                <span className="text-micro text-muted-foreground">Theo quy chuẩn cọc 0đ của SYNESIS</span>
               </div>
               <button
                 type="button"
@@ -361,7 +361,7 @@ export default function AccountSettingsPage() {
             <div className="flex items-center justify-between px-3.5 py-3">
               <div className="pr-2">
                 <span className="text-xs font-medium text-foreground block">Kèo mới phù hợp</span>
-                <span className="text-[10px] text-muted-foreground">Thông báo khi có bạn tập cùng band ở gần</span>
+                <span className="text-micro text-muted-foreground">Thông báo khi có bạn tập cùng band ở gần</span>
               </div>
               <button
                 type="button"
@@ -386,7 +386,7 @@ export default function AccountSettingsPage() {
             <div className="flex items-center justify-between px-3.5 py-3">
               <div className="pr-2">
                 <span className="text-xs font-medium text-foreground block">Chuỗi & Xu sắp hết hạn</span>
-                <span className="text-[10px] text-muted-foreground">Cảnh báo đứt chuỗi tuần và mất xu thưởng</span>
+                <span className="text-micro text-muted-foreground">Cảnh báo đứt chuỗi tuần và mất xu thưởng</span>
               </div>
               <button
                 type="button"
@@ -513,7 +513,7 @@ export default function AccountSettingsPage() {
               <p className="text-xs text-muted-foreground">Số điện thoại dùng để nhận mã OTP và liên hệ khẩn cấp.</p>
             </div>
             <div>
-              <label className="text-[11px] font-bold text-muted-foreground block mb-1">Số điện thoại:</label>
+              <label className="text-caption font-bold text-muted-foreground block mb-1">Số điện thoại:</label>
               <input
                 type="text"
                 value={phoneNumber}
@@ -588,7 +588,7 @@ export default function AccountSettingsPage() {
                 <p className="text-xs font-bold text-foreground">Người thân / Bạn tập chính</p>
                 <p className="text-xs text-muted-foreground font-mono">0912 ••• 888</p>
               </div>
-              <span className="text-[10px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-md">Mặc định</span>
+              <span className="text-micro font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-md">Mặc định</span>
             </div>
             <Button onClick={closeModal} className="w-full rounded-xl bg-brand text-white font-bold text-xs h-10">
               Xong
@@ -621,7 +621,7 @@ export default function AccountSettingsPage() {
                   <div key={item.id} className="p-2.5 rounded-xl bg-muted/40 border border-border flex items-center justify-between">
                     <div>
                       <p className="text-xs font-bold text-foreground">{item.name}</p>
-                      <p className="text-[10px] text-muted-foreground">Chặn ngày {item.date}</p>
+                      <p className="text-micro text-muted-foreground">Chặn ngày {item.date}</p>
                     </div>
                     <button
                       type="button"
@@ -679,7 +679,7 @@ export default function AccountSettingsPage() {
                   )}
                 >
                   <p className="text-xs font-bold text-foreground">{opt.label}</p>
-                  <p className="text-[11px] text-muted-foreground">{opt.desc}</p>
+                  <p className="text-caption text-muted-foreground">{opt.desc}</p>
                 </button>
               ))}
             </div>
@@ -723,7 +723,7 @@ export default function AccountSettingsPage() {
                   )}
                 >
                   <p className="text-xs font-bold text-foreground">{item.vibe}</p>
-                  <p className="text-[11px] text-muted-foreground">{item.desc}</p>
+                  <p className="text-caption text-muted-foreground">{item.desc}</p>
                 </button>
               ))}
             </div>
@@ -762,7 +762,7 @@ export default function AccountSettingsPage() {
                   )}
                 >
                   <span className="text-xs font-bold text-foreground">{km} km</span>
-                  <span className="text-[11px] text-muted-foreground">
+                  <span className="text-caption text-muted-foreground">
                     {km === 3 ? "Chuẩn SYNESIS (Khuyên dùng)" : km < 3 ? "Gần sát nhà" : "Phạm vi toàn thành phố"}
                   </span>
                 </button>
@@ -802,7 +802,7 @@ export default function AccountSettingsPage() {
                   )}
                 >
                   <p className="font-bold text-foreground">{opt.label}</p>
-                  <p className="text-[11px] text-muted-foreground">{opt.desc}</p>
+                  <p className="text-caption text-muted-foreground">{opt.desc}</p>
                 </button>
               ))}
             </div>
@@ -841,7 +841,7 @@ export default function AccountSettingsPage() {
                   )}
                 >
                   <p className="font-bold text-foreground">{opt.label}</p>
-                  <p className="text-[11px] text-muted-foreground">{opt.desc}</p>
+                  <p className="text-caption text-muted-foreground">{opt.desc}</p>
                 </button>
               ))}
             </div>
@@ -942,7 +942,7 @@ export default function AccountSettingsPage() {
                   )}
                 >
                   <p className="text-xs font-bold text-foreground">{item.label}</p>
-                  <p className="text-[11px] text-muted-foreground">{item.desc}</p>
+                  <p className="text-caption text-muted-foreground">{item.desc}</p>
                 </button>
               ))}
             </div>
@@ -971,7 +971,7 @@ export default function AccountSettingsPage() {
                 <span className="text-foreground">Cổng thanh toán:</span>
                 <span className="text-brand font-black">VietQR (PayOS)</span>
               </div>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
+              <p className="text-caption text-muted-foreground leading-relaxed">
                 Khi thuê sân hoặc tham gia kèo chia tiền (85% Host · 15% Nền tảng), tiền sẽ được chuyển thẳng về tài khoản ngân hàng liên kết sau khi quét QR check-in thành công.
               </p>
             </div>
@@ -997,14 +997,14 @@ export default function AccountSettingsPage() {
               <div className="p-2.5 rounded-xl bg-muted/40 border border-border flex justify-between items-center">
                 <div>
                   <p className="font-bold text-foreground">Kèo Chạy Bờ Kè Thanh Đa</p>
-                  <p className="text-[10px] text-muted-foreground">16/11/2026 · Quét QR đúng giờ</p>
+                  <p className="text-micro text-muted-foreground">16/11/2026 · Quét QR đúng giờ</p>
                 </div>
                 <span className="font-bold text-emerald-600 dark:text-emerald-400">+0.5 UT</span>
               </div>
               <div className="p-2.5 rounded-xl bg-muted/40 border border-border flex justify-between items-center">
                 <div>
                   <p className="font-bold text-foreground">Chia tiền sân Cầu Lông Đào Duy Anh</p>
-                  <p className="text-[10px] text-muted-foreground">12/11/2026 · VietQR PayOS</p>
+                  <p className="text-micro text-muted-foreground">12/11/2026 · VietQR PayOS</p>
                 </div>
                 <span className="font-bold text-foreground">-45.000đ</span>
               </div>
@@ -1033,13 +1033,13 @@ export default function AccountSettingsPage() {
             <div className="space-y-2 text-xs">
               <div className="p-2.5 rounded-xl bg-muted/50 border border-border space-y-1">
                 <p className="font-bold text-foreground">Điểm Uy Tín (UT) hoạt động như thế nào?</p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-caption text-muted-foreground">
                   Mỗi tài khoản khởi điểm 7.0 UT. Điểm trên 8.0 được hưởng miễn cọc 0đ khi ghép kèo.
                 </p>
               </div>
               <div className="p-2.5 rounded-xl bg-muted/50 border border-border space-y-1">
                 <p className="font-bold text-foreground">Quy định hủy kèo phút chót?</p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-caption text-muted-foreground">
                   Hủy trong vòng 30 phút trước giờ hẹn sẽ bị trừ 1.5 UT và khóa ghép kèo 24 giờ.
                 </p>
               </div>
