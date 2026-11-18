@@ -3,7 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, ChevronRight, Lock, UserRound, Users, UsersRound } from "lucide-react";
+import { ArrowLeft, ArrowRight, EyeOff, Lock, MessageCircle, Repeat2, ShieldCheck, Sparkles, Users, UsersRound } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { BottomSheet } from "@/components/feed/bottom-sheet";
 import { BrowseKeos } from "@/components/keo/browse-keos";
 import { GroupFlow, PersonalFlow, SoloFlow } from "@/components/keo/keo-flows";
@@ -14,11 +15,82 @@ import { SportIcon } from "@/components/shared/sport-icon";
 
 type Kind = "ca-nhan" | "nhom" | "1-1";
 
-const OPTIONS: { id: Kind; title: string; desc: string; icon: typeof Users }[] = [
-  { id: "ca-nhan", title: "Cá nhân", desc: "Một mình: lên kế hoạch tập riêng, chỉ bạn thấy", icon: UserRound },
-  { id: "nhom", title: "Nhóm", desc: "Tìm nhóm đang thiếu người, hoặc tự lập nhóm mới", icon: Users },
-  { id: "1-1", title: "1:1", desc: "Bạn và một đồng đội: gợi ý tối đa 3 người hợp nhất", icon: UsersRound },
+type Fact = { icon: typeof Users; text: string };
+
+/**
+ * 3 cách tạo kèo (thứ tự founder chốt ở D31). Mỗi chip là một luật THẬT của app:
+ *  - Cá nhân: chỉ mình thấy, không cộng/trừ UT, mở được thành 1:1 (keo-flows SoloFlow, D31)
+ *  - Nhóm: 2–22 người (keo-form min/max), vào chat nhóm sau khi chấp nhận (D33), UT tính khi đã chốt (D23)
+ *  - 1:1: gợi ý tối đa 3 người hợp nhất, UT tính khi đã chốt (D23)
+ */
+const OPTIONS: { id: Kind; title: string; tagline: string; people: 1 | 2 | 4; facts: Fact[] }[] = [
+  {
+    id: "ca-nhan",
+    title: "Cá nhân",
+    tagline: "Tự lên kế hoạch tập riêng cho mình",
+    people: 1,
+    facts: [
+      { icon: EyeOff, text: "Chỉ bạn thấy" },
+      { icon: Lock, text: "Không tính UT" },
+      { icon: Repeat2, text: "Mở thành 1:1 khi muốn" },
+    ],
+  },
+  {
+    id: "nhom",
+    title: "Nhóm",
+    tagline: "Vào nhóm đang thiếu người, hoặc tự lập nhóm",
+    people: 4,
+    facts: [
+      { icon: Users, text: "2–22 người" },
+      { icon: MessageCircle, text: "Chat nhóm sau khi vào" },
+      { icon: ShieldCheck, text: "Tính UT khi đã chốt" },
+    ],
+  },
+  {
+    id: "1-1",
+    title: "1:1",
+    tagline: "Bạn và một đồng đội hợp pace, hợp giờ",
+    people: 2,
+    facts: [
+      { icon: Sparkles, text: "Gợi ý 3 người hợp nhất" },
+      { icon: ShieldCheck, text: "Tính UT khi đã chốt" },
+    ],
+  },
 ];
+
+/** Hình tượng số người: 1 chấm có quỹ đạo · 2 chấm nối nhau · cụm 4 chấm. Rê chuột → các chấm giãn ra. */
+function PeopleGlyph({ people }: { people: 1 | 2 | 4 }) {
+  const dot = "absolute rounded-full ring-2 ring-card transition-transform duration-500 ease-out-expo";
+  return (
+    <span
+      aria-hidden
+      className="relative h-14 w-14 shrink-0 rounded-2xl bg-brand-gradient-soft ring-1 ring-inset ring-brand/15 overflow-hidden"
+    >
+      {people === 1 && (
+        <>
+          <span className="absolute inset-2.5 rounded-full border border-dashed border-brand/40 transition-transform duration-700 ease-out-expo group-hover:rotate-90 group-hover:scale-110" />
+          <span className={cn(dot, "left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 bg-brand-gradient shadow-glow")} />
+        </>
+      )}
+      {people === 2 && (
+        <>
+          <span className="absolute left-4 right-4 top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-brand/35" />
+          <span className={cn(dot, "left-2.5 top-1/2 h-5 w-5 -translate-y-1/2 bg-brand-gradient shadow-glow group-hover:-translate-x-0.5")} />
+          <span className={cn(dot, "right-2.5 top-1/2 h-5 w-5 -translate-y-1/2 bg-brand-glow group-hover:translate-x-0.5")} />
+        </>
+      )}
+      {people === 4 && (
+        <>
+          <span className={cn(dot, "left-[19px] top-[18px] h-5 w-5 bg-brand-gradient shadow-glow")} />
+          <span className={cn(dot, "left-2 top-2.5 h-3.5 w-3.5 bg-brand-glow group-hover:-translate-x-0.5 group-hover:-translate-y-0.5")} />
+          <span className={cn(dot, "right-2 top-3 h-3.5 w-3.5 bg-brand-mist group-hover:translate-x-0.5 group-hover:-translate-y-0.5")} />
+          <span className={cn(dot, "left-3 bottom-2 h-3 w-3 bg-brand-300 group-hover:-translate-x-0.5 group-hover:translate-y-0.5")} />
+          <span className={cn(dot, "right-2.5 bottom-2.5 h-3.5 w-3.5 bg-brand-glow group-hover:translate-x-0.5 group-hover:translate-y-0.5")} />
+        </>
+      )}
+    </span>
+  );
+}
 
 const TITLE: Record<Kind, string> = { "ca-nhan": "Kế hoạch tự tập", nhom: "Tạo kèo nhóm", "1-1": "Tạo kèo 1:1" };
 
@@ -134,24 +206,40 @@ function Hub() {
         <BrowseKeos />
       </div>
 
-      <BottomSheet open={open} onClose={() => setOpen(false)} title="Tạo kèo mới" bodyClassName="p-3.5 pb-8 space-y-2.5">
-        {OPTIONS.map((o) => (
-          <Link
-            key={o.id}
-            href={`/len-keo?loai=${o.id}`}
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-3.5 hover:border-brand/40 shadow-xs active:scale-[0.99] transition-all text-foreground group"
-          >
-            <span className="w-11 h-11 shrink-0 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center group-hover:scale-105 transition-transform">
-              <o.icon className="h-5 w-5" />
-            </span>
-            <span className="flex-1 min-w-0">
-              <span className="block text-body font-bold text-foreground">{o.title}</span>
-              <span className="block text-xs text-muted-foreground mt-0.5">{o.desc}</span>
-            </span>
-            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-        ))}
+      <BottomSheet open={open} onClose={() => setOpen(false)} title="Tạo kèo mới" bodyClassName="p-3.5 pb-8">
+        <p className="px-0.5 pb-2.5 text-xs text-muted-foreground">Bạn muốn tập thế nào? Chọn một kiểu, rồi điền chi tiết buổi tập.</p>
+        <div className="space-y-2.5 stagger-in">
+          {OPTIONS.map((o) => (
+            <Link
+              key={o.id}
+              href={`/len-keo?loai=${o.id}`}
+              onClick={() => setOpen(false)}
+              className="group card-interactive relative flex items-start gap-3.5 rounded-2xl border border-border/80 bg-card p-3.5 shadow-xs hover:border-brand/40 text-foreground"
+            >
+              <PeopleGlyph people={o.people} />
+              <span className="flex-1 min-w-0 pt-0.5">
+                <span className="flex items-center justify-between gap-2">
+                  <span className="font-display text-[17px] font-extrabold tracking-tight text-foreground">{o.title}</span>
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all duration-300 ease-out-expo group-hover:bg-brand-gradient group-hover:text-white group-hover:shadow-glow">
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+                  </span>
+                </span>
+                <span className="block text-xs text-muted-foreground mt-0.5">{o.tagline}</span>
+                <span className="mt-2 flex flex-wrap gap-1.5">
+                  {o.facts.map((f) => (
+                    <span
+                      key={f.text}
+                      className="inline-flex items-center gap-1 rounded-md bg-muted/70 px-1.5 py-0.5 text-caption font-semibold text-foreground/80"
+                    >
+                      <f.icon className="h-3 w-3 text-brand dark:text-brand-glow" aria-hidden />
+                      {f.text}
+                    </span>
+                  ))}
+                </span>
+              </span>
+            </Link>
+          ))}
+        </div>
       </BottomSheet>
     </div>
   );

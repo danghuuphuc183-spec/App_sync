@@ -80,6 +80,36 @@ export function formatVietnamTime(dateInput: Date | string | number): string {
 }
 
 /**
+ * Các phần ngày theo giờ Việt Nam để hiển thị lịch sự kiện:
+ * { weekday: "Thứ Bảy", day: "28", month: "11", label: "Thứ Bảy, 28/11", time: "19:30" }.
+ * Thứ luôn suy ra từ chính ngày đó (không viết tay) nên không thể lệch.
+ */
+export function vietnamDateParts(dateInput: Date | string | number): {
+  weekday: string;
+  day: string;
+  month: string;
+  label: string;
+  time: string;
+} {
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) {
+    throw new RangeError("Thời gian đầu vào không hợp lệ");
+  }
+  const parts = new Intl.DateTimeFormat("vi-VN", {
+    timeZone: VIETNAM_TIMEZONE,
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit",
+  }).formatToParts(date);
+  const pick = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value ?? "";
+  const weekday = pick("weekday");
+  const capitalized = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+  const day = pick("day");
+  const month = pick("month");
+  return { weekday: capitalized, day, month, label: `${capitalized}, ${day}/${month}`, time: formatVietnamTime(date) };
+}
+
+/**
  * Kiểm tra người dùng có đủ từ 18 tuổi trở lên hay không (tính theo ngày sinh).
  */
 export function isAtLeast18YearsOld(birthDateInput: string | Date, nowInput?: Date): boolean {

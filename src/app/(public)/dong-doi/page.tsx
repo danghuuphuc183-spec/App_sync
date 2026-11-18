@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   Bell,
@@ -27,6 +28,7 @@ import {
   Search,
   MapPin,
   Clock,
+  Route,
   UserCheck,
   Award,
 } from "lucide-react";
@@ -46,6 +48,7 @@ import { SplitPaymentOrder, MOCK_PARTNER_ACCOUNTS, SYNESIS_PLATFORM_ACCOUNT } fr
 import { generateVietQrImageUrl, generateOrderCode } from "@/features/payment/vietqr.service";
 import { RankAuraGlow, getRankTheme } from "@/components/profile/rank-aura";
 import { RankBadgeIcon } from "@/components/profile/rank-badge-icon";
+import { vietnamDateParts } from "@/lib/date";
 
 type ScreenView = "main" | "duo" | "nhom";
 type MainCategory = "nhom" | "clb";
@@ -835,99 +838,131 @@ function DongDoiContent() {
                   </span>
                 </div>
 
-                {/* Filter badges */}
+                {/* Bộ lọc loại sự kiện (kèm số lượng) */}
                 <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
                   {[
                     { id: "all", label: "Tất cả" },
-                    { id: "race", label: "Giải chạy nội bộ" },
+                    { id: "race", label: "Giải chạy" },
                     { id: "long_run", label: "Long Run" },
+                    { id: "social", label: "Cộng đồng" },
                     { id: "workshop", label: "Workshop" },
-                  ].map((f) => (
-                    <button
-                      key={f.id}
-                      type="button"
-                      onClick={() => setEventCategoryFilter(f.id)}
-                      className={cn(
-                        "px-2.5 py-1 rounded-full text-caption font-semibold shrink-0 transition-all",
-                        eventCategoryFilter === f.id
-                          ? "bg-brand text-white shadow-xs"
-                          : "bg-muted/70 text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      {f.label}
-                    </button>
-                  ))}
+                  ].map((f) => {
+                    const count = (myClub.events || []).filter((ev) => f.id === "all" || ev.eventType === f.id).length;
+                    return (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => setEventCategoryFilter(f.id)}
+                        aria-pressed={eventCategoryFilter === f.id}
+                        className={cn(
+                          "px-2.5 py-1 rounded-full text-caption font-semibold shrink-0 transition-all",
+                          eventCategoryFilter === f.id
+                            ? "bg-brand-gradient text-white shadow-glow"
+                            : "bg-card border border-border/80 text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        {f.label} <span className="font-numeric font-bold opacity-80">{count}</span>
+                      </button>
+                    );
+                  })}
                 </div>
 
-                {/* Danh sách Event Cards */}
-                <div className="space-y-2.5">
+                {/* Băng chuyền thẻ sự kiện có ảnh bìa — vuốt ngang; đổi bộ lọc thì quay về thẻ đầu */}
+                <div
+                  key={eventCategoryFilter}
+                  className="-mx-4 px-4 flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-px-4 pb-1 stagger-in"
+                >
                   {(myClub.events || [])
                     .filter((ev) => eventCategoryFilter === "all" || ev.eventType === eventCategoryFilter)
                     .map((ev) => {
                       const isRsvped = registeredEventIds.includes(ev.id);
+                      const going = ev.participantsCount + (isRsvped && !ev.isRegistered ? 1 : 0);
+                      const capacity = ev.maxParticipants ?? going;
+                      const fill = capacity > 0 ? Math.min(100, Math.round((going / capacity) * 100)) : 0;
+                      const day = ev.startsAt ? vietnamDateParts(ev.startsAt) : null;
                       return (
-                        <div
+                        <article
                           key={ev.id}
-                          className="p-3.5 rounded-2xl bg-card border border-border/80 hover:border-brand/40 shadow-xs space-y-2.5 transition-all"
+                          aria-label={ev.title}
+                          className="group/ev card-hover snap-start shrink-0 w-[80%] max-w-[300px] rounded-2xl border border-border/80 bg-card overflow-hidden shadow-xs flex flex-col"
                         >
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <div className="flex items-center gap-1.5 mb-1">
-                                <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-micro">
-                                  {ev.eventTypeName}
-                                </span>
-                                {ev.badgeText && (
-                                  <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-micro">
-                                    {ev.badgeText}
-                                  </span>
-                                )}
+                          <div className="relative aspect-[16/10] bg-muted overflow-hidden">
+                            {ev.image && (
+                              <Image
+                                src={ev.image}
+                                alt={ev.imageAlt ?? ev.title}
+                                fill
+                                unoptimized
+                                sizes="300px"
+                                className="object-cover transition-transform duration-700 ease-out-expo group-hover/ev:scale-[1.05]"
+                              />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/25 to-transparent" />
+                            {day && (
+                              <div className="absolute left-2.5 top-2.5 min-w-[44px] rounded-xl bg-white/95 px-2 py-1 text-center text-ink shadow-sm">
+                                <span className="block font-numeric text-[22px] font-extrabold leading-none">{day.day}</span>
+                                <span className="block text-micro font-bold uppercase tracking-wide text-brand">Th{day.month}</span>
                               </div>
-                              <h3 className="text-sm font-bold text-foreground leading-snug">{ev.title}</h3>
-                            </div>
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-micro shrink-0">
+                            )}
+                            <span className="absolute right-2.5 top-2.5 rounded-full bg-emerald-500 px-2 py-0.5 text-micro font-extrabold text-white shadow-sm">
                               +{ev.rewardExp} EXP
                             </span>
+                            <div className="absolute inset-x-3 bottom-2.5 text-white">
+                              <span className="inline-flex rounded-md bg-white/15 px-1.5 py-0.5 text-micro font-bold ring-1 ring-inset ring-white/25 backdrop-blur-sm">
+                                {ev.eventTypeName}
+                              </span>
+                              <h3 className="mt-1 text-sm font-extrabold leading-snug line-clamp-2">{ev.title}</h3>
+                            </div>
                           </div>
 
-                          <div className="space-y-1 text-caption text-muted-foreground">
-                            <div className="flex items-center gap-1.5">
-                              <Clock className="h-3.5 w-3.5 text-brand shrink-0" />
+                          <div className="flex flex-1 flex-col gap-1.5 p-3 text-caption text-muted-foreground">
+                            <p className="flex items-center gap-1.5">
+                              <Clock className="h-3.5 w-3.5 shrink-0 text-brand" />
                               <span>
-                                {ev.dateVi} · {ev.timeVi}
+                                {ev.dateVi} · <span className="font-numeric text-xs font-bold text-foreground">{ev.timeVi}</span>
                               </span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                            </p>
+                            <p className="flex items-center gap-1.5">
+                              <MapPin className="h-3.5 w-3.5 shrink-0" />
                               <span className="truncate">{ev.location}</span>
-                            </div>
-                            <div className="flex items-center justify-between pt-0.5">
-                              <span className="font-medium text-foreground">
-                                {ev.distanceOrDuration} · Chủ trì: {ev.hostName}
+                            </p>
+                            <p className="flex items-center gap-1.5">
+                              <Route className="h-3.5 w-3.5 shrink-0" />
+                              <span className="truncate font-medium text-foreground">{ev.distanceOrDuration}</span>
+                            </p>
+                            {ev.badgeText && (
+                              <span className="self-start rounded-md bg-amber-500/10 px-1.5 py-0.5 text-micro font-bold text-amber-700 dark:text-amber-400">
+                                {ev.badgeText}
                               </span>
-                              <span className="text-muted-foreground font-semibold">
-                                {ev.participantsCount + (isRsvped && !ev.isRegistered ? 1 : 0)}/{ev.maxParticipants} vđv
-                              </span>
-                            </div>
-                          </div>
+                            )}
 
-                          <div className="pt-1 border-t border-border/50 flex items-center justify-between">
-                            <span className="text-micro text-muted-foreground">
-                              {isRsvped ? "✓ Đã đăng ký tham gia" : "Mở cho toàn thể hội viên CLB"}
-                            </span>
+                            <div className="mt-1 space-y-1">
+                              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                                <div className="h-full rounded-full bg-brand-gradient transition-all duration-500" style={{ width: `${fill}%` }} />
+                              </div>
+                              <div className="flex items-center justify-between gap-2 text-micro">
+                                <span>
+                                  <span className="font-numeric text-xs font-bold text-foreground">{going}</span>/{capacity} vđv
+                                </span>
+                                <span className="truncate">Chủ trì: {ev.hostName}</span>
+                              </div>
+                            </div>
+
                             <button
                               type="button"
                               onClick={() => handleToggleEventRsvp(ev.id, ev.title)}
                               className={cn(
-                                "px-3 py-1.5 rounded-xl font-bold text-xs transition-all active:scale-95 shadow-xs",
-                                isRsvped
-                                  ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                                  : "bg-brand text-white hover:bg-brand-600"
+                                "mt-auto w-full rounded-xl py-2 text-xs font-bold",
+                                isRsvped ? "bg-emerald-600 text-white hover:bg-emerald-700" : "btn-electric"
                               )}
                             >
                               {isRsvped ? "Đã đăng ký ✓" : "Đăng ký tham gia (RSVP)"}
                             </button>
+                            {ev.imageCredit && (
+                              <p className="text-[9px] leading-none text-muted-foreground/70">Ảnh: {ev.imageCredit} / Unsplash</p>
+                            )}
                           </div>
-                        </div>
+                        </article>
                       );
                     })}
                 </div>

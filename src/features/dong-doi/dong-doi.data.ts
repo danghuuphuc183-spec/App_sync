@@ -20,6 +20,7 @@
  */
 
 import { getNextRankProgress } from "@/features/rank/ranking";
+import { vietnamDateParts } from "@/lib/date";
 
 export interface DuoItem {
   id: string;
@@ -395,8 +396,14 @@ export interface ClubEventItem {
   title: string;
   eventType: "race" | "long_run" | "workshop" | "social";
   eventTypeName: string;
+  /** Thời điểm bắt đầu (ISO, giờ VN). `dateVi`/`timeVi` được suy ra từ đây nên thứ không bao giờ lệch. */
+  startsAt?: string;
   dateVi: string;
   timeVi: string;
+  /** Ảnh bìa (Unsplash License — dùng miễn phí, ghi công tác giả ở `imageCredit`) */
+  image?: string;
+  imageAlt?: string;
+  imageCredit?: string;
   location: string;
   distanceOrDuration: string;
   hostName: string;
@@ -458,6 +465,264 @@ export interface ClubListItem {
     slotsLeft: number;
   }>;
 }
+
+/** Ảnh Unsplash qua CDN chính thức (cách Unsplash khuyến nghị: hotlink, không tải về). */
+const unsplash = (id: string) => `https://images.unsplash.com/photo-${id}?w=800&auto=format&fit=crop&q=75`;
+
+type ClubEventSeed = Omit<ClubEventItem, "dateVi" | "timeVi"> & { startsAt: string };
+
+/** Sinh `dateVi` ("Thứ Bảy, 28/11") và `timeVi` ("19:30") từ `startsAt` theo giờ Việt Nam. */
+function clubEvent(seed: ClubEventSeed): ClubEventItem {
+  const d = vietnamDateParts(seed.startsAt);
+  return { ...seed, dateVi: d.label, timeVi: d.time };
+}
+
+/**
+ * Lịch sự kiện mẫu của FTU2 Run Club (13 sự kiện, sắp theo ngày).
+ * Tên giải là tên mô tả HƯ CẤU tại địa điểm có thật ở TP.HCM — không dùng tên/thương hiệu giải thật
+ * (quy tắc dự án #23). Ảnh: Unsplash License; giải chạy dùng ảnh vận động viên thật, sự kiện gắn
+ * địa danh dùng ảnh TP.HCM thật.
+ */
+const FTU2_EVENTS: ClubEventItem[] = (
+  [
+    {
+      id: "event-1",
+      title: "Giải Chạy Nội Bộ FTU2 Autumn Half Marathon",
+      eventType: "race",
+      eventTypeName: "Giải chạy nội bộ",
+      startsAt: "2026-11-22T05:00:00+07:00",
+      location: "Khu Đô Thị Sala & Cầu Ba Son, TP. Thủ Đức",
+      distanceOrDuration: "21km & 10km",
+      hostName: "Ban Chủ Nhiệm FTU2",
+      participantsCount: 48,
+      maxParticipants: 60,
+      isRegistered: true,
+      rewardExp: 50,
+      badgeText: "Huy chương Finisher",
+      image: unsplash("1777788613992-5f2655a97e72"),
+      imageAlt: "Đoàn vận động viên đông người chạy trên đường trong một giải marathon",
+      imageCredit: "Daniel Stiel",
+    },
+    {
+      id: "event-2",
+      title: "Long Run Cuối Tuần: Bờ Kè Thanh Đa - Landmark 81",
+      eventType: "long_run",
+      eventTypeName: "Chạy dài cuối tuần",
+      startsAt: "2026-11-21T05:30:00+07:00",
+      location: "Cổng Công Viên Central Park, Bình Thạnh",
+      distanceOrDuration: "15km · Pace 5:45 - 6:15",
+      hostName: "Minh Anh (Pacer)",
+      participantsCount: 26,
+      maxParticipants: 35,
+      isRegistered: false,
+      rewardExp: 25,
+      badgeText: "Kèm pacer giữ nhịp",
+      image: unsplash("1698996608582-24cb3690afb8"),
+      imageAlt: "Toà nhà chọc trời bên bờ sông Sài Gòn",
+      imageCredit: "Quinn Nguyen",
+    },
+    {
+      id: "event-3",
+      title: "Workshop: Kỹ Thuật Tiếp Đất & Phòng Tránh Chấn Thương Gối",
+      eventType: "workshop",
+      eventTypeName: "Workshop kỹ thuật",
+      startsAt: "2026-11-25T19:00:00+07:00",
+      location: "Phòng Sinh Hoạt Thể Thao ĐH Ngoại Thương CS2",
+      distanceOrDuration: "90 phút chuyên sâu",
+      hostName: "HLV Quốc Hưng & Bác sĩ Thể thao",
+      participantsCount: 38,
+      maxParticipants: 50,
+      isRegistered: false,
+      rewardExp: 20,
+      badgeText: "Miễn phí hội viên",
+      image: unsplash("1769284331730-9955c15e7dac"),
+      imageAlt: "Nhóm người chạy bộ trên lối đi ven biển có hàng cọ",
+      imageCredit: "Yuval Zukerman",
+    },
+    {
+      id: "event-4",
+      title: "Workshop: Chạy Đêm An Toàn — Đèn, Áo Phản Quang & Lộ Trình",
+      eventType: "workshop",
+      eventTypeName: "Workshop an toàn",
+      startsAt: "2026-11-26T19:30:00+07:00",
+      location: "Phòng Sinh Hoạt Thể Thao ĐH Ngoại Thương CS2",
+      distanceOrDuration: "75 phút · chuẩn bị cho giải chạy đêm 28/11",
+      hostName: "Ban Chủ Nhiệm FTU2",
+      participantsCount: 26,
+      maxParticipants: 50,
+      isRegistered: false,
+      rewardExp: 15,
+      badgeText: "Miễn phí hội viên",
+      image: unsplash("1774719194893-a8e7f20363b1"),
+      imageAlt: "Người chạy bộ lướt nhanh trên phố vào ban đêm",
+      imageCredit: "Venti Views",
+    },
+    {
+      id: "event-5",
+      title: "Giải Chạy Đêm Ven Sông Thủ Thiêm 10K",
+      eventType: "race",
+      eventTypeName: "Giải chạy thành phố",
+      startsAt: "2026-11-28T19:30:00+07:00",
+      location: "Công viên bờ sông Sài Gòn, Thủ Thiêm, TP. Thủ Đức",
+      distanceOrDuration: "5K & 10K · cung đường ven sông",
+      hostName: "BCN FTU2 (đăng ký theo đoàn)",
+      participantsCount: 31,
+      maxParticipants: 40,
+      isRegistered: false,
+      rewardExp: 40,
+      badgeText: "Đi theo đoàn CLB",
+      image: unsplash("1700500790259-a2527558c3f2"),
+      imageAlt: "Trung tâm Quận 1 về đêm nhìn từ bờ sông Thủ Thiêm",
+      imageCredit: "Nhat Tien Huynh",
+    },
+    {
+      id: "event-6",
+      title: "Chạy Nhặt Rác Bờ Kè Thanh Đa (Plogging)",
+      eventType: "social",
+      eventTypeName: "Chạy cộng đồng",
+      startsAt: "2026-11-29T06:00:00+07:00",
+      location: "Bờ kè Thanh Đa, Bình Thạnh",
+      distanceOrDuration: "6 km · vừa chạy vừa nhặt rác",
+      hostName: "BCN FTU2 & nhóm tình nguyện",
+      participantsCount: 29,
+      maxParticipants: 50,
+      isRegistered: false,
+      rewardExp: 20,
+      badgeText: "Vì môi trường",
+      image: unsplash("1758599668426-1cf242bb7667"),
+      imageAlt: "Tình nguyện viên nhặt rác bỏ vào túi",
+      imageCredit: "Vitaly Gariev",
+    },
+    {
+      id: "event-7",
+      title: "Long Run 25K Đại Lộ Võ Văn Kiệt",
+      eventType: "long_run",
+      eventTypeName: "Chạy dài cuối tuần",
+      startsAt: "2026-12-06T04:45:00+07:00",
+      location: "Chân cầu Calmette, Q.1 → Đại lộ Võ Văn Kiệt",
+      distanceOrDuration: "25 km · Pace 6:00 - 6:30",
+      hostName: "Hữu Tùng (Pacer)",
+      participantsCount: 18,
+      maxParticipants: 30,
+      isRegistered: false,
+      rewardExp: 30,
+      badgeText: "Trạm nước mỗi 5 km",
+      image: unsplash("1613936360976-8f35cf0e5461"),
+      imageAlt: "Đoàn người chạy trên đường nhựa ban ngày",
+      imageCredit: "Miguel A Amutio",
+    },
+    {
+      id: "event-8",
+      title: "Workshop: Khởi Động & Giãn Cơ Đúng Cách Cho Chạy Dài",
+      eventType: "workshop",
+      eventTypeName: "Workshop kỹ thuật",
+      startsAt: "2026-12-09T19:00:00+07:00",
+      location: "Công viên Vinhomes Central Park, Bình Thạnh",
+      distanceOrDuration: "60 phút thực hành",
+      hostName: "HLV Quốc Hưng",
+      participantsCount: 21,
+      maxParticipants: 30,
+      isRegistered: false,
+      rewardExp: 15,
+      badgeText: "Miễn phí hội viên",
+      image: unsplash("1683111124427-650aff5592a8"),
+      imageAlt: "Ba người giãn cơ trước buổi chạy",
+      imageCredit: "Sweet Life",
+    },
+    {
+      id: "event-9",
+      title: "Bán Marathon Phú Mỹ Hưng Mùa Lễ Hội",
+      eventType: "race",
+      eventTypeName: "Giải chạy thành phố",
+      startsAt: "2026-12-13T04:30:00+07:00",
+      location: "Hồ Bán Nguyệt & Cầu Ánh Sao, Phú Mỹ Hưng, Q.7",
+      distanceOrDuration: "21K · 10K · 5K",
+      hostName: "BCN FTU2 (đăng ký theo đoàn)",
+      participantsCount: 52,
+      maxParticipants: 70,
+      isRegistered: false,
+      rewardExp: 60,
+      badgeText: "Huy chương Finisher",
+      image: unsplash("1781029103015-bd978c26df57"),
+      imageAlt: "Hàng trăm vận động viên xuất phát trong một giải marathon thành phố",
+      imageCredit: "Miguel A Amutio",
+    },
+    {
+      id: "event-10",
+      title: "Long Run Bình Minh 18K: Sala – Cầu Ba Son",
+      eventType: "long_run",
+      eventTypeName: "Chạy dài cuối tuần",
+      startsAt: "2026-12-19T05:15:00+07:00",
+      location: "Khu đô thị Sala, TP. Thủ Đức",
+      distanceOrDuration: "18 km · Pace 5:45 - 6:15",
+      hostName: "Minh Anh (Pacer)",
+      participantsCount: 24,
+      maxParticipants: 35,
+      isRegistered: false,
+      rewardExp: 25,
+      badgeText: "Kèm pacer giữ nhịp",
+      image: unsplash("1651901927035-61cc17296ac3"),
+      imageAlt: "Cầu dây văng bắc qua sông Sài Gòn lúc chiều tà",
+      imageCredit: "Leo Cap",
+    },
+    {
+      id: "event-11",
+      title: "Chạy Chào Năm Mới 2027 Phố Đi Bộ Nguyễn Huệ",
+      eventType: "social",
+      eventTypeName: "Chạy cộng đồng",
+      startsAt: "2027-01-01T05:30:00+07:00",
+      location: "Phố đi bộ Nguyễn Huệ, Q.1",
+      distanceOrDuration: "5 km chạy vui · mọi pace",
+      hostName: "Minh Trang (Hậu cần sự kiện)",
+      participantsCount: 87,
+      maxParticipants: 150,
+      isRegistered: false,
+      rewardExp: 20,
+      badgeText: "Áo kỷ niệm",
+      image: unsplash("1710084118214-e10f1fe1c5f2"),
+      imageAlt: "Trụ sở UBND TP.HCM ở đầu phố đi bộ Nguyễn Huệ lên đèn về đêm",
+      imageCredit: "khanh vu",
+    },
+    {
+      id: "event-12",
+      title: "Giải Chạy Vượt Cầu Ba Son 12K",
+      eventType: "race",
+      eventTypeName: "Giải chạy thành phố",
+      startsAt: "2027-01-10T05:00:00+07:00",
+      location: "Cầu Ba Son (Q.1) ↔ Đại lộ Vòng Cung Thủ Thiêm",
+      distanceOrDuration: "12K · 2 lần qua dốc cầu",
+      hostName: "BCN FTU2 (đăng ký theo đoàn)",
+      participantsCount: 22,
+      maxParticipants: 40,
+      isRegistered: false,
+      rewardExp: 45,
+      badgeText: "Cung có dốc cầu",
+      image: unsplash("1761064039885-afa38ab58a21"),
+      imageAlt: "Vận động viên chạy trên phố trong một giải marathon thành phố",
+      imageCredit: "Jerry Wei",
+    },
+    {
+      id: "event-13",
+      title: "Chạy Gây Quỹ “Bước Chân Vì Trẻ Em Vùng Cao”",
+      eventType: "race",
+      eventTypeName: "Chạy gây quỹ",
+      startsAt: "2027-01-24T05:30:00+07:00",
+      location: "Công viên Gia Định, Gò Vấp",
+      distanceOrDuration: "5K & 10K · có chip tính giờ",
+      hostName: "BCN FTU2 & Hội SV Ngoại Thương",
+      participantsCount: 64,
+      maxParticipants: 120,
+      isRegistered: false,
+      rewardExp: 35,
+      badgeText: "Từ thiện · phí nền tảng 0%",
+      image: unsplash("1783216509054-c69ca71b8f01"),
+      imageAlt: "Đông đảo người tham gia một giải chạy ngoài trời",
+      imageCredit: "Joseph Prospere",
+    },
+  ] satisfies ClubEventSeed[]
+)
+  .map(clubEvent)
+  .sort((a, b) => (a.startsAt ?? "").localeCompare(b.startsAt ?? ""));
 
 export const SAMPLE_CLUBS_LIST: ClubListItem[] = [
   {
@@ -544,56 +809,7 @@ export const SAMPLE_CLUBS_LIST: ClubListItem[] = [
         rankVi: "Cấp 3 · Pacer",
       },
     ],
-    events: [
-      {
-        id: "event-1",
-        title: "Giải Chạy Nội Bộ FTU2 Autumn Half Marathon",
-        eventType: "race",
-        eventTypeName: "Giải chạy nội bộ",
-        dateVi: "Chủ Nhật, 24/11",
-        timeVi: "05:00 AM",
-        location: "Khu Đô Thị Sala & Cầu Ba Son, TP. Thủ Đức",
-        distanceOrDuration: "21km & 10km",
-        hostName: "Ban Chủ Nhiệm FTU2",
-        participantsCount: 48,
-        maxParticipants: 60,
-        isRegistered: true,
-        rewardExp: 50,
-        badgeText: "Huy chương Finisher",
-      },
-      {
-        id: "event-2",
-        title: "Long Run Cuối Tuần: Bờ Kè Thanh Đa - Landmark 81",
-        eventType: "long_run",
-        eventTypeName: "Chạy dài cuối tuần",
-        dateVi: "Thứ Bảy, 16/11",
-        timeVi: "05:30 AM",
-        location: "Cổng Công Viên Central Park, Bình Thạnh",
-        distanceOrDuration: "15km · Pace 5:45 - 6:15",
-        hostName: "Minh Anh (Pacer)",
-        participantsCount: 26,
-        maxParticipants: 35,
-        isRegistered: false,
-        rewardExp: 25,
-        badgeText: "Kèm pacer giữ nhịp",
-      },
-      {
-        id: "event-3",
-        title: "Workshop: Kỹ Thuật Tiếp Đất & Phòng Tránh Chấn Thương Gối",
-        eventType: "workshop",
-        eventTypeName: "Workshop kỹ thuật",
-        dateVi: "Thứ Tư, 20/11",
-        timeVi: "19:00 PM",
-        location: "Phòng Sinh Hoạt Thể Thao ĐH Ngoại Thương CS2",
-        distanceOrDuration: "90 phút chuyên sâu",
-        hostName: "HLV Quốc Hưng & Bác sĩ Thể thao",
-        participantsCount: 38,
-        maxParticipants: 50,
-        isRegistered: false,
-        rewardExp: 20,
-        badgeText: "Miễn phí hội viên",
-      },
-    ],
+    events: FTU2_EVENTS,
     internalBounties: [
       {
         id: "bounty-1",

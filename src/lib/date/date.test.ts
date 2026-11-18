@@ -5,6 +5,7 @@ import {
   formatVietnamTime,
   isAtLeast18YearsOld,
   isAtLeastHoursInFuture,
+  vietnamDateParts,
 } from "./index";
 
 describe("Date utilities", () => {
@@ -58,5 +59,19 @@ describe("Date utilities", () => {
     // Cách 1 giờ 30 phút (11:30) -> Không hợp lệ (sát giờ)
     const invalidFuture = new Date("2026-10-30T11:30:00Z");
     expect(isAtLeastHoursInFuture(invalidFuture, 2, fixedNow)).toBe(false);
+  });
+
+  it("vietnamDateParts suy ra đúng thứ theo giờ Việt Nam (kể cả khi UTC còn ở ngày hôm trước)", () => {
+    // 28/11/2026 là Thứ Bảy
+    expect(vietnamDateParts("2026-11-28T19:30:00+07:00")).toEqual({
+      weekday: "Thứ Bảy",
+      day: "28",
+      month: "11",
+      label: "Thứ Bảy, 28/11",
+      time: "19:30",
+    });
+    // 04:30 sáng giờ VN = 21:30 hôm trước theo UTC → vẫn phải là Chủ Nhật 13/12
+    expect(vietnamDateParts("2026-12-12T21:30:00Z").label).toBe("Chủ Nhật, 13/12");
+    expect(() => vietnamDateParts("không phải ngày")).toThrow(RangeError);
   });
 });
