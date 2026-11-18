@@ -37,7 +37,7 @@ describe("Hồ sơ & Profile Page with Club Management and Role Permissions", ()
     // Check 4 balanced quick action buttons
     expect(screen.getByText("Lịch")).toBeInTheDocument();
     expect(screen.getByText("Kèo")).toBeInTheDocument();
-    expect(screen.getByText("QL CLB")).toBeInTheDocument();
+    expect(screen.getByText("CLB")).toBeInTheDocument();
     expect(screen.getByText("Xu")).toBeInTheDocument();
   });
 

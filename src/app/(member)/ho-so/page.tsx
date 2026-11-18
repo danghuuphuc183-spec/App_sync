@@ -326,7 +326,7 @@ export default function ProfilePage() {
             <span className="text-[11px] font-semibold text-foreground">Kèo</span>
           </button>
 
-          {/* CLB / QL CLB */}
+          {/* CLB */}
           <Link
             href={isClubLeader ? "/cau-lac-bo/quan-ly" : "/dong-doi?tab=clb"}
             className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5 group relative"
@@ -335,7 +335,7 @@ export default function ProfilePage() {
               <Shield className="h-4 w-4" />
             </div>
             <span className="text-[11px] font-semibold text-foreground truncate max-w-full px-0.5">
-              {isClubLeader ? "QL CLB" : "CLB"}
+              CLB
             </span>
             {isClubLeader && (
               <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-card" />
