@@ -98,6 +98,20 @@ const VIBE_INFO: Record<VibeMode, { title: string; desc: string }> = {
 
 export type KeoFormKind = "solo" | "personal" | "group";
 
+function getOptionsGridClass(count: number, fieldId: string): string {
+  if (count === 5) return "grid grid-cols-5 gap-1.5";
+  if (count === 8) return "grid grid-cols-4 gap-1.5";
+  if (count === 2) return "grid grid-cols-2 gap-1.5";
+  if (count === 3) {
+    if (fieldId === "load") return "grid grid-cols-1 sm:grid-cols-3 gap-1.5";
+    return "grid grid-cols-3 gap-1.5";
+  }
+  if (count === 4) {
+    return "grid grid-cols-2 sm:grid-cols-4 gap-1.5";
+  }
+  return "grid grid-cols-3 sm:grid-cols-4 gap-1.5";
+}
+
 const SUBMIT_LABEL: Record<KeoFormKind, string> = {
   solo: "Lưu kế hoạch tự tập",
   personal: "Done · Tìm bạn tập",
@@ -206,7 +220,7 @@ export function KeoForm<T extends PersonalForm>({
                   {f.label}
                   {f.multi && <span className="font-normal text-muted-foreground"> · chọn được nhiều</span>}
                 </p>
-                <div className="flex flex-wrap gap-1.5">
+                <div className={getOptionsGridClass(f.options.length, f.id)}>
                   {f.options.map((o) => {
                     const on = value.details?.[f.id]?.includes(o) ?? false;
                     return (
@@ -216,11 +230,13 @@ export function KeoForm<T extends PersonalForm>({
                         aria-pressed={on}
                         onClick={() => set({ details: toggleDetail(value.details ?? {}, f, o) } as Partial<T>)}
                         className={cn(
-                          "rounded-lg border px-2.5 py-1.5 text-[12.5px] font-semibold transition-colors",
-                          on ? "bg-foreground border-foreground text-background" : "border-border text-foreground hover:bg-muted"
+                          "w-full rounded-xl border py-2 px-1 text-xs font-semibold text-center transition-all flex items-center justify-center active:scale-[0.98] shadow-2xs",
+                          on
+                            ? "bg-foreground border-foreground text-background font-bold shadow-xs"
+                            : "border-border text-foreground hover:bg-muted"
                         )}
                       >
-                        {o}
+                        <span className="truncate">{o}</span>
                       </button>
                     );
                   })}
@@ -328,8 +344,8 @@ export function KeoForm<T extends PersonalForm>({
                           } as Partial<T>)
                         }
                         className={cn(
-                          "rounded-lg border px-2 py-1.5 text-[11.5px] font-semibold text-center transition-colors",
-                          on ? "bg-foreground border-foreground text-background" : "border-border text-foreground hover:bg-muted"
+                          "w-full rounded-xl border py-2 px-1 text-xs font-semibold text-center transition-all flex items-center justify-center active:scale-[0.98] shadow-2xs",
+                          on ? "bg-foreground border-foreground text-background font-bold shadow-xs" : "border-border text-foreground hover:bg-muted"
                         )}
                       >
                         {t.label}
@@ -362,8 +378,8 @@ export function KeoForm<T extends PersonalForm>({
                           } as Partial<T>)
                         }
                         className={cn(
-                          "rounded-lg border px-2 py-1.5 text-[11.5px] font-semibold text-center transition-colors",
-                          on ? "bg-foreground border-foreground text-background" : "border-border text-foreground hover:bg-muted"
+                          "w-full rounded-xl border py-2 px-1 text-xs font-semibold text-center transition-all flex items-center justify-center active:scale-[0.98] shadow-2xs",
+                          on ? "bg-foreground border-foreground text-background font-bold shadow-xs" : "border-border text-foreground hover:bg-muted"
                         )}
                       >
                         {p.label}
@@ -396,8 +412,8 @@ export function KeoForm<T extends PersonalForm>({
                           } as Partial<T>)
                         }
                         className={cn(
-                          "rounded-lg border px-2 py-1.5 text-[11.5px] font-semibold text-center transition-colors",
-                          on ? "bg-foreground border-foreground text-background" : "border-border text-foreground hover:bg-muted"
+                          "w-full rounded-xl border py-2 px-1 text-xs font-semibold text-center transition-all flex items-center justify-center active:scale-[0.98] shadow-2xs",
+                          on ? "bg-foreground border-foreground text-background font-bold shadow-xs" : "border-border text-foreground hover:bg-muted"
                         )}
                       >
                         {m.label}

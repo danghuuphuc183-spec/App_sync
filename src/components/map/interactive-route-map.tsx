@@ -13,6 +13,7 @@ import {
   LocateFixed,
   MapPin,
   Milestone,
+  Mountain,
   Navigation,
   Pause,
   Play,
@@ -856,22 +857,34 @@ export function InteractiveRouteMap() {
                   ))}
                 </div>
 
-                {/* 4 tiêu chí chuẩn chạy bộ thực tế */}
+                {/* 4 tiêu chí chuẩn chạy bộ thực tế (Chỉ dùng icon vector đen trắng SVG) */}
                 <div className="space-y-1.5 bg-muted/40 p-2.5 rounded-xl border border-border/50 text-[11px]">
                   <div className="flex items-start gap-1.5">
-                    <span className="font-bold text-foreground shrink-0 w-20">⛰️ Độ dốc:</span>
+                    <span className="font-bold text-foreground shrink-0 w-24 flex items-center gap-1">
+                      <Mountain className="h-3 w-3 stroke-[2] text-foreground" />
+                      <span>Độ dốc:</span>
+                    </span>
                     <span className="text-muted-foreground">Dễ (&lt;15m) • Vừa phải (15-30m) • Thử thách (&gt;30m dốc cầu)</span>
                   </div>
                   <div className="flex items-start gap-1.5">
-                    <span className="font-bold text-foreground shrink-0 w-20">🛣️ Mặt đường:</span>
+                    <span className="font-bold text-foreground shrink-0 w-24 flex items-center gap-1">
+                      <Milestone className="h-3 w-3 stroke-[2] text-foreground" />
+                      <span>Mặt đường:</span>
+                    </span>
                     <span className="text-muted-foreground">Đá công viên phẳng / Nhựa mịn ven sông (êm chân, bảo vệ gối)</span>
                   </div>
                   <div className="flex items-start gap-1.5">
-                    <span className="font-bold text-foreground shrink-0 w-20">🛡️ An toàn:</span>
+                    <span className="font-bold text-foreground shrink-0 w-24 flex items-center gap-1">
+                      <ShieldCheck className="h-3 w-3 stroke-[2] text-foreground" />
+                      <span>An toàn:</span>
+                    </span>
                     <span className="text-muted-foreground">Không xe máy, đèn chiếu sáng ban đêm, vòi nước công cộng & SOS</span>
                   </div>
                   <div className="flex items-start gap-1.5">
-                    <span className="font-bold text-foreground shrink-0 w-20">⭐ Đánh giá:</span>
+                    <span className="font-bold text-foreground shrink-0 w-24 flex items-center gap-1">
+                      <Star className="h-3 w-3 stroke-[2] text-foreground" />
+                      <span>Đánh giá:</span>
+                    </span>
                     <span className="text-muted-foreground">4.7★ – 4.9★ vote từ cộng đồng runner phong trào</span>
                   </div>
                 </div>

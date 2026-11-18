@@ -636,14 +636,9 @@ function DongDoiContent() {
                   <Shield className="h-3.5 w-3.5 shrink-0 stroke-[2] text-blue-600 dark:text-blue-400" />
                   <span><strong>CLB:</strong> Dành cho CLB chạy bộ & phòng gym · Thành viên, sự kiện & hoạt động</span>
                 </span>
-                {userClubRole === "leader" && (
-                  <Link
-                    href="/cau-lac-bo/quan-ly"
-                    className="font-bold underline shrink-0 text-blue-600 dark:text-blue-400"
-                  >
-                    Quản lý Quỹ
-                  </Link>
-                )}
+                <span className="text-[10px] text-blue-700/80 dark:text-blue-300/80 font-medium shrink-0">
+                  Phân quyền vai trò
+                </span>
               </div>
 
               {/* BỘ CHỌN PHÂN QUYỀN (DEMO / THỰC TẾ: THÀNH VIÊN VS TRƯỞNG CLB / BQL PHÒNG GYM) */}
