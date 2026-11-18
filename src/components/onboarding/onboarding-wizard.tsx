@@ -6,7 +6,6 @@ import { ArrowLeft, Check, CloudLightning, LocateFixed, Shield, Sparkles, Users,
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
 import {
-  COMM_STYLE_OPTIONS,
   DEFAULT_ONBOARDING,
   GOALS,
   INTENSITY_OPTIONS,
@@ -17,7 +16,7 @@ import {
   toPartnerProfile,
   type OnboardingProfile,
 } from "@/features/onboarding/onboarding";
-import { COMM_STYLE_LABEL, DAY_PARTS, INTENSITY_LABEL, slotKey, matchPartners, WORKOUT_LABEL, type DayPart } from "@/features/match/partner-match";
+import { DAY_PARTS, INTENSITY_LABEL, slotKey, matchPartners, WORKOUT_LABEL, type DayPart } from "@/features/match/partner-match";
 import { candidateToPartner } from "@/features/match/partner-pool";
 import { CANDIDATES_DATA } from "@/features/match/candidates.data";
 import { ConnectAppsStep, PermissionsStep } from "./permissions-and-apps";
@@ -37,7 +36,7 @@ const AREAS: { label: string; pos: [number, number] }[] = [
   { label: "Gò Vấp", pos: [10.8387, 106.6653] },
 ];
 
-/* ---------- UI nhỏ ---------- */
+/* ---------- UI nhỏ chuẩn hoá theo hệ màu sáng của app (Light mode mặc định, Dark mode khi thiết bị yêu cầu) ---------- */
 function Chip({ on, onClick, children, className }: { on: boolean; onClick: () => void; children: React.ReactNode; className?: string }) {
   return (
     <button
@@ -45,8 +44,10 @@ function Chip({ on, onClick, children, className }: { on: boolean; onClick: () =
       onClick={onClick}
       aria-pressed={on}
       className={cn(
-        "rounded-2xl border px-3.5 py-2.5 text-[13.5px] font-semibold text-left transition-all active:scale-[0.98]",
-        on ? "border-brand-sky bg-brand/30 text-white shadow-[0_0_0_1px_rgba(57,161,244,.4)]" : "border-white/12 bg-white/[0.05] text-white/85 hover:bg-white/10",
+        "rounded-2xl border px-3.5 py-2.5 text-[13.5px] font-semibold text-left transition-all active:scale-[0.98] shadow-2xs",
+        on
+          ? "border-brand bg-brand text-white shadow-xs dark:bg-brand-sky dark:text-black dark:border-brand-sky font-bold"
+          : "border-border/80 bg-card text-foreground hover:bg-muted/70 hover:border-brand/30",
         className
       )}
     >
@@ -57,13 +58,18 @@ function Chip({ on, onClick, children, className }: { on: boolean; onClick: () =
 
 function Toggle({ on, onChange, title, desc }: { on: boolean; onChange: (v: boolean) => void; title: string; desc: string }) {
   return (
-    <button type="button" onClick={() => onChange(!on)} aria-pressed={on} className="w-full flex items-center gap-3 rounded-2xl bg-white/[0.06] border border-white/10 p-3.5 text-left">
+    <button
+      type="button"
+      onClick={() => onChange(!on)}
+      aria-pressed={on}
+      className="w-full flex items-center gap-3 rounded-2xl bg-card border border-border/80 p-3.5 text-left shadow-2xs hover:border-brand/30 transition-all active:scale-[0.99]"
+    >
       <span className="flex-1">
-        <span className="block text-[14px] font-bold">{title}</span>
-        <span className="block text-[12px] text-white/60">{desc}</span>
+        <span className="block text-[14px] font-bold text-foreground">{title}</span>
+        <span className="block text-[12px] text-muted-foreground">{desc}</span>
       </span>
-      <span className={cn("h-7 w-12 shrink-0 rounded-full p-0.5 transition-colors", on ? "bg-brand-sky" : "bg-white/20")}>
-        <span className={cn("block h-6 w-6 rounded-full bg-white transition-transform", on && "translate-x-5")} />
+      <span className={cn("h-7 w-12 shrink-0 rounded-full p-0.5 transition-colors", on ? "bg-brand dark:bg-brand-sky" : "bg-muted-foreground/25")}>
+        <span className={cn("block h-6 w-6 rounded-full bg-white shadow-xs transition-transform", on && "translate-x-5")} />
       </span>
     </button>
   );
@@ -71,9 +77,9 @@ function Toggle({ on, onChange, title, desc }: { on: boolean; onChange: (v: bool
 
 function NumberField({ label, value, onChange, min, max, unit }: { label: string; value: number; onChange: (v: number) => void; min: number; max: number; unit: string }) {
   return (
-    <label className="block rounded-2xl bg-white/[0.06] border border-white/10 px-3.5 py-2.5">
-      <span className="block text-[11.5px] text-white/55">{label}</span>
-      <span className="flex items-baseline gap-1">
+    <label className="block rounded-2xl bg-card border border-border/80 px-3.5 py-2.5 shadow-2xs">
+      <span className="block text-[11.5px] text-muted-foreground font-medium">{label}</span>
+      <span className="flex items-baseline gap-1 mt-0.5">
         <input
           type="number"
           inputMode="numeric"
@@ -81,9 +87,9 @@ function NumberField({ label, value, onChange, min, max, unit }: { label: string
           min={min}
           max={max}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full bg-transparent text-[20px] font-extrabold outline-none"
+          className="w-full bg-transparent text-[20px] font-extrabold text-foreground outline-none"
         />
-        <span className="text-[12px] text-white/55">{unit}</span>
+        <span className="text-[12px] text-muted-foreground">{unit}</span>
       </span>
     </label>
   );
@@ -123,7 +129,6 @@ export function OnboardingWizard() {
   const update = (fn: (x: OnboardingProfile) => Partial<OnboardingProfile>) => setP((x) => ({ ...x, ...fn(x) }));
   const toggleIn = <T,>(list: T[], v: T) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
-  const hasGym = p.sports.includes("gym") || p.sports.includes("calisthenics");
   const workoutOptions = p.sports.flatMap((s) => (WORKOUTS_BY_SPORT[s] ?? []).map((w) => ({ ...w, sport: s })));
 
   const finish = () => {
@@ -155,9 +160,15 @@ export function OnboardingWizard() {
       valid: p.displayName.trim().length >= 2 && p.gender !== "unspecified",
       body: (
         <div className="space-y-3">
-          <label className="block rounded-2xl bg-white/[0.06] border border-white/10 px-3.5 py-2.5">
-            <span className="block text-[11.5px] text-white/55">Tên hiển thị</span>
-            <input value={p.displayName} onChange={(e) => set({ displayName: e.target.value })} className="w-full bg-transparent text-[18px] font-bold outline-none" aria-label="Tên hiển thị" />
+          <label className="block rounded-2xl bg-card border border-border/80 px-3.5 py-2.5 shadow-2xs">
+            <span className="block text-[11.5px] text-muted-foreground font-medium">Tên hiển thị</span>
+            <input
+              value={p.displayName}
+              onChange={(e) => set({ displayName: e.target.value })}
+              className="w-full bg-transparent text-[18px] font-bold text-foreground outline-none mt-0.5 placeholder:text-muted-foreground/50"
+              placeholder="Nhập tên của bạn"
+              aria-label="Tên hiển thị"
+            />
           </label>
           <div className="grid grid-cols-3 gap-2">
             {(
@@ -211,28 +222,31 @@ export function OnboardingWizard() {
                     return { sports, workoutTypes: x.workoutTypes.filter((w) => allowed.has(w)) };
                   })
                 }
-                className="flex flex-col items-center gap-1 px-1 py-2 text-[11.5px] text-center"
+                className="flex flex-col items-center gap-1 px-1 py-2.5 text-[11.5px] text-center"
               >
                 <SportIcon sport={s.id} className="h-6 w-6" />
-                {s.label}
+                <span>{s.label}</span>
               </Chip>
             ))}
           </div>
           {workoutOptions.length > 0 && (
             <div className="space-y-2">
-              <p className="text-[12px] font-bold uppercase tracking-wider text-white/55">Loại buổi tập</p>
+              <p className="text-[12px] font-bold uppercase tracking-wider text-muted-foreground">Loại buổi tập</p>
               <div className="grid grid-cols-2 gap-2">
-                {workoutOptions.map((w) => (
-                  <Chip key={w.id} on={p.workoutTypes.includes(w.id)} onClick={() => update((x) => ({ workoutTypes: toggleIn(x.workoutTypes, w.id) }))}>
-                    <span className="block">{w.label}</span>
-                    <span className="block text-[11px] font-normal text-white/55">{w.hint}</span>
-                  </Chip>
-                ))}
+                {workoutOptions.map((w) => {
+                  const on = p.workoutTypes.includes(w.id);
+                  return (
+                    <Chip key={w.id} on={on} onClick={() => update((x) => ({ workoutTypes: toggleIn(x.workoutTypes, w.id) }))}>
+                      <span className="block font-bold">{w.label}</span>
+                      <span className={cn("block text-[11px] font-normal", on ? "text-white/80 dark:text-black/80" : "text-muted-foreground")}>{w.hint}</span>
+                    </Chip>
+                  );
+                })}
               </div>
             </div>
           )}
           <div className="space-y-2">
-            <p className="text-[12px] font-bold uppercase tracking-wider text-white/55">Trình độ</p>
+            <p className="text-[12px] font-bold uppercase tracking-wider text-muted-foreground">Trình độ</p>
             <div className="grid grid-cols-4 gap-2">
               {(
                 [
@@ -249,14 +263,17 @@ export function OnboardingWizard() {
             </div>
           </div>
           <div className="space-y-2">
-            <p className="text-[12px] font-bold uppercase tracking-wider text-white/55">Cường độ thường tập</p>
+            <p className="text-[12px] font-bold uppercase tracking-wider text-muted-foreground">Cường độ thường tập</p>
             <div className="grid grid-cols-3 gap-2">
-              {INTENSITY_OPTIONS.map((o) => (
-                <Chip key={o.id} on={p.intensity === o.id} onClick={() => set({ intensity: o.id })} className="px-2 text-center">
-                  <span className="block">{o.label}</span>
-                  <span className="block text-[11px] font-normal text-white/55">{o.hint}</span>
-                </Chip>
-              ))}
+              {INTENSITY_OPTIONS.map((o) => {
+                const on = p.intensity === o.id;
+                return (
+                  <Chip key={o.id} on={on} onClick={() => set({ intensity: o.id })} className="px-2 text-center">
+                    <span className="block font-bold">{o.label}</span>
+                    <span className={cn("block text-[11px] font-normal", on ? "text-white/80 dark:text-black/80" : "text-muted-foreground")}>{o.hint}</span>
+                  </Chip>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -277,12 +294,17 @@ export function OnboardingWizard() {
                 ["Cuối tuần", [5, 6].flatMap((d) => (["dawn", "morning", "afternoon"] as DayPart[]).map((x) => slotKey(d, x)))],
               ] as [string, string[]][]
             ).map(([l, slots]) => (
-              <button key={l} type="button" onClick={() => update((x) => ({ availability: [...new Set([...x.availability, ...slots])] }))} className="rounded-lg bg-white/10 px-3 py-1.5 text-[12px] font-semibold hover:bg-white/20">
+              <button
+                key={l}
+                type="button"
+                onClick={() => update((x) => ({ availability: [...new Set([...x.availability, ...slots])] }))}
+                className="rounded-xl bg-card border border-border/80 px-3 py-1.5 text-[12px] font-semibold text-foreground hover:bg-muted shadow-2xs transition-colors"
+              >
                 + {l}
               </button>
             ))}
             {p.availability.length > 0 && (
-              <button type="button" onClick={() => set({ availability: [] })} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold text-white/60">
+              <button type="button" onClick={() => set({ availability: [] })} className="rounded-xl px-3 py-1.5 text-[12px] font-semibold text-muted-foreground hover:text-foreground">
                 Xoá hết
               </button>
             )}
@@ -290,13 +312,13 @@ export function OnboardingWizard() {
           <div className="grid gap-1" style={{ gridTemplateColumns: "46px repeat(7, minmax(0,1fr))" }} role="grid" aria-label="Lịch rảnh trong tuần">
             <span />
             {DAYS.map((d) => (
-              <span key={d} className="text-center text-[11px] font-bold text-white/60">
+              <span key={d} className="text-center text-[11px] font-bold text-muted-foreground">
                 {d}
               </span>
             ))}
             {DAY_PARTS.map((part) => (
               <React.Fragment key={part}>
-                <span className="text-[10.5px] text-white/55 flex items-center">{PART_LABEL[part]}</span>
+                <span className="text-[10.5px] text-muted-foreground flex items-center font-medium">{PART_LABEL[part]}</span>
                 {DAYS.map((d, di) => {
                   const k = slotKey(di, part);
                   const on = p.availability.includes(k);
@@ -308,14 +330,19 @@ export function OnboardingWizard() {
                       aria-selected={on}
                       aria-label={`${d} ${PART_LABEL[part]}`}
                       onClick={() => update((x) => ({ availability: toggleIn(x.availability, k) }))}
-                      className={cn("h-9 rounded-lg transition-colors", on ? "bg-brand-sky shadow-[0_0_10px_rgba(57,161,244,.6)]" : "bg-white/[0.07] hover:bg-white/15")}
+                      className={cn(
+                        "h-9 rounded-lg transition-all active:scale-95",
+                        on
+                          ? "bg-brand text-white shadow-xs dark:bg-brand-sky dark:text-black"
+                          : "bg-muted/40 hover:bg-muted border border-border/40"
+                      )}
                     />
                   );
                 })}
               </React.Fragment>
             ))}
           </div>
-          <p className="mt-2 text-[12px] text-white/55">Đã chọn {p.availability.length} khung giờ</p>
+          <p className="mt-2.5 text-[12px] text-muted-foreground">Đã chọn {p.availability.length} khung giờ</p>
         </div>
       ),
     },
@@ -335,12 +362,15 @@ export function OnboardingWizard() {
                 { timeout: 8000 }
               )
             }
-            className={cn("w-full flex items-center gap-3 rounded-2xl border p-3.5 text-left", p.areaLabel === "Vị trí hiện tại" ? "border-brand-sky bg-brand/30" : "border-white/12 bg-white/[0.05]")}
+            className={cn(
+              "w-full flex items-center gap-3 rounded-2xl border p-3.5 text-left transition-all active:scale-[0.99] shadow-2xs",
+              p.areaLabel === "Vị trí hiện tại" ? "border-brand bg-brand/10 text-foreground" : "border-border/80 bg-card text-foreground hover:bg-muted/60"
+            )}
           >
-            <LocateFixed className="h-5 w-5 text-white" />
+            <LocateFixed className="h-5 w-5 text-brand dark:text-brand-sky" />
             <span className="flex-1">
-              <span className="block text-[14px] font-bold">Dùng vị trí hiện tại (GPS)</span>
-              <span className="block text-[12px] text-white/55">{p.permissions.gps === "denied" ? "Quyền vị trí bị từ chối — chọn khu vực bên dưới" : "Chính xác nhất"}</span>
+              <span className="block text-[14px] font-bold text-foreground">Dùng vị trí hiện tại (GPS)</span>
+              <span className="block text-[12px] text-muted-foreground">{p.permissions.gps === "denied" ? "Quyền vị trí bị từ chối — chọn khu vực bên dưới" : "Chính xác nhất"}</span>
             </span>
           </button>
           <div className="grid grid-cols-2 gap-2">
@@ -350,29 +380,13 @@ export function OnboardingWizard() {
               </Chip>
             ))}
           </div>
-          <div className="rounded-2xl bg-white/[0.06] border border-white/10 p-3.5">
+          <div className="rounded-2xl bg-card border border-border/80 p-3.5 shadow-2xs">
             <div className="flex justify-between text-[13px]">
-              <span className="text-white/70">Bán kính ghép bạn tập</span>
-              <b>≤ {p.radiusKm} km</b>
+              <span className="text-muted-foreground">Bán kính ghép bạn tập</span>
+              <b className="text-foreground">≤ {p.radiusKm} km</b>
             </div>
-            <input type="range" min={1} max={10} step={1} value={p.radiusKm} onChange={(e) => set({ radiusKm: Number(e.target.value) })} className="mt-2 w-full accent-brand-sky" aria-label="Bán kính" />
+            <input type="range" min={1} max={10} step={1} value={p.radiusKm} onChange={(e) => set({ radiusKm: Number(e.target.value) })} className="mt-2 w-full accent-brand" aria-label="Bán kính" />
           </div>
-        </div>
-      ),
-    },
-    {
-      key: "comm",
-      title: "Bạn thích tập cùng thế nào?",
-      sub: "Chọn trực tiếp kiểu giao tiếp khi tập. Bạn đổi được bất cứ lúc nào trong Hồ sơ.",
-      valid: true,
-      body: (
-        <div className="space-y-2">
-          {COMM_STYLE_OPTIONS.map((o) => (
-            <Chip key={o.id} on={p.commStyle === o.id} onClick={() => set({ commStyle: o.id })} className="w-full py-3">
-              <span className="block font-bold">{o.label}</span>
-              <span className="block text-[12px] font-normal text-white/60">{o.hint}</span>
-            </Chip>
-          ))}
         </div>
       ),
     },
@@ -385,14 +399,14 @@ export function OnboardingWizard() {
         <div className="space-y-2.5">
           <div className="grid grid-cols-2 gap-2">
             <Chip on={p.vibe === "performance"} onClick={() => set({ vibe: "performance" })} className="py-3.5">
-              <Zap className="h-5 w-5 text-white mb-1" />
+              <Zap className="h-5 w-5 mb-1" />
               <span className="block font-bold">Mode Hiệu suất</span>
-              <span className="block text-[11.5px] font-normal text-white/60">Tập trung tập luyện, ít xã giao</span>
+              <span className={cn("block text-[11.5px] font-normal", p.vibe === "performance" ? "text-white/80 dark:text-black/80" : "text-muted-foreground")}>Tập trung tập luyện, ít xã giao</span>
             </Chip>
             <Chip on={p.vibe === "friendly"} onClick={() => set({ vibe: "friendly" })} className="py-3.5">
-              <Users className="h-5 w-5 text-white mb-1" />
+              <Users className="h-5 w-5 mb-1" />
               <span className="block font-bold">Mode Đồng hành</span>
-              <span className="block text-[11.5px] font-normal text-white/60">Cởi mở, trò chuyện nhiều hơn</span>
+              <span className={cn("block text-[11.5px] font-normal", p.vibe === "friendly" ? "text-white/80 dark:text-black/80" : "text-muted-foreground")}>Cởi mở, trò chuyện nhiều hơn</span>
             </Chip>
           </div>
           <Toggle
@@ -401,8 +415,6 @@ export function OnboardingWizard() {
             title="Chỉ ghép cặp cùng giới"
             desc={p.gender === "female" ? "Khuyên dùng — bảo vệ bạn khỏi rủi ro bị làm phiền" : "Chỉ hiện và ghép với người cùng giới tính"}
           />
-          {hasGym && <Toggle on={p.needsSpotter} onChange={(v) => set({ needsSpotter: v })} title="Cần người đỡ tạ (spotter)" desc="Buổi tạ nặng sẽ ưu tiên người tự tin đỡ tạ an toàn" />}
-          {hasGym && <Toggle on={p.canSpot} onChange={(v) => set({ canSpot: v })} title="Tôi đỡ tạ được" desc="Bạn biết cách đỡ tạ an toàn cho bench, squat" />}
           <Toggle on={p.hideExactLocation} onChange={(v) => set({ hideExactLocation: v })} title="Ẩn vị trí chính xác" desc="Người khác chỉ thấy khu vực, không thấy điểm xuất phát của bạn" />
         </div>
       ),
@@ -435,43 +447,80 @@ export function OnboardingWizard() {
   const skippable = ["perms", "apps"].includes(cur.key);
 
   return (
-    <div className="relative min-h-dvh bg-[#020611] text-white overflow-clip">
-      <div className="absolute inset-0 intro-grid opacity-40" />
-      <div className="absolute -top-48 right-[-30%] h-[460px] w-[460px] rounded-full bg-brand/25 blur-[110px]" />
+    <div className="relative min-h-dvh bg-background text-foreground overflow-clip transition-colors">
+      {/* Vùng mờ lan toả nhẹ nhàng của thương hiệu */}
+      <div className="absolute -top-40 right-[-20%] h-80 w-80 rounded-full bg-blue-500/10 blur-[100px] pointer-events-none" />
+
       <div className="relative mx-auto flex min-h-dvh max-w-md flex-col px-5 pb-6 pt-[max(16px,env(safe-area-inset-top))]">
+        {/* Header trên cùng: Nút quay lại + Thanh hiển thị từng câu hỏi (Segmented Progress Bar) */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setStep(Math.max(0, step - 1))}
             disabled={step === 0}
             aria-label="Quay lại"
-            className="h-10 w-10 -ml-2 rounded-full hover:bg-white/10 flex items-center justify-center disabled:opacity-0"
+            className="h-10 w-10 -ml-2 rounded-full hover:bg-muted text-foreground flex items-center justify-center disabled:opacity-0 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden" role="progressbar" aria-valuenow={step + 1} aria-valuemax={steps.length}>
-            <div className="h-full rounded-full bg-gradient-to-r from-brand to-brand-sky transition-all duration-500" style={{ width: `${((step + 1) / steps.length) * 100}%` }} />
+
+          {/* Thanh hiển thị từng câu hỏi dạng phân đoạn (Segmented Progress Bar) */}
+          <div
+            className="flex items-center gap-1.5 flex-1"
+            role="progressbar"
+            aria-valuenow={step + 1}
+            aria-valuemax={steps.length}
+            aria-label="Tiến độ trả lời câu hỏi"
+          >
+            {steps.map((s, idx) => (
+              <div
+                key={s.key}
+                className="h-1.5 flex-1 rounded-full overflow-hidden bg-muted transition-all"
+              >
+                <div
+                  className={cn(
+                    "h-full rounded-full transition-all duration-300",
+                    idx < step
+                      ? "bg-brand w-full"
+                      : idx === step
+                      ? "bg-brand w-full animate-in fade-in"
+                      : "w-0"
+                  )}
+                />
+              </div>
+            ))}
           </div>
-          <span className="text-[12px] font-semibold text-white/55 w-10 text-right">
+
+          <span className="text-xs font-bold text-muted-foreground w-10 text-right">
             {step + 1}/{steps.length}
           </span>
         </div>
 
-        <div key={cur.key} className="mt-5 flex-1 animate-in fade-in slide-in-from-right-4 duration-300">
-          <h1 className="text-[25px] font-extrabold leading-tight font-display">{cur.title}</h1>
-          <p className="mt-1 mb-5 text-[13.5px] text-white/60">{cur.sub}</p>
+        {/* Nội dung câu hỏi với hiệu ứng chuyển tiếp mượt mà */}
+        <div key={cur.key} className="mt-4 flex-1 animate-in fade-in slide-in-from-right-4 duration-300">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-brand dark:text-brand-sky">
+            Câu {step + 1}/{steps.length}
+          </span>
+          <h1 className="text-[24px] font-extrabold leading-tight text-foreground font-display mt-0.5">
+            {cur.title}
+          </h1>
+          <p className="mt-1 mb-5 text-[13.5px] text-muted-foreground leading-snug">{cur.sub}</p>
           {cur.body}
         </div>
 
-        <div className="sticky bottom-0 pt-4 pb-1 bg-gradient-to-t from-[#020611] via-[#020611] to-transparent">
+        {/* Thanh thao tác dính đáy: Nền sáng / mờ theo giao diện chính */}
+        <div className="sticky bottom-0 pt-4 pb-2 bg-gradient-to-t from-background via-background/95 to-transparent">
           <button
             onClick={() => (last ? finish() : setStep(step + 1))}
             disabled={!cur.valid}
-            className="w-full h-12 rounded-lg bg-brand text-white font-bold text-[15px] hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30 disabled:bg-white/10 disabled:text-white/40 disabled:shadow-none disabled:cursor-not-allowed"
+            className="w-full h-12 rounded-xl bg-brand text-white font-bold text-[15px] hover:bg-brand-600 active:scale-[0.98] transition-all shadow-xs disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none disabled:cursor-not-allowed"
           >
             {last ? "Vào SYNESIS" : "Tiếp tục"}
           </button>
           {skippable && (
-            <button onClick={() => setStep(step + 1)} className="mt-2 w-full text-center text-[13px] font-semibold text-white/55">
+            <button
+              onClick={() => setStep(step + 1)}
+              className="mt-2 w-full text-center text-[13px] font-semibold text-muted-foreground hover:text-foreground transition-colors"
+            >
               Để sau
             </button>
           )}
@@ -495,60 +544,60 @@ function Summary({ p }: { p: OnboardingProfile }) {
   }, [p, sport]);
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl bg-white/[0.06] border border-white/10 p-3.5 grid grid-cols-2 gap-y-2 text-[12.5px]">
-        <span className="text-white/55">Môn</span>
-        <span className="font-semibold text-right">{p.sports.map((s) => SPORT_OPTIONS.find((o) => o.id === s)?.label).join(", ")}</span>
-        <span className="text-white/55">Buổi tập</span>
-        <span className="font-semibold text-right truncate">{p.workoutTypes.map((w) => WORKOUT_LABEL[w]).join(", ") || "—"}</span>
-        <span className="text-white/55">Giờ rảnh</span>
-        <span className="font-semibold text-right">{p.availability.length} khung/tuần</span>
-        <span className="text-white/55">Khu vực</span>
-        <span className="font-semibold text-right">{p.areaLabel} · ≤{p.radiusKm} km</span>
-        <span className="text-white/55">Cường độ</span>
-        <span className="font-semibold text-right">{INTENSITY_LABEL[p.intensity]}</span>
-        <span className="text-white/55">Giao tiếp · Vibe</span>
-        <span className="font-semibold text-right truncate">
-          {COMM_STYLE_LABEL[p.commStyle]} · {p.vibe === "performance" ? "Hiệu suất" : "Đồng hành"}
+      <div className="rounded-2xl bg-card border border-border/80 p-3.5 grid grid-cols-2 gap-y-2 text-[12.5px] shadow-xs">
+        <span className="text-muted-foreground">Môn</span>
+        <span className="font-semibold text-right text-foreground">{p.sports.map((s) => SPORT_OPTIONS.find((o) => o.id === s)?.label).join(", ")}</span>
+        <span className="text-muted-foreground">Buổi tập</span>
+        <span className="font-semibold text-right text-foreground truncate">{p.workoutTypes.map((w) => WORKOUT_LABEL[w]).join(", ") || "—"}</span>
+        <span className="text-muted-foreground">Giờ rảnh</span>
+        <span className="font-semibold text-right text-foreground">{p.availability.length} khung/tuần</span>
+        <span className="text-muted-foreground">Khu vực</span>
+        <span className="font-semibold text-right text-foreground">{p.areaLabel} · ≤{p.radiusKm} km</span>
+        <span className="text-muted-foreground">Cường độ</span>
+        <span className="font-semibold text-right text-foreground">{INTENSITY_LABEL[p.intensity]}</span>
+        <span className="text-muted-foreground">Vibe</span>
+        <span className="font-semibold text-right text-foreground truncate">
+          {p.vibe === "performance" ? "Hiệu suất" : "Đồng hành"}
         </span>
-        <span className="text-white/55">Ứng dụng</span>
-        <span className="font-semibold text-right">{p.connectedApps.length} đã kết nối</span>
+        <span className="text-muted-foreground">Ứng dụng</span>
+        <span className="font-semibold text-right text-foreground">{p.connectedApps.length} đã kết nối</span>
       </div>
 
       <div>
-        <p className="mb-2 flex items-center gap-1.5 text-[14px] font-bold">
-          <Sparkles className="h-4 w-4 text-white" /> {run.matches.length ? `${run.matches.length} bạn tập phù hợp nhất` : "Chưa có ai phù hợp trong bán kính này"}
+        <p className="mb-2 flex items-center gap-1.5 text-[14px] font-bold text-foreground">
+          <Sparkles className="h-4 w-4 text-brand dark:text-brand-sky" /> {run.matches.length ? `${run.matches.length} bạn tập phù hợp nhất` : "Chưa có ai phù hợp trong bán kính này"}
         </p>
         <ul className="space-y-2">
           {run.matches.map((m) => {
             const c = CANDIDATES_DATA.find((x) => x.id === m.profile.id)!;
             return (
-              <li key={m.profile.id} className="flex items-center gap-3 rounded-2xl bg-white/[0.06] border border-white/10 p-3">
-                <img src={c.avatar} alt={c.name} className="h-12 w-12 rounded-full object-cover ring-2 ring-brand-sky/50" />
+              <li key={m.profile.id} className="flex items-center gap-3 rounded-2xl bg-card border border-border/80 p-3 shadow-xs">
+                <img src={c.avatar} alt={c.name} className="h-12 w-12 rounded-full object-cover ring-2 ring-brand/30" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-bold">{c.name}</p>
-                  <p className="text-[11.5px] text-white/60 truncate">{m.reasons.slice(0, 3).join(" · ")}</p>
+                  <p className="text-[14px] font-bold text-foreground">{c.name}</p>
+                  <p className="text-[11.5px] text-muted-foreground truncate">{m.reasons.slice(0, 3).join(" · ")}</p>
                 </div>
-                <span className="text-[18px] font-black font-display text-brand-sky">{m.score}%</span>
+                <span className="text-[18px] font-black font-display text-brand dark:text-brand-sky">{m.score}%</span>
               </li>
             );
           })}
         </ul>
-        {run.matches.length === 0 && <p className="text-[12.5px] text-white/60">Thử tăng bán kính hoặc thêm khung giờ rảnh — bạn có thể đổi trong Hồ sơ.</p>}
+        {run.matches.length === 0 && <p className="text-[12.5px] text-muted-foreground">Thử tăng bán kính hoặc thêm khung giờ rảnh — bạn có thể đổi trong Hồ sơ.</p>}
       </div>
 
-      <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-3 space-y-1.5 text-[12px] text-white/65">
-        <p className="flex items-center gap-1.5 font-bold text-white/85">
-          <Shield className="h-4 w-4 text-white" /> Hệ thống đã lọc giúp bạn
+      <div className="rounded-2xl bg-muted/40 border border-border/70 p-3 space-y-1.5 text-[12px] text-muted-foreground">
+        <p className="flex items-center gap-1.5 font-bold text-foreground">
+          <Shield className="h-4 w-4 text-brand" /> Hệ thống đã lọc giúp bạn
         </p>
         <p>• {run.excluded.distance} người ngoài {p.radiusKm} km · {run.excluded.schedule} người không trùng giờ rảnh</p>
         {run.excluded.gender > 0 && <p>• {run.excluded.gender} người khác giới (tuỳ chọn an toàn)</p>}
         {run.excluded.locationRestricted > 0 && <p>• {run.excluded.locationRestricted} tài khoản bị hạn chế vị trí (nhiều tín hiệu bất thường, đã xác minh thất bại)</p>}
         <p>• Độ tin cậy tính theo số buổi đã tập — người mới không bị xếp riêng</p>
         <p className="flex items-center gap-1.5">
-          <CloudLightning className="h-3.5 w-3.5 shrink-0" /> Mưa dông ở điểm hẹn ngoài trời → đề xuất phòng tập có thật gần đó, cả hai xác nhận mới đổi; huỷ hoặc đổi giờ không bị phạt
+          <CloudLightning className="h-3.5 w-3.5 shrink-0 text-amber-500" /> Mưa dông ở điểm hẹn ngoài trời → đề xuất phòng tập có thật gần đó, cả hai xác nhận mới đổi; huỷ hoặc đổi giờ không bị phạt
         </p>
       </div>
-      <p className="flex items-center gap-1.5 text-[12px] text-emerald-300">
+      <p className="flex items-center gap-1.5 text-[12.5px] text-emerald-600 dark:text-emerald-400 font-semibold">
         <Check className="h-4 w-4" /> Bắt đầu với 7 Điểm Uy tín (UT)
       </p>
     </div>

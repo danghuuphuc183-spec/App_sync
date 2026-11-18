@@ -240,19 +240,19 @@ export function InteractiveRouteMap() {
     baseLayerRef.current =
       baseLayer === "satellite"
         ? [
-            L.tileLayer("https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}&hl=vi", {
-              maxZoom: 20,
-              subdomains: ["mt0", "mt1", "mt2", "mt3"],
-              attribution: "&copy; Google Maps",
-            }),
-          ]
+          L.tileLayer("https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}&hl=vi", {
+            maxZoom: 20,
+            subdomains: ["mt0", "mt1", "mt2", "mt3"],
+            attribution: "&copy; Google Maps",
+          }),
+        ]
         : [
-            L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=vi", {
-              maxZoom: 20,
-              subdomains: ["mt0", "mt1", "mt2", "mt3"],
-              attribution: "&copy; Google Maps",
-            }),
-          ];
+          L.tileLayer("https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=vi", {
+            maxZoom: 20,
+            subdomains: ["mt0", "mt1", "mt2", "mt3"],
+            attribution: "&copy; Google Maps",
+          }),
+        ];
     baseLayerRef.current.forEach((l) => {
       l.addTo(map);
       (l as Leaflet.TileLayer).bringToBack();
@@ -709,8 +709,8 @@ export function InteractiveRouteMap() {
                                 r.difficulty === "Dễ"
                                   ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400"
                                   : r.difficulty === "Vừa phải"
-                                  ? "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400"
-                                  : "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400"
+                                    ? "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400"
+                                    : "bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400"
                               )}
                             >
                               {r.difficulty}
@@ -974,32 +974,32 @@ export function InteractiveRouteMap() {
             <div className="overflow-y-auto px-3 pb-4 space-y-2.5">
               {isRouteMode
                 ? routes.map((r) => (
-                    <RouteDetailCard
-                      key={r.id}
-                      route={r}
-                      selected={r.id === selectedId}
-                      saved={savedIds.includes(r.id)}
-                      onSelect={() => setSelectedId(r.id)}
-                      onToggleSave={() => toggleSaved(r.id)}
-                      onStartLive={() => setCheckInSpot(spotFromRoute(r))}
-                      simulator={
-                        r.id === selectedId
-                          ? { isPlaying, progress: runnerProgress, onToggle: () => setIsPlaying((p) => !p), onReset: resetSimulator }
-                          : null
-                      }
-                    />
-                  ))
+                  <RouteDetailCard
+                    key={r.id}
+                    route={r}
+                    selected={r.id === selectedId}
+                    saved={savedIds.includes(r.id)}
+                    onSelect={() => setSelectedId(r.id)}
+                    onToggleSave={() => toggleSaved(r.id)}
+                    onStartLive={() => setCheckInSpot(spotFromRoute(r))}
+                    simulator={
+                      r.id === selectedId
+                        ? { isPlaying, progress: runnerProgress, onToggle: () => setIsPlaying((p) => !p), onReset: resetSimulator }
+                        : null
+                    }
+                  />
+                ))
                 : venues.map((v) => (
-                    <VenueDetailCard
-                      key={v.id}
-                      venue={v}
-                      selected={v.id === selectedId}
-                      saved={savedIds.includes(v.id)}
-                      onSelect={() => setSelectedId(v.id)}
-                      onToggleSave={() => toggleSaved(v.id)}
-                      onStartLive={() => setCheckInSpot(spotFromVenue(v))}
-                    />
-                  ))}
+                  <VenueDetailCard
+                    key={v.id}
+                    venue={v}
+                    selected={v.id === selectedId}
+                    saved={savedIds.includes(v.id)}
+                    onSelect={() => setSelectedId(v.id)}
+                    onToggleSave={() => toggleSaved(v.id)}
+                    onStartLive={() => setCheckInSpot(spotFromVenue(v))}
+                  />
+                ))}
               {itemCount === 0 && <EmptyResult />}
               <SafetyNote />
             </div>
@@ -1009,47 +1009,47 @@ export function InteractiveRouteMap() {
             <div ref={carouselRef} className="flex gap-2.5 overflow-x-auto snap-x snap-mandatory no-scrollbar px-3 pb-2">
               {isRouteMode
                 ? routes.map((r) => (
-                    <PeekCard
-                      key={r.id}
-                      id={r.id}
-                      selected={r.id === selectedId}
-                      saved={savedIds.includes(r.id)}
-                      onSelect={() => setSelectedId(r.id)}
-                      onToggleSave={() => toggleSaved(r.id)}
-                      onStartLive={() => setCheckInSpot(spotFromRoute(r))}
-                      thumb={<ElevationSpark points={r.elevationPoints} className="w-full h-full" />}
-                      title={r.name}
-                      badge={r.difficulty}
-                      rating={r.rating}
-                      reviewCount={r.reviewCount}
-                      meta={`${r.distanceKm} km · +${r.elevationGainM} m · ${r.estimatedTime}`}
-                      sub={`${r.district} · An toàn ${r.safetyScore}%`}
-                    />
-                  ))
+                  <PeekCard
+                    key={r.id}
+                    id={r.id}
+                    selected={r.id === selectedId}
+                    saved={savedIds.includes(r.id)}
+                    onSelect={() => setSelectedId(r.id)}
+                    onToggleSave={() => toggleSaved(r.id)}
+                    onStartLive={() => setCheckInSpot(spotFromRoute(r))}
+                    thumb={<ElevationSpark points={r.elevationPoints} className="w-full h-full" />}
+                    title={r.name}
+                    badge={r.difficulty}
+                    rating={r.rating}
+                    reviewCount={r.reviewCount}
+                    meta={`${r.distanceKm} km · +${r.elevationGainM} m · ${r.estimatedTime}`}
+                    sub={`${r.district} · An toàn ${r.safetyScore}%`}
+                  />
+                ))
                 : venues.map((v) => (
-                    <PeekCard
-                      key={v.id}
-                      id={v.id}
-                      selected={v.id === selectedId}
-                      saved={savedIds.includes(v.id)}
-                      onSelect={() => setSelectedId(v.id)}
-                      onToggleSave={() => toggleSaved(v.id)}
-                      onStartLive={() => setCheckInSpot(spotFromVenue(v))}
-                      thumb={
-                        <div className="w-full h-full flex flex-col items-center justify-center bg-brand-50 dark:bg-brand-950/40">
-                          <SportIcon sport={v.sport} className="h-6 w-6 text-foreground" />
-                          <span className="text-[11px] font-black text-brand-700 flex items-center gap-0.5">
-                            <Star className="h-3 w-3 fill-current" />
-                            {v.rating.toFixed(1)}
-                          </span>
-                        </div>
-                      }
-                      title={v.name}
-                      badge={v.district}
-                      meta={`${v.priceRange} · ${v.openHours}`}
-                      sub={v.address}
-                    />
-                  ))}
+                  <PeekCard
+                    key={v.id}
+                    id={v.id}
+                    selected={v.id === selectedId}
+                    saved={savedIds.includes(v.id)}
+                    onSelect={() => setSelectedId(v.id)}
+                    onToggleSave={() => toggleSaved(v.id)}
+                    onStartLive={() => setCheckInSpot(spotFromVenue(v))}
+                    thumb={
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-brand-50 dark:bg-brand-950/40">
+                        <SportIcon sport={v.sport} className="h-6 w-6 text-foreground" />
+                        <span className="text-[11px] font-black text-brand-700 flex items-center gap-0.5">
+                          <Star className="h-3 w-3 fill-current" />
+                          {v.rating.toFixed(1)}
+                        </span>
+                      </div>
+                    }
+                    title={v.name}
+                    badge={v.district}
+                    meta={`${v.priceRange} · ${v.openHours}`}
+                    sub={v.address}
+                  />
+                ))}
               {itemCount === 0 && (
                 <div className="w-full rounded-3xl bg-background shadow-xl p-4">
                   <EmptyResult />
@@ -1170,7 +1170,7 @@ function SaveButton({ saved, onClick }: { saved: boolean; onClick: () => void })
       aria-pressed={saved}
       className="h-8 w-8 shrink-0 rounded-full bg-muted flex items-center justify-center"
     >
-      <Bookmark className={cn("h-4 w-4", saved ?"fill-foreground text-foreground" :"text-foreground")} />
+      <Bookmark className={cn("h-4 w-4", saved ? "fill-foreground text-foreground" : "text-foreground")} />
     </button>
   );
 }
@@ -1212,8 +1212,8 @@ function PeekCard(props: {
               props.badge === "Dễ"
                 ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400"
                 : props.badge === "Vừa phải"
-                ? "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400"
-                : "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400"
+                  ? "bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400"
+                  : "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400"
             )}
           >
             {props.badge}

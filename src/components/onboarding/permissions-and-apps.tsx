@@ -72,23 +72,29 @@ export function PermissionsStep({
       {PERMS.map((p) => {
         const st = value[p.key];
         return (
-          <div key={p.key} className="flex items-center gap-3 rounded-2xl bg-white/[0.06] border border-white/10 p-3.5">
-            <span className="h-11 w-11 shrink-0 rounded-xl bg-brand/30 flex items-center justify-center">
-              <p.icon className="h-5 w-5 text-brand-sky" />
+          <div key={p.key} className="flex items-center gap-3 rounded-2xl bg-card border border-border/80 p-3.5 shadow-2xs">
+            <span className="h-11 w-11 shrink-0 rounded-xl bg-brand/10 dark:bg-brand/20 flex items-center justify-center">
+              <p.icon className="h-5 w-5 text-brand dark:text-brand-sky" />
             </span>
             <div className="flex-1 min-w-0">
-              <p className="text-[14px] font-bold">
-                {p.title} {p.required && <span className="ml-1 rounded bg-brand-sky/20 px-1.5 py-0.5 text-[10px] text-brand-sky">Cần thiết</span>}
+              <p className="text-[14px] font-bold text-foreground">
+                {p.title} {p.required && <span className="ml-1 rounded-md bg-brand/15 text-brand dark:text-brand-sky px-1.5 py-0.5 text-[10px] font-bold">Cần thiết</span>}
               </p>
-              <p className="text-[12px] text-white/60 leading-snug">{p.why}</p>
-              {st === "denied" && <p className="mt-1 text-[11.5px] text-amber-300">Hãy bật lại trong Cài đặt trình duyệt / điện thoại.</p>}
+              <p className="text-[12px] text-muted-foreground leading-snug">{p.why}</p>
+              {st === "denied" && <p className="mt-1 text-[11.5px] text-amber-600 dark:text-amber-400 font-medium">Hãy bật lại trong Cài đặt trình duyệt / điện thoại.</p>}
             </div>
             <button
               onClick={() => void ask(p.key)}
               disabled={busy !== null || st === "granted" || st === "unsupported"}
               className={cn(
                 "shrink-0 rounded-lg px-3.5 py-2 text-[12.5px] font-bold flex items-center gap-1 transition-colors",
-                st === "granted" ? "bg-emerald-400/15 text-emerald-300" : st === "denied" ? "bg-white/10 text-white" : st === "unsupported" ? "bg-white/5 text-white/40" : "bg-brand text-white hover:bg-brand-500"
+                st === "granted"
+                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                  : st === "denied"
+                  ? "bg-muted text-foreground border border-border"
+                  : st === "unsupported"
+                  ? "bg-muted/40 text-muted-foreground"
+                  : "bg-brand text-white hover:bg-brand-600 shadow-2xs"
               )}
             >
               {busy === p.key ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : st === "granted" ? <Check className="h-3.5 w-3.5" /> : st === "denied" ? <X className="h-3.5 w-3.5" /> : null}
@@ -97,7 +103,7 @@ export function PermissionsStep({
           </div>
         );
       })}
-      <p className="text-[11.5px] text-white/50">Bạn có thể đổi quyền bất kỳ lúc nào trong Hồ sơ → Riêng tư. Vị trí chỉ chia sẻ khi bạn bật “Tập tại đây”.</p>
+      <p className="text-[11.5px] text-muted-foreground">Bạn có thể đổi quyền bất kỳ lúc nào trong Hồ sơ → Riêng tư. Vị trí chỉ chia sẻ khi bạn bật “Tập tại đây”.</p>
     </div>
   );
 }
@@ -164,20 +170,23 @@ export function ConnectAppsStep({ connected, onChange }: { connected: string[]; 
         {SPORT_APPS.map((a) => {
           const on = connected.includes(a.id);
           return (
-            <div key={a.id} className="flex items-center gap-3 rounded-2xl bg-white/[0.06] border border-white/10 p-3">
-              <span className="h-11 w-11 shrink-0 rounded-xl flex items-center justify-center text-[18px] font-black text-white border border-white/25 bg-white/[0.08]">
+            <div key={a.id} className="flex items-center gap-3 rounded-2xl bg-card border border-border/80 p-3 shadow-2xs">
+              <span
+                style={{ backgroundColor: a.color }}
+                className="h-11 w-11 shrink-0 rounded-xl flex items-center justify-center text-[18px] font-black text-white shadow-2xs"
+              >
                 {a.short}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-bold">{a.name}</p>
-                <p className="text-[11.5px] text-white/55 truncate">{on ? `✓ ${a.syncPreview}` : a.platform}</p>
+                <p className="text-[14px] font-bold text-foreground">{a.name}</p>
+                <p className="text-[11.5px] text-muted-foreground truncate">{on ? `✓ ${a.syncPreview}` : a.platform}</p>
               </div>
               {on ? (
-                <button onClick={() => onChange(connected.filter((x) => x !== a.id))} className="shrink-0 rounded-lg bg-emerald-400/15 text-emerald-300 px-3 py-1.5 text-[12px] font-bold">
+                <button onClick={() => onChange(connected.filter((x) => x !== a.id))} className="shrink-0 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-3 py-1.5 text-[12px] font-bold">
                   Đã kết nối
                 </button>
               ) : (
-                <button onClick={() => setOpen(a)} className="shrink-0 rounded-lg bg-white text-black px-3.5 py-1.5 text-[12px] font-bold hover:bg-neutral-200">
+                <button onClick={() => setOpen(a)} className="shrink-0 rounded-lg bg-brand hover:bg-brand-600 text-white px-3.5 py-1.5 text-[12px] font-bold transition-colors shadow-2xs">
                   Kết nối
                 </button>
               )}
