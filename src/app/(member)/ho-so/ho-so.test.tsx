@@ -27,22 +27,21 @@ vi.mock("@/context/auth-context", () => ({
 }));
 
 describe("Hồ sơ & Profile Page with Club Management and Role Permissions", () => {
-  it("renders profile header and 5 quick action buttons including Club Management", () => {
+  it("renders profile header and 4 balanced quick action buttons including Club Management", () => {
     render(<ProfilePage />);
 
     expect(screen.getByRole("heading", { name: "Hồ sơ" })).toBeInTheDocument();
     expect(screen.getByText("Hữu Phúc Đặng")).toBeInTheDocument();
     expect(screen.getByText(/@danghuuphuc183/i)).toBeInTheDocument();
 
-    // Check 5 quick action buttons
+    // Check 4 balanced quick action buttons
     expect(screen.getByText("Lịch")).toBeInTheDocument();
     expect(screen.getByText("Kèo")).toBeInTheDocument();
-    expect(screen.getByText("Nhóm")).toBeInTheDocument();
     expect(screen.getByText("QL CLB")).toBeInTheDocument();
     expect(screen.getByText("Xu")).toBeInTheDocument();
   });
 
-  it("renders Club Management & Fund Hub above the action bar for Club Leader and hides it for normal Member", () => {
+  it("renders orderly Club Management & Fund Hub for Club Leader and hides it for normal Member", () => {
     render(<ProfilePage />);
 
     // DEFAULT VIEW IS CLUB LEADER:

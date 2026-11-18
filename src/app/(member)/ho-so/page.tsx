@@ -300,126 +300,45 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* THẺ QUẢN LÝ CLB & QUỸ SINH HOẠT (NẰM TRÊN THANH LỊCH, KÈO, NHÓM, XU) */}
-        {/* Dành cho Trưởng CLB / Chủ phòng gym / Ban quản lý phòng tập - Thành viên thường không thấy quỹ */}
-        {isClubLeader ? (
-          <div className="p-3.5 rounded-2xl bg-linear-to-br from-blue-600/10 via-brand/10 to-indigo-600/10 border border-blue-500/25 shadow-xs space-y-2.5 relative overflow-hidden animate-in fade-in duration-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-xs">
-                  <Shield className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <h3 className="text-xs font-bold text-foreground">Quản lý CLB & Quỹ</h3>
-                    <span className="px-1.5 py-0.2 rounded-md bg-blue-500/20 text-blue-700 dark:text-blue-300 font-extrabold text-[9.5px]">
-                      Trưởng CLB
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground">FTU2 Run Club · 1.240 thành viên</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setIsClubLeader(false)}
-                  title="Chuyển sang góc nhìn Thành viên thường"
-                  className="px-2 py-1 rounded-lg border border-border text-[10px] text-muted-foreground hover:bg-muted"
-                >
-                  Xem vai Member
-                </button>
-                <Link
-                  href="/cau-lac-bo/quan-ly"
-                  className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1"
-                >
-                  <span>Quản lý</span>
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Phần tiền quỹ CLB hiển thị trong Profile theo đúng yêu cầu */}
-            <div className="grid grid-cols-2 gap-2 pt-1 border-t border-blue-500/15 text-xs">
-              <div className="p-2.5 rounded-xl bg-card/90 border border-border/70 space-y-0.5">
-                <p className="text-[10px] text-muted-foreground font-medium">Số dư Quỹ CLB</p>
-                <p className="text-sm font-black text-brand dark:text-brand-sky">12.450.000đ</p>
-                <p className="text-[9.5px] text-emerald-600 dark:text-emerald-400">94% thực nhận sau phí</p>
-              </div>
-              <div className="p-2.5 rounded-xl bg-card/90 border border-border/70 space-y-0.5">
-                <p className="text-[10px] text-muted-foreground font-medium">Hội phí Quý IV</p>
-                <p className="text-sm font-black text-emerald-600 dark:text-emerald-400">41/50 đã nộp</p>
-                <p className="text-[9.5px] text-muted-foreground">Tiến độ thu 82%</p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="px-3 py-2 rounded-xl bg-muted/40 border border-border/60 flex items-center justify-between text-xs animate-in fade-in duration-200">
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-blue-500" />
-              <span className="text-[11px] text-muted-foreground">
-                CLB: <strong>FTU2 Run Club</strong> · Hội viên chính thức (Không thấy quỹ)
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsClubLeader(true)}
-              className="text-[10.5px] font-bold text-brand dark:text-brand-sky hover:underline"
-            >
-              Chuyển vai Trưởng CLB
-            </button>
-          </div>
-        )}
-
-        {/* 5. NĂM NÚT THAO TÁC NHANH: [Lịch] [Kèo] [Nhóm] [Quản lý CLB] [Xu] */}
-        <div className="grid grid-cols-5 gap-1.5">
+        {/* 5. BỐN NÚT THAO TÁC NHANH: [Lịch] [Kèo] [CLB / QL CLB] [Xu] (CÂN ĐỐI, THOÁNG MẮT, KHÔNG CHÈN ÉP) */}
+        <div className="grid grid-cols-4 gap-2">
           {/* Lịch */}
           <button
             type="button"
             onClick={() => setIsScheduleModalOpen(true)}
-            className="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1"
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5"
           >
             <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
               <Calendar className="h-4 w-4" />
             </div>
-            <span className="text-[10.5px] font-semibold text-foreground">Lịch</span>
+            <span className="text-[11px] font-semibold text-foreground">Lịch</span>
           </button>
 
           {/* Kèo */}
           <button
             type="button"
             onClick={() => setActiveTab("keo")}
-            className="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1"
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5"
           >
             <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
               <Zap className="h-4 w-4" />
             </div>
-            <span className="text-[10.5px] font-semibold text-foreground">Kèo</span>
+            <span className="text-[11px] font-semibold text-foreground">Kèo</span>
           </button>
 
-          {/* Nhóm */}
-          <Link
-            href="/dong-doi?tab=nhom"
-            className="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1 group"
-          >
-            <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center group-hover:scale-105 transition-transform">
-              <Users className="h-4 w-4" />
-            </div>
-            <span className="text-[10.5px] font-semibold text-foreground">Nhóm</span>
-          </Link>
-
-          {/* Quản lý CLB (Trưởng CLB) hoặc CLB (Thành viên) */}
+          {/* CLB / QL CLB */}
           <Link
             href={isClubLeader ? "/cau-lac-bo/quan-ly" : "/dong-doi?tab=clb"}
-            className="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1 group relative"
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5 group relative"
           >
-            <div className="w-8 h-8 rounded-xl bg-blue-500/15 dark:bg-blue-500/25 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-105 transition-transform">
               <Shield className="h-4 w-4" />
             </div>
-            <span className="text-[10.5px] font-semibold text-foreground truncate max-w-full px-0.5">
+            <span className="text-[11px] font-semibold text-foreground truncate max-w-full px-0.5">
               {isClubLeader ? "QL CLB" : "CLB"}
             </span>
             {isClubLeader && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-card" />
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-card" />
             )}
           </Link>
 
@@ -427,22 +346,22 @@ export default function ProfilePage() {
           <button
             type="button"
             onClick={() => setIsCoinsModalOpen(true)}
-            className="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1"
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-brand/40 shadow-xs active:scale-95 transition-all space-y-1.5"
           >
             <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
               <Coins className="h-4 w-4" />
             </div>
-            <span className="text-[10.5px] font-semibold text-foreground">Xu</span>
+            <span className="text-[11px] font-semibold text-foreground">Xu</span>
           </button>
         </div>
 
-        {/* 6. TWO CARDS: [Uy tín 8,5/10] & [Chuỗi tuần 6 tuần] */}
+        {/* 6. HAI Ô CHỈ SỐ KỶ LUẬT: [Uy tín 8,5/10] & [Chuỗi tuần 6 tuần] */}
         <div className="grid grid-cols-2 gap-2.5">
           {/* Card Uy Tín */}
           <button
             type="button"
             onClick={() => setIsTrustRulesOpen(true)}
-            className="p-3 rounded-2xl bg-card border border-border/70 text-left shadow-xs space-y-2 hover:border-brand/40 transition-all active:scale-[0.99]"
+            className="p-3.5 rounded-2xl bg-card border border-border/70 text-left shadow-xs space-y-2 hover:border-brand/40 transition-all active:scale-[0.99]"
           >
             <p className="text-[11px] text-muted-foreground font-medium">Uy tín</p>
             <p className="text-base font-bold text-foreground">
@@ -454,7 +373,7 @@ export default function ProfilePage() {
           </button>
 
           {/* Card Chuỗi Tuần */}
-          <div className="p-3 rounded-2xl bg-card border border-border/70 text-left shadow-xs space-y-2">
+          <div className="p-3.5 rounded-2xl bg-card border border-border/70 text-left shadow-xs space-y-2">
             <p className="text-[11px] text-muted-foreground font-medium">Chuỗi tuần</p>
             <p className="text-base font-bold text-foreground">6 tuần</p>
             {/* 7 streak dots: 6 active blue, 1 inactive */}
@@ -502,6 +421,86 @@ export default function ProfilePage() {
             />
           </div>
         </button>
+
+        {/* 8. THẺ CÂU LẠC BỘ & QUỸ SINH HOẠT (TRẬT TỰ RÕ RÀNG, PHÂN BIỆT VAI TRÒ TRƯỞNG CLB VS HỘI VIÊN) */}
+        <div className="p-3.5 rounded-2xl bg-card border border-border/70 shadow-xs space-y-3 transition-all relative overflow-hidden">
+          {/* Header hàng 1: Icon CLB, Tên, Badge vai trò & Link hành động */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold shadow-xs">
+                <Shield className="h-4.5 w-4.5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="text-xs font-bold text-foreground">
+                    {isClubLeader ? "Quản lý CLB & Quỹ" : "CLB của tôi"}
+                  </h3>
+                  <span
+                    className={cn(
+                      "px-1.5 py-0.5 rounded-md font-extrabold text-[9.5px]",
+                      isClubLeader
+                        ? "bg-blue-500/15 text-blue-700 dark:text-blue-300"
+                        : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    {isClubLeader ? "Trưởng CLB" : "Hội viên"}
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  FTU2 Run Club · {isClubLeader ? "1.240 thành viên" : "1.240 tv · 4 sự kiện tuần"}
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href={isClubLeader ? "/cau-lac-bo/quan-ly" : "/dong-doi?tab=clb"}
+              className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white active:scale-95 text-xs font-bold transition-all shadow-xs flex items-center gap-1"
+            >
+              <span>{isClubLeader ? "Quản lý" : "Trang CLB"}</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+
+          {/* Nội dung theo phân quyền */}
+          {isClubLeader ? (
+            /* TRƯỞNG CLB: HIỂN THỊ QUỸ VÀ THU HỘI PHÍ (2 Ô CÂN ĐỐI, TRẬT TỰ RÕ RÀNG) */
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/60 text-xs">
+              <div className="p-2.5 rounded-xl bg-muted/40 border border-border/60 space-y-0.5">
+                <p className="text-[10px] text-muted-foreground font-medium">Số dư Quỹ CLB</p>
+                <p className="text-sm font-black text-brand dark:text-brand-sky">12.450.000đ</p>
+                <p className="text-[9.5px] text-emerald-600 dark:text-emerald-400 font-medium">94% thực nhận sau phí</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-muted/40 border border-border/60 space-y-0.5">
+                <p className="text-[10px] text-muted-foreground font-medium">Hội phí Quý IV</p>
+                <p className="text-sm font-black text-emerald-600 dark:text-emerald-400">41/50 đã nộp</p>
+                <p className="text-[9.5px] text-muted-foreground">Tiến độ thu 82%</p>
+              </div>
+            </div>
+          ) : (
+            /* HỘI VIÊN THƯỜNG: BẢO MẬT QUỸ (KHÔNG THẤY TIỀN), HIỂN THỊ HOẠT ĐỘNG */
+            <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5 text-[11px]">
+                <Lock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                <span>Không thấy quỹ sinh hoạt (Chỉ Ban quản lý)</span>
+              </span>
+              <span className="text-[10.5px] font-medium text-foreground bg-muted/60 px-2 py-0.5 rounded-md">
+                Kèo chạy T4 & CN
+              </span>
+            </div>
+          )}
+
+          {/* Dòng điều hướng demo vai trò tinh tế ở góc dưới, không phá vỡ UI chính */}
+          <div className="flex items-center justify-between pt-1 text-[10px] text-muted-foreground border-t border-border/30">
+            <span>Vai trò: <strong className="text-foreground">{isClubLeader ? "Trưởng CLB (Có quyền Quỹ)" : "Thành viên (Bảo mật Quỹ)"}</strong></span>
+            <button
+              type="button"
+              onClick={() => setIsClubLeader(!isClubLeader)}
+              className="text-brand dark:text-brand-sky hover:underline font-semibold"
+            >
+              {isClubLeader ? "Xem vai Member" : "Chuyển vai Trưởng CLB"}
+            </button>
+          </div>
+        </div>
 
         {/* 8. GHI NHẬN TẬP LUYỆN (CHUẨN CHI TIẾT: THỐNG KÊ THÁNG, BẢN ĐỒ NHIỆT 20 TUẦN, BIỂU ĐỒ PHÂN BỐ & GHI BUỔI TẬP) */}
         <TrainingLog className="rounded-3xl bg-card/90 backdrop-blur-md border border-border/70 shadow-xs" />
