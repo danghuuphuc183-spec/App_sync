@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { BadgeCheck, UserCheck } from "lucide-react";
+import { BadgeCheck, UserCheck, X } from "lucide-react";
 import { suggestFollows, type ViewerContext } from "@/features/social/follow-suggest";
 import { DEMO_VIEWER, SUGGESTION_CANDIDATES } from "@/features/social/suggestions.data";
 import { cn } from "@/lib/utils";
@@ -23,12 +23,16 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
   if (suggestions.length === 0) return null;
 
   return (
-    <section aria-label="Nên theo dõi" className="py-0.5">
-      <div className="flex items-center justify-between px-3.5 mb-2">
-        <h2 className="text-sm font-bold text-foreground">Nên theo dõi</h2>
+    <section aria-label="Nên theo dõi" className="py-1">
+      <div className="flex items-center justify-between px-3.5 mb-1.5">
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-xs font-bold text-foreground">Nên theo dõi</h2>
+          <span className="text-[10px] text-muted-foreground font-medium">· Gợi ý bạn tập</span>
+        </div>
         <button
+          type="button"
           onClick={() => setShowAll((v) => !v)}
-          className="text-xs font-semibold text-brand dark:text-brand-sky hover:underline"
+          className="text-[11px] font-semibold text-brand dark:text-brand-sky hover:underline"
         >
           {showAll ? "Thu gọn" : "Xem tất cả"}
         </button>
@@ -37,7 +41,9 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
       <div
         className={cn(
           "px-3",
-          showAll ? "grid grid-cols-2 gap-2.5" : "flex gap-2.5 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-1"
+          showAll
+            ? "grid grid-cols-3 gap-2"
+            : "flex gap-2 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-1"
         )}
       >
         {suggestions.map(({ candidate: c, reason, track }) => {
@@ -46,53 +52,68 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
             <article
               key={c.id}
               className={cn(
-                "rounded-2xl border border-border/80 bg-card shadow-xs p-3.5 flex flex-col items-center text-center",
-                !showAll && "w-[44%] min-w-[150px] shrink-0 snap-start"
+                "rounded-xl border border-border/70 bg-card shadow-2xs p-2.5 flex flex-col items-center text-center relative transition-all",
+                !showAll && "w-[118px] min-w-[118px] shrink-0 snap-start"
               )}
             >
-              <div className="relative mt-1">
+              {/* Nút Xóa / Bỏ qua gợi ý ở góc trên bên phải */}
+              <button
+                type="button"
+                onClick={() => setDismissedIds((prev) => [...prev, c.id])}
+                disabled={isFollowing}
+                aria-label="Xóa"
+                title="Bỏ qua gợi ý"
+                className={cn(
+                  "absolute top-1 right-1 p-1 rounded-full text-muted-foreground/60 hover:text-foreground hover:bg-muted transition-colors",
+                  isFollowing && "invisible pointer-events-none"
+                )}
+              >
+                <X className="h-3 w-3 stroke-[2]" />
+              </button>
+
+              {/* Avatar nhỏ gọn phù hợp khung điện thoại */}
+              <div className="relative mt-0.5">
                 <img
                   src={c.avatar}
                   alt={c.name}
                   className={cn(
-                    "h-16 w-16 rounded-full object-cover",
-                    track === "featured" ? "ring-2 ring-brand-600 ring-offset-2 ring-offset-background" : "ring-1 ring-neutral-200 dark:ring-neutral-700"
+                    "h-11 w-11 rounded-full object-cover",
+                    track === "featured"
+                      ? "ring-2 ring-brand ring-offset-1.5 ring-offset-background"
+                      : "ring-1 ring-border"
                   )}
                 />
                 {c.isVerified && (
                   <BadgeCheck
- aria-label="Đã xác minh"
- className="absolute -top-0.5 -right-1 h-5 w-5 text-background fill-foreground"
- />
+                    aria-label="Đã xác minh"
+                    className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 text-blue-500 fill-white dark:fill-card"
+                  />
                 )}
               </div>
-              <h3 className="mt-2.5 text-[14px] font-bold text-foreground leading-tight line-clamp-1">{c.name}</h3>
-              <p className="mt-1 text-[11.5px] text-muted-foreground leading-snug line-clamp-2 min-h-[2.4em]">{reason}</p>
-              <div className="mt-3 w-full flex flex-col gap-1.5">
+
+              {/* Tên & Lý do gợi ý */}
+              <h3 className="mt-1.5 text-xs font-bold text-foreground leading-tight line-clamp-1 w-full px-0.5">
+                {c.name}
+              </h3>
+              <p className="mt-0.5 text-[10px] text-muted-foreground leading-tight line-clamp-1 w-full px-0.5">
+                {reason}
+              </p>
+
+              {/* Nút Theo dõi nhỏ gọn */}
+              <div className="mt-2 w-full">
                 <button
+                  type="button"
                   onClick={() => toggleFollow(c.id)}
                   aria-pressed={isFollowing}
                   className={cn(
-                    "w-full rounded-lg py-1.5 text-[12.5px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1",
+                    "w-full rounded-lg py-1 px-1.5 text-[11px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1 shadow-2xs",
                     isFollowing
-                      ? "bg-neutral-100 dark:bg-neutral-800 text-foreground"
-                      : "bg-brand hover:bg-brand-700 text-white dark:bg-brand-sky dark:text-black"
+                      ? "bg-muted text-foreground border border-border"
+                      : "bg-brand hover:bg-brand-600 text-white dark:bg-brand-sky dark:text-black"
                   )}
                 >
-                  {isFollowing && <UserCheck className="h-3.5 w-3.5" />}
-                  {isFollowing ? "Đang theo dõi" : "Theo dõi"}
-                </button>
-                <button
-                  onClick={() => setDismissedIds((prev) => [...prev, c.id])}
-                  disabled={isFollowing}
-                  aria-hidden={isFollowing}
-                  tabIndex={isFollowing ? -1 : undefined}
-                  className={cn(
-                    "w-full rounded-lg py-1.5 text-[12.5px] font-bold border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800",
-                    isFollowing && "invisible"
-                  )}
-                >
-                  Xóa
+                  {isFollowing && <UserCheck className="h-3 w-3" />}
+                  <span>{isFollowing ? "Đang theo dõi" : "Theo dõi"}</span>
                 </button>
               </div>
             </article>

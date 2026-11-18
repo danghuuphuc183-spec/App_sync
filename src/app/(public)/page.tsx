@@ -5,7 +5,6 @@ import { X, Zap, Search, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { WeeklyStreakCard } from "@/components/home/weekly-streak-card";
-import { SuggestedFollows } from "@/components/home/suggested-follows";
 import { HomeFeed } from "@/components/feed/home-feed";
 import { INITIAL_FEED } from "@/features/feed/feed.data";
 import type { FeedPost } from "@/features/feed/feed.types";
@@ -101,10 +100,7 @@ export default function HomePage() {
       {/* 2. CHUỖI LIÊN TIẾP THEO TUẦN (giữ chuỗi kiểu Strava) */}
       <WeeklyStreakCard />
 
-      {/* 4. NÊN THEO DÕI — gợi ý người nổi tiếng & người có điểm chung */}
-      <SuggestedFollows />
-
-      {/* 6. BẢNG TIN: bài người dùng · CLB · quảng cáo + Reels */}
+      {/* 3. BẢNG TIN: bài người dùng · CLB · quảng cáo + gợi ý theo dõi dưới bộ lọc */}
       <HomeFeed posts={posts} setPosts={setPosts} searchQuery={searchQuery} onCreatePost={() => setIsCreateModalOpen(true)} />
 
       {/* 9. MODAL TẠO KÈO HOẶC CHIA SẺ BUỔI TẬP */}

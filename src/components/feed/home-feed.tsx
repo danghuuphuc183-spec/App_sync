@@ -8,14 +8,15 @@ import { PEOPLE } from "@/features/feed/feed.data";
 import { filterPosts, SPORT_LABEL } from "@/features/feed/feed.utils";
 import { useSocialPrefs } from "@/features/feed/use-social-prefs";
 import { InstagramChatModal } from "@/components/chat/instagram-chat-modal";
+import { SuggestedFollows } from "@/components/home/suggested-follows";
 import { PostCard } from "./post-card";
 import { CommentsSheet, PostOptionsSheet, ShareSheet } from "./post-sheets";
 import { BottomSheet, useToast } from "./bottom-sheet";
 
 const FILTERS = [
   { id: "all", label: "Tất cả" },
-  { id: "following", label: "Đang theo dõi" },
   { id: "clubs", label: "CLB" },
+  { id: "following", label: "Đang theo dõi" },
   { id: "invites", label: "Kèo tập" },
   { id: "running", label: "Chạy bộ" },
   { id: "gym", label: "Gym" },
@@ -93,6 +94,9 @@ export function HomeFeed({
           ))}
         </div>
       </div>
+
+      {/* Gợi ý theo dõi nhỏ gọn nằm ngay dưới thanh bộ lọc Tất cả - CLB - Đang theo dõi - Kèo tập */}
+      {filter === "all" && <SuggestedFollows />}
 
       {visible.length === 0 ? (
         <div className="mx-3 rounded-2xl border border-dashed border-neutral-300 dark:border-neutral-700 p-8 text-center space-y-3">
