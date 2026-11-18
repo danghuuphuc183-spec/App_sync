@@ -56,8 +56,12 @@ export function TimeActivityPicker({
         </div>
         <span
           className={cn(
-            "rounded-lg px-2.5 py-0.5 text-[11.5px] font-bold",
-            selectedAvg >= 60 ? "bg-brand text-white" : selectedAvg >= 30 ? "bg-brand-100 text-brand-700" : "bg-muted text-muted-foreground"
+            "rounded-full px-3 py-1 text-[11.5px] font-bold shadow-xs transition-all",
+            selectedAvg >= 60
+              ? "bg-gradient-to-r from-[#0567E1] to-[#0A84FF] text-white shadow-blue-500/25"
+              : selectedAvg >= 30
+                ? "bg-blue-50 dark:bg-blue-950/60 text-brand-700 dark:text-brand-300 border border-blue-200/60"
+                : "bg-muted text-muted-foreground"
           )}
         >
           {crowd}
@@ -65,7 +69,7 @@ export function TimeActivityPicker({
       </div>
 
       {/* Biểu đồ hoạt động */}
-      <div className="flex items-end gap-[2px] h-24" role="img" aria-label={`Mức hoạt động theo giờ, đông nhất lúc ${bucketToTime(peak)}`}>
+      <div className="flex items-end gap-[2.5px] h-24 pt-2" role="img" aria-label={`Mức hoạt động theo giờ, đông nhất lúc ${bucketToTime(peak)}`}>
         {bars.map((v, i) => {
           const inRange = i >= lo && i < hi;
           return (
@@ -77,20 +81,22 @@ export function TimeActivityPicker({
               onClick={() => onBarClick(i)}
               title={`${bucketToTime(i)}–${bucketToTime(i + 1)}`}
               className={cn(
-                "flex-1 rounded-t-[3px] transition-colors",
-                inRange ? "bg-brand hover:bg-brand-700" : "bg-brand-100 dark:bg-brand-900 hover:bg-brand-200"
+                "flex-1 rounded-t-[4px] transition-all duration-150 cursor-pointer active:scale-y-95",
+                inRange
+                  ? "bg-gradient-to-t from-[#0567E1] via-[#0D7AF8] to-[#38BDF8] shadow-[0_2px_8px_rgba(5,103,225,0.25)] hover:brightness-110"
+                  : "bg-blue-100/70 dark:bg-blue-950/40 hover:bg-blue-200/90 dark:hover:bg-blue-900/60"
               )}
-              style={{ height: `${Math.max(6, v)}%` }}
+              style={{ height: `${Math.max(8, v)}%` }}
             />
           );
         })}
       </div>
 
       {/* Thanh trượt 2 đầu */}
-      <div className="relative h-8 mt-1">
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1 rounded-full bg-brand-100 dark:bg-brand-900" />
+      <div className="relative h-8 mt-1.5">
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-blue-100 dark:bg-blue-950/60" />
         <div
-          className="absolute top-1/2 -translate-y-1/2 h-1 rounded-full bg-brand"
+          className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-gradient-to-r from-[#0567E1] via-[#0091FF] to-[#38BDF8] shadow-[0_0_8px_rgba(5,103,225,0.35)]"
           style={{ left: `${(lo / BUCKETS) * 100}%`, right: `${100 - (hi / BUCKETS) * 100}%` }}
         />
         <input

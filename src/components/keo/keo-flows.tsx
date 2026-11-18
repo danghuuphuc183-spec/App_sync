@@ -182,11 +182,11 @@ export function PersonalFlow() {
         )}
         <div className="mt-4 flex gap-2">
           {p && (
-            <button onClick={() => setChatOpen(true)} className="flex-1 rounded-lg bg-brand hover:bg-brand-700 text-white py-3 text-[14px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98]">
+            <button onClick={() => setChatOpen(true)} className="flex-1 rounded-2xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white py-3 text-[14px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] shadow-md shadow-blue-500/25 transition-all">
               <MessageCircle className="h-4 w-4" /> Nhắn tin
             </button>
           )}
-          <Link href="/ho-so?tab=bounties" className="flex-1 rounded-lg border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky py-2.5 text-[14px] font-bold text-center hover:bg-brand-50 dark:hover:bg-brand-950">
+          <Link href="/ho-so?tab=bounties" className="flex-1 rounded-2xl border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky py-2.5 text-[14px] font-bold text-center hover:bg-brand-50/60 dark:hover:bg-brand-950 active:scale-[0.98] transition-all">
             Xem kèo của tôi
           </Link>
         </div>
@@ -252,15 +252,15 @@ export function PersonalFlow() {
                       onClick={() => setUseIndoor((v) => !v)}
                       aria-pressed={useIndoor}
                       className={cn(
-                        "rounded-lg px-3 py-1.5 text-[12.5px] font-bold border",
-                        useIndoor ? "bg-foreground text-background border-foreground" : "border-foreground/40 hover:bg-background"
+                        "rounded-xl px-3 py-1.5 text-[12.5px] font-bold border transition-all active:scale-95",
+                        useIndoor ? "bg-gradient-to-r from-[#0567E1] to-[#1C8DFF] text-white border-transparent shadow-xs" : "border-brand/40 text-brand hover:bg-brand-50"
                       )}
                     >
                       {useIndoor ? "✓ Sẽ đề xuất đổi sang " : "Đề xuất đổi sang "}
                       {weather.proposal.name}
                     </button>
                   )}
-                  <button type="button" onClick={() => setStep("form")} className="rounded-lg px-3 py-1.5 text-[12.5px] font-bold border border-foreground/40 hover:bg-background">
+                  <button type="button" onClick={() => setStep("form")} className="rounded-xl px-3 py-1.5 text-[12.5px] font-bold border border-brand/40 text-brand hover:bg-brand-50 active:scale-95 transition-all">
                     Đổi giờ (không phạt)
                   </button>
                 </div>
@@ -303,13 +303,13 @@ export function PersonalFlow() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setSkipped((s) => [...s, c.id])}
-                  className="h-10 px-4 rounded-lg border border-border text-[13px] font-bold text-foreground hover:bg-muted active:scale-95 flex items-center gap-1"
+                  className="h-10 px-4 rounded-xl border border-border text-[13px] font-bold text-foreground hover:bg-muted active:scale-95 flex items-center gap-1 transition-all"
                 >
                   <X className="h-4 w-4" /> Bỏ qua
                 </button>
                 <button
                   onClick={() => accept(c)}
-                  className="flex-1 h-10 rounded-lg bg-brand hover:bg-brand-700 active:scale-[0.98] text-white text-[13.5px] font-bold"
+                  className="flex-1 h-10 rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:opacity-95 active:scale-[0.98] text-white text-[13.5px] font-bold shadow-md shadow-blue-500/25 transition-all"
                 >
                   Chấp nhận
                 </button>
@@ -326,11 +326,11 @@ export function PersonalFlow() {
           <p className="text-[13px] text-foreground">Không ai hợp ý? Đăng kèo công khai để người gần bạn nhận.</p>
           <div className="flex gap-2 justify-center">
             {skipped.length > 0 && (
-              <button onClick={() => setSkipped([])} className="rounded-lg border border-border px-3.5 py-2 text-[12.5px] font-bold flex items-center gap-1 hover:bg-muted">
+              <button onClick={() => setSkipped([])} className="rounded-xl border border-border px-3.5 py-2 text-[12.5px] font-bold flex items-center gap-1 hover:bg-muted active:scale-95 transition-all">
                 <RefreshCw className="h-3.5 w-3.5" /> Xem lại
               </button>
             )}
-            <button onClick={postPublic} className="rounded-lg bg-black text-white dark:bg-white dark:text-black px-4 py-2 text-[12.5px] font-bold hover:opacity-90 active:scale-95">
+            <button onClick={postPublic} className="rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white px-4 py-2.5 text-[12.5px] font-bold hover:opacity-95 active:scale-95 shadow-md shadow-blue-500/25 transition-all">
               Đăng kèo công khai
             </button>
           </div>
@@ -446,11 +446,11 @@ export function GroupFlow() {
         <div className="mt-4 flex gap-2">
           <button
             onClick={() => setChatKeo(result.keo)}
-            className="flex-1 rounded-lg bg-brand hover:bg-brand-700 text-white py-3 text-[14px] font-bold flex items-center justify-center gap-1.5"
+            className="flex-1 rounded-2xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white py-3 text-[14px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] shadow-md shadow-blue-500/25 transition-all"
           >
             <MessageCircle className="h-4 w-4" /> Chat nhóm
           </button>
-          <Link href="/ho-so?tab=bounties" className="flex-1 rounded-lg border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky py-2.5 text-[14px] font-bold text-center">
+          <Link href="/ho-so?tab=bounties" className="flex-1 rounded-2xl border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky py-2.5 text-[14px] font-bold text-center hover:bg-brand-50/60 dark:hover:bg-brand-950 active:scale-[0.98] transition-all">
             Xem kèo của tôi
           </Link>
         </div>
@@ -489,7 +489,7 @@ export function GroupFlow() {
         </div>
 
         <div className="sticky bottom-[72px] mt-4 pt-2 bg-gradient-to-t from-background via-background to-transparent">
-          <button onClick={createOwn} className="w-full rounded-lg bg-black hover:opacity-90 text-white dark:bg-white dark:text-black py-3.5 text-[14px] font-bold active:scale-[0.98]">
+          <button onClick={createOwn} className="w-full rounded-2xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:opacity-95 text-white py-3.5 text-[14px] font-bold active:scale-[0.98] shadow-lg shadow-blue-500/25 transition-all">
             Bỏ qua · Tự lập nhóm (thiếu {form.capacity - form.present} người)
           </button>
         </div>
@@ -597,11 +597,11 @@ export function SoloFlow() {
             Đã mở thành kèo 1:1 trên bảng kèo. Ai nhận kèo thì luật UT áp dụng như kèo 1:1 bình thường.
           </p>
         ) : (
-          <button onClick={openToOthers} className="w-full rounded-lg border-2 border-foreground py-3 text-[14px] font-bold text-foreground hover:bg-muted">
+          <button onClick={openToOthers} className="w-full rounded-2xl border-2 border-brand py-3 text-[14px] font-bold text-brand dark:text-brand-sky hover:bg-brand-50/60 active:scale-[0.98] transition-all">
             Mở cho người khác tập cùng
           </button>
         )}
-        <Link href="/len-keo" className="block w-full rounded-lg bg-brand hover:bg-brand-700 text-white py-3 text-center text-[14px] font-bold">
+        <Link href="/len-keo" className="block w-full rounded-2xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white py-3.5 text-center text-[14px] font-bold shadow-md shadow-blue-500/25 active:scale-[0.98] transition-all">
           Về Lên kèo
         </Link>
       </div>

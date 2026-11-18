@@ -96,13 +96,13 @@ export function DayCalendar({
               aria-pressed={isSel}
               aria-label={`${WEEKDAY_LONG[d.getDay()]}, ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}${tag}`}
               className={cn(
-                "relative h-10 rounded-lg text-[13.5px] font-semibold transition-colors",
+                "relative h-10 rounded-xl text-[13.5px] font-semibold transition-all duration-150 active:scale-95",
                 isSel
-                  ? "bg-brand text-white"
+                  ? "bg-gradient-to-br from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white font-bold shadow-md shadow-blue-500/25 scale-[1.04]"
                   : disabled
                     ? "text-muted-foreground/40 cursor-not-allowed"
-                    : "text-foreground hover:bg-muted",
-                isToday && !isSel && "ring-1 ring-inset ring-foreground/60"
+                    : "text-foreground hover:bg-brand-50/60 dark:hover:bg-brand-950/40",
+                isToday && !isSel && "ring-1.5 ring-brand/70 text-brand font-bold"
               )}
             >
               {d.getDate()}

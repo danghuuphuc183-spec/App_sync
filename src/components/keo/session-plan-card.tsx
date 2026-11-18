@@ -13,9 +13,9 @@ import { RouteMapMedia } from "@/components/feed/route-map-media";
 import { formatKeoDay } from "@/features/keo/keo-date";
 
 const INTENSITY_CLASS: Record<Intensity, string> = {
-  Nhẹ: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300",
-  Vừa: "bg-brand-100 text-brand-800 dark:bg-brand-900 dark:text-brand-200",
-  Cao: "bg-black text-white dark:bg-white dark:text-black",
+  Nhẹ: "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200/50",
+  Vừa: "bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200/50",
+  Cao: "bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold shadow-2xs",
 };
 
 export function findRoute(place: KeoPlace | null) {
