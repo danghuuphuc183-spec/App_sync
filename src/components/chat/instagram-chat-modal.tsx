@@ -224,11 +224,11 @@ export function InstagramChatModal({
                 <span className="text-xs font-bold text-foreground truncate">
                   {activeConv.partner.name}
                 </span>
-                <span className="text-[10px] text-muted-foreground font-mono">
+                <span className="text-micro text-muted-foreground font-mono">
                   {formatUt(activeConv.partner.trustScore)} UT
                 </span>
               </div>
-              <span className="text-[10px] text-muted-foreground truncate">
+              <span className="text-micro text-muted-foreground truncate">
                 {activeConv.partner.lastActiveVi}
               </span>
             </div>
@@ -269,7 +269,7 @@ export function InstagramChatModal({
               key={c.id}
               onClick={() => setActiveConvId(c.id)}
               className={cn(
-                "px-2.5 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border",
+                "px-2.5 py-1 rounded-lg text-micro font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border",
                 activeConvId === c.id
                   ? "bg-brand text-white border-brand shadow-xs"
                   : "bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-foreground"
@@ -278,7 +278,7 @@ export function InstagramChatModal({
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               <span>{c.partner.name.split(" ")[0]}</span>
               {c.unreadCount > 0 && (
-                <span className="w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[9px] flex items-center justify-center font-bold">
+                <span className="w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-micro flex items-center justify-center font-bold">
                   {c.unreadCount}
                 </span>
               )}
@@ -298,8 +298,8 @@ export function InstagramChatModal({
               className="w-16 h-16 rounded-full object-cover mx-auto ring-2 ring-brand/30 shadow-md"
             />
             <h4 className="text-xs font-black text-foreground">{activeConv.partner.name}</h4>
-            <p className="text-[11px] text-muted-foreground">{activeConv.partner.sportVi}</p>
-            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-brand-100/30 dark:bg-brand/30 border border-brand-300/40 text-[10px] text-brand dark:text-brand-sky font-bold">
+            <p className="text-caption text-muted-foreground">{activeConv.partner.sportVi}</p>
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-brand-100/30 dark:bg-brand/30 border border-brand-300/40 text-micro text-brand dark:text-brand-sky font-bold">
               <Shield className="h-3 w-3 stroke-[2]" />
               <span>{activeConv.partner.trustScore} Điểm Uy Tín • Khế Ước Kỷ Luật</span>
             </div>
@@ -352,16 +352,16 @@ export function InstagramChatModal({
                         className="w-full h-24 object-cover rounded-lg"
                       />
                     )}
-                    <div className="space-y-0.5 text-[11px]">
+                    <div className="space-y-0.5 text-caption">
                       <div className="font-semibold text-foreground flex items-center gap-1">
                         <MapPin className="h-3 w-3 text-neutral-500" />
                         <span>{msg.attachment.subTitle}</span>
                       </div>
-                      <p className="text-muted-foreground text-[10px] pl-4">{msg.attachment.detail}</p>
+                      <p className="text-muted-foreground text-micro pl-4">{msg.attachment.detail}</p>
                     </div>
 
                     <div className="flex items-center justify-between pt-1 border-t border-neutral-100 dark:border-neutral-800">
-                      <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                      <span className="text-micro font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3 stroke-[2]" />
                         Đã chốt kèo
                       </span>
@@ -369,7 +369,7 @@ export function InstagramChatModal({
                         <Link
                           href={msg.attachment.actionHref}
                           onClick={onClose}
-                          className="text-[10px] font-bold text-brand dark:text-brand-sky hover:underline flex items-center gap-0.5"
+                          className="text-micro font-bold text-brand dark:text-brand-sky hover:underline flex items-center gap-0.5"
                         >
                           <span>{msg.attachment.actionLabel}</span>
                           <ExternalLink className="h-2.5 w-2.5" />
@@ -380,7 +380,7 @@ export function InstagramChatModal({
                 )}
 
                 {/* Timestamp & Seen status */}
-                <span className="text-[9px] text-muted-foreground mt-0.5 px-1 font-mono">
+                <span className="text-micro text-muted-foreground mt-0.5 px-1 font-mono">
                   {msg.timestamp} {isMe && (msg.isRead ? "• Đã xem" : "• Đã gửi")}
                 </span>
               </div>

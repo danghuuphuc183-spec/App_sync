@@ -41,7 +41,7 @@ function Steps({ step }: { step: 1 | 2 | 3 }) {
         return (
           <li key={l} className="flex-1">
             <div className={cn("h-1.5 rounded-full", n <= step ? "bg-brand" : "bg-muted")} />
-            <p className={cn("mt-1 text-[11px] font-semibold", n === step ? "text-brand dark:text-brand-sky" : "text-muted-foreground")}>
+            <p className={cn("mt-1 text-caption font-semibold", n === step ? "text-brand dark:text-brand-sky" : "text-muted-foreground")}>
               {n}. {l}
             </p>
           </li>
@@ -167,7 +167,7 @@ export function PersonalFlow() {
           keo={result.keo}
         />
         {p && result.keo.venueChange?.status === "pending" && (
-          <div className="mt-3 rounded-2xl border border-border bg-muted/50 p-3 text-[12.5px] text-foreground flex gap-2.5">
+          <div className="mt-3 rounded-2xl border border-border bg-muted/50 p-3 text-xs text-foreground flex gap-2.5">
             <CloudLightning className="h-5 w-5 shrink-0" />
             <p>
               Đã gửi đề xuất đổi sang <b>{result.keo.venueChange.to.name}</b>. Đang chờ {p.name} xác nhận ({pendingConfirmations(result.keo).length} người).
@@ -182,11 +182,11 @@ export function PersonalFlow() {
         )}
         <div className="mt-4 flex gap-2">
           {p && (
-            <button onClick={() => setChatOpen(true)} className="flex-1 rounded-2xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white py-3 text-[14px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] shadow-md shadow-blue-500/25 transition-all">
+            <button onClick={() => setChatOpen(true)} className="flex-1 rounded-2xl bg-brand-gradient text-white py-3 text-sm font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] shadow-md shadow-blue-500/25 transition-all">
               <MessageCircle className="h-4 w-4" /> Nhắn tin
             </button>
           )}
-          <Link href="/ho-so?tab=bounties" className="flex-1 rounded-2xl border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky py-2.5 text-[14px] font-bold text-center hover:bg-brand-50/60 dark:hover:bg-brand-950 active:scale-[0.98] transition-all">
+          <Link href="/ho-so?tab=bounties" className="flex-1 rounded-2xl border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky py-2.5 text-sm font-bold text-center hover:bg-brand-50/60 dark:hover:bg-brand-950 active:scale-[0.98] transition-all">
             Xem kèo của tôi
           </Link>
         </div>
@@ -217,15 +217,15 @@ export function PersonalFlow() {
         <Steps step={2} />
         <BackRow onBack={() => setStep("form")} label="Sửa thiết lập" />
         <div className="mb-3">
-          <h2 className="text-[18px] font-extrabold text-foreground flex items-center gap-1.5">
+          <h2 className="text-lg font-extrabold text-foreground flex items-center gap-1.5">
             <Sparkles className="h-5 w-5 text-foreground" /> {matches.length > 0 ? `${matches.length} người tương thích nhất` : "Chưa tìm thấy người phù hợp"}
           </h2>
-          <p className="text-[12.5px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {SPORT_LABEL[form.sport]} · {form.place?.name} · {formatKeoDay(form.time.day)} {form.time.from}–{form.time.to} · ≤ {run?.radiusKm ?? 3} km
           </p>
-          {run?.widened && <p className="mt-1 text-[12px] text-amber-600">Không có ai trong 3 km — đã mở rộng tới {run.radiusKm} km.</p>}
+          {run?.widened && <p className="mt-1 text-xs text-amber-600">Không có ai trong 3 km — đã mở rộng tới {run.radiusKm} km.</p>}
           {run && (run.excluded.locationRestricted > 0 || run.excluded.gender > 0 || run.needsVerification > 0 || run.excluded.vibe > 0) && (
-            <p className="mt-1 text-[11.5px] text-muted-foreground flex items-center gap-1">
+            <p className="mt-1 text-caption text-muted-foreground flex items-center gap-1">
               <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-foreground" />
               {[
                 run.excluded.vibe ? `Đã lọc ${run.excluded.vibe} người không khớp VIBE bắt buộc` : "",
@@ -242,7 +242,7 @@ export function PersonalFlow() {
         {weather && weather.risk !== "none" && (
           <div className={cn("mb-3 rounded-2xl border p-3 flex gap-2.5", weather.risk === "storm" ? "border-amber-300 bg-amber-50 dark:bg-amber-950/40" : "border-brand-200 bg-brand-50 dark:bg-brand-950/40")}>
             <CloudLightning className="h-5 w-5 shrink-0 text-foreground" />
-            <div className="text-[12.5px] text-foreground space-y-2">
+            <div className="text-xs text-foreground space-y-2">
               <p>{weather.message}</p>
               {weather.risk === "storm" && (
                 <div className="flex flex-wrap gap-2">
@@ -252,20 +252,20 @@ export function PersonalFlow() {
                       onClick={() => setUseIndoor((v) => !v)}
                       aria-pressed={useIndoor}
                       className={cn(
-                        "rounded-xl px-3 py-1.5 text-[12.5px] font-bold border transition-all active:scale-95",
-                        useIndoor ? "bg-gradient-to-r from-[#0567E1] to-[#1C8DFF] text-white border-transparent shadow-xs" : "border-brand/40 text-brand hover:bg-brand-50"
+                        "rounded-xl px-3 py-1.5 text-xs font-bold border transition-all active:scale-95",
+                        useIndoor ? "bg-brand-gradient text-white border-transparent shadow-xs" : "border-brand/40 text-brand hover:bg-brand-50"
                       )}
                     >
                       {useIndoor ? "✓ Sẽ đề xuất đổi sang " : "Đề xuất đổi sang "}
                       {weather.proposal.name}
                     </button>
                   )}
-                  <button type="button" onClick={() => setStep("form")} className="rounded-xl px-3 py-1.5 text-[12.5px] font-bold border border-brand/40 text-brand hover:bg-brand-50 active:scale-95 transition-all">
+                  <button type="button" onClick={() => setStep("form")} className="rounded-xl px-3 py-1.5 text-xs font-bold border border-brand/40 text-brand hover:bg-brand-50 active:scale-95 transition-all">
                     Đổi giờ (không phạt)
                   </button>
                 </div>
               )}
-              {useIndoor && weather.proposal && <p className="text-[11.5px] text-muted-foreground">Địa điểm chỉ đổi khi bạn tập cũng xác nhận. Không đồng ý thì giữ chỗ cũ.</p>}
+              {useIndoor && weather.proposal && <p className="text-caption text-muted-foreground">Địa điểm chỉ đổi khi bạn tập cũng xác nhận. Không đồng ý thì giữ chỗ cũ.</p>}
             </div>
           </div>
         )}
@@ -276,40 +276,40 @@ export function PersonalFlow() {
               <div className="flex items-center gap-3">
                 <img src={c.avatar} alt={c.name} className="h-14 w-14 rounded-full object-cover ring-2 ring-brand/30" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-[15px] font-bold text-foreground">
-                    {c.name} <span className="text-[12px] font-normal text-muted-foreground">· {c.age} tuổi</span>
+                  <p className="text-body font-bold text-foreground">
+                    {c.name} <span className="text-xs font-normal text-muted-foreground">· {c.age} tuổi</span>
                   </p>
-                  <p className="text-[12px] text-muted-foreground truncate">
+                  <p className="text-xs text-muted-foreground truncate">
                     {c.capabilities.level} · {c.capabilities.paceOrWeight}
                   </p>
-                  <p className="text-[12px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     Đúng hẹn {c.punctualRate.split(" (")[0]} · cách {c.distanceKm} km
                   </p>
                 </div>
                 <div className="text-center shrink-0">
                   <p className="text-[22px] font-black font-display text-brand dark:text-brand-sky leading-none">{breakdown.totalScore}%</p>
-                  <p className="text-[10px] text-muted-foreground">tương thích</p>
+                  <p className="text-micro text-muted-foreground">tương thích</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {breakdown.matchReasonVi.slice(0, 3).map((r) => (
-                  <span key={r} className="rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-2 py-0.5 text-[11px] font-semibold">
+                  <span key={r} className="rounded-lg bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-200 px-2 py-0.5 text-caption font-semibold">
                     {r}
                   </span>
                 ))}
               </div>
-              <p className="text-[11.5px] font-bold uppercase tracking-wider text-muted-foreground">Buổi tập đề xuất cùng {c.name}</p>
+              <p className="text-caption font-bold uppercase tracking-wider text-muted-foreground">Buổi tập đề xuất cùng {c.name}</p>
               <SessionPlanBlock place={form.place} candidate={c} time={form.time} />
               <div className="flex gap-2">
                 <button
                   onClick={() => setSkipped((s) => [...s, c.id])}
-                  className="h-10 px-4 rounded-xl border border-border text-[13px] font-bold text-foreground hover:bg-muted active:scale-95 flex items-center gap-1 transition-all"
+                  className="h-10 px-4 rounded-xl border border-border text-label font-bold text-foreground hover:bg-muted active:scale-95 flex items-center gap-1 transition-all"
                 >
                   <X className="h-4 w-4" /> Bỏ qua
                 </button>
                 <button
                   onClick={() => accept(c)}
-                  className="flex-1 h-10 rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:opacity-95 active:scale-[0.98] text-white text-[13.5px] font-bold shadow-md shadow-blue-500/25 transition-all"
+                  className="flex-1 h-10 rounded-xl bg-brand-gradient hover:opacity-95 active:scale-[0.98] text-white text-label font-bold shadow-md shadow-blue-500/25 transition-all"
                 >
                   Chấp nhận
                 </button>
@@ -323,14 +323,14 @@ export function PersonalFlow() {
         )}
 
         <div className="mt-4 rounded-2xl border border-dashed border-brand-300 p-3.5 text-center space-y-2">
-          <p className="text-[13px] text-foreground">Không ai hợp ý? Đăng kèo công khai để người gần bạn nhận.</p>
+          <p className="text-label text-foreground">Không ai hợp ý? Đăng kèo công khai để người gần bạn nhận.</p>
           <div className="flex gap-2 justify-center">
             {skipped.length > 0 && (
-              <button onClick={() => setSkipped([])} className="rounded-xl border border-border px-3.5 py-2 text-[12.5px] font-bold flex items-center gap-1 hover:bg-muted active:scale-95 transition-all">
+              <button onClick={() => setSkipped([])} className="rounded-xl border border-border px-3.5 py-2 text-xs font-bold flex items-center gap-1 hover:bg-muted active:scale-95 transition-all">
                 <RefreshCw className="h-3.5 w-3.5" /> Xem lại
               </button>
             )}
-            <button onClick={postPublic} className="rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white px-4 py-2.5 text-[12.5px] font-bold hover:opacity-95 active:scale-95 shadow-md shadow-blue-500/25 transition-all">
+            <button onClick={postPublic} className="rounded-xl bg-brand-gradient text-white px-4 py-2.5 text-xs font-bold hover:opacity-95 active:scale-95 shadow-md shadow-blue-500/25 transition-all">
               Đăng kèo công khai
             </button>
           </div>
@@ -446,11 +446,11 @@ export function GroupFlow() {
         <div className="mt-4 flex gap-2">
           <button
             onClick={() => setChatKeo(result.keo)}
-            className="flex-1 rounded-2xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white py-3 text-[14px] font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] shadow-md shadow-blue-500/25 transition-all"
+            className="flex-1 rounded-2xl bg-brand-gradient text-white py-3 text-sm font-bold flex items-center justify-center gap-1.5 active:scale-[0.98] shadow-md shadow-blue-500/25 transition-all"
           >
             <MessageCircle className="h-4 w-4" /> Chat nhóm
           </button>
-          <Link href="/ho-so?tab=bounties" className="flex-1 rounded-2xl border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky py-2.5 text-[14px] font-bold text-center hover:bg-brand-50/60 dark:hover:bg-brand-950 active:scale-[0.98] transition-all">
+          <Link href="/ho-so?tab=bounties" className="flex-1 rounded-2xl border-2 border-brand text-brand dark:text-brand-sky dark:border-brand-sky py-2.5 text-sm font-bold text-center hover:bg-brand-50/60 dark:hover:bg-brand-950 active:scale-[0.98] transition-all">
             Xem kèo của tôi
           </Link>
         </div>
@@ -466,10 +466,10 @@ export function GroupFlow() {
       <div>
         <Steps step={2} />
         <BackRow onBack={() => setStep("form")} label="Sửa thiết lập" />
-        <h2 className="text-[18px] font-extrabold text-foreground flex items-center gap-1.5">
+        <h2 className="text-lg font-extrabold text-foreground flex items-center gap-1.5">
           <UsersRound className="h-5 w-5 text-foreground" /> Nhóm đang thiếu người
         </h2>
-        <p className="text-[12.5px] text-muted-foreground mb-3">
+        <p className="text-xs text-muted-foreground mb-3">
           Bạn mang theo {form.present} người · {SPORT_LABEL[form.sport]} · {formatKeoDay(form.time.day)} {form.time.from}–{form.time.to}
         </p>
 
@@ -489,7 +489,7 @@ export function GroupFlow() {
         </div>
 
         <div className="sticky bottom-[72px] mt-4 pt-2 bg-gradient-to-t from-background via-background to-transparent">
-          <button onClick={createOwn} className="w-full rounded-2xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:opacity-95 text-white py-3.5 text-[14px] font-bold active:scale-[0.98] shadow-lg shadow-blue-500/25 transition-all">
+          <button onClick={createOwn} className="w-full rounded-2xl bg-brand-gradient hover:opacity-95 text-white py-3.5 text-sm font-bold active:scale-[0.98] shadow-lg shadow-blue-500/25 transition-all">
             Bỏ qua · Tự lập nhóm (thiếu {form.capacity - form.present} người)
           </button>
         </div>
@@ -577,10 +577,10 @@ export function SoloFlow() {
         <div className="rounded-2xl border border-border bg-card p-5 text-center space-y-3 animate-in zoom-in-95 duration-200">
           <CheckCircle2 className="h-14 w-14 text-foreground mx-auto" />
           <h2 className="text-[19px] font-extrabold text-foreground">Đã lưu kế hoạch tự tập</h2>
-          <p className="text-[13px] text-muted-foreground flex items-center justify-center gap-1.5">
+          <p className="text-label text-muted-foreground flex items-center justify-center gap-1.5">
             <Lock className="h-3.5 w-3.5" /> Chỉ mình bạn thấy. Không cộng, không trừ UT.
           </p>
-          <div className="rounded-xl bg-muted p-3 text-left text-[13px] space-y-1">
+          <div className="rounded-xl bg-muted p-3 text-left text-label space-y-1">
             <p><b>{SPORT_LABEL[plan.sport]} tại {plan.place.name}</b></p>
             <p className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 shrink-0" />{formatKeoDay(plan.time.day)} · {plan.time.from}–{plan.time.to}</p>
             {plan.details && (
@@ -588,20 +588,20 @@ export function SoloFlow() {
             )}
           </div>
           <ReminderList day={plan.time.day} from={plan.time.from} who="Bạn" />
-          <p className="text-[12px] text-muted-foreground text-left">
+          <p className="text-xs text-muted-foreground text-left">
             Tập từ 30 phút trở lên và có xác thực (check-in, đồng hồ) thì buổi này được tính vào chuỗi ngày tập.
           </p>
         </div>
         {opened ? (
-          <p className="rounded-xl bg-muted p-3 text-[12.5px] text-foreground text-center">
+          <p className="rounded-xl bg-muted p-3 text-xs text-foreground text-center">
             Đã mở thành kèo 1:1 trên bảng kèo. Ai nhận kèo thì luật UT áp dụng như kèo 1:1 bình thường.
           </p>
         ) : (
-          <button onClick={openToOthers} className="w-full rounded-2xl border-2 border-brand py-3 text-[14px] font-bold text-brand dark:text-brand-sky hover:bg-brand-50/60 active:scale-[0.98] transition-all">
+          <button onClick={openToOthers} className="w-full rounded-2xl border-2 border-brand py-3 text-sm font-bold text-brand dark:text-brand-sky hover:bg-brand-50/60 active:scale-[0.98] transition-all">
             Mở cho người khác tập cùng
           </button>
         )}
-        <Link href="/len-keo" className="block w-full rounded-2xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white py-3.5 text-center text-[14px] font-bold shadow-md shadow-blue-500/25 active:scale-[0.98] transition-all">
+        <Link href="/len-keo" className="block w-full rounded-2xl bg-brand-gradient text-white py-3.5 text-center text-sm font-bold shadow-md shadow-blue-500/25 active:scale-[0.98] transition-all">
           Về Lên kèo
         </Link>
       </div>
@@ -627,8 +627,8 @@ function SuccessCard({ title, subtitle, keo }: { title: string; subtitle: string
     <div className="rounded-2xl border border-border bg-card p-5 text-center space-y-3 animate-in zoom-in-95 duration-200">
       <CheckCircle2 className="h-14 w-14 text-foreground mx-auto" />
       <h2 className="text-[19px] font-extrabold text-foreground">{title}</h2>
-      <p className="text-[13px] text-muted-foreground">{subtitle}</p>
-      <div className="rounded-xl bg-muted p-3 text-left text-[13px] space-y-1">
+      <p className="text-label text-muted-foreground">{subtitle}</p>
+      <div className="rounded-xl bg-muted p-3 text-left text-label space-y-1">
         <p>
           <b>{displayTitle(keo)}</b>
         </p>
@@ -649,16 +649,16 @@ function SuccessCard({ title, subtitle, keo }: { title: string; subtitle: string
 
 function BackRow({ onBack, label }: { onBack: () => void; label: string }) {
   return (
-    <button onClick={onBack} className="mb-2 flex items-center gap-1 text-[13px] font-semibold text-muted-foreground hover:text-foreground">
+    <button onClick={onBack} className="mb-2 flex items-center gap-1 text-label font-semibold text-muted-foreground hover:text-foreground">
       <ArrowLeft className="h-4 w-4" /> {label}
     </button>
   );
 }
 
 function SubHeading({ children }: { children: React.ReactNode }) {
-  return <p className="mt-4 mb-2 text-[12px] font-bold uppercase tracking-wider text-muted-foreground">{children}</p>;
+  return <p className="mt-4 mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">{children}</p>;
 }
 
 function EmptyBox({ text }: { text: string }) {
-  return <div className="rounded-2xl bg-muted/70 p-4 text-[13px] text-muted-foreground text-center">{text}</div>;
+  return <div className="rounded-2xl bg-muted/70 p-4 text-label text-muted-foreground text-center">{text}</div>;
 }

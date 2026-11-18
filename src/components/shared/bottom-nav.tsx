@@ -14,22 +14,27 @@ export const FIVE_MAIN_TABS = [
   { title: "Bạn", href: "/ho-so", icon: User },
 ];
 
+/** Màn hình hội thoại có ô soạn tin riêng ở đáy → ẩn thanh điều hướng (như Instagram Direct). */
+const HIDE_ON_PREFIXES = ["/chat"];
+
 export function BottomNav() {
   const pathname = usePathname();
   // Reels: thanh điều hướng nền đen giống Instagram
   const isDark = pathname?.startsWith("/reels") ?? false;
 
+  if (pathname && HIDE_ON_PREFIXES.some((p) => pathname.startsWith(p))) return null;
+
   return (
     <nav
       aria-label="Điều hướng 5 trang chính trên di động"
       className={cn(
-        "fixed bottom-0 left-0 right-0 z-50 border-t px-3 py-1.5 safe-area-pb shadow-sm",
+        "fixed bottom-0 left-0 right-0 z-50 border-t px-2 pt-1 safe-area-pb",
         isDark
           ? "dark bg-black border-neutral-800 text-white"
-          : "border-neutral-200/80 dark:border-neutral-800 bg-background/95 backdrop-blur-md"
+          : "border-border/70 bg-card/85 backdrop-blur-xl supports-[backdrop-filter]:bg-card/75 shadow-[0_-8px_24px_-16px_rgb(7_11_26/0.18)]"
       )}
     >
-      <div className="max-w-md mx-auto flex items-center justify-between">
+      <div className="max-w-md mx-auto flex items-end justify-between">
         {FIVE_MAIN_TABS.map((item) => {
           const isActive = item.exact
             ? pathname === item.href
@@ -43,22 +48,22 @@ export function BottomNav() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative -top-3 flex flex-col items-center justify-center group focus:outline-none"
+                aria-current={isActive ? "page" : undefined}
+                className="relative -top-3 flex flex-1 flex-col items-center justify-center group rounded-2xl"
               >
-                <div
-                  className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-full shadow-md transition-all duration-200 active:scale-90",
-                    isActive
-                      ? "bg-gradient-to-tr from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white shadow-lg shadow-blue-500/35 ring-2 ring-blue-400/50 scale-105"
-                      : "bg-gradient-to-tr from-[#0567E1] to-[#0A84FF] text-white shadow-blue-500/25 hover:shadow-blue-500/35 group-hover:scale-105"
-                  )}
-                >
-                  <Icon className="h-6 w-6 stroke-[2.2]" />
-                </div>
                 <span
                   className={cn(
-                    "text-[10px] font-bold mt-0.5 tracking-tight transition-colors",
-                    isActive ? "text-brand dark:text-brand-sky" : "text-neutral-700 dark:text-neutral-300"
+                    "btn-electric flex h-[52px] w-[52px] items-center justify-center rounded-full ring-4 transition-transform duration-300 ease-spring group-active:scale-90",
+                    isDark ? "ring-black" : "ring-background",
+                    isActive ? "scale-105 shadow-glow-lg" : "animate-glow-breathe"
+                  )}
+                >
+                  <Icon className={cn("h-6 w-6 stroke-[2.3]", isActive && "animate-icon-pop")} />
+                </span>
+                <span
+                  className={cn(
+                    "text-micro font-bold mt-1 tracking-tight transition-colors",
+                    isActive ? "text-brand dark:text-brand-glow" : "text-foreground/80"
                   )}
                 >
                   {item.title}
@@ -71,34 +76,33 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex flex-col items-center justify-center flex-1 py-1 min-h-[46px] rounded-xl text-[10px] font-medium transition-all select-none active:scale-95",
+                "relative flex flex-col items-center justify-center flex-1 pt-2 pb-1 min-h-[52px] rounded-xl text-micro select-none transition-colors",
                 isActive
                   ? "text-foreground font-bold"
-                  : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+                  : "text-muted-foreground font-medium hover:text-foreground"
               )}
             >
-              <div
+              {/* Vạch chỉ báo kiểu "vạch làn chạy": giãn ra khi tab được chọn */}
+              <span
+                aria-hidden
                 className={cn(
-                  "relative flex items-center justify-center px-3 py-1 rounded-lg transition-colors",
-                  isActive && "bg-muted"
+                  "absolute top-0 h-[3px] w-6 rounded-full bg-brand-gradient transition-all duration-300 ease-out-expo",
+                  isActive ? "opacity-100 scale-x-100 shadow-glow" : "opacity-0 scale-x-0"
                 )}
-              >
-                <Icon
-                  className={cn(
-                    "h-5 w-5 transition-transform",
-                    isActive ? "stroke-[2.2] scale-105 text-foreground" : "stroke-[1.75]"
-                  )}
-                />
-              </div>
-              <span className="truncate max-w-[58px] text-center leading-none mt-0.5">
-                {item.title}
-              </span>
+              />
+              <Icon
+                className={cn(
+                  "h-[22px] w-[22px] transition-[stroke-width,color] duration-200",
+                  isActive ? "stroke-[2.3] text-brand dark:text-brand-glow animate-icon-pop" : "stroke-[1.8]"
+                )}
+              />
+              <span className="truncate max-w-[64px] text-center leading-none mt-1">{item.title}</span>
             </Link>
           );
         })}
       </div>
-
     </nav>
   );
 }

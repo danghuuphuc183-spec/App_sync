@@ -70,7 +70,7 @@ export function MyPosts() {
   return (
     <section aria-label="Bài đăng của bạn" className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-[15px] font-extrabold text-foreground">Bài đăng của bạn ({posts.length})</h2>
+        <h2 className="text-body font-extrabold text-foreground">Bài đăng của bạn ({posts.length})</h2>
         <div className="flex rounded-full bg-muted p-0.5" role="tablist" aria-label="Kiểu hiển thị">
           {(
             [
@@ -83,7 +83,7 @@ export function MyPosts() {
               role="tab"
               aria-selected={view === id}
               onClick={() => setView(id)}
-              className={cn("rounded-lg px-3 py-1 text-[12px] font-bold", view === id ? "bg-background shadow-sm text-foreground" : "text-muted-foreground")}
+              className={cn("rounded-lg px-3 py-1 text-xs font-bold", view === id ? "bg-background shadow-sm text-foreground" : "text-muted-foreground")}
             >
               {label}
             </button>
@@ -103,7 +103,7 @@ export function MyPosts() {
                   <RouteMapMedia coords={first.coords} label={first.label} compact aspect={1} />
                 ) : null}
                 {p.media.length > 1 && <Layers className="absolute top-1.5 right-1.5 h-4 w-4 text-white drop-shadow" />}
-                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-1.5 pb-1 pt-4 text-left text-[10px] font-bold text-white">
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-1.5 pb-1 pt-4 text-left text-micro font-bold text-white">
                   {mounted ? formatPostTime(p.createdAt) : "\u00a0"}
                 </span>
               </button>
@@ -177,7 +177,7 @@ export function MyConnections({ initialTab = "friends" }: { initialTab?: SocialT
             aria-selected={tab === id}
             onClick={() => setTab(id)}
             className={cn(
-              "rounded-lg py-2 px-1 text-[11.5px] font-bold transition-colors",
+              "rounded-lg py-2 px-1 text-caption font-bold transition-colors",
               tab === id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -193,18 +193,18 @@ export function MyConnections({ initialTab = "friends" }: { initialTab?: SocialT
           onChange={(e) => setQ(e.target.value)}
           placeholder="Tìm theo tên..."
           aria-label="Tìm trong danh sách"
-          className="flex-1 bg-transparent text-[13px] outline-none"
+          className="flex-1 bg-transparent text-label outline-none"
         />
       </label>
 
       {tab === "friends" && pending.length > 0 && (
         <div className="space-y-1">
-          <p className="text-[11.5px] font-bold uppercase tracking-wider text-muted-foreground">Lời mời đã gửi</p>
+          <p className="text-caption font-bold uppercase tracking-wider text-muted-foreground">Lời mời đã gửi</p>
           {pending.filter(match).map((p) => (
             <PersonRow key={p.id} person={p}>
               <button
                 onClick={() => prefs.setFriendStatus(p.id, "none")}
-                className="rounded-lg bg-muted px-3 py-1.5 text-[12px] font-bold text-foreground flex items-center gap-1"
+                className="rounded-lg bg-muted px-3 py-1.5 text-xs font-bold text-foreground flex items-center gap-1"
               >
                 <Clock className="h-3.5 w-3.5" /> Huỷ lời mời
               </button>
@@ -214,7 +214,7 @@ export function MyConnections({ initialTab = "friends" }: { initialTab?: SocialT
       )}
 
       {list.length === 0 ? (
-        <p className="rounded-2xl bg-muted/60 p-5 text-center text-[13px] text-muted-foreground">
+        <p className="rounded-2xl bg-muted/60 p-5 text-center text-label text-muted-foreground">
           {tab === "friends"
             ? "Chưa có bạn bè. Vào hồ sơ một người và bấm “Kết bạn”."
             : tab === "following"
@@ -236,7 +236,7 @@ export function MyConnections({ initialTab = "friends" }: { initialTab?: SocialT
                     <button
                       onClick={() => prefs.toggleFollow(p.id)}
                       className={cn(
-                        "rounded-lg px-3 py-1.5 text-[12px] font-bold flex items-center gap-1 transition-colors",
+                        "rounded-lg px-3 py-1.5 text-xs font-bold flex items-center gap-1 transition-colors",
                         isFollowing ? "bg-muted text-foreground" : "bg-brand text-white hover:bg-brand-700"
                       )}
                     >
@@ -260,11 +260,11 @@ function PersonRow({ person, children }: { person: Person; children: React.React
       <Link href={profileHref(person)} className="flex items-center gap-3 flex-1 min-w-0">
         <img src={person.avatar} alt={person.name} className={cn("h-11 w-11 object-cover", person.kind === "club" ? "rounded-xl" : "rounded-full")} />
         <span className="min-w-0">
-          <span className="flex items-center gap-1 text-[14px] font-bold text-foreground">
+          <span className="flex items-center gap-1 text-sm font-bold text-foreground">
             <span className="truncate">{person.name}</span>
             {person.verified && <BadgeCheck className="h-4 w-4 shrink-0 text-background fill-foreground" />}
           </span>
-          <span className="block text-[12px] text-muted-foreground truncate">
+          <span className="block text-xs text-muted-foreground truncate">
             @{person.handle} · {person.sports.map((s) => SPORT_LABEL[s] ?? s).join(", ")}
           </span>
         </span>
@@ -288,8 +288,8 @@ export function SocialStatsBar({ onSelect }: { onSelect: (target: "posts" | Soci
         ] as const
       ).map(([id, v, label]) => (
         <button key={id} onClick={() => onSelect(id)} className="py-2.5 text-center hover:bg-muted/60 first:rounded-l-3xl last:rounded-r-3xl transition-colors">
-          <p className="text-[18px] font-extrabold font-display text-foreground">{v}</p>
-          <p className="text-[10.5px] text-muted-foreground leading-tight">{label}</p>
+          <p className="text-lg font-extrabold font-display text-foreground">{v}</p>
+          <p className="text-caption text-muted-foreground leading-tight">{label}</p>
         </button>
       ))}
     </div>

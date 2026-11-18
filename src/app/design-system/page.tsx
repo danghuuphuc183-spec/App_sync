@@ -47,7 +47,7 @@ export default function DesignSystemPage() {
             <div key={c.hex} className={`p-4 rounded-xl shadow-sm ${c.cls}`}>
               <p className="font-display font-extrabold text-sm">{c.name}</p>
               <p className="text-xs font-mono opacity-90">{c.hex}</p>
-              <p className="text-[11px] opacity-80 mt-1">{c.use}</p>
+              <p className="text-caption opacity-80 mt-1">{c.use}</p>
             </div>
           ))}
         </div>

@@ -30,7 +30,7 @@ export function TrustMeter({ currentScore, className }: TrustMeterProps) {
 
       <div className="flex items-baseline justify-between pt-1">
         <div>
-          <span className="text-3xl font-extrabold text-foreground font-mono">{formatUt(score)}</span>
+          <span className="text-3xl font-extrabold text-foreground font-numeric">{formatUt(score)}</span>
           <span className="text-sm text-muted-foreground ml-1">/ {max} UT</span>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
@@ -46,7 +46,7 @@ export function TrustMeter({ currentScore, className }: TrustMeterProps) {
           {MARKS.map((m) => (
             <div key={m} className="absolute -translate-x-1/2 flex flex-col items-center" style={{ left: `${(m / max) * 100}%` }}>
               <div className="h-2 w-0.5 bg-muted-foreground/40" />
-              <span className="text-[10px] text-muted-foreground font-medium">{m}</span>
+              <span className="text-micro text-muted-foreground font-medium">{m}</span>
             </div>
           ))}
         </div>

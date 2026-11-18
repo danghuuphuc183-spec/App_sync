@@ -135,10 +135,10 @@ export const RANK_THEMES: Record<RankBadgeLevel, RankThemeConfig> = {
     primaryColor: "#38bdf8",
     accentColor: "#c084fc",
     auraRgba: "rgba(56, 189, 248, 0.55)",
-    textClass: "text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-pink-400 to-purple-400 font-extrabold",
-    pillClass: "bg-linear-to-r from-cyan-500/15 via-fuchsia-500/15 to-purple-500/15 text-purple-700 dark:text-cyan-200 border border-cyan-400/40",
+    textClass: "text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-400 to-purple-400 font-extrabold",
+    pillClass: "bg-gradient-to-r from-cyan-500/15 via-fuchsia-500/15 to-purple-500/15 text-purple-700 dark:text-cyan-200 border border-cyan-400/40",
     borderClass: "border-cyan-400/40 dark:border-fuchsia-400/40",
-    activeBorderClass: "border-transparent bg-linear-to-r from-cyan-400 via-fuchsia-500 to-purple-500 shadow-[0_0_32px_-3px_rgba(192,132,252,0.55)]",
+    activeBorderClass: "border-transparent bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-purple-500 shadow-[0_0_32px_-3px_rgba(192,132,252,0.55)]",
     avatarRingGradient: "from-cyan-400 via-fuchsia-400 to-purple-500",
     progressGradient: "from-cyan-400 via-fuchsia-500 to-purple-500",
     orbGradientPrimary: "from-cyan-400/35 via-fuchsia-500/25 to-transparent",
@@ -176,7 +176,7 @@ export function RankAuraGlow({
       <div
         className={cn(
           "pointer-events-none absolute -top-10 -right-10 w-36 h-36 rounded-full blur-2xl transition-all duration-700",
-          `bg-linear-to-br ${theme.orbGradientPrimary}`,
+          `bg-gradient-to-br ${theme.orbGradientPrimary}`,
           pulse && "rank-aura-pulse",
           className
         )}
@@ -195,7 +195,7 @@ export function RankAuraGlow({
         <div
           className={cn(
             "pointer-events-none absolute -top-12 -right-12 w-44 h-44 rounded-full blur-3xl transition-all duration-700",
-            `bg-linear-to-br ${theme.orbGradientPrimary}`,
+            `bg-gradient-to-br ${theme.orbGradientPrimary}`,
             pulse && "rank-aura-pulse",
             className
           )}
@@ -205,7 +205,7 @@ export function RankAuraGlow({
         <div
           className={cn(
             "pointer-events-none absolute -bottom-12 -left-12 w-40 h-40 rounded-full blur-3xl opacity-70 transition-all duration-700",
-            `bg-linear-to-tr ${theme.orbGradientSecondary}`,
+            `bg-gradient-to-tr ${theme.orbGradientSecondary}`,
             className
           )}
           aria-hidden="true"
@@ -234,7 +234,7 @@ export function RankAuraGlow({
       <div
         className={cn(
           "pointer-events-none absolute inset-0 -m-2 rounded-full blur-md opacity-60 transition-all duration-500",
-          `bg-linear-to-tr ${theme.avatarRingGradient}`,
+          `bg-gradient-to-tr ${theme.avatarRingGradient}`,
           pulse && "rank-aura-pulse",
           className
         )}
@@ -248,7 +248,7 @@ export function RankAuraGlow({
     <div
       className={cn(
         "pointer-events-none absolute inset-0 rounded-2xl opacity-40 blur-lg transition-all duration-500",
-        `bg-linear-to-r ${theme.orbGradientPrimary}`,
+        `bg-gradient-to-r ${theme.orbGradientPrimary}`,
         className
       )}
       aria-hidden="true"
@@ -291,7 +291,7 @@ export function RankPill({
         onClick={onClick}
         className={cn(
           "inline-flex items-center gap-1.5 font-bold rounded-full transition-all active:scale-95",
-          size === "xs" ? "text-[10.5px] px-2.5 py-0.5" : "text-xs px-3 py-1",
+          size === "xs" ? "text-caption px-2.5 py-0.5" : "text-xs px-3 py-1",
           theme.pillClass,
           "hover:shadow-xs",
           className
@@ -306,7 +306,7 @@ export function RankPill({
     <span
       className={cn(
         "inline-flex items-center gap-1.5 font-bold rounded-full",
-        size === "xs" ? "text-[10.5px] px-2.5 py-0.5" : "text-xs px-3 py-1",
+        size === "xs" ? "text-caption px-2.5 py-0.5" : "text-xs px-3 py-1",
         theme.pillClass,
         className
       )}

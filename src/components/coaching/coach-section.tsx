@@ -98,7 +98,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
           </p>
         </div>
 
-        <div className="relative z-10 flex flex-wrap items-center gap-2 pt-1 text-[11px] font-semibold text-white/95">
+        <div className="relative z-10 flex flex-wrap items-center gap-2 pt-1 text-caption font-semibold text-white/95">
           <span className="flex items-center gap-1 bg-white/15 px-2.5 py-1 rounded-lg backdrop-blur-xs">
             <ShieldCheck className="h-3.5 w-3.5 text-white" />
             100% Bằng cấp xác minh
@@ -156,7 +156,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
                 key={m.id}
                 onClick={() => setModeFilter(m.id as "all" | "1:1" | "group")}
                 className={cn(
-                  "px-3 py-1 rounded-lg text-[11px] font-bold transition-all border",
+                  "px-3 py-1 rounded-lg text-caption font-bold transition-all border",
                   modeFilter === m.id
                     ? "bg-brand text-white border-brand shadow-xs"
                     : "bg-muted/50 border-border text-muted-foreground hover:text-foreground"
@@ -167,7 +167,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
             ))}
           </div>
 
-          <span className="text-[11px] text-muted-foreground font-semibold">
+          <span className="text-caption text-muted-foreground font-semibold">
             Tìm thấy <strong>{rankedCoaches.length}</strong> HLV phù hợp
           </span>
         </div>
@@ -187,7 +187,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
         ) : (
           <div className="p-8 rounded-3xl bg-muted/40 border border-border text-center space-y-2">
             <p className="text-xs font-bold text-foreground">Không tìm thấy Huấn luyện viên phù hợp với bộ lọc hiện tại.</p>
-            <p className="text-[11px] text-muted-foreground">Hãy thử nới lỏng mức ngân sách hoặc chọn lại môn thể thao.</p>
+            <p className="text-caption text-muted-foreground">Hãy thử nới lỏng mức ngân sách hoặc chọn lại môn thể thao.</p>
             <Button
               onClick={() => {
                 setProfile(DEFAULT_USER_PROFILE);
@@ -210,7 +210,7 @@ export function CoachSection({ initialModeFilter = "all" }: CoachSectionProps) {
             <Users className="h-4 w-4" />
             <span>Bạn đã có Micro-Squad 2-4 người?</span>
           </div>
-          <p className="text-[11px] text-muted-foreground leading-relaxed">
+          <p className="text-caption text-muted-foreground leading-relaxed">
             Thuê chung Huấn Luyện Viên 1 buổi cuối tuần để chỉnh tư thế và lên giáo án đồng bộ, chi phí chỉ từ 140k/người!
           </p>
         </div>

@@ -57,7 +57,7 @@ export function BrowseKeos({ initialTab = "for-you" }: { initialTab?: Tab } = {}
     <div>
       {/* Vị trí + sắp xếp (thay cho 2 tab cũ "Dành cho bạn" / "Gần nhất") */}
       <div className="mb-2.5 flex items-center justify-between gap-2">
-        <p className="flex min-w-0 items-center gap-1.5 text-[11.5px] text-muted-foreground font-medium">
+        <p className="flex min-w-0 items-center gap-1.5 text-caption text-muted-foreground font-medium">
           <LocateFixed className="h-3.5 w-3.5 shrink-0 text-brand" />
           <span className="truncate">{source === "gps" ? "Vị trí hiện tại của bạn" : "Mặc định: Bình Thạnh"}</span>
         </p>
@@ -74,7 +74,7 @@ export function BrowseKeos({ initialTab = "for-you" }: { initialTab?: Tab } = {}
               aria-checked={tab === id}
               onClick={() => setTab(id)}
               className={cn(
-                "rounded-lg px-2.5 py-1 text-[11.5px] font-bold transition-all",
+                "rounded-lg px-2.5 py-1 text-caption font-bold transition-all",
                 tab === id ? "bg-card text-foreground shadow-xs border border-border/40" : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -109,11 +109,11 @@ export function BrowseKeos({ initialTab = "for-you" }: { initialTab?: Tab } = {}
       </div>
 
       {ranked.length === 0 ? (
-        <div className="rounded-2xl bg-muted/70 p-6 text-center text-[13px] text-muted-foreground">
+        <div className="rounded-2xl bg-muted/70 p-6 text-center text-label text-muted-foreground">
           Không còn kèo đang mở phù hợp bộ lọc.
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 stagger-in">
           {ranked.map((r) => (
             <KeoCard
               key={r.keo.id}
@@ -149,7 +149,7 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       onClick={onClick}
       aria-pressed={on}
       className={cn(
-        "shrink-0 rounded-xl border px-3 py-1.5 text-[12px] font-semibold whitespace-nowrap transition-all active:scale-95",
+        "shrink-0 rounded-xl border px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all active:scale-95",
         on
           ? "bg-brand border-brand text-white shadow-xs"
           : "border-border/80 bg-card text-foreground hover:bg-muted/70 hover:border-border"

@@ -117,7 +117,7 @@ export function RouteMapMedia({
       </svg>
 
       {!compact && (
-        <div className="absolute top-3 left-3 max-w-[75%] rounded-lg bg-white/90 dark:bg-black/70 backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-foreground truncate flex items-center gap-1">
+        <div className="absolute top-3 left-3 max-w-[75%] rounded-lg bg-white/90 dark:bg-black/70 backdrop-blur px-2.5 py-1 text-caption font-semibold text-foreground truncate flex items-center gap-1">
           <MapPin className="h-3 w-3 shrink-0" />{label}
         </div>
       )}
@@ -138,8 +138,8 @@ export function RouteMapMedia({
             ["Thời gian", activity.duration],
           ].map(([k, v]) => (
             <div key={k} className="px-2 py-2 text-center">
-              <p className="text-[10px] text-muted-foreground">{k}</p>
-              <p className="text-[14px] font-extrabold text-foreground font-display leading-tight">
+              <p className="text-micro text-muted-foreground">{k}</p>
+              <p className="text-sm font-extrabold text-foreground font-display leading-tight">
                 {v}
               </p>
             </div>

@@ -71,18 +71,18 @@ export function AcceptKeoSheet({ keo, onClose, onAccepted }: { keo: Keo | null; 
       {keo && (
         <>
           <div>
-            <p className="text-[14px] font-bold">{displayTitle(keo)}</p>
-            <p className="text-[13px] text-muted-foreground">
+            <p className="text-sm font-bold">{displayTitle(keo)}</p>
+            <p className="text-label text-muted-foreground">
               {formatKeoDay(keo.time.day)} · {keo.time.from}–{keo.time.to} · {keo.place.name}
             </p>
-            {keo.details && <p className="text-[12.5px] text-muted-foreground">{summarizeDetails(keo.sport, keo.details)}</p>}
+            {keo.details && <p className="text-xs text-muted-foreground">{summarizeDetails(keo.sport, keo.details)}</p>}
           </div>
-          <p className="rounded-xl bg-muted px-3 py-2 text-[12.5px] text-foreground">
+          <p className="rounded-xl bg-muted px-3 py-2 text-xs text-foreground">
             {group
               ? `Nhóm ${keo.memberIds.length}/${keo.capacity} người, đang thiếu ${spotsLeft(keo)}. Bạn vào xong còn thiếu ${Math.max(0, spotsLeft(keo) - 1)}.`
               : "Kèo 1:1: bạn nhận xong, kèo ẩn ngay khỏi bảng kèo để không ai nhận trùng."}
           </p>
-          <div className="rounded-xl border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-950/40 p-3 text-[12.5px] space-y-1">
+          <div className="rounded-xl border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-950/40 p-3 text-xs space-y-1">
             <p className="font-bold text-brand dark:text-brand-sky flex items-center gap-1.5">
               <Shield className="h-4 w-4" /> Cam kết kỷ luật
             </p>
@@ -90,7 +90,7 @@ export function AcceptKeoSheet({ keo, onClose, onAccepted }: { keo: Keo | null; 
             <p className="text-muted-foreground">• Sau khi chốt: huỷ sớm −0,25, trong 30 phút −0,5, vắng −1 UT.</p>
             <p className="text-muted-foreground">• Bạn và chủ kèo được nhắc hôm trước và trước giờ tập 1 tiếng.</p>
           </div>
-          <label htmlFor="accept-msg" className="block text-[12.5px] font-bold text-foreground">
+          <label htmlFor="accept-msg" className="block text-xs font-bold text-foreground">
             Tin nhắn xác nhận gửi {group ? `${hostName} và cả nhóm` : hostName} (bắt buộc, sửa được)
           </label>
           <textarea
@@ -101,12 +101,12 @@ export function AcceptKeoSheet({ keo, onClose, onAccepted }: { keo: Keo | null; 
             rows={3}
             maxLength={400}
             placeholder={`Ít nhất ${MIN_CONFIRM_CHARS} ký tự`}
-            className="w-full resize-none rounded-xl border border-border bg-background px-3 py-2 text-[13.5px] outline-none focus:ring-2 focus:ring-brand/30"
+            className="w-full resize-none rounded-xl border border-border bg-background px-3 py-2 text-label outline-none focus:ring-2 focus:ring-brand/30"
           />
           {error && (
             <p
               role="alert"
-              className="rounded-xl border border-destructive/40 bg-destructive/5 px-3 py-2 text-[12.5px] font-semibold text-destructive"
+              className="rounded-xl border border-destructive/40 bg-destructive/5 px-3 py-2 text-xs font-semibold text-destructive"
             >
               {error}
             </p>
@@ -114,11 +114,11 @@ export function AcceptKeoSheet({ keo, onClose, onAccepted }: { keo: Keo | null; 
           <button
             onClick={accept}
             disabled={!isConfirmMessageValid(draft)}
-            className="w-full rounded-lg bg-brand hover:bg-brand-700 active:scale-[0.98] text-white py-3 text-[14px] font-bold disabled:bg-neutral-200 disabled:text-neutral-500 dark:disabled:bg-neutral-800"
+            className="w-full rounded-lg bg-brand hover:bg-brand-700 active:scale-[0.98] text-white py-3 text-sm font-bold disabled:bg-neutral-200 disabled:text-neutral-500 dark:disabled:bg-neutral-800"
           >
             {group ? "Chấp nhận · Vào chat nhóm" : "Chấp nhận kèo · Vào chat với host"}
           </button>
-          <p className="text-center text-[11.5px] text-muted-foreground">
+          <p className="text-center text-caption text-muted-foreground">
             Chấp nhận xong bạn mới được thêm vào {group ? "nhóm" : "kèo"} và vào chat.
           </p>
         </>
@@ -187,10 +187,10 @@ export function KeoChatSheet({
               })}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[14.5px] font-bold text-foreground truncate">
+              <p className="text-sm font-bold text-foreground truncate">
                 {keo.kind === "group" || keo.hostId === "me" ? displayTitle(keo) : hostName}
               </p>
-              <p className="text-[11.5px] text-muted-foreground truncate">
+              <p className="text-caption text-muted-foreground truncate">
                 {keo.kind === "group"
                   ? `Chat nhóm · ${memberIds.length} người: ${[...others, "bạn"].join(", ")}`
                   : keo.hostId === "me"
@@ -201,7 +201,7 @@ export function KeoChatSheet({
           </HeaderIdentity>
         </header>
 
-        <div className="border-b border-border bg-muted/40 px-3 py-2.5 text-[12.5px] space-y-0.5">
+        <div className="border-b border-border bg-muted/40 px-3 py-2.5 text-xs space-y-0.5">
           <p className="font-bold text-foreground truncate">{displayTitle(keo)}</p>
           <p className="flex items-center gap-1.5 text-muted-foreground">
             <Clock className="h-3.5 w-3.5 shrink-0" />
@@ -225,7 +225,7 @@ export function KeoChatSheet({
               <Link
                 href={profileHref(host)}
                 onClick={onClose}
-                className="flex h-8 items-center gap-1.5 whitespace-nowrap rounded-lg border border-border px-2.5 text-[12.5px] font-bold text-foreground hover:bg-muted"
+                className="flex h-8 items-center gap-1.5 whitespace-nowrap rounded-lg border border-border px-2.5 text-xs font-bold text-foreground hover:bg-muted"
               >
                 <UserRound className="h-4 w-4" /> Hồ sơ host
               </Link>
@@ -240,7 +240,7 @@ export function KeoChatSheet({
                   onClose();
                   onCancel(keo);
                 }}
-                className="flex h-8 items-center gap-1.5 whitespace-nowrap rounded-lg border border-destructive/40 px-2.5 text-[12.5px] font-bold text-destructive hover:bg-destructive/5"
+                className="flex h-8 items-center gap-1.5 whitespace-nowrap rounded-lg border border-destructive/40 px-2.5 text-xs font-bold text-destructive hover:bg-destructive/5"
               >
                 <XCircle className="h-4 w-4" /> Huỷ kèo
               </button>
@@ -272,7 +272,7 @@ export function KeoChatSheet({
             rows={1}
             maxLength={400}
             placeholder="Nhắn tin…"
-            className="flex-1 resize-none rounded-xl border border-border bg-background px-3 py-2 text-[13.5px] outline-none focus:ring-2 focus:ring-brand/30"
+            className="flex-1 resize-none rounded-xl border border-border bg-background px-3 py-2 text-label outline-none focus:ring-2 focus:ring-brand/30"
           />
           <button
             type="submit"
@@ -313,12 +313,12 @@ function HostMembers({ keo }: { keo: Keo }) {
   const [confirming, setConfirming] = React.useState<string | null>(null);
   const members = keo.memberIds.filter((id) => id !== "me");
   if (members.length === 0) {
-    return <p className="border-b border-border px-3 py-2 text-[12px] text-muted-foreground">Chưa có ai nhận kèo. Kèo đang hiện trên bảng kèo.</p>;
+    return <p className="border-b border-border px-3 py-2 text-xs text-muted-foreground">Chưa có ai nhận kèo. Kèo đang hiện trên bảng kèo.</p>;
   }
   const deadline = canDecline(keo, members[0]!, "me").deadline;
   return (
     <div className="border-b border-border px-3 py-2 space-y-1.5" aria-label="Người đã nhận kèo">
-      <p className="text-[11.5px] text-muted-foreground">
+      <p className="text-caption text-muted-foreground">
         Người đã nhận · từ chối được tới <b className="text-foreground">{formatReminderTime(deadline)}</b> (trước giờ tập 24 giờ)
       </p>
       {members.map((id) => {
@@ -328,12 +328,12 @@ function HostMembers({ keo }: { keo: Keo }) {
         return (
           <div key={id} className="flex items-center gap-2">
             {p && <img src={p.avatar} alt={name} className="h-7 w-7 rounded-full object-cover" />}
-            <span className="flex-1 min-w-0 truncate text-[13px] font-semibold text-foreground">{name}</span>
+            <span className="flex-1 min-w-0 truncate text-label font-semibold text-foreground">{name}</span>
             {confirming === id ? (
               <>
                 <button
                   onClick={() => setConfirming(null)}
-                  className="rounded-lg border border-border px-2.5 py-1 text-[12px] font-bold hover:bg-muted"
+                  className="rounded-lg border border-border px-2.5 py-1 text-xs font-bold hover:bg-muted"
                 >
                   Giữ lại
                 </button>
@@ -342,7 +342,7 @@ function HostMembers({ keo }: { keo: Keo }) {
                     store.declineMember(keo.id, id, name);
                     setConfirming(null);
                   }}
-                  className="rounded-lg bg-destructive px-2.5 py-1 text-[12px] font-bold text-white hover:bg-destructive/90"
+                  className="rounded-lg bg-destructive px-2.5 py-1 text-xs font-bold text-white hover:bg-destructive/90"
                 >
                   Xác nhận từ chối
                 </button>
@@ -353,7 +353,7 @@ function HostMembers({ keo }: { keo: Keo }) {
                 disabled={!check.ok}
                 title={check.ok ? undefined : check.reasonVi}
                 aria-label={`Từ chối ${name}`}
-                className="rounded-lg border border-destructive/40 px-2.5 py-1 text-[12px] font-bold text-destructive flex items-center gap-1 hover:bg-destructive/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="rounded-lg border border-destructive/40 px-2.5 py-1 text-xs font-bold text-destructive flex items-center gap-1 hover:bg-destructive/5 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <UserX className="h-3.5 w-3.5" /> {check.ok ? "Từ chối" : "Quá hạn"}
               </button>
@@ -367,7 +367,7 @@ function HostMembers({ keo }: { keo: Keo }) {
 
 function Bubble({ m, keo }: { m: KeoChatMessage; keo: Keo }) {
   if (m.senderId === "system") {
-    return <p className="mx-auto max-w-[90%] rounded-xl bg-muted px-3 py-1.5 text-center text-[11.5px] text-muted-foreground">{m.text}</p>;
+    return <p className="mx-auto max-w-[90%] rounded-xl bg-muted px-3 py-1.5 text-center text-caption text-muted-foreground">{m.text}</p>;
   }
   const mine = m.senderId === "me";
   const p = hostOf(m.senderId) ?? keo.guestProfiles?.[m.senderId];
@@ -376,11 +376,11 @@ function Bubble({ m, keo }: { m: KeoChatMessage; keo: Keo }) {
       {!mine && p && <img src={p.avatar} alt={p.name} className="h-7 w-7 rounded-full object-cover" />}
       <div
         className={cn(
-          "max-w-[78%] rounded-2xl px-3 py-2 text-[13.5px]",
+          "max-w-[78%] rounded-2xl px-3 py-2 text-label",
           mine ? "bg-brand text-white rounded-br-md" : "bg-muted text-foreground rounded-bl-md"
         )}
       >
-        {!mine && keo.kind === "group" && p && <p className="text-[11px] font-bold opacity-70">{p.name}</p>}
+        {!mine && keo.kind === "group" && p && <p className="text-caption font-bold opacity-70">{p.name}</p>}
         {m.text}
       </div>
     </div>

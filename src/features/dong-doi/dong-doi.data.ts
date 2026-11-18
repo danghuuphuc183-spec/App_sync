@@ -19,6 +19,8 @@
  * - Chống cày: Thưởng Duo chỉ tính cho tối đa 3 Duo đang hoạt động và 2 buổi chung mỗi tuần.
  */
 
+import { getNextRankProgress } from "@/features/rank/ranking";
+
 export interface DuoItem {
   id: string;
   partnerName: string;
@@ -149,15 +151,26 @@ export interface UrgentAction {
   buttonText: string;
 }
 
+/** EXP mẫu của người dùng hiện tại — cùng giá trị trang Hồ sơ đang hiển thị (1.240 EXP). */
+const CURRENT_USER_EXP = 1240;
+const currentUserRank = getNextRankProgress(CURRENT_USER_EXP);
+
+/**
+ * Hạng lấy từ MỘT nguồn duy nhất `features/rank/ranking.ts` (quy tắc dự án #10), để Đồng đội và
+ * Hồ sơ luôn hiển thị cùng một cấp. Trước đây trang này viết cứng "Hạng 3 · Reliable / 3.500 EXP"
+ * trong khi Hồ sơ hiện "Cấp 2 · Runner / 2.000 EXP" cho cùng một người.
+ */
 export const CURRENT_USER_STATUS: PersonalStatus = {
-  rankLevel: 3,
-  rankTitle: "Hạng 3 · Reliable",
-  rankBadge: "Reliable",
+  rankLevel: currentUserRank.currentRank.level,
+  rankTitle: currentUserRank.currentRank.badgeTitle,
+  rankBadge: currentUserRank.currentRank.nameEn,
   onTime: "18/19",
   trustStatus: "Uy tín tốt",
-  currentExp: 1240,
-  targetExp: 3500,
-  nextRankTitle: "Lên hạng 4 · Elite",
+  currentExp: CURRENT_USER_EXP,
+  targetExp: currentUserRank.nextRank?.minExp ?? CURRENT_USER_EXP,
+  nextRankTitle: currentUserRank.nextRank
+    ? `Lên ${currentUserRank.nextRank.badgeTitle.replace(/^Cấp/, "cấp")}`
+    : "Đã đạt cấp cao nhất",
 };
 
 export const URGENT_ACTION: UrgentAction = {

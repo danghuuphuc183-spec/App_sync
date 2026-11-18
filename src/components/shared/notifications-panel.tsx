@@ -54,7 +54,7 @@ export function NotificationsPanel({
       <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-border">
         <p className="text-sm font-bold text-foreground">Thông báo</p>
         <div className="flex items-center gap-1">
-          <button onClick={onMarkAllRead} className="text-[11px] font-semibold text-brand dark:text-brand-sky px-2 py-1 rounded-lg hover:bg-muted">
+          <button onClick={onMarkAllRead} className="text-caption font-semibold text-brand dark:text-brand-sky px-2 py-1 rounded-lg hover:bg-muted">
             Đánh dấu đã đọc
           </button>
           <button onClick={onClose} aria-label="Đóng thông báo" className="h-7 w-7 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground">
@@ -76,8 +76,8 @@ export function NotificationsPanel({
                 <Icon className="h-4 w-4" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[12.5px] leading-snug text-foreground">{n.text}</p>
-                <p className="text-[10.5px] text-muted-foreground mt-0.5">{n.timeAgo}</p>
+                <p className="text-xs leading-snug text-foreground">{n.text}</p>
+                <p className="text-caption text-muted-foreground mt-0.5">{n.timeAgo}</p>
               </div>
               {n.unread && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-500" aria-label="Chưa đọc" />}
             </li>

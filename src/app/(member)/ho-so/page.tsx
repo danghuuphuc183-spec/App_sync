@@ -81,6 +81,12 @@ export default function ProfilePage() {
   const toggleTheme = () => {
     const isDark = document.documentElement.classList.toggle("dark");
     setIsDarkMode(isDark);
+    // Ghi nhớ để lần tải lại sau vẫn giữ (script đầu trang trong app/layout.tsx đọc khoá này)
+    try {
+      localStorage.setItem("sync_theme", isDark ? "dark" : "light");
+    } catch (err) {
+      console.warn("Không lưu được chế độ giao diện:", err);
+    }
   };
 
   // User Profile Data - Defaults to Minh Thư matching mockup or current logged in user
@@ -135,13 +141,13 @@ export default function ProfilePage() {
         <div
           className={cn(
             "absolute -top-16 -left-10 w-96 h-96 rounded-full blur-3xl opacity-35 dark:opacity-45 rank-aura-pulse transition-all duration-700",
-            `bg-linear-to-br ${rankTheme.orbGradientPrimary}`
+            `bg-gradient-to-br ${rankTheme.orbGradientPrimary}`
           )}
         />
         <div
           className={cn(
             "absolute top-52 -right-16 w-80 h-80 rounded-full blur-3xl opacity-25 dark:opacity-35 transition-all duration-700",
-            `bg-linear-to-bl ${rankTheme.orbGradientSecondary}`
+            `bg-gradient-to-bl ${rankTheme.orbGradientSecondary}`
           )}
         />
         <div className="absolute top-[650px] -left-20 w-80 h-80 bg-brand/10 dark:bg-brand/15 rounded-full blur-3xl" />
@@ -149,7 +155,7 @@ export default function ProfilePage() {
 
       {/* 1. TOP HEADER: Hồ sơ + Share + Sun + Settings */}
       <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-md px-4 py-3 flex items-center justify-between">
-        <h1 className="text-xl font-bold tracking-tight text-foreground">Hồ sơ</h1>
+        <h1 className="text-title text-foreground">Hồ sơ</h1>
         <div className="flex items-center gap-1.5">
           {/* Share */}
           <button
@@ -202,7 +208,7 @@ export default function ProfilePage() {
               <RankAuraGlow level={currentRankLevel} variant="avatar-halo" />
               <div
                 className={cn(
-                  "w-14 h-14 rounded-full p-[2px] shadow-xs relative z-10 bg-linear-to-tr",
+                  "w-14 h-14 rounded-full p-[2px] shadow-xs relative z-10 bg-gradient-to-tr",
                   rankTheme.avatarRingGradient
                 )}
               >
@@ -231,7 +237,7 @@ export default function ProfilePage() {
                 @{profileHandle} · {profileArea}
               </p>
               <div className="flex items-center gap-1.5 pt-0.5 flex-wrap">
-                <span className="inline-flex items-center text-[10.5px] font-semibold text-brand dark:text-brand-sky bg-brand/10 dark:bg-brand/20 px-2 py-0.5 rounded-full">
+                <span className="inline-flex items-center text-caption font-semibold text-brand dark:text-brand-sky bg-brand/10 dark:bg-brand/20 px-2 py-0.5 rounded-full">
                   Đã xác thực
                 </span>
                 {/* Clickable Rank Badge Pill with Rank Aura */}
@@ -240,7 +246,7 @@ export default function ProfilePage() {
                   label="Cấp 2 · Runner"
                   onClick={() => setIsRankRoadmapOpen(true)}
                 />
-                <span className="inline-flex items-center text-[10.5px] font-medium text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
+                <span className="inline-flex items-center text-caption font-medium text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
                   ⚡ 5:45/km
                 </span>
               </div>
@@ -252,7 +258,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => setIsEditModalOpen(true)}
-              className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:brightness-105 active:scale-[0.97] text-white font-bold text-xs transition-all duration-150 shadow-sm shadow-blue-500/25 select-none"
+              className="flex-1 py-2.5 px-4 rounded-xl bg-brand-gradient hover:brightness-105 active:scale-[0.97] text-white font-bold text-xs transition-all duration-150 shadow-sm shadow-blue-500/25 select-none"
             >
               Sửa hồ sơ
             </button>
@@ -287,15 +293,15 @@ export default function ProfilePage() {
         {/* 4. THREE STATS ROW: 38 Buổi · 96% Đúng hẹn · 6 Bạn tập */}
         <div className="grid grid-cols-3 divide-x divide-border/60 text-center py-1">
           <div className="px-2">
-            <p className="text-lg font-bold text-foreground">38</p>
+            <p className="font-numeric text-stat font-bold text-foreground">38</p>
             <p className="text-xs text-muted-foreground">Buổi</p>
           </div>
           <div className="px-2">
-            <p className="text-lg font-bold text-foreground">96%</p>
+            <p className="font-numeric text-stat font-bold text-foreground">96<span className="text-lg">%</span></p>
             <p className="text-xs text-muted-foreground">Đúng hẹn</p>
           </div>
           <div className="px-2">
-            <p className="text-lg font-bold text-foreground">6</p>
+            <p className="font-numeric text-stat font-bold text-foreground">6</p>
             <p className="text-xs text-muted-foreground">Bạn tập</p>
           </div>
         </div>
@@ -311,7 +317,7 @@ export default function ProfilePage() {
             <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
               <Calendar className="h-4 w-4" />
             </div>
-            <span className="text-[11px] font-semibold text-foreground">Lịch</span>
+            <span className="text-caption font-semibold text-foreground">Lịch</span>
           </button>
 
           {/* Kèo */}
@@ -323,7 +329,7 @@ export default function ProfilePage() {
             <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
               <Zap className="h-4 w-4" />
             </div>
-            <span className="text-[11px] font-semibold text-foreground">Kèo</span>
+            <span className="text-caption font-semibold text-foreground">Kèo</span>
           </button>
 
           {/* CLB */}
@@ -334,7 +340,7 @@ export default function ProfilePage() {
             <div className="w-8 h-8 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-105 transition-transform">
               <Shield className="h-4 w-4" />
             </div>
-            <span className="text-[11px] font-semibold text-foreground truncate max-w-full px-0.5">
+            <span className="text-caption font-semibold text-foreground truncate max-w-full px-0.5">
               CLB
             </span>
             {isClubLeader && (
@@ -351,7 +357,7 @@ export default function ProfilePage() {
             <div className="w-8 h-8 rounded-xl bg-brand/10 dark:bg-brand/20 text-brand dark:text-brand-sky flex items-center justify-center">
               <Coins className="h-4 w-4" />
             </div>
-            <span className="text-[11px] font-semibold text-foreground">Xu</span>
+            <span className="text-caption font-semibold text-foreground">Xu</span>
           </button>
         </div>
 
@@ -363,25 +369,25 @@ export default function ProfilePage() {
             onClick={() => setIsTrustRulesOpen(true)}
             className="p-3.5 rounded-2xl bg-card border border-border/70 text-left shadow-xs space-y-2 hover:border-brand/40 transition-all active:scale-[0.99]"
           >
-            <p className="text-[11px] text-muted-foreground font-medium">Uy tín</p>
-            <p className="text-base font-bold text-foreground">
-              8,5 <span className="text-xs font-normal text-muted-foreground">/10</span>
+            <p className="text-caption text-muted-foreground font-medium">Uy tín</p>
+            <p className="font-numeric text-[28px] leading-none font-bold text-foreground">
+              8,5 <span className="text-sm font-semibold text-muted-foreground">/10</span>
             </p>
             <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
-              <div className="h-full bg-brand rounded-full" style={{ width: "85%" }} />
+              <div className="h-full bg-brand-gradient rounded-full" style={{ width: "85%" }} />
             </div>
           </button>
 
           {/* Card Chuỗi Tuần */}
           <div className="p-3.5 rounded-2xl bg-card border border-border/70 text-left shadow-xs space-y-2">
-            <p className="text-[11px] text-muted-foreground font-medium">Chuỗi tuần</p>
-            <p className="text-base font-bold text-foreground">6 tuần</p>
+            <p className="text-caption text-muted-foreground font-medium">Chuỗi tuần</p>
+            <p className="text-sm font-semibold text-muted-foreground"><span className="font-numeric text-[28px] leading-none font-bold text-foreground">6</span> tuần</p>
             {/* 7 streak dots: 6 active blue, 1 inactive */}
             <div className="flex items-center gap-1.5 pt-0.5">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <span key={i} className="h-1.5 w-1.5 rounded-full bg-brand" />
+                <span key={i} className="h-1.5 w-3 rounded-full bg-brand-gradient" />
               ))}
-              <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/30" />
+              <span className="h-1.5 w-3 rounded-full bg-muted-foreground/25" />
             </div>
           </div>
         </div>
@@ -412,11 +418,11 @@ export default function ProfilePage() {
                 <ChevronRight className="h-3.5 w-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
               </div>
             </div>
-            <span className="text-muted-foreground font-mono text-[11px]">1.240 / 2.000 EXP</span>
+            <span className="text-muted-foreground font-numeric text-sm font-semibold"><span className="text-foreground">1.240</span> / 2.000 EXP</span>
           </div>
           <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden relative z-10">
             <div
-              className={cn("h-full rounded-full bg-linear-to-r transition-all duration-500", rankTheme.progressGradient)}
+              className={cn("h-full rounded-full bg-gradient-to-r transition-all duration-500", rankTheme.progressGradient)}
               style={{ width: "62%" }}
             />
           </div>
@@ -437,7 +443,7 @@ export default function ProfilePage() {
                   </h3>
                   <span
                     className={cn(
-                      "px-1.5 py-0.5 rounded-md font-extrabold text-[9.5px]",
+                      "px-1.5 py-0.5 rounded-md font-extrabold text-micro",
                       isClubLeader
                         ? "bg-blue-500/15 text-blue-700 dark:text-blue-300"
                         : "bg-muted text-muted-foreground"
@@ -446,7 +452,7 @@ export default function ProfilePage() {
                     {isClubLeader ? "Trưởng CLB" : "Hội viên"}
                   </span>
                 </div>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-caption text-muted-foreground">
                   FTU2 Run Club · {isClubLeader ? "1.240 thành viên" : "1.240 tv · 4 sự kiện tuần"}
                 </p>
               </div>
@@ -466,31 +472,31 @@ export default function ProfilePage() {
             /* TRƯỞNG CLB: HIỂN THỊ QUỸ VÀ THU HỘI PHÍ (2 Ô CÂN ĐỐI, TRẬT TỰ RÕ RÀNG) */
             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/60 text-xs">
               <div className="p-2.5 rounded-xl bg-muted/40 border border-border/60 space-y-0.5">
-                <p className="text-[10px] text-muted-foreground font-medium">Số dư Quỹ CLB</p>
+                <p className="text-micro text-muted-foreground font-medium">Số dư Quỹ CLB</p>
                 <p className="text-sm font-black text-brand dark:text-brand-sky">12.450.000đ</p>
-                <p className="text-[9.5px] text-emerald-600 dark:text-emerald-400 font-medium">94% thực nhận sau phí</p>
+                <p className="text-micro text-emerald-600 dark:text-emerald-400 font-medium">94% thực nhận sau phí</p>
               </div>
               <div className="p-2.5 rounded-xl bg-muted/40 border border-border/60 space-y-0.5">
-                <p className="text-[10px] text-muted-foreground font-medium">Hội phí Quý IV</p>
+                <p className="text-micro text-muted-foreground font-medium">Hội phí Quý IV</p>
                 <p className="text-sm font-black text-emerald-600 dark:text-emerald-400">41/50 đã nộp</p>
-                <p className="text-[9.5px] text-muted-foreground">Tiến độ thu 82%</p>
+                <p className="text-micro text-muted-foreground">Tiến độ thu 82%</p>
               </div>
             </div>
           ) : (
             /* HỘI VIÊN THƯỜNG: BẢO MẬT QUỸ (KHÔNG THẤY TIỀN), HIỂN THỊ HOẠT ĐỘNG */
             <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5 text-[11px]">
+              <span className="flex items-center gap-1.5 text-caption">
                 <Lock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                 <span>Không thấy quỹ sinh hoạt (Chỉ Ban quản lý)</span>
               </span>
-              <span className="text-[10.5px] font-medium text-foreground bg-muted/60 px-2 py-0.5 rounded-md">
+              <span className="text-caption font-medium text-foreground bg-muted/60 px-2 py-0.5 rounded-md">
                 Kèo chạy T4 & CN
               </span>
             </div>
           )}
 
           {/* Dòng điều hướng demo vai trò tinh tế ở góc dưới, không phá vỡ UI chính */}
-          <div className="flex items-center justify-between pt-1 text-[10px] text-muted-foreground border-t border-border/30">
+          <div className="flex items-center justify-between pt-1 text-micro text-muted-foreground border-t border-border/30">
             <span>Vai trò: <strong className="text-foreground">{isClubLeader ? "Trưởng CLB (Có quyền Quỹ)" : "Thành viên (Bảo mật Quỹ)"}</strong></span>
             <button
               type="button"
@@ -509,7 +515,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-2 gap-2.5">
           {/* Card 1: Pace & kỷ lục */}
           <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1">
-            <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+            <div className="flex items-center gap-1 text-caption text-muted-foreground">
               <span>Pace & kỷ lục</span>
               <Lock className="h-3 w-3" />
             </div>
@@ -518,19 +524,19 @@ export default function ProfilePage() {
 
           {/* Card 2: Lịch cố định */}
           <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1">
-            <p className="text-[11px] text-muted-foreground">Lịch cố định</p>
+            <p className="text-caption text-muted-foreground">Lịch cố định</p>
             <p className="text-xs font-bold text-foreground">T3 · T5 - 5:30</p>
           </div>
 
           {/* Card 3: Cung đường quen */}
           <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1">
-            <p className="text-[11px] text-muted-foreground">Cung đường quen</p>
+            <p className="text-caption text-muted-foreground">Cung đường quen</p>
             <p className="text-xs font-bold text-foreground">Thanh Đa</p>
           </div>
 
           {/* Card 4: Môn & band */}
           <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1">
-            <p className="text-[11px] text-muted-foreground">Môn & band</p>
+            <p className="text-caption text-muted-foreground">Môn & band</p>
             <p className="text-xs font-bold text-foreground">R2 · S1</p>
           </div>
         </div>
@@ -600,7 +606,7 @@ export default function ProfilePage() {
                     <polygon points="6,4 18,3 21,14 14,20 4,16 6,4" />
                   </svg>
                 </div>
-                <span className="text-[11px] font-bold text-foreground text-left">10 km</span>
+                <span className="text-caption font-bold text-foreground text-left">10 km</span>
               </div>
 
               {/* Item 2: Gym - 45' */}
@@ -608,7 +614,7 @@ export default function ProfilePage() {
                 <div className="flex-1 flex items-center justify-center text-muted-foreground/60">
                   <Dumbbell className="h-8 w-8" />
                 </div>
-                <span className="text-[11px] font-bold text-foreground text-left">Gym - 45&apos;</span>
+                <span className="text-caption font-bold text-foreground text-left">Gym - 45&apos;</span>
               </div>
 
               {/* Item 3: 6,2 km graph */}
@@ -618,7 +624,7 @@ export default function ProfilePage() {
                     <path d="M3 18 L8 14 L14 17 L21 6" />
                   </svg>
                 </div>
-                <span className="text-[11px] font-bold text-foreground text-left">6,2 km</span>
+                <span className="text-caption font-bold text-foreground text-left">6,2 km</span>
               </div>
 
               {/* Item 4: Calisthenics */}
@@ -626,7 +632,7 @@ export default function ProfilePage() {
                 <div className="flex-1 flex items-center justify-center text-muted-foreground/60">
                   <Activity className="h-8 w-8" />
                 </div>
-                <span className="text-[11px] font-bold text-foreground text-left">Calisthenics</span>
+                <span className="text-caption font-bold text-foreground text-left">Calisthenics</span>
               </div>
 
               {/* Item 5: 8 km polygon */}
@@ -636,7 +642,7 @@ export default function ProfilePage() {
                     <polygon points="12,3 20,8 18,19 6,19 4,8" />
                   </svg>
                 </div>
-                <span className="text-[11px] font-bold text-foreground text-left">8 km</span>
+                <span className="text-caption font-bold text-foreground text-left">8 km</span>
               </div>
 
               {/* Item 6: Squad */}
@@ -644,7 +650,7 @@ export default function ProfilePage() {
                 <div className="flex-1 flex items-center justify-center text-muted-foreground/60">
                   <Users className="h-8 w-8" />
                 </div>
-                <span className="text-[11px] font-bold text-foreground text-left">Squad</span>
+                <span className="text-caption font-bold text-foreground text-left">Squad</span>
               </div>
             </div>
           )}
@@ -655,10 +661,10 @@ export default function ProfilePage() {
               <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-foreground">Chạy Bờ Kè Thanh Đa · 10km</span>
-                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full">Sắp tới</span>
+                  <span className="text-micro font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full">Sắp tới</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground">Hôm nay 17:45 · Spot Bờ Kè Bán Đảo Thanh Đa</p>
-                <div className="flex items-center justify-between pt-1 border-t border-border/50 text-[11px]">
+                <p className="text-caption text-muted-foreground">Hôm nay 17:45 · Spot Bờ Kè Bán Đảo Thanh Đa</p>
+                <div className="flex items-center justify-between pt-1 border-t border-border/50 text-caption">
                   <span className="text-muted-foreground">Bạn tập: Hữu Phúc (UT 8.5)</span>
                   <button
                     type="button"
@@ -673,9 +679,9 @@ export default function ProfilePage() {
               <div className="p-3 rounded-2xl bg-card border border-border/70 shadow-xs space-y-1.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-foreground">Gym Legday · The New Gym</span>
-                  <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Đã xong</span>
+                  <span className="text-micro font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">Đã xong</span>
                 </div>
-                <p className="text-[11px] text-muted-foreground">Hôm qua 06:00 · Quét QR đúng giờ (+0.5 UT)</p>
+                <p className="text-caption text-muted-foreground">Hôm qua 06:00 · Quét QR đúng giờ (+0.5 UT)</p>
               </div>
             </div>
           )}
@@ -699,7 +705,7 @@ export default function ProfilePage() {
                       <Icon className="h-4 w-4 text-brand dark:text-brand-sky" />
                       <span className="truncate">{badge.title}</span>
                     </div>
-                    <p className="text-[10.5px] text-muted-foreground line-clamp-1">{badge.desc}</p>
+                    <p className="text-caption text-muted-foreground line-clamp-1">{badge.desc}</p>
                   </div>
                 );
               })}
@@ -724,10 +730,10 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-foreground">{buddy.name}</p>
-                      <p className="text-[10px] text-muted-foreground">{buddy.role} · {buddy.area}</p>
+                      <p className="text-micro text-muted-foreground">{buddy.role} · {buddy.area}</p>
                     </div>
                   </div>
-                  <span className="text-[11px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-full">
+                  <span className="text-caption font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-full">
                     {buddy.ut} UT
                   </span>
                 </div>
@@ -761,7 +767,7 @@ export default function ProfilePage() {
 
             <div className="space-y-2.5 text-xs">
               <div>
-                <label className="text-[11px] font-bold text-foreground block mb-1">Tên hiển thị:</label>
+                <label className="text-caption font-bold text-foreground block mb-1">Tên hiển thị:</label>
                 <input
                   type="text"
                   value={profileName}
@@ -771,7 +777,7 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-foreground block mb-1">Username (@handle):</label>
+                <label className="text-caption font-bold text-foreground block mb-1">Username (@handle):</label>
                 <input
                   type="text"
                   value={profileHandle}
@@ -781,7 +787,7 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-foreground block mb-1">Khu vực thường tập:</label>
+                <label className="text-caption font-bold text-foreground block mb-1">Khu vực thường tập:</label>
                 <input
                   type="text"
                   value={profileArea}
@@ -791,7 +797,7 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="text-[11px] font-bold text-foreground block mb-1">Pace & kỷ lục quen thuộc:</label>
+                <label className="text-caption font-bold text-foreground block mb-1">Pace & kỷ lục quen thuộc:</label>
                 <input
                   type="text"
                   value={profilePace}
@@ -927,10 +933,10 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-0.5">
-              <p className="text-xs font-mono font-bold text-foreground">
+              <p className="text-xs font-numeric font-bold text-foreground">
                 Mã: <span className="text-brand dark:text-brand-sky">SYNC-81-MT-2026</span>
               </p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-caption text-muted-foreground">
                 Tự làm mới sau: <strong className="text-foreground">{qrCountdown}s</strong>
               </p>
             </div>
@@ -980,8 +986,8 @@ export default function ProfilePage() {
             <div className="space-y-2 text-xs">
               {/* Phân tầng UT */}
               <div className="p-3 rounded-2xl bg-muted/40 border border-border/80 space-y-1">
-                <p className="font-bold text-foreground text-[11px] uppercase tracking-wide">Thang điểm UT hệ thống</p>
-                <ul className="space-y-1 text-[11px] text-muted-foreground">
+                <p className="font-bold text-foreground text-caption uppercase tracking-wide">Thang điểm UT hệ thống</p>
+                <ul className="space-y-1 text-caption text-muted-foreground">
                   <li>• <strong>9–10 UT:</strong> Uy tín cao (mở tối đa 3 kèo/24h)</li>
                   <li>• <strong>7–8 UT:</strong> Cần chú ý (tạo tối đa 2 kèo/24h)</li>
                   <li>• <strong>5–6 UT:</strong> Hạn chế (chỉ tạo 1 kèo/24h, đóng băng lịch định kỳ)</li>
@@ -995,7 +1001,7 @@ export default function ProfilePage() {
                   <ShieldCheck className="h-3.5 w-3.5" />
                   <span>Cộng điểm & Phục hồi (+UT)</span>
                 </p>
-                <ul className="space-y-1 text-[11px] text-muted-foreground">
+                <ul className="space-y-1 text-caption text-muted-foreground">
                   <li>• Khởi điểm đăng ký: <strong>7.0 UT</strong> (Tân binh: <strong>8.0 UT</strong>)</li>
                   <li>• Buổi tập đúng hẹn: <strong>+0.5 UT</strong> (tối đa 1 lần/ngày)</li>
                   <li>• Lời xin lỗi được bạn tập chấp nhận: <strong>+0.5 UT</strong> (1 lần/kèo)</li>
@@ -1008,7 +1014,7 @@ export default function ProfilePage() {
                   <ShieldAlert className="h-3.5 w-3.5" />
                   <span>Trừ điểm vi phạm (-UT)</span>
                 </p>
-                <ul className="space-y-1 text-[11px] text-muted-foreground">
+                <ul className="space-y-1 text-caption text-muted-foreground">
                   <li>• Hủy trong vòng 30 phút trước giờ hẹn: <strong>-0.5 UT</strong></li>
                   <li>• Đến trễ trong vòng 15 phút: <strong>-0.25 UT</strong> (sau 15p tính vắng)</li>
                   <li>• Vắng có khai báo trong 24 giờ: <strong>-1.0 UT</strong></li>

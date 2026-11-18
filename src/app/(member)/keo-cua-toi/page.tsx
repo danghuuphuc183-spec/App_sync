@@ -184,7 +184,7 @@ export default function MyKeosPage() {
         })}
       </div>
 
-      <p className="text-[11.5px] text-muted-foreground">
+      <p className="text-caption text-muted-foreground">
         Đúng hẹn (trễ không quá {UT_CONFIG.TIME.LATE_GRACE_MIN} phút) +{formatUt(UT_CONFIG.RECOVERY.ON_TIME)} UT. Trễ 15–25 phút{" "}
         {formatUt(UT_CONFIG.PENALTY.LATE_15_25)} UT, quá 25 phút tính là vắng. Xem đủ luật ở{" "}
         <Link href="/vi-uy-tin" className="underline">Ví UT</Link>.

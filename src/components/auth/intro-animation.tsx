@@ -112,10 +112,10 @@ export function IntroAnimation({ onDone }: { onDone: () => void }) {
             ["Calo", "340", "kcal"],
           ].map(([k, v, u], i) => (
             <div key={k} className="rounded-xl border border-brand-sky/30 bg-white/5 backdrop-blur px-2.5 py-2 intro-chip" style={{ animationDelay: `${0.15 + i * 0.12}s` }}>
-              <p className="text-[10px] text-brand-200/80">{k}</p>
-              <p className="text-[18px] font-extrabold font-display leading-tight">
+              <p className="text-micro text-brand-200/80">{k}</p>
+              <p className="text-lg font-extrabold font-display leading-tight">
                 {v}
-                <span className="ml-0.5 text-[10px] font-semibold text-brand-200/80">{u}</span>
+                <span className="ml-0.5 text-micro font-semibold text-brand-200/80">{u}</span>
               </p>
             </div>
           ))}
@@ -171,7 +171,7 @@ export function IntroAnimation({ onDone }: { onDone: () => void }) {
         <p className="mt-4 text-[28px] font-black tracking-[0.14em] font-display">SYN≡SIS</p>
       </div>
 
-      <button onClick={finish} className="absolute top-[max(16px,env(safe-area-inset-top))] right-4 rounded-lg bg-white/10 hover:bg-white/20 px-3.5 py-1.5 text-[12.5px] font-semibold backdrop-blur">
+      <button onClick={finish} className="absolute top-[max(16px,env(safe-area-inset-top))] right-4 rounded-lg bg-white/10 hover:bg-white/20 px-3.5 py-1.5 text-xs font-semibold backdrop-blur">
         Bỏ qua
       </button>
     </div>

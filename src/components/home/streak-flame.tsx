@@ -43,7 +43,7 @@ export function StreakFlame({ value, active, className }: { value: React.ReactNo
       </svg>
       <span
         className={cn(
-          "absolute inset-x-0 bottom-[7px] text-center text-[13px] font-black leading-none tabular-nums",
+          "absolute inset-x-0 bottom-[7px] text-center text-label font-black leading-none tabular-nums",
           active ? "text-neutral-950" : "text-neutral-500"
         )}
         style={{ textShadow: "0 1px 0 rgba(255,255,255,0.7)" }}

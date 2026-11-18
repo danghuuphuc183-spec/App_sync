@@ -77,7 +77,7 @@ export default function SportQuizPage() {
             <Sparkles className="h-4 w-4" />
             <span>Kết quả phân tích thuật toán</span>
           </Badge>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h1 className="text-title">
             Môn Thể Thao Phù Hợp Nhất Với Bạn
           </h1>
           <p className="text-sm text-muted-foreground max-w-lg mx-auto">

@@ -21,11 +21,12 @@ describe("Đồng đội & Duo Feature Page", () => {
     expect(screen.getByText("Tập tiếp, giữ chuỗi, cùng tiến bộ")).toBeInTheDocument();
 
     // Personal card
-    expect(screen.getByText("Hạng 3 · Reliable")).toBeInTheDocument();
+    // Hạng phải khớp nguồn duy nhất ranking.ts (cùng giá trị trang Hồ sơ): 1.240 EXP → Cấp 2 · Runner
+    expect(screen.getByText("Cấp 2 · Runner")).toBeInTheDocument();
     expect(screen.getAllByText(/Đúng hẹn 18\/19/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("Uy tín tốt")).toBeInTheDocument();
-    expect(screen.getByText("1.240 / 3.500 EXP")).toBeInTheDocument();
-    expect(screen.getByText("Lên hạng 4 · Elite")).toBeInTheDocument();
+    expect(screen.getByText("1.240 / 2.000 EXP")).toBeInTheDocument();
+    expect(screen.getByText("Lên cấp 3 · Pacer")).toBeInTheDocument();
 
     // Urgent card
     expect(screen.getByText("VIỆC CẦN LÀM HÔM NAY")).toBeInTheDocument();

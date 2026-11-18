@@ -120,7 +120,7 @@ export function VietQRPaymentModal({
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-border/60 bg-muted/20">
           <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary border border-primary/20">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-micro font-semibold bg-primary/10 text-primary border border-primary/20">
               <QrCode className="h-3 w-3" />
               payOS · VietQR Chuẩn NAPAS
             </span>
@@ -222,7 +222,7 @@ export function VietQRPaymentModal({
                     priority
                   />
                 </div>
-                <p className="text-[11px] text-neutral-500 mt-1 flex items-center gap-1 font-sans">
+                <p className="text-caption text-neutral-500 mt-1 flex items-center gap-1 font-sans">
                   <Sparkles className="h-3 w-3 text-primary" />
                   Mở ứng dụng ngân hàng hoặc MoMo để quét mã
                 </p>
@@ -326,12 +326,12 @@ export function VietQRPaymentModal({
                     Cơ chế Split Payment tự động:
                   </span>
                   {order.breakdown.isCapped && (
-                    <span className="text-[10px] bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded font-normal">
+                    <span className="text-micro bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded font-normal">
                       Đã áp trần 800k
                     </span>
                   )}
                 </div>
-                <div className="space-y-1 pt-1 text-[11px]">
+                <div className="space-y-1 pt-1 text-caption">
                   <div className="flex justify-between text-muted-foreground">
                     <span>
                       👉 Đối tác ({order.partnerAccount.bankCode} ·{" "}

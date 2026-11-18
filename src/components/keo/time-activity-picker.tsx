@@ -49,16 +49,16 @@ export function TimeActivityPicker({
     <div className="rounded-2xl border border-border p-3.5 pb-3">
       <div className="flex items-baseline justify-between mb-2">
         <div>
-          <p className="text-[12px] font-semibold text-muted-foreground">{formatKeoDay(day)}</p>
+          <p className="text-xs font-semibold text-muted-foreground">{formatKeoDay(day)}</p>
           <p className="text-[22px] font-extrabold font-display text-foreground tracking-tight" aria-live="polite">
             {from} – {to}
           </p>
         </div>
         <span
           className={cn(
-            "rounded-full px-3 py-1 text-[11.5px] font-bold shadow-xs transition-all",
+            "rounded-full px-3 py-1 text-caption font-bold shadow-xs transition-all",
             selectedAvg >= 60
-              ? "bg-gradient-to-r from-[#0567E1] to-[#0A84FF] text-white shadow-blue-500/25"
+              ? "bg-brand-gradient text-white shadow-blue-500/25"
               : selectedAvg >= 30
                 ? "bg-blue-50 dark:bg-blue-950/60 text-brand-700 dark:text-brand-300 border border-blue-200/60"
                 : "bg-muted text-muted-foreground"
@@ -83,7 +83,7 @@ export function TimeActivityPicker({
               className={cn(
                 "flex-1 rounded-t-[4px] transition-all duration-150 cursor-pointer active:scale-y-95",
                 inRange
-                  ? "bg-gradient-to-t from-[#0567E1] via-[#0D7AF8] to-[#38BDF8] shadow-[0_2px_8px_rgba(5,103,225,0.25)] hover:brightness-110"
+                  ? "bg-brand-gradient shadow-[0_2px_8px_rgba(5,103,225,0.25)] hover:brightness-110"
                   : "bg-blue-100/70 dark:bg-blue-950/40 hover:bg-blue-200/90 dark:hover:bg-blue-900/60"
               )}
               style={{ height: `${Math.max(8, v)}%` }}
@@ -96,7 +96,7 @@ export function TimeActivityPicker({
       <div className="relative h-8 mt-1.5">
         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-blue-100 dark:bg-blue-950/60" />
         <div
-          className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-gradient-to-r from-[#0567E1] via-[#0091FF] to-[#38BDF8] shadow-[0_0_8px_rgba(5,103,225,0.35)]"
+          className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-brand-gradient shadow-[0_0_8px_rgba(5,103,225,0.35)]"
           style={{ left: `${(lo / BUCKETS) * 100}%`, right: `${100 - (hi / BUCKETS) * 100}%` }}
         />
         <input
@@ -125,7 +125,7 @@ export function TimeActivityPicker({
         />
       </div>
 
-      <div className="flex justify-between text-[11.5px] text-muted-foreground">
+      <div className="flex justify-between text-caption text-muted-foreground">
         <span>04:00</span>
         <span className="flex items-center gap-1 text-foreground font-semibold">
           <Flame className="h-3.5 w-3.5 text-foreground" /> Đông nhất {bucketToTime(peak)}

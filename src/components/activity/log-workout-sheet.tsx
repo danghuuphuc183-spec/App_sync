@@ -35,7 +35,7 @@ export function LogWorkoutSheet({
   return (
     <BottomSheet open={open} onClose={onClose} title={dateLabel ? `Ghi buổi tập · ${dateLabel}` : "Ghi buổi tập hôm nay"} bodyClassName="p-4 pb-6 space-y-4">
       <div className="space-y-2">
-        <p className="text-[12px] font-semibold text-muted-foreground">Môn thể thao</p>
+        <p className="text-xs font-semibold text-muted-foreground">Môn thể thao</p>
         <div className="flex flex-wrap gap-2">
           {LOG_SPORTS.map((s) => (
             <button
@@ -44,7 +44,7 @@ export function LogWorkoutSheet({
               onClick={() => setSport(s.id)}
               aria-pressed={sport === s.id}
               className={cn(
-                "rounded-lg px-3 py-1.5 text-[13px] font-medium border transition-colors",
+                "rounded-lg px-3 py-1.5 text-label font-medium border transition-colors",
                 sport === s.id ? "bg-brand text-white border-brand" : "border-border text-foreground hover:bg-muted"
               )}
             >
@@ -55,7 +55,7 @@ export function LogWorkoutSheet({
       </div>
 
       <div className="space-y-2">
-        <div className="flex justify-between text-[12px] font-semibold text-muted-foreground">
+        <div className="flex justify-between text-xs font-semibold text-muted-foreground">
           <span>Thời lượng</span>
           <span className="text-foreground">{minutes} phút</span>
         </div>
@@ -73,7 +73,7 @@ export function LogWorkoutSheet({
 
       <label className="flex items-center gap-3 rounded-xl border border-border p-3 cursor-pointer">
         <Users className="h-5 w-5 text-foreground shrink-0" />
-        <span className="flex-1 text-[13px] text-foreground">Tập cùng bạn (qua kèo)</span>
+        <span className="flex-1 text-label text-foreground">Tập cùng bạn (qua kèo)</span>
         <input type="checkbox" checked={withPartner} onChange={(e) => setWithPartner(e.target.checked)} className="h-5 w-5 accent-brand" />
       </label>
 

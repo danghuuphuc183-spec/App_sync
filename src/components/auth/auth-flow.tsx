@@ -202,7 +202,7 @@ export function AuthFlow() {
                 <img src="/logo-icon-584.png" alt="SYNESIS" className="relative h-20 w-20 rounded-3xl shadow-xl" />
               </div>
               <p className="mt-3 text-[26px] font-black tracking-[0.14em] font-display">SYN≡SIS</p>
-              <h1 className="mt-2 text-center text-[22px] font-extrabold leading-tight font-display">
+              <h1 className="mt-2 text-center text-title">
                 Tìm bạn tập hợp nhịp,
                 <br />
                 <span className="bg-gradient-to-r from-brand-sky to-white bg-clip-text text-transparent">giữ kỷ luật cùng nhau</span>
@@ -223,7 +223,7 @@ export function AuthFlow() {
                     <span className="h-7 w-7 shrink-0 rounded-lg bg-brand/30 flex items-center justify-center">
                       <I className="h-3.5 w-3.5 text-brand-sky" />
                     </span>
-                    <span className="text-[12.5px] text-white/90">{text as string}</span>
+                    <span className="text-xs text-white/90">{text as string}</span>
                   </li>
                 );
               })}
@@ -235,7 +235,7 @@ export function AuthFlow() {
                 type="button"
                 onClick={() => setAuthMode("login")}
                 className={cn(
-                  "flex-1 py-2 rounded-lg text-[13px] font-bold transition-all text-center flex items-center justify-center gap-1.5",
+                  "flex-1 py-2 rounded-lg text-label font-bold transition-all text-center flex items-center justify-center gap-1.5",
                   authMode === "login"
                     ? "bg-brand text-white shadow-md"
                     : "text-white/60 hover:text-white hover:bg-white/[0.04]"
@@ -247,7 +247,7 @@ export function AuthFlow() {
                 type="button"
                 onClick={() => setAuthMode("register")}
                 className={cn(
-                  "flex-1 py-2 rounded-lg text-[13px] font-bold transition-all text-center flex items-center justify-center gap-1.5",
+                  "flex-1 py-2 rounded-lg text-label font-bold transition-all text-center flex items-center justify-center gap-1.5",
                   authMode === "register"
                     ? "bg-gradient-to-r from-emerald-500 to-brand text-white shadow-md"
                     : "text-white/60 hover:text-white hover:bg-white/[0.04]"
@@ -272,8 +272,8 @@ export function AuthFlow() {
                     <div className="flex items-center gap-2.5 min-w-0">
                       <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-[11px] font-bold text-emerald-300">Tài khoản Google mẫu</p>
-                        <p className="text-[13px] font-extrabold text-white truncate">danghuuphuc183@gmail.com</p>
+                        <p className="text-caption font-bold text-emerald-300">Tài khoản Google mẫu</p>
+                        <p className="text-label font-extrabold text-white truncate">danghuuphuc183@gmail.com</p>
                       </div>
                     </div>
                     <span className="shrink-0 text-xs font-bold px-2.5 py-1 rounded-md bg-white/10 text-brand-sky">
@@ -284,21 +284,21 @@ export function AuthFlow() {
                   <button
                     onClick={() => void continueWithGoogle()}
                     disabled={busy}
-                    className="w-full h-11 rounded-lg bg-white text-black font-bold text-[14.5px] flex items-center justify-center gap-2.5 hover:bg-neutral-100 active:scale-[0.98] transition-all"
+                    className="w-full h-11 rounded-lg bg-white text-black font-bold text-sm flex items-center justify-center gap-2.5 hover:bg-neutral-100 active:scale-[0.98] transition-all"
                   >
                     {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />} Tiếp tục với Google
                   </button>
 
                   <button
                     onClick={() => setStep("phone")}
-                    className="w-full h-11 rounded-lg bg-brand text-white font-bold text-[14.5px] flex items-center justify-center gap-2.5 hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30"
+                    className="w-full h-11 rounded-lg bg-brand text-white font-bold text-sm flex items-center justify-center gap-2.5 hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30"
                   >
                     <Smartphone className="h-4 w-4" /> Tiếp tục bằng số điện thoại
                   </button>
 
                   <button
                     onClick={() => setStep("email")}
-                    className="w-full py-1 text-center text-[12px] font-semibold text-white/70 hover:text-white transition-colors"
+                    className="w-full py-1 text-center text-xs font-semibold text-white/70 hover:text-white transition-colors"
                   >
                     Hoặc đăng nhập bằng Email khác
                   </button>
@@ -307,7 +307,7 @@ export function AuthFlow() {
                     <button
                       type="button"
                       onClick={() => setAuthMode("register")}
-                      className="text-[12.5px] text-white/75 hover:text-white"
+                      className="text-xs text-white/75 hover:text-white"
                     >
                       Chưa có tài khoản? <span className="font-bold text-brand-sky underline underline-offset-2">Đăng ký mới tại đây</span>
                     </button>
@@ -315,7 +315,7 @@ export function AuthFlow() {
                 </>
               ) : (
                 <>
-                  <div className="p-3 rounded-xl bg-brand/20 border border-brand-sky/30 text-[12px] text-brand-100 leading-relaxed">
+                  <div className="p-3 rounded-xl bg-brand/20 border border-brand-sky/30 text-xs text-brand-100 leading-relaxed">
                     ✨ <b>Tài khoản mới:</b> Sau khi đăng ký, hệ thống sẽ mở bảng <b>khảo sát 10 câu hỏi (~2 phút)</b> để thiết lập môn tập, giờ rảnh và khu vực bạn muốn ghép.
                   </div>
 
@@ -326,14 +326,14 @@ export function AuthFlow() {
                       setStep("register_google");
                     }}
                     disabled={busy}
-                    className="w-full h-11 rounded-lg bg-white text-black font-bold text-[14.5px] flex items-center justify-center gap-2.5 hover:bg-neutral-100 active:scale-[0.98] transition-all"
+                    className="w-full h-11 rounded-lg bg-white text-black font-bold text-sm flex items-center justify-center gap-2.5 hover:bg-neutral-100 active:scale-[0.98] transition-all"
                   >
                     <GoogleIcon /> Đăng ký với Google
                   </button>
 
                   <button
                     onClick={() => setStep("phone")}
-                    className="w-full h-11 rounded-lg bg-brand text-white font-bold text-[14.5px] flex items-center justify-center gap-2.5 hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30"
+                    className="w-full h-11 rounded-lg bg-brand text-white font-bold text-sm flex items-center justify-center gap-2.5 hover:bg-brand-500 active:scale-[0.98] transition-all shadow-lg shadow-brand/30"
                   >
                     <Smartphone className="h-4 w-4" /> Đăng ký bằng số điện thoại
                   </button>
@@ -344,7 +344,7 @@ export function AuthFlow() {
                       setRegEmail("");
                       setStep("register_email");
                     }}
-                    className="w-full h-11 rounded-lg bg-white/[0.08] border border-white/15 text-white font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-white/15 active:scale-[0.98] transition-all"
+                    className="w-full h-11 rounded-lg bg-white/[0.08] border border-white/15 text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-white/15 active:scale-[0.98] transition-all"
                   >
                     <Mail className="h-4 w-4 text-emerald-400" /> Đăng ký bằng Email
                   </button>
@@ -353,7 +353,7 @@ export function AuthFlow() {
                     <button
                       type="button"
                       onClick={() => setAuthMode("login")}
-                      className="text-[12.5px] text-white/75 hover:text-white"
+                      className="text-xs text-white/75 hover:text-white"
                     >
                       Đã có tài khoản? <span className="font-bold text-brand-sky underline underline-offset-2">Đăng nhập tại đây</span>
                     </button>
@@ -361,14 +361,14 @@ export function AuthFlow() {
                 </>
               )}
 
-              <button onClick={() => setGuideOpen(true)} className="w-full text-center text-[12.5px] font-bold text-brand-sky pt-1">
+              <button onClick={() => setGuideOpen(true)} className="w-full text-center text-xs font-bold text-brand-sky pt-1">
                 Người mới? Xem 4 bước bắt đầu
               </button>
-              <p className="text-center text-[10.5px] text-white/40">
+              <p className="text-center text-caption text-white/40">
                 Tiếp tục nghĩa là bạn đồng ý Điều khoản sử dụng & Chính sách quyền riêng tư của SYNESIS.
               </p>
             </div>
-            {authError && <p role="alert" className="mt-3 text-center text-[12px] text-red-300">{authError}</p>}
+            {authError && <p role="alert" className="mt-3 text-center text-xs text-red-300">{authError}</p>}
           </div>
         )}
 
@@ -384,14 +384,14 @@ export function AuthFlow() {
             <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg w-fit">
               <Sparkles className="h-3.5 w-3.5" /> Tạo tài khoản mới & thiết lập hồ sơ
             </div>
-            <h1 className="mt-3 text-[24px] font-extrabold font-display">Đăng ký với Google</h1>
-            <p className="mt-1 text-[13px] text-white/60">
+            <h1 className="mt-3 text-title">Đăng ký với Google</h1>
+            <p className="mt-1 text-label text-white/60">
               Nhập tên và địa chỉ Gmail để bắt đầu. Hệ thống sẽ chuyển tiếp đến bảng khảo sát 10 câu hỏi để cá nhân hoá bạn tập.
             </p>
 
             <div className="mt-5 space-y-3">
               <label className="block">
-                <span className="text-[12px] font-semibold text-white/70">Họ và tên hiển thị</span>
+                <span className="text-xs font-semibold text-white/70">Họ và tên hiển thị</span>
                 <input
                   autoFocus
                   type="text"
@@ -399,29 +399,29 @@ export function AuthFlow() {
                   onChange={(e) => setRegName(e.target.value)}
                   placeholder="VD: Nguyễn Văn A"
                   required
-                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-[15px] font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
+                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-body font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
                 />
               </label>
 
               <label className="block">
-                <span className="text-[12px] font-semibold text-white/70">Địa chỉ Gmail</span>
+                <span className="text-xs font-semibold text-white/70">Địa chỉ Gmail</span>
                 <input
                   type="email"
                   value={regEmail}
                   onChange={(e) => setRegEmail(e.target.value)}
                   placeholder="tenbantam@gmail.com"
                   required
-                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-[15px] font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
+                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-body font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
                 />
               </label>
             </div>
 
-            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
+            {authError && <p role="alert" className="mt-3 text-xs text-red-300">{authError}</p>}
 
             <button
               type="submit"
               disabled={regName.trim().length < 2 || !regEmail.includes("@") || busy}
-              className="mt-auto h-12 rounded-lg bg-gradient-to-r from-emerald-500 to-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
+              className="mt-auto h-12 rounded-lg bg-gradient-to-r from-emerald-500 to-brand text-white font-bold text-body flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
             >
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-amber-300" />}
               Tiếp tục đến khảo sát thiết lập (10 bước) →
@@ -441,14 +441,14 @@ export function AuthFlow() {
             <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg w-fit">
               <UserPlus className="h-3.5 w-3.5" /> Tạo tài khoản mới & thiết lập hồ sơ
             </div>
-            <h1 className="mt-3 text-[24px] font-extrabold font-display">Đăng ký bằng Email</h1>
-            <p className="mt-1 text-[13px] text-white/60">
+            <h1 className="mt-3 text-title">Đăng ký bằng Email</h1>
+            <p className="mt-1 text-label text-white/60">
               Nhập họ tên và địa chỉ email của bạn để thiết lập tài khoản mới và trả lời khảo sát bạn tập.
             </p>
 
             <div className="mt-5 space-y-3">
               <label className="block">
-                <span className="text-[12px] font-semibold text-white/70">Họ và tên</span>
+                <span className="text-xs font-semibold text-white/70">Họ và tên</span>
                 <input
                   autoFocus
                   type="text"
@@ -456,29 +456,29 @@ export function AuthFlow() {
                   onChange={(e) => setRegName(e.target.value)}
                   placeholder="VD: Hoàng Long"
                   required
-                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-[15px] font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
+                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-body font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
                 />
               </label>
 
               <label className="block">
-                <span className="text-[12px] font-semibold text-white/70">Địa chỉ Email</span>
+                <span className="text-xs font-semibold text-white/70">Địa chỉ Email</span>
                 <input
                   type="email"
                   value={regEmail}
                   onChange={(e) => setRegEmail(e.target.value)}
                   placeholder="hoanglong@example.com"
                   required
-                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-[15px] font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
+                  className="mt-1.5 w-full rounded-xl bg-white/[0.07] border border-white/15 px-4 h-12 text-body font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
                 />
               </label>
             </div>
 
-            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
+            {authError && <p role="alert" className="mt-3 text-xs text-red-300">{authError}</p>}
 
             <button
               type="submit"
               disabled={regName.trim().length < 2 || !regEmail.includes("@") || busy}
-              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
+              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-body flex items-center justify-center gap-2 hover:bg-brand-500 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
             >
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-amber-300" />}
               Tiếp tục đến khảo sát thiết lập (10 bước) →
@@ -495,8 +495,8 @@ export function AuthFlow() {
             }}
             className="flex flex-1 flex-col pt-4 animate-in fade-in slide-in-from-right-4 duration-300"
           >
-            <h1 className="text-[26px] font-extrabold font-display">Email của bạn</h1>
-            <p className="mt-1 text-[13.5px] text-white/60">Nhập địa chỉ email / Gmail để nhận diện và xác nhận hồ sơ thể thao của bạn.</p>
+            <h1 className="text-title">Email của bạn</h1>
+            <p className="mt-1 text-label text-white/60">Nhập địa chỉ email / Gmail để nhận diện và xác nhận hồ sơ thể thao của bạn.</p>
             <label className="mt-6 flex items-center gap-2 rounded-2xl bg-white/[0.07] border border-white/15 px-4 h-14 focus-within:border-brand-sky">
               <input
                 autoFocus
@@ -505,15 +505,15 @@ export function AuthFlow() {
                 onChange={(e) => setEmailInput(e.target.value)}
                 placeholder="danghuuphuc183@gmail.com"
                 aria-label="Địa chỉ email"
-                className="flex-1 bg-transparent text-[16px] font-semibold tracking-wide outline-none placeholder:text-white/30"
+                className="flex-1 bg-transparent text-base font-semibold tracking-wide outline-none placeholder:text-white/30"
               />
               {emailInput.includes("@") && <Check className="h-5 w-5 text-emerald-400" />}
             </label>
-            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
+            {authError && <p role="alert" className="mt-3 text-xs text-red-300">{authError}</p>}
             <button
               type="submit"
               disabled={!emailInput.includes("@") || busy}
-              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
+              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-body flex items-center justify-center gap-2 hover:bg-brand-500 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
             >
               {busy && <Loader2 className="h-4 w-4 animate-spin" />} Xác nhận & Vào hồ sơ
             </button>
@@ -529,10 +529,10 @@ export function AuthFlow() {
             }}
             className="flex flex-1 flex-col pt-4 animate-in fade-in slide-in-from-right-4 duration-300"
           >
-            <h1 className="text-[26px] font-extrabold font-display">Số điện thoại của bạn</h1>
-            <p className="mt-1 text-[13.5px] text-white/60">Chúng tôi sẽ gửi mã xác minh 6 số qua SMS. Dùng để đăng nhập và tạo tài khoản mới.</p>
+            <h1 className="text-title">Số điện thoại của bạn</h1>
+            <p className="mt-1 text-label text-white/60">Chúng tôi sẽ gửi mã xác minh 6 số qua SMS. Dùng để đăng nhập và tạo tài khoản mới.</p>
             <label className="mt-6 flex items-center gap-2 rounded-2xl bg-white/[0.07] border border-white/15 px-4 h-14 focus-within:border-brand-sky">
-              <span className="shrink-0 whitespace-nowrap text-[15px] font-semibold text-white/80">🇻🇳 +84</span>
+              <span className="shrink-0 whitespace-nowrap text-body font-semibold text-white/80">🇻🇳 +84</span>
               <span className="h-6 w-px bg-white/20" />
               <input
                 autoFocus
@@ -546,14 +546,14 @@ export function AuthFlow() {
               />
               {normalized && <Check className="h-5 w-5 text-white" />}
             </label>
-            {phoneInput && !normalized && <p className="mt-2 text-[12px] text-amber-300">Số di động Việt Nam gồm 10 số, bắt đầu bằng 03, 05, 07, 08 hoặc 09.</p>}
-            <p className="mt-3 text-[11.5px] text-white/45">Bản thử nghiệm: 0908 123 456 là tài khoản đã có; số khác sẽ tạo tài khoản mới.</p>
+            {phoneInput && !normalized && <p className="mt-2 text-xs text-amber-300">Số di động Việt Nam gồm 10 số, bắt đầu bằng 03, 05, 07, 08 hoặc 09.</p>}
+            <p className="mt-3 text-caption text-white/45">Bản thử nghiệm: 0908 123 456 là tài khoản đã có; số khác sẽ tạo tài khoản mới.</p>
             {captchaSiteKey && <div className="mt-4"><Turnstile key={captchaKey} siteKey={captchaSiteKey} onSuccess={setCaptchaToken} onExpire={() => setCaptchaToken("")} onError={() => { setCaptchaToken(""); setAuthError("Không xác minh được bảo mật. Vui lòng tải lại trang."); }} /></div>}
-            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
+            {authError && <p role="alert" className="mt-3 text-xs text-red-300">{authError}</p>}
             <button
               type="submit"
               disabled={!normalized || busy}
-              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
+              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-body flex items-center justify-center gap-2 hover:bg-brand-500 active:scale-[0.98] disabled:bg-white/10 disabled:text-white/40 disabled:cursor-not-allowed transition-all"
             >
               {busy && <Loader2 className="h-4 w-4 animate-spin" />} Gửi mã OTP
             </button>
@@ -563,8 +563,8 @@ export function AuthFlow() {
         {/* ================= OTP ================= */}
         {step === "otp" && phone && (
           <div className="flex flex-1 flex-col pt-4 animate-in fade-in slide-in-from-right-4 duration-300">
-            <h1 className="text-[26px] font-extrabold font-display">Nhập mã xác minh</h1>
-            <p className="mt-1 text-[13.5px] text-white/60">
+            <h1 className="text-title">Nhập mã xác minh</h1>
+            <p className="mt-1 text-label text-white/60">
               Đã gửi mã 6 số tới <b className="text-white">{formatVnPhone(phone)}</b>
             </p>
             <OtpInput
@@ -576,22 +576,22 @@ export function AuthFlow() {
               }}
               error={!!otpError}
             />
-            {otpError && <p className="mt-2 text-[12.5px] text-red-300">{otpError}</p>}
-            <p className="mt-3 rounded-xl bg-brand/20 border border-brand-sky/30 px-3 py-2 text-[12px] text-brand-100">
+            {otpError && <p className="mt-2 text-xs text-red-300">{otpError}</p>}
+            <p className="mt-3 rounded-xl bg-brand/20 border border-brand-sky/30 px-3 py-2 text-xs text-brand-100">
               Bản thử nghiệm: mã OTP là <b className="tracking-widest">{DEMO_OTP}</b>
             </p>
-            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
+            {authError && <p role="alert" className="mt-3 text-xs text-red-300">{authError}</p>}
             <button
               onClick={() => resendIn <= 0 && void sendOtp()}
               disabled={resendIn > 0}
-              className="mt-4 self-start text-[13px] font-semibold text-brand-sky disabled:text-white/40"
+              className="mt-4 self-start text-label font-semibold text-brand-sky disabled:text-white/40"
             >
               {resendIn > 0 ? `Gửi lại mã sau ${resendIn}s` : "Gửi lại mã"}
             </button>
             <button
               onClick={() => void verifyOtp(otp)}
               disabled={otp.length !== 6 || busy}
-              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 disabled:bg-white/10 disabled:text-white/40"
+              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-body flex items-center justify-center gap-2 hover:bg-brand-500 disabled:bg-white/10 disabled:text-white/40"
             >
               {busy && <Loader2 className="h-4 w-4 animate-spin" />} Xác minh
             </button>
@@ -607,9 +607,9 @@ export function AuthFlow() {
             }}
             className="flex flex-1 flex-col pt-4 animate-in fade-in slide-in-from-right-4 duration-300"
           >
-            <span className="self-start rounded-lg bg-emerald-400/15 text-emerald-300 px-3 py-1 text-[11.5px] font-bold">✓ Đã xác minh · Tài khoản mới</span>
-            <h1 className="mt-3 text-[26px] font-extrabold font-display">Bạn tên là gì?</h1>
-            <p className="mt-1 text-[13.5px] text-white/60">Tên hiển thị với bạn tập. Hệ thống sẽ dẫn bạn đến bảng khảo sát 10 câu hỏi để tìm bạn tập phù hợp.</p>
+            <span className="self-start rounded-lg bg-emerald-400/15 text-emerald-300 px-3 py-1 text-caption font-bold">✓ Đã xác minh · Tài khoản mới</span>
+            <h1 className="mt-3 text-title">Bạn tên là gì?</h1>
+            <p className="mt-1 text-label text-white/60">Tên hiển thị với bạn tập. Hệ thống sẽ dẫn bạn đến bảng khảo sát 10 câu hỏi để tìm bạn tập phù hợp.</p>
             <input
               autoFocus
               value={name}
@@ -619,11 +619,11 @@ export function AuthFlow() {
               maxLength={40}
               className="mt-6 h-14 rounded-2xl bg-white/[0.07] border border-white/15 px-4 text-[17px] font-semibold outline-none focus:border-brand-sky placeholder:text-white/30"
             />
-            {authError && <p role="alert" className="mt-3 text-[12px] text-red-300">{authError}</p>}
+            {authError && <p role="alert" className="mt-3 text-xs text-red-300">{authError}</p>}
             <button
               type="submit"
               disabled={name.trim().length < 2 || busy}
-              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-[15px] flex items-center justify-center gap-2 hover:bg-brand-500 disabled:bg-white/10 disabled:text-white/40"
+              className="mt-auto h-12 rounded-lg bg-brand text-white font-bold text-body flex items-center justify-center gap-2 hover:bg-brand-500 disabled:bg-white/10 disabled:text-white/40"
             >
               {busy && <Loader2 className="h-4 w-4 animate-spin" />} Tạo tài khoản & thiết lập (10 bước) →
             </button>
@@ -646,13 +646,13 @@ export function AuthFlow() {
                 <li key={t} className="flex gap-3">
                   <span className="h-8 w-8 shrink-0 rounded-full bg-brand text-white font-bold flex items-center justify-center text-sm">{i + 1}</span>
                   <span>
-                    <span className="block text-[14px] font-bold text-foreground">{t}</span>
-                    <span className="block text-[12px] text-muted-foreground">{d}</span>
+                    <span className="block text-sm font-bold text-foreground">{t}</span>
+                    <span className="block text-xs text-muted-foreground">{d}</span>
                   </span>
                 </li>
               ))}
             </ol>
-            <button onClick={() => setGuideOpen(false)} className="mt-5 w-full h-11 rounded-lg bg-brand text-white font-bold text-[14px]">
+            <button onClick={() => setGuideOpen(false)} className="mt-5 w-full h-11 rounded-lg bg-brand text-white font-bold text-sm">
               Đã hiểu
             </button>
           </div>

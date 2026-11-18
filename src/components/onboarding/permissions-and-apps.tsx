@@ -77,17 +77,17 @@ export function PermissionsStep({
               <p.icon className="h-5 w-5 text-brand dark:text-brand-sky" />
             </span>
             <div className="flex-1 min-w-0">
-              <p className="text-[14px] font-bold text-foreground">
-                {p.title} {p.required && <span className="ml-1 rounded-md bg-brand/15 text-brand dark:text-brand-sky px-1.5 py-0.5 text-[10px] font-bold">Cần thiết</span>}
+              <p className="text-sm font-bold text-foreground">
+                {p.title} {p.required && <span className="ml-1 rounded-md bg-brand/15 text-brand dark:text-brand-sky px-1.5 py-0.5 text-micro font-bold">Cần thiết</span>}
               </p>
-              <p className="text-[12px] text-muted-foreground leading-snug">{p.why}</p>
-              {st === "denied" && <p className="mt-1 text-[11.5px] text-amber-600 dark:text-amber-400 font-medium">Hãy bật lại trong Cài đặt trình duyệt / điện thoại.</p>}
+              <p className="text-xs text-muted-foreground leading-snug">{p.why}</p>
+              {st === "denied" && <p className="mt-1 text-caption text-amber-600 dark:text-amber-400 font-medium">Hãy bật lại trong Cài đặt trình duyệt / điện thoại.</p>}
             </div>
             <button
               onClick={() => void ask(p.key)}
               disabled={busy !== null || st === "granted" || st === "unsupported"}
               className={cn(
-                "shrink-0 rounded-lg px-3.5 py-2 text-[12.5px] font-bold flex items-center gap-1 transition-colors",
+                "shrink-0 rounded-lg px-3.5 py-2 text-xs font-bold flex items-center gap-1 transition-colors",
                 st === "granted"
                   ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
                   : st === "denied"
@@ -103,7 +103,7 @@ export function PermissionsStep({
           </div>
         );
       })}
-      <p className="text-[11.5px] text-muted-foreground">Bạn có thể đổi quyền bất kỳ lúc nào trong Hồ sơ → Riêng tư. Vị trí chỉ chia sẻ khi bạn bật “Tập tại đây”.</p>
+      <p className="text-caption text-muted-foreground">Bạn có thể đổi quyền bất kỳ lúc nào trong Hồ sơ → Riêng tư. Vị trí chỉ chia sẻ khi bạn bật “Tập tại đây”.</p>
     </div>
   );
 }
@@ -173,20 +173,20 @@ export function ConnectAppsStep({ connected, onChange }: { connected: string[]; 
             <div key={a.id} className="flex items-center gap-3 rounded-2xl bg-card border border-border/80 p-3 shadow-2xs">
               <span
                 style={{ backgroundColor: a.color }}
-                className="h-11 w-11 shrink-0 rounded-xl flex items-center justify-center text-[18px] font-black text-white shadow-2xs"
+                className="h-11 w-11 shrink-0 rounded-xl flex items-center justify-center text-lg font-black text-white shadow-2xs"
               >
                 {a.short}
               </span>
               <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-bold text-foreground">{a.name}</p>
-                <p className="text-[11.5px] text-muted-foreground truncate">{on ? `✓ ${a.syncPreview}` : a.platform}</p>
+                <p className="text-sm font-bold text-foreground">{a.name}</p>
+                <p className="text-caption text-muted-foreground truncate">{on ? `✓ ${a.syncPreview}` : a.platform}</p>
               </div>
               {on ? (
-                <button onClick={() => onChange(connected.filter((x) => x !== a.id))} className="shrink-0 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-3 py-1.5 text-[12px] font-bold">
+                <button onClick={() => onChange(connected.filter((x) => x !== a.id))} className="shrink-0 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-3 py-1.5 text-xs font-bold">
                   Đã kết nối
                 </button>
               ) : (
-                <button onClick={() => setOpen(a)} className="shrink-0 rounded-lg bg-brand hover:bg-brand-600 text-white px-3.5 py-1.5 text-[12px] font-bold transition-colors shadow-2xs">
+                <button onClick={() => setOpen(a)} className="shrink-0 rounded-lg bg-brand hover:bg-brand-600 text-white px-3.5 py-1.5 text-xs font-bold transition-colors shadow-2xs">
                   Kết nối
                 </button>
               )}
@@ -205,17 +205,17 @@ export function ConnectAppsStep({ connected, onChange }: { connected: string[]; 
               <span className="text-[20px] text-muted-foreground">⇄</span>
               <img src="/logo-icon-128.png" alt="SYNESIS" className="h-12 w-12 rounded-xl" />
             </div>
-            <p className="text-[13.5px] text-foreground">SYNESIS sẽ được phép <b>chỉ đọc</b>:</p>
+            <p className="text-label text-foreground">SYNESIS sẽ được phép <b>chỉ đọc</b>:</p>
             <ul className="space-y-1.5">
               {open.scopes.map((s) => (
-                <li key={s} className="flex items-center gap-2 text-[13px] text-foreground">
+                <li key={s} className="flex items-center gap-2 text-label text-foreground">
                   <Check className="h-4 w-4 text-foreground" /> {s}
                 </li>
               ))}
             </ul>
-            {open.note && <p className="rounded-xl bg-brand-50 dark:bg-brand-950/50 border border-brand-200 dark:border-brand-800 p-2.5 text-[12px] text-foreground">{open.note}</p>}
-            <p className="text-[11.5px] text-muted-foreground">Không đăng bài, không sửa dữ liệu của bạn. Có thể ngắt kết nối bất kỳ lúc nào. (Bản thử nghiệm mô phỏng việc uỷ quyền.)</p>
-            <button onClick={() => void link()} disabled={linking} className="w-full h-12 rounded-lg bg-brand hover:bg-brand-700 text-white font-bold text-[14px] flex items-center justify-center gap-2">
+            {open.note && <p className="rounded-xl bg-brand-50 dark:bg-brand-950/50 border border-brand-200 dark:border-brand-800 p-2.5 text-xs text-foreground">{open.note}</p>}
+            <p className="text-caption text-muted-foreground">Không đăng bài, không sửa dữ liệu của bạn. Có thể ngắt kết nối bất kỳ lúc nào. (Bản thử nghiệm mô phỏng việc uỷ quyền.)</p>
+            <button onClick={() => void link()} disabled={linking} className="w-full h-12 rounded-lg bg-brand hover:bg-brand-700 text-white font-bold text-sm flex items-center justify-center gap-2">
               {linking && <Loader2 className="h-4 w-4 animate-spin" />} Cho phép & kết nối
             </button>
           </>

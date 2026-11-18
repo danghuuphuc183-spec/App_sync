@@ -98,7 +98,7 @@ export function CoachBookingModal({
                 <h3 className="text-sm font-black text-foreground">Đặt Lịch Coaching</h3>
                 <ShieldCheck className="h-3.5 w-3.5 text-foreground" />
               </div>
-              <p className="text-[11px] text-muted-foreground">HLV {coach.name} • {coach.sportCategory}</p>
+              <p className="text-caption text-muted-foreground">HLV {coach.name} • {coach.sportCategory}</p>
             </div>
           </div>
           <button
@@ -113,7 +113,7 @@ export function CoachBookingModal({
         <form onSubmit={handleConfirm} className="p-4 overflow-y-auto space-y-3.5 flex-1 text-xs">
           {/* Mode Selector (1:1 vs Nhóm) */}
           <div className="space-y-1.5">
-            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+            <label className="text-micro font-bold text-muted-foreground uppercase tracking-wider">
               Chọn hình thức coaching:
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -132,7 +132,7 @@ export function CoachBookingModal({
                     <User className="h-3.5 w-3.5" />
                     Kèm 1:1 Riêng
                   </span>
-                  <Badge className={mode === "1:1" ? "bg-white/20 text-white text-[9px]" : "bg-muted text-foreground text-[9px]"}>
+                  <Badge className={mode === "1:1" ? "bg-white/20 text-white text-micro" : "bg-muted text-foreground text-micro"}>
                     Tối ưu tiến độ
                   </Badge>
                 </div>
@@ -156,7 +156,7 @@ export function CoachBookingModal({
                     <Users className="h-3.5 w-3.5" />
                     Nhóm Squad (2-4 bạn)
                   </span>
-                  <Badge className="bg-emerald-500 text-white text-[9px] font-bold">
+                  <Badge className="bg-emerald-500 text-white text-micro font-bold">
                     -{coach.pricing.groupCoaching.savingsPercent}%
                   </Badge>
                 </div>
@@ -170,7 +170,7 @@ export function CoachBookingModal({
           {/* If Squad: invite friend names */}
           {mode === "group" && (
             <div className="p-2.5 rounded-2xl bg-brand-100/30 dark:bg-brand/30 border border-brand-300/40 space-y-1.5 animate-in fade-in">
-              <label className="text-[10px] font-bold text-foreground flex items-center gap-1">
+              <label className="text-micro font-bold text-foreground flex items-center gap-1">
                 <Users className="h-3 w-3 text-foreground" />
                 Thành viên trong Micro-Squad cùng tham gia:
               </label>
@@ -181,7 +181,7 @@ export function CoachBookingModal({
                 placeholder="Nhập tên bạn tập hoặc mã Squad (VD: Minh Anh, Tuấn Khang)..."
                 className="w-full h-8 rounded-xl border border-border bg-background px-2.5 text-xs text-foreground focus:outline-hidden"
               />
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-micro text-muted-foreground">
                 Mỗi bạn trong nhóm sẽ tự động nhận link xác nhận và chia tiền sòng phẳng trên app.
               </p>
             </div>
@@ -189,7 +189,7 @@ export function CoachBookingModal({
 
           {/* Date Picker */}
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+            <label className="text-micro font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
               <Calendar className="h-3 w-3 text-foreground" />
               Chọn ngày tập:
             </label>
@@ -200,7 +200,7 @@ export function CoachBookingModal({
                   type="button"
                   onClick={() => setSelectedDate(d)}
                   className={cn(
-                    "h-8 rounded-xl text-[11px] font-bold border transition-all truncate px-1",
+                    "h-8 rounded-xl text-caption font-bold border transition-all truncate px-1",
                     selectedDate === d
                       ? "bg-brand text-white border-brand"
                       : "bg-card border-border text-foreground hover:bg-muted"
@@ -214,7 +214,7 @@ export function CoachBookingModal({
 
           {/* Time slot */}
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+            <label className="text-micro font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
               <Clock className="h-3 w-3 text-foreground" />
               Khung giờ tập luyện:
             </label>
@@ -232,7 +232,7 @@ export function CoachBookingModal({
 
           {/* Location */}
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+            <label className="text-micro font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
               <MapPin className="h-3 w-3 text-foreground" />
               Địa điểm tập:
             </label>
@@ -253,7 +253,7 @@ export function CoachBookingModal({
 
           {/* Trainee notes / injuries */}
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+            <label className="text-micro font-bold text-muted-foreground uppercase tracking-wider">
               Ghi chú thể trạng / chấn thương (nếu có):
             </label>
             <textarea
@@ -268,7 +268,7 @@ export function CoachBookingModal({
           {/* Pricing summary */}
           <div className="p-3 rounded-2xl bg-muted/60 border border-border flex items-center justify-between">
             <div>
-              <div className="text-[10px] text-muted-foreground font-semibold">
+              <div className="text-micro text-muted-foreground font-semibold">
                 Chi phí cho buổi tập ({mode === "1:1" ? "Kèm riêng 1:1" : "Mỗi bạn trong Squad"}):
               </div>
               <div className="text-base font-black text-brand dark:text-brand-sky">
@@ -276,10 +276,10 @@ export function CoachBookingModal({
               </div>
             </div>
             <div className="text-right">
-              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 block">
+              <span className="text-micro font-bold text-emerald-600 dark:text-emerald-400 block">
                 +0,5 UT khi đúng hẹn
               </span>
-              <span className="text-[9px] text-muted-foreground">Có mặt đúng giờ</span>
+              <span className="text-micro text-muted-foreground">Có mặt đúng giờ</span>
             </div>
           </div>
 

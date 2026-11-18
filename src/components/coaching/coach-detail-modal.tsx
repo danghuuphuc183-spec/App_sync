@@ -69,10 +69,10 @@ export function CoachDetailModal({
             </div>
 
             <div className="flex items-center gap-2 pb-1">
-              <Badge className="bg-brand text-white text-[11px] font-bold px-2.5 py-1">
+              <Badge className="bg-brand text-white text-caption font-bold px-2.5 py-1">
                 {formatUt(coach.trustScore)} UT
               </Badge>
-              <Badge variant="outline" className="text-[11px] font-semibold border-border">
+              <Badge variant="outline" className="text-caption font-semibold border-border">
                 {coach.tier.toUpperCase()} TIER
               </Badge>
             </div>
@@ -101,7 +101,7 @@ export function CoachDetailModal({
               key={t.id}
               onClick={() => setActiveTab(t.id as "overview" | "history" | "reviews" | "pricing")}
               className={cn(
-                "py-1.5 rounded-xl text-[11px] font-bold text-center transition-all",
+                "py-1.5 rounded-xl text-caption font-bold text-center transition-all",
                 activeTab === t.id
                   ? "bg-brand text-white shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
@@ -119,27 +119,27 @@ export function CoachDetailModal({
             <div className="space-y-3">
               {/* Chỉ số thể hình */}
               <div className="space-y-1.5">
-                <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <div className="text-caption font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <TrendingUp className="h-3.5 w-3.5 text-foreground" />
                   <span>Số đo & Thể hình thực tế của HLV</span>
                 </div>
                 <div className="grid grid-cols-4 gap-2 p-3 rounded-2xl bg-muted/50 text-center">
                   <div>
-                    <div className="text-[10px] text-muted-foreground font-semibold">Chiều cao</div>
+                    <div className="text-micro text-muted-foreground font-semibold">Chiều cao</div>
                     <div className="text-sm font-black text-foreground">{coach.bodyStats.heightCm} cm</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-muted-foreground font-semibold">Cân nặng</div>
+                    <div className="text-micro text-muted-foreground font-semibold">Cân nặng</div>
                     <div className="text-sm font-black text-foreground">{coach.bodyStats.weightKg} kg</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-muted-foreground font-semibold">Tỷ lệ mỡ</div>
+                    <div className="text-micro text-muted-foreground font-semibold">Tỷ lệ mỡ</div>
                     <div className="text-sm font-black text-brand dark:text-brand-sky">
                       {coach.bodyStats.bodyFatPercent ? `${coach.bodyStats.bodyFatPercent}%` : "Chuẩn"}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-muted-foreground font-semibold">Kinh nghiệm</div>
+                    <div className="text-micro text-muted-foreground font-semibold">Kinh nghiệm</div>
                     <div className="text-sm font-black text-foreground">{coach.bodyStats.experienceYears} năm</div>
                   </div>
                 </div>
@@ -147,13 +147,13 @@ export function CoachDetailModal({
 
               {/* Tiểu sử & Triết lý */}
               <div className="space-y-1">
-                <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                <div className="text-caption font-bold text-muted-foreground uppercase tracking-wider">
                   Triết lý & Tiểu sử nghề nghiệp
                 </div>
                 <div className="p-3 rounded-2xl bg-card border border-border text-xs leading-relaxed space-y-1.5">
                   <p className="text-foreground">{coach.bio}</p>
                   {coach.quote && (
-                    <p className="italic text-muted-foreground border-l-2 border-brand pl-2 text-[11px]">
+                    <p className="italic text-muted-foreground border-l-2 border-brand pl-2 text-caption">
                       &ldquo;{coach.quote}&rdquo;
                     </p>
                   )}
@@ -162,7 +162,7 @@ export function CoachDetailModal({
 
               {/* Sở thích & Phong cách */}
               <div className="space-y-1.5">
-                <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <div className="text-caption font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <Heart className="h-3.5 w-3.5 text-foreground" />
                   <span>Sở thích cá nhân & Gu tập luyện</span>
                 </div>
@@ -180,7 +180,7 @@ export function CoachDetailModal({
 
               {/* Địa điểm & Phòng tập hỗ trợ */}
               <div className="space-y-1.5">
-                <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <div className="text-caption font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <MapPin className="h-3.5 w-3.5 text-foreground" />
                   <span>Phòng tập đối tác & Khu vực hoạt động</span>
                 </div>
@@ -188,7 +188,7 @@ export function CoachDetailModal({
                   <div className="font-semibold text-foreground">
                     Khu vực: {coach.locations.join(" • ")}
                   </div>
-                  <div className="text-[11px] text-muted-foreground">
+                  <div className="text-caption text-muted-foreground">
                     Hỗ trợ: {coach.supportedGyms.join(", ")}
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export function CoachDetailModal({
             <div className="space-y-3.5">
               {/* Bằng cấp & Chứng chỉ quốc tế */}
               <div className="space-y-1.5">
-                <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <div className="text-caption font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <Award className="h-3.5 w-3.5 text-foreground" />
                   <span>Chứng chỉ nghề nghiệp & Bằng cấp</span>
                 </div>
@@ -220,7 +220,7 @@ export function CoachDetailModal({
 
               {/* Timeline lịch sử sự nghiệp */}
               <div className="space-y-2">
-                <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <div className="text-caption font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5 text-foreground" />
                   <span>Quá trình công tác & Thành tích</span>
                 </div>
@@ -228,12 +228,12 @@ export function CoachDetailModal({
                   {coach.history.map((h, i) => (
                     <div key={i} className="space-y-0.5 relative">
                       <div className="absolute -left-[19px] top-1.5 w-2.5 h-2.5 rounded-full bg-brand" />
-                      <div className="text-[10px] font-bold text-brand dark:text-brand-sky">
+                      <div className="text-micro font-bold text-brand dark:text-brand-sky">
                         {h.period}
                       </div>
                       <div className="text-xs font-black text-foreground">{h.role}</div>
-                      <div className="text-[11px] text-muted-foreground font-semibold">{h.organization}</div>
-                      <div className="text-[11px] text-foreground/80 leading-relaxed">{h.highlight}</div>
+                      <div className="text-caption text-muted-foreground font-semibold">{h.organization}</div>
+                      <div className="text-caption text-foreground/80 leading-relaxed">{h.highlight}</div>
                     </div>
                   ))}
                 </div>
@@ -241,14 +241,14 @@ export function CoachDetailModal({
 
               {/* Chuyên môn kỹ thuật sâu */}
               <div className="space-y-1.5">
-                <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                <div className="text-caption font-bold text-muted-foreground uppercase tracking-wider">
                   Chuyên môn kỹ thuật sâu
                 </div>
                 <div className="grid grid-cols-2 gap-1.5">
                   {coach.specialties.map((spec, i) => (
                     <div
                       key={i}
-                      className="p-2 rounded-xl bg-muted/60 text-[11px] font-semibold text-foreground flex items-center gap-1.5"
+                      className="p-2 rounded-xl bg-muted/60 text-caption font-semibold text-foreground flex items-center gap-1.5"
                     >
                       <Dumbbell className="h-3 w-3 text-foreground shrink-0" />
                       <span className="truncate">{spec}</span>
@@ -273,11 +273,11 @@ export function CoachDetailModal({
                       ))}
                     </div>
                   </div>
-                  <div className="text-[11px] text-muted-foreground font-medium">
+                  <div className="text-caption text-muted-foreground font-medium">
                     Dựa trên {coach.reviewCount} lượt đánh giá thực tế có bảo chứng
                   </div>
                 </div>
-                <Badge className="bg-emerald-600/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
+                <Badge className="bg-emerald-600/15 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 border border-emerald-500/30 text-micro font-bold">
                   100% Học viên thật
                 </Badge>
               </div>
@@ -303,7 +303,7 @@ export function CoachDetailModal({
                               <CheckCircle2 className="h-3 w-3 text-foreground" />
                             )}
                           </div>
-                          <div className="text-[10px] text-muted-foreground">
+                          <div className="text-micro text-muted-foreground">
                             {rev.dateVi} • {rev.trainingType === "1:1" ? "Gói 1:1 cá nhân" : "Gói Nhóm Squad"}
                           </div>
                         </div>
@@ -321,7 +321,7 @@ export function CoachDetailModal({
                     </p>
 
                     {rev.achievementBadge && (
-                      <div className="flex items-center gap-1 text-[10px] font-bold text-brand dark:text-brand-sky bg-brand-100/30 dark:bg-brand/30 px-2.5 py-1 rounded-lg w-fit">
+                      <div className="flex items-center gap-1 text-micro font-bold text-brand dark:text-brand-sky bg-brand-100/30 dark:bg-brand/30 px-2.5 py-1 rounded-lg w-fit">
                         <Trophy className="h-3 w-3" /><span>Kết quả: {rev.achievementBadge}</span>
                       </div>
                     )}
@@ -341,7 +341,7 @@ export function CoachDetailModal({
                     <User className="h-4 w-4 text-foreground" />
                     <span>GÓI COACHING 1:1 CÁ NHÂN</span>
                   </div>
-                  <Badge className="bg-brand text-white text-[10px] font-bold">Kèm Riêng 100%</Badge>
+                  <Badge className="bg-brand text-white text-micro font-bold">Kèm Riêng 100%</Badge>
                 </div>
 
                 <div className="flex items-baseline gap-1">
@@ -357,7 +357,7 @@ export function CoachDetailModal({
                   </div>
                 )}
 
-                <p className="text-[11px] text-muted-foreground">{coach.pricing.single1on1.notes}</p>
+                <p className="text-caption text-muted-foreground">{coach.pricing.single1on1.notes}</p>
 
                 <Button
                   onClick={() => onBookSession(coach, "1:1")}
@@ -375,7 +375,7 @@ export function CoachDetailModal({
                     <Users className="h-4 w-4 text-foreground" />
                     <span>GÓI NHÓM SQUAD ({coach.pricing.groupCoaching.minMembers}-{coach.pricing.groupCoaching.maxMembers} NGƯỜI)</span>
                   </div>
-                  <Badge className="bg-emerald-600 text-white text-[10px] font-bold">
+                  <Badge className="bg-emerald-600 text-white text-micro font-bold">
                     Tiết Kiệm -{coach.pricing.groupCoaching.savingsPercent}%
                   </Badge>
                 </div>
@@ -389,7 +389,7 @@ export function CoachDetailModal({
 
                 <div className="space-y-1 text-xs">
                   {coach.pricing.groupCoaching.groupBenefits.map((b, i) => (
-                    <div key={i} className="flex items-center gap-1.5 text-[11px] text-foreground font-medium">
+                    <div key={i} className="flex items-center gap-1.5 text-caption text-foreground font-medium">
                       <CheckCircle2 className="h-3.5 w-3.5 text-foreground shrink-0" />
                       <span>{b}</span>
                     </div>
@@ -411,11 +411,11 @@ export function CoachDetailModal({
         {/* Modal Footer Quick Action */}
         <div className="p-3 border-t border-border bg-card flex items-center justify-between gap-2 shrink-0">
           <div className="text-xs">
-            <span className="text-muted-foreground text-[10px] block">Từ mức phí:</span>
+            <span className="text-muted-foreground text-micro block">Từ mức phí:</span>
             <span className="font-black text-foreground">
               {formatVnd(coach.pricing.groupCoaching.pricePerPersonPerSession)}
             </span>
-            <span className="text-[10px] text-muted-foreground"> (tập nhóm)</span>
+            <span className="text-micro text-muted-foreground"> (tập nhóm)</span>
           </div>
           <div className="flex gap-2">
             <Button

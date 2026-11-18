@@ -178,7 +178,7 @@ export function KeoForm<T extends PersonalForm>({
       className="space-y-5"
     >
       {usingDefault && (
-        <div className="flex items-center gap-2 rounded-xl bg-brand-50 dark:bg-brand-950/50 border border-brand-200 dark:border-brand-800 px-3 py-2 text-[12.5px]">
+        <div className="flex items-center gap-2 rounded-xl bg-brand-50 dark:bg-brand-950/50 border border-brand-200 dark:border-brand-800 px-3 py-2 text-xs">
           <Star className="h-4 w-4 text-foreground fill-foreground shrink-0" />
           <span className="flex-1 text-foreground">Đang dùng cài đặt mặc định của bạn</span>
           <button type="button" onClick={() => onClearDefault?.()} className="font-bold text-brand dark:text-brand-sky">
@@ -199,7 +199,7 @@ export function KeoForm<T extends PersonalForm>({
               className={cn(
                 "flex flex-col items-center gap-1.5 rounded-2xl border py-3 text-xs font-bold transition-all duration-150 active:scale-95 shadow-2xs select-none",
                 value.sport === s
-                  ? "bg-gradient-to-br from-[#0567E1] via-[#0A7AF6] to-[#208DFF] text-white border-transparent shadow-md shadow-blue-500/25 ring-2 ring-blue-400/30 scale-[1.02]"
+                  ? "bg-brand-gradient text-white border-transparent shadow-md shadow-blue-500/25 ring-2 ring-blue-400/30 scale-[1.02]"
                   : "border-border text-foreground hover:border-brand-300 hover:bg-brand-50/50 dark:hover:bg-brand-950/40"
               )}
             >
@@ -216,7 +216,7 @@ export function KeoForm<T extends PersonalForm>({
           <div className="space-y-3 rounded-2xl border border-border/80 bg-card/40 p-3.5 shadow-2xs">
             {fieldsForSport(value.sport).map((f) => (
               <div key={f.id} role="group" aria-label={f.label}>
-                <p className="mb-1.5 text-[12.5px] font-semibold text-foreground">
+                <p className="mb-1.5 text-xs font-semibold text-foreground">
                   {f.label}
                   {f.multi && <span className="font-normal text-muted-foreground"> · chọn được nhiều</span>}
                 </p>
@@ -232,7 +232,7 @@ export function KeoForm<T extends PersonalForm>({
                         className={cn(
                           "w-full rounded-xl border py-2.5 px-1 text-xs font-semibold text-center transition-all duration-150 flex items-center justify-center active:scale-[0.95] select-none shadow-2xs",
                           on
-                            ? "bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white border-transparent font-bold shadow-sm shadow-blue-500/30 ring-1 ring-blue-300/30"
+                            ? "bg-brand-gradient text-white border-transparent font-bold shadow-sm shadow-blue-500/30 ring-1 ring-blue-300/30"
                             : "border-border/80 bg-card/60 text-foreground hover:bg-brand-50/40 hover:border-brand-200"
                         )}
                       >
@@ -274,7 +274,7 @@ export function KeoForm<T extends PersonalForm>({
                 className={cn(
                   "flex flex-col items-center text-center rounded-2xl border p-3 transition-all duration-200 active:scale-[0.95] shadow-2xs relative select-none",
                   active
-                    ? "bg-gradient-to-br from-[#0567E1] via-[#0872EB] to-[#1A86FF] text-white border-transparent shadow-md shadow-blue-500/30 ring-2 ring-blue-400/40 scale-[1.02]"
+                    ? "bg-brand-gradient text-white border-transparent shadow-md shadow-blue-500/30 ring-2 ring-blue-400/40 scale-[1.02]"
                     : "border-border/80 bg-card text-foreground hover:border-brand-300 hover:bg-brand-50/40 dark:hover:bg-brand-950/20"
                 )}
               >
@@ -286,8 +286,8 @@ export function KeoForm<T extends PersonalForm>({
                 >
                   <Icon className="h-4.5 w-4.5 stroke-[2]" />
                 </div>
-                <span className="text-[13px] font-bold leading-tight">{vm.label}</span>
-                <span className={cn("text-[10.5px] mt-0.5 line-clamp-1", active ? "text-white/90" : "text-muted-foreground")}>
+                <span className="text-label font-bold leading-tight">{vm.label}</span>
+                <span className={cn("text-caption mt-0.5 line-clamp-1", active ? "text-white/90" : "text-muted-foreground")}>
                   {vm.tagline}
                 </span>
               </button>
@@ -296,7 +296,7 @@ export function KeoForm<T extends PersonalForm>({
         </div>
 
         {/* Mô tả ngắn gọn về VIBE đã chọn */}
-        <div className="rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/40 px-3.5 py-2 text-[12px] leading-snug shadow-2xs">
+        <div className="rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/40 px-3.5 py-2 text-xs leading-snug shadow-2xs">
           <b className="text-brand dark:text-brand-sky font-bold">{VIBE_INFO[value.vibe ?? "friendly"].title}: </b>
           <span className="text-foreground/90">{VIBE_INFO[value.vibe ?? "friendly"].desc}</span>
         </div>
@@ -306,7 +306,7 @@ export function KeoForm<T extends PersonalForm>({
           <button
             type="button"
             onClick={() => setShowVibeDetails((v) => !v)}
-            className="w-full flex items-center justify-between text-left text-[12.5px] font-bold text-foreground active:scale-[0.99] transition-transform"
+            className="w-full flex items-center justify-between text-left text-xs font-bold text-foreground active:scale-[0.99] transition-transform"
           >
             <span className="flex items-center gap-1.5">
               <SlidersHorizontal className="h-4 w-4 text-brand stroke-[2]" />
@@ -323,7 +323,7 @@ export function KeoForm<T extends PersonalForm>({
             <div className="space-y-3 pt-1 border-t border-border/60">
               {/* Mức độ trò chuyện */}
               <div>
-                <p className="mb-1.5 text-[11.5px] font-semibold text-foreground">Mức độ trò chuyện (Talk level)</p>
+                <p className="mb-1.5 text-caption font-semibold text-foreground">Mức độ trò chuyện (Talk level)</p>
                 <div className="grid grid-cols-3 gap-1.5">
                   {[
                     { id: "quiet", label: "Ít nói / Yên tĩnh" },
@@ -346,7 +346,7 @@ export function KeoForm<T extends PersonalForm>({
                         className={cn(
                           "w-full rounded-xl border py-2 px-1 text-xs font-semibold text-center transition-all duration-150 flex items-center justify-center active:scale-[0.95] shadow-2xs select-none",
                           on
-                            ? "bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white border-transparent font-bold shadow-xs ring-1 ring-blue-300/30"
+                            ? "bg-brand-gradient text-white border-transparent font-bold shadow-xs ring-1 ring-blue-300/30"
                             : "border-border/80 bg-card text-foreground hover:bg-muted"
                         )}
                       >
@@ -359,7 +359,7 @@ export function KeoForm<T extends PersonalForm>({
 
               {/* Sau buổi tập */}
               <div>
-                <p className="mb-1.5 text-[11.5px] font-semibold text-foreground">Sau buổi tập (Post-workout)</p>
+                <p className="mb-1.5 text-caption font-semibold text-foreground">Sau buổi tập (Post-workout)</p>
                 <div className="grid grid-cols-3 gap-1.5">
                   {[
                     { id: "coffee_social", label: "Giao lưu / Cafe" },
@@ -382,7 +382,7 @@ export function KeoForm<T extends PersonalForm>({
                         className={cn(
                           "w-full rounded-xl border py-2 px-1 text-xs font-semibold text-center transition-all duration-150 flex items-center justify-center active:scale-[0.95] shadow-2xs select-none",
                           on
-                            ? "bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white border-transparent font-bold shadow-xs ring-1 ring-blue-300/30"
+                            ? "bg-brand-gradient text-white border-transparent font-bold shadow-xs ring-1 ring-blue-300/30"
                             : "border-border/80 bg-card text-foreground hover:bg-muted"
                         )}
                       >
@@ -395,7 +395,7 @@ export function KeoForm<T extends PersonalForm>({
 
               {/* Âm nhạc */}
               <div>
-                <p className="mb-1.5 text-[11.5px] font-semibold text-foreground">Âm nhạc khi tập</p>
+                <p className="mb-1.5 text-caption font-semibold text-foreground">Âm nhạc khi tập</p>
                 <div className="grid grid-cols-3 gap-1.5">
                   {[
                     { id: "own_music", label: "Tai nghe riêng" },
@@ -418,7 +418,7 @@ export function KeoForm<T extends PersonalForm>({
                         className={cn(
                           "w-full rounded-xl border py-2 px-1 text-xs font-semibold text-center transition-all duration-150 flex items-center justify-center active:scale-[0.95] shadow-2xs select-none",
                           on
-                            ? "bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white border-transparent font-bold shadow-xs ring-1 ring-blue-300/30"
+                            ? "bg-brand-gradient text-white border-transparent font-bold shadow-xs ring-1 ring-blue-300/30"
                             : "border-border/80 bg-card text-foreground hover:bg-muted"
                         )}
                       >
@@ -447,8 +447,8 @@ export function KeoForm<T extends PersonalForm>({
                     className="mt-0.5 h-4 w-4 rounded accent-brand"
                   />
                   <div className="text-left">
-                    <span className="block text-[12px] font-bold text-foreground">Bắt buộc khớp VIBE (Must-have)</span>
-                    <span className="block text-[11px] text-muted-foreground">Bộ lọc cứng: chỉ gợi ý bạn tập có cùng phong cách VIBE đã chọn</span>
+                    <span className="block text-xs font-bold text-foreground">Bắt buộc khớp VIBE (Must-have)</span>
+                    <span className="block text-caption text-muted-foreground">Bộ lọc cứng: chỉ gợi ý bạn tập có cùng phong cách VIBE đã chọn</span>
                   </div>
                 </label>
 
@@ -460,8 +460,8 @@ export function KeoForm<T extends PersonalForm>({
                     className="mt-0.5 h-4 w-4 rounded accent-brand"
                   />
                   <div className="text-left">
-                    <span className="block text-[12px] font-bold text-foreground">Ưu tiên bạn cùng giới tính</span>
-                    <span className="block text-[11px] text-muted-foreground">Ranh giới an toàn: chỉ kết nối với người tập cùng giới tính</span>
+                    <span className="block text-xs font-bold text-foreground">Ưu tiên bạn cùng giới tính</span>
+                    <span className="block text-caption text-muted-foreground">Ranh giới an toàn: chỉ kết nối với người tập cùng giới tính</span>
                   </div>
                 </label>
               </div>
@@ -481,7 +481,7 @@ export function KeoForm<T extends PersonalForm>({
             onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
             aria-label="Tìm địa điểm"
             placeholder={value.sport === "running" || value.sport === "cycling" ? "Tìm cung đường, khu vực (vd: Thảo Điền, Quận 7)" : "Tìm sân, phòng tập, khu vực (vd: Quận 7)"}
-            className="w-full rounded-xl border border-border bg-background py-2.5 pl-9 pr-9 text-[13.5px] outline-none focus:ring-2 focus:ring-brand/30 [&::-webkit-search-cancel-button]:hidden"
+            className="w-full rounded-xl border border-border bg-background py-2.5 pl-9 pr-9 text-label outline-none focus:ring-2 focus:ring-brand/30 [&::-webkit-search-cancel-button]:hidden"
           />
           {placeQuery && (
             <button
@@ -497,11 +497,11 @@ export function KeoForm<T extends PersonalForm>({
 
         {placeQuery.trim() && (
           <div className="space-y-1.5" aria-label="Kết quả tìm kiếm">
-            <p className="text-[12px] font-bold text-muted-foreground">
+            <p className="text-xs font-bold text-muted-foreground">
               {hits.length ? `Kết quả cho “${placeQuery.trim()}” · ${hits.length}` : `Không tìm thấy “${placeQuery.trim()}”`}
             </p>
             {hits.length === 0 ? (
-              <p className="rounded-xl bg-muted px-3 py-2.5 text-[12.5px] text-muted-foreground">
+              <p className="rounded-xl bg-muted px-3 py-2.5 text-xs text-muted-foreground">
                 Thử gõ tên khác, tên quận hoặc chọn một địa điểm gợi ý bên dưới.
               </p>
             ) : (
@@ -515,9 +515,9 @@ export function KeoForm<T extends PersonalForm>({
         )}
 
         <div className="space-y-1.5" aria-label="Địa điểm gợi ý">
-          <p className="flex items-baseline justify-between text-[12px] font-bold text-muted-foreground">
+          <p className="flex items-baseline justify-between text-xs font-bold text-muted-foreground">
             <span>Gợi ý gần bạn</span>
-            <span className="font-normal text-[11.5px]">Sắp xếp theo khoảng cách</span>
+            <span className="font-normal text-caption">Sắp xếp theo khoảng cách</span>
           </p>
           <ul className="space-y-2">
             {(showAllPlaces ? places : places.slice(0, 3)).map(({ p, d }) => (
@@ -525,7 +525,7 @@ export function KeoForm<T extends PersonalForm>({
             ))}
           </ul>
           {places.length > 3 && (
-            <button type="button" onClick={() => setShowAllPlaces((v) => !v)} className="text-[12.5px] font-bold text-brand dark:text-brand-sky hover:underline py-1">
+            <button type="button" onClick={() => setShowAllPlaces((v) => !v)} className="text-xs font-bold text-brand dark:text-brand-sky hover:underline py-1">
               {showAllPlaces ? "Thu gọn" : `Xem thêm ${places.length - 3} địa điểm`}
             </button>
           )}
@@ -565,7 +565,7 @@ export function KeoForm<T extends PersonalForm>({
               onChange={(present) => set({ present } as unknown as Partial<T>)}
             />
           </div>
-          <p className="text-[12px] text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Nhóm đang thiếu <b className="text-foreground">{Math.max(0, group.capacity - group.present)} người</b>
           </p>
         </Section>
@@ -581,7 +581,7 @@ export function KeoForm<T extends PersonalForm>({
           placeholder={
             kind === "group" ? "VD: Chia tiền sân 60k/người" : kind === "solo" ? "VD: Mục tiêu tuần này, bài tập phụ" : "VD: Sau buổi tập đi cà phê"
           }
-          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[13.5px] outline-none focus:ring-2 focus:ring-brand/30"
+          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-label outline-none focus:ring-2 focus:ring-brand/30"
         />
       </Section>
 
@@ -593,7 +593,7 @@ export function KeoForm<T extends PersonalForm>({
             onChange={(e) => onSaveAsDefaultChange(e.target.checked)}
             className="h-5 w-5 accent-brand"
           />
-          <span className="text-[13.5px] text-foreground">
+          <span className="text-label text-foreground">
             <b>Đặt làm mặc định</b> cho lần lên kèo sau
           </span>
         </label>
@@ -603,12 +603,12 @@ export function KeoForm<T extends PersonalForm>({
         <button
           type="submit"
           disabled={!valid}
-          className="w-full rounded-2xl py-3.5 text-[15px] font-bold tracking-tight text-white transition-all duration-200 bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1E8DFF] hover:opacity-95 active:scale-[0.97] shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 border border-white/20 disabled:opacity-40 disabled:from-muted disabled:to-muted disabled:text-muted-foreground disabled:shadow-none disabled:border-transparent disabled:cursor-not-allowed"
+          className="w-full rounded-2xl py-3.5 text-body font-bold tracking-tight text-white transition-all duration-200 bg-brand-gradient hover:opacity-95 active:scale-[0.97] shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 border border-white/20 disabled:opacity-40 disabled:from-muted disabled:to-muted disabled:text-muted-foreground disabled:shadow-none disabled:border-transparent disabled:cursor-not-allowed"
         >
           {SUBMIT_LABEL[kind]}
         </button>
         {!valid && missing.length > 0 && (
-          <p className="mt-1.5 text-center text-[12px] font-medium text-muted-foreground">Còn thiếu: {missing.join(", ")}</p>
+          <p className="mt-1.5 text-center text-xs font-medium text-muted-foreground">Còn thiếu: {missing.join(", ")}</p>
         )}
       </div>
     </form>
@@ -633,17 +633,17 @@ function PlaceRow({ place: p, km, selected, onSelect }: { place: KeoPlace; km: n
           className={cn(
             "w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors",
             selected
-              ? "bg-gradient-to-br from-[#0567E1] to-[#1C8DFF] text-white shadow-xs"
+              ? "bg-brand-gradient text-white shadow-xs"
               : "bg-muted text-muted-foreground"
           )}
         >
           <MapPin className="h-4 w-4" />
         </span>
         <span className="flex-1 min-w-0">
-          <span className="block text-[13px] font-bold text-foreground truncate">{p.name}</span>
-          <span className="block text-[11px] text-muted-foreground truncate">{p.area}</span>
+          <span className="block text-label font-bold text-foreground truncate">{p.name}</span>
+          <span className="block text-caption text-muted-foreground truncate">{p.area}</span>
         </span>
-        <span className="rounded-full bg-muted/80 px-2 py-0.5 text-[11px] font-bold text-muted-foreground shrink-0">
+        <span className="rounded-full bg-muted/80 px-2 py-0.5 text-caption font-bold text-muted-foreground shrink-0">
           {km.toFixed(1)} km
         </span>
         {selected && (
@@ -660,8 +660,8 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
   return (
     <fieldset className="space-y-2">
       <legend className="flex w-full items-baseline justify-between mb-2">
-        <span className="text-[14px] font-bold text-foreground">{title}</span>
-        {hint && <span className="text-[11.5px] text-muted-foreground">{hint}</span>}
+        <span className="text-sm font-bold text-foreground">{title}</span>
+        {hint && <span className="text-caption text-muted-foreground">{hint}</span>}
       </legend>
       {children}
     </fieldset>
@@ -686,8 +686,8 @@ function Stepper({
 }) {
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-3 shadow-2xs">
-      <p className="text-[12.5px] font-bold text-foreground">{label}</p>
-      <p className="text-[11px] text-muted-foreground">{hint}</p>
+      <p className="text-xs font-bold text-foreground">{label}</p>
+      <p className="text-caption text-muted-foreground">{hint}</p>
       <div className="mt-2 flex items-center justify-between">
         <button
           type="button"
@@ -698,7 +698,7 @@ function Stepper({
         >
           <Minus className="h-4 w-4" />
         </button>
-        <span className="text-[18px] font-extrabold font-display text-foreground" aria-live="polite">
+        <span className="text-lg font-extrabold font-display text-foreground" aria-live="polite">
           {value}
         </span>
         <button
@@ -706,7 +706,7 @@ function Stepper({
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={value >= max}
           aria-label={`Tăng ${label}`}
-          className="h-8 w-8 rounded-full bg-gradient-to-r from-[#0567E1] to-[#1C8DFF] text-white flex items-center justify-center shadow-xs active:scale-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:from-muted disabled:to-muted disabled:text-muted-foreground"
+          className="h-8 w-8 rounded-full bg-brand-gradient text-white flex items-center justify-center shadow-xs active:scale-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:from-muted disabled:to-muted disabled:text-muted-foreground"
         >
           <Plus className="h-4 w-4" />
         </button>

@@ -250,7 +250,7 @@ function DongDoiContent() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-foreground">Đồng đội</h1>
+              <h1 className="text-title text-foreground">Đồng đội</h1>
               <p className="text-xs text-muted-foreground mt-0.5">Tập tiếp, giữ chuỗi, cùng tiến bộ</p>
             </div>
             <button
@@ -260,7 +260,7 @@ function DongDoiContent() {
               className="relative p-2 rounded-full hover:bg-muted text-foreground transition-all active:scale-95"
             >
               <Bell className="h-5 w-5 stroke-[1.8]" />
-              <span className="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center leading-none">
+              <span className="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-rose-500 text-white text-micro font-bold flex items-center justify-center leading-none">
                 2
               </span>
             </button>
@@ -282,7 +282,7 @@ function DongDoiContent() {
             >
               <Users className="h-4 w-4 text-brand" />
               <span>Nhóm tập</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-brand/10 text-brand font-semibold">
+              <span className="text-micro px-1.5 py-0.2 rounded-full bg-brand/10 text-brand font-semibold">
                 3–6
               </span>
             </button>
@@ -301,7 +301,7 @@ function DongDoiContent() {
             >
               <Shield className="h-4 w-4 text-blue-500" />
               <span>Câu Lạc Bộ</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold">
+              <span className="text-micro px-1.5 py-0.2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold">
                 CLB
               </span>
             </button>
@@ -313,7 +313,7 @@ function DongDoiContent() {
           {activeCategory === "nhom" && (
             <div className="space-y-3.5 animate-in fade-in duration-200">
               {/* Guidance Info Badge */}
-              <div className="px-3 py-2 rounded-xl bg-muted/50 border border-border/60 flex items-center justify-between text-[11px] text-muted-foreground">
+              <div className="px-3 py-2 rounded-xl bg-muted/50 border border-border/60 flex items-center justify-between text-caption text-muted-foreground">
                 <span className="truncate pr-2 flex items-center gap-1.5">
                   <Users className="h-3.5 w-3.5 shrink-0 stroke-[2] text-foreground" />
                   <span><strong>Nhóm:</strong> Tự tạo sau khi tập chung (3–6 người) · Giữ chuỗi tuần</span>
@@ -329,7 +329,7 @@ function DongDoiContent() {
 
               {/* Thẻ cá nhân trên cùng (Top status card - Màu loan Rank 3 Ruby Cùng mẫu với CLB) */}
               {(() => {
-                const userRankTheme = getRankTheme(3);
+                const userRankTheme = getRankTheme(CURRENT_USER_STATUS.rankLevel);
                 return (
                   <div
                     className={cn(
@@ -356,7 +356,7 @@ function DongDoiContent() {
                     </div>
 
                     <div className="space-y-1 relative z-10">
-                      <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                      <div className="flex items-center justify-between text-caption text-muted-foreground">
                         <span className="font-semibold text-foreground">
                           {CURRENT_USER_STATUS.currentExp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} /{" "}
                           {CURRENT_USER_STATUS.targetExp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} EXP
@@ -366,7 +366,7 @@ function DongDoiContent() {
                       <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                         <div
                           className={cn(
-                            "h-full rounded-full transition-all duration-500 bg-linear-to-r",
+                            "h-full rounded-full transition-all duration-500 bg-gradient-to-r",
                             userRankTheme.progressGradient
                           )}
                           style={{
@@ -379,13 +379,13 @@ function DongDoiContent() {
                 );
               })()}
 
-              {/* Việc cần làm hôm nay (Blue solid banner card) */}
-              <div className="p-4 rounded-2xl bg-brand text-white shadow-sm space-y-2.5 relative overflow-hidden">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-white/80">
+              {/* Việc cần làm hôm nay — bề mặt "bảng tỉ số" mực (cùng ngôn ngữ với thẻ Chuỗi ở Trang chủ) */}
+              <div className="surface-ink p-4 rounded-3xl space-y-2.5 relative overflow-hidden">
+                <p className="text-micro font-bold uppercase tracking-[0.14em] text-brand-mist/80">
                   VIỆC CẦN LÀM HÔM NAY
                 </p>
-                <h2 className="text-base font-bold leading-tight">{URGENT_ACTION.title}</h2>
-                <p className="text-xs text-white/90 leading-relaxed">
+                <h2 className="font-display text-lg font-extrabold leading-tight text-white">{URGENT_ACTION.title}</h2>
+                <p className="text-xs text-brand-mist/80 leading-relaxed">
                   {URGENT_ACTION.deadlineText}
                 </p>
 
@@ -397,7 +397,7 @@ function DongDoiContent() {
                   <button
                     type="button"
                     onClick={() => openDuo("thuy-dung")}
-                    className="px-4 py-1.5 rounded-full bg-white text-brand font-bold text-xs hover:bg-neutral-100 active:scale-95 transition-all shadow-xs"
+                    className="px-4 py-2 rounded-full bg-white text-ink font-bold text-xs hover:bg-brand-50 shadow-sm"
                   >
                     {URGENT_ACTION.buttonText}
                   </button>
@@ -440,7 +440,7 @@ function DongDoiContent() {
                             <h3 className="text-sm font-bold text-foreground leading-tight">
                               {duo.partnerName}
                             </h3>
-                            <p className="text-[11px] text-muted-foreground">{duo.sportSchedule}</p>
+                            <p className="text-caption text-muted-foreground">{duo.sportSchedule}</p>
                           </div>
                         </div>
 
@@ -449,11 +449,11 @@ function DongDoiContent() {
                           <span className="text-sm font-extrabold text-foreground">
                             {duo.streakWeeks}
                           </span>
-                          <span className="text-[11px] text-muted-foreground">tuần</span>
+                          <span className="text-caption text-muted-foreground">tuần</span>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-1 border-t border-border/50 text-[11px]">
+                      <div className="flex items-center justify-between pt-1 border-t border-border/50 text-caption">
                         <div className="flex items-center gap-2">
                           <span
                             className={cn(
@@ -527,7 +527,7 @@ function DongDoiContent() {
                         </div>
                         <div>
                           <h3 className="text-sm font-bold text-foreground">{group.name}</h3>
-                          <p className="text-[11px] text-muted-foreground">{group.sportDescription}</p>
+                          <p className="text-caption text-muted-foreground">{group.sportDescription}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
@@ -543,7 +543,7 @@ function DongDoiContent() {
                         <span className="font-bold text-foreground">
                           {group.activeCount}/{group.targetCount} người đã tập tuần này
                         </span>
-                        <span className="text-[11px] text-muted-foreground">
+                        <span className="text-caption text-muted-foreground">
                           Đạt khi {Math.ceil((group.targetCount * group.targetPercent) / 100)}/
                           {group.targetCount}
                         </span>
@@ -559,7 +559,7 @@ function DongDoiContent() {
                     </div>
 
                     {group.isTargetMet && (
-                      <div className="p-2 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 text-[11px] text-emerald-700 dark:text-emerald-300 font-medium leading-relaxed">
+                      <div className="p-2 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 text-caption text-emerald-700 dark:text-emerald-300 font-medium leading-relaxed">
                         Mục tiêu tuần đã đạt: mỗi người đã tập nhận +{group.rewardExp} EXP
                       </div>
                     )}
@@ -571,7 +571,7 @@ function DongDoiContent() {
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-bold text-foreground">Vừa tập cùng</h2>
-                  <span className="text-[11px] text-muted-foreground">Gợi ý tạo nhóm</span>
+                  <span className="text-caption text-muted-foreground">Gợi ý tạo nhóm</span>
                 </div>
 
                 {SAMPLE_RECENT_PARTNERS.map((partner) => (
@@ -592,7 +592,7 @@ function DongDoiContent() {
                         <h3 className="text-sm font-bold text-foreground leading-tight truncate">
                           {partner.name}
                         </h3>
-                        <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
+                        <p className="text-caption text-muted-foreground mt-0.5 truncate">
                           {partner.activityNote} · {partner.onTimeRecord}
                         </p>
                       </div>
@@ -631,12 +631,12 @@ function DongDoiContent() {
           {activeCategory === "clb" && (
             <div className="space-y-3.5 animate-in fade-in duration-200">
               {/* Guidance Info Badge */}
-              <div className="px-3 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between text-[11px] text-blue-900 dark:text-blue-300">
+              <div className="px-3 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between text-caption text-blue-900 dark:text-blue-300">
                 <span className="truncate pr-2 flex items-center gap-1.5">
                   <Shield className="h-3.5 w-3.5 shrink-0 stroke-[2] text-blue-600 dark:text-blue-400" />
                   <span><strong>CLB:</strong> Dành cho CLB chạy bộ & phòng gym · Thành viên, sự kiện & hoạt động</span>
                 </span>
-                <span className="text-[10px] text-blue-700/80 dark:text-blue-300/80 font-medium shrink-0">
+                <span className="text-micro text-blue-700/80 dark:text-blue-300/80 font-medium shrink-0">
                   Phân quyền vai trò
                 </span>
               </div>
@@ -644,10 +644,10 @@ function DongDoiContent() {
               {/* BỘ CHỌN PHÂN QUYỀN (DEMO / THỰC TẾ: THÀNH VIÊN VS TRƯỞNG CLB / BQL PHÒNG GYM) */}
               <div className="flex items-center justify-between p-2.5 rounded-2xl bg-card border border-border/80 text-xs shadow-xs">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-muted-foreground text-[11px]">Vai trò của bạn:</span>
+                  <span className="text-muted-foreground text-caption">Vai trò của bạn:</span>
                   <span
                     className={cn(
-                      "px-2 py-0.5 rounded-full font-bold text-[10.5px]",
+                      "px-2 py-0.5 rounded-full font-bold text-caption",
                       userClubRole === "leader"
                         ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30"
                         : "bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30"
@@ -669,7 +669,7 @@ function DongDoiContent() {
                 <button
                   type="button"
                   onClick={() => setUserClubRole(userClubRole === "leader" ? "member" : "leader")}
-                  className="text-[11px] font-semibold text-brand dark:text-brand-sky hover:underline"
+                  className="text-caption font-semibold text-brand dark:text-brand-sky hover:underline"
                 >
                   Chuyển sang: {userClubRole === "leader" ? "Thành viên" : "Trưởng CLB"}
                 </button>
@@ -685,10 +685,10 @@ function DongDoiContent() {
                       </div>
                       <div>
                         <h2 className="text-xs font-bold text-foreground">Quỹ Sinh Hoạt CLB</h2>
-                        <p className="text-[10px] text-muted-foreground">{myClub.name}</p>
+                        <p className="text-micro text-muted-foreground">{myClub.name}</p>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 font-bold text-[10.5px] border border-amber-500/30">
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 font-bold text-caption border border-amber-500/30">
                       Vai trò: Trưởng CLB / Admin
                     </span>
                   </div>
@@ -699,19 +699,19 @@ function DongDoiContent() {
                       <p className="text-base font-black text-brand dark:text-brand-sky">
                         {formatVnd(myClub.fundBalanceVnd)}
                       </p>
-                      <p className="text-[10px] text-muted-foreground">Số dư quỹ hiện tại</p>
+                      <p className="text-micro text-muted-foreground">Số dư quỹ hiện tại</p>
                     </div>
                     <div>
                       <p className="text-base font-black text-foreground">
                         {formatVnd(myClub.duesPerQuarterVnd)}
                       </p>
-                      <p className="text-[10px] text-muted-foreground">Phí Quý IV / tv</p>
+                      <p className="text-micro text-muted-foreground">Phí Quý IV / tv</p>
                     </div>
                     <div>
                       <p className="text-base font-black text-emerald-600 dark:text-emerald-400">
                         {myClub.paidMembersCount}/{myClub.totalDuesMembersCount}
                       </p>
-                      <p className="text-[10px] text-muted-foreground">Đã nộp quỹ (82%)</p>
+                      <p className="text-micro text-muted-foreground">Đã nộp quỹ (82%)</p>
                     </div>
                   </div>
 
@@ -719,13 +719,13 @@ function DongDoiContent() {
                   <div className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-bold text-foreground">Tiến độ thu quỹ Quý IV</span>
-                      <span className="text-[11px] text-muted-foreground">
+                      <span className="text-caption text-muted-foreground">
                         {Math.round((myClub.paidMembersCount / myClub.totalDuesMembersCount) * 100)}% hoàn thành
                       </span>
                     </div>
                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-linear-to-r from-blue-500 to-brand rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-blue-500 to-brand rounded-full transition-all duration-500"
                         style={{
                           width: `${(myClub.paidMembersCount / myClub.totalDuesMembersCount) * 100}%`,
                         }}
@@ -734,18 +734,18 @@ function DongDoiContent() {
                   </div>
 
                   {/* Cách tính tiền CLB minh bạch (Transparent Fee Breakdown) */}
-                  <div className="p-2.5 rounded-2xl bg-muted/40 border border-border/50 text-[11px] space-y-1">
+                  <div className="p-2.5 rounded-2xl bg-muted/40 border border-border/50 text-caption space-y-1">
                     <div className="flex items-center justify-between text-muted-foreground">
                       <span>Phí thành viên đóng:</span>
                       <span className="font-semibold text-foreground">{formatVnd(clbDuesFee.amountVnd)}</span>
                     </div>
                     <div className="flex items-center justify-between text-muted-foreground">
                       <span>Phí nền tảng SYNESIS ({PAYMENT_CONFIG.platformPercent.club_membership}%):</span>
-                      <span className="font-mono text-foreground">−{formatVnd(clbDuesFee.platformFeeVnd)}</span>
+                      <span className="font-numeric text-foreground">−{formatVnd(clbDuesFee.platformFeeVnd)}</span>
                     </div>
                     <div className="flex items-center justify-between text-muted-foreground">
                       <span>Phí cổng đối tác VietQR ({PAYMENT_CONFIG.processing.percent}%):</span>
-                      <span className="font-mono text-foreground">−{formatVnd(clbDuesFee.processingFeeVnd)}</span>
+                      <span className="font-numeric text-foreground">−{formatVnd(clbDuesFee.processingFeeVnd)}</span>
                     </div>
                     <div className="flex items-center justify-between pt-1 border-t border-border/50 font-bold text-emerald-600 dark:text-emerald-400">
                       <span>CLB thực nhận (94%):</span>
@@ -758,7 +758,7 @@ function DongDoiContent() {
                     <button
                       type="button"
                       onClick={() => setIsPaymentModalOpen(true)}
-                      className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:brightness-105 active:scale-95 text-white text-xs font-bold transition-all shadow-xs shadow-blue-500/25 flex items-center justify-center gap-1.5"
+                      className="py-2.5 px-3 rounded-xl bg-brand-gradient hover:brightness-105 active:scale-95 text-white text-xs font-bold transition-all shadow-xs shadow-blue-500/25 flex items-center justify-center gap-1.5"
                     >
                       <QrCode className="h-4 w-4" />
                       <span>Thu quỹ qua VietQR</span>
@@ -772,7 +772,7 @@ function DongDoiContent() {
                     </Link>
                   </div>
 
-                  <p className="text-[10px] text-muted-foreground pt-1 flex items-center gap-1">
+                  <p className="text-micro text-muted-foreground pt-1 flex items-center gap-1">
                     <Lock className="h-3 w-3 shrink-0" />
                     <span>Chỉ Trưởng CLB và Ban quản lý phòng gym mới có thẩm quyền xem và quản lý quỹ.</span>
                   </p>
@@ -789,20 +789,20 @@ function DongDoiContent() {
                       </div>
                       <div>
                         <h2 className="text-xs font-bold text-foreground">Tư cách hội viên: {myClub.name}</h2>
-                        <p className="text-[10px] text-muted-foreground">Mã hội viên: FTU-8821 · Sinh hoạt định kỳ</p>
+                        <p className="text-micro text-muted-foreground">Mã hội viên: FTU-8821 · Sinh hoạt định kỳ</p>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[10.5px]">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-caption">
                       Hội viên chính thức
                     </span>
                   </div>
 
                   {/* Trạng thái nộp hội phí cá nhân */}
-                  <div className="p-2.5 rounded-xl bg-muted/40 border border-border/50 text-[11px] flex items-center justify-between">
+                  <div className="p-2.5 rounded-xl bg-muted/40 border border-border/50 text-caption flex items-center justify-between">
                     <div>
                       <span className="text-muted-foreground">Hội phí cá nhân Quý IV: </span>
                       <strong className="text-foreground">150.000đ</strong>
-                      <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
+                      <p className="text-micro text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
                         {duesPaid ? "✓ Đã đóng phí (Hiệu lực đến 31/12/2026)" : "Chưa đóng phí"}
                       </p>
                     </div>
@@ -816,7 +816,7 @@ function DongDoiContent() {
                     </button>
                   </div>
 
-                  <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                  <p className="text-micro text-muted-foreground flex items-center gap-1">
                     <Lock className="h-3 w-3 shrink-0" />
                     <span>Số dư quỹ tổng CLB chỉ hiển thị cho Trưởng CLB và Ban quản lý phòng gym.</span>
                   </p>
@@ -830,7 +830,7 @@ function DongDoiContent() {
                     <CalendarDays className="h-4 w-4 text-brand" />
                     <h2 className="text-sm font-bold text-foreground">Sự kiện & Hoạt động CLB</h2>
                   </div>
-                  <span className="text-[11px] font-semibold text-brand dark:text-brand-sky">
+                  <span className="text-caption font-semibold text-brand dark:text-brand-sky">
                     {myClub.events?.length || 3} hoạt động
                   </span>
                 </div>
@@ -848,7 +848,7 @@ function DongDoiContent() {
                       type="button"
                       onClick={() => setEventCategoryFilter(f.id)}
                       className={cn(
-                        "px-2.5 py-1 rounded-full text-[11px] font-semibold shrink-0 transition-all",
+                        "px-2.5 py-1 rounded-full text-caption font-semibold shrink-0 transition-all",
                         eventCategoryFilter === f.id
                           ? "bg-brand text-white shadow-xs"
                           : "bg-muted/70 text-muted-foreground hover:text-foreground"
@@ -873,23 +873,23 @@ function DongDoiContent() {
                           <div className="flex items-start justify-between gap-2">
                             <div>
                               <div className="flex items-center gap-1.5 mb-1">
-                                <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-[10px]">
+                                <span className="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-micro">
                                   {ev.eventTypeName}
                                 </span>
                                 {ev.badgeText && (
-                                  <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-[10px]">
+                                  <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-micro">
                                     {ev.badgeText}
                                   </span>
                                 )}
                               </div>
                               <h3 className="text-sm font-bold text-foreground leading-snug">{ev.title}</h3>
                             </div>
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] shrink-0">
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-micro shrink-0">
                               +{ev.rewardExp} EXP
                             </span>
                           </div>
 
-                          <div className="space-y-1 text-[11px] text-muted-foreground">
+                          <div className="space-y-1 text-caption text-muted-foreground">
                             <div className="flex items-center gap-1.5">
                               <Clock className="h-3.5 w-3.5 text-brand shrink-0" />
                               <span>
@@ -911,7 +911,7 @@ function DongDoiContent() {
                           </div>
 
                           <div className="pt-1 border-t border-border/50 flex items-center justify-between">
-                            <span className="text-[10px] text-muted-foreground">
+                            <span className="text-micro text-muted-foreground">
                               {isRsvped ? "✓ Đã đăng ký tham gia" : "Mở cho toàn thể hội viên CLB"}
                             </span>
                             <button
@@ -940,7 +940,7 @@ function DongDoiContent() {
                     <Users className="h-4 w-4 text-brand" />
                     <h2 className="text-sm font-bold text-foreground">Ban Chủ Nhiệm & Thành Viên</h2>
                   </div>
-                  <span className="text-[11px] font-semibold text-muted-foreground">
+                  <span className="text-caption font-semibold text-muted-foreground">
                     {myClub.memberCount} thành viên
                   </span>
                 </div>
@@ -964,17 +964,17 @@ function DongDoiContent() {
                         <div className="truncate">
                           <div className="flex items-center gap-1.5">
                             <h4 className="text-xs font-bold text-foreground truncate">{lead.name}</h4>
-                            <span className="px-1.5 py-0.2 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-[9.5px]">
+                            <span className="px-1.5 py-0.2 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-micro">
                               {lead.badge}
                             </span>
                           </div>
-                          <p className="text-[10.5px] text-muted-foreground truncate">{lead.roleTitle}</p>
+                          <p className="text-caption text-muted-foreground truncate">{lead.roleTitle}</p>
                         </div>
                       </div>
 
                       <div className="text-right shrink-0">
-                        <span className="text-xs font-black text-brand font-mono">{lead.weeklyKm}</span>
-                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                        <span className="text-xs font-black text-brand font-numeric">{lead.weeklyKm}</span>
+                        <p className="text-micro text-emerald-600 dark:text-emerald-400 font-semibold">
                           {lead.trustScore}
                         </p>
                       </div>
@@ -1009,7 +1009,7 @@ function DongDoiContent() {
                           <h3 className="text-sm font-bold text-foreground">{myClub.name}</h3>
                           <ShieldCheck className="h-3.5 w-3.5 text-blue-500 shrink-0" />
                         </div>
-                        <p className="text-[11px] text-muted-foreground">{myClub.weeklySchedule}</p>
+                        <p className="text-caption text-muted-foreground">{myClub.weeklySchedule}</p>
                       </div>
                     </div>
                     <span className="text-xs font-bold text-brand dark:text-brand-sky">
@@ -1024,7 +1024,7 @@ function DongDoiContent() {
                         <span className="font-bold text-foreground">
                           {myClub.challengeProgress.currentKm}/{myClub.challengeProgress.targetKm} km tuần
                         </span>
-                        <span className="text-[11px] text-muted-foreground">
+                        <span className="text-caption text-muted-foreground">
                           Còn {myClub.challengeProgress.daysLeft} ngày
                         </span>
                       </div>
@@ -1040,11 +1040,11 @@ function DongDoiContent() {
                   )}
 
                   {/* Kèo nội bộ CLB */}
-                  <div className="p-2 rounded-xl bg-muted/40 border border-border/50 text-[11px] flex items-center justify-between">
+                  <div className="p-2 rounded-xl bg-muted/40 border border-border/50 text-caption flex items-center justify-between">
                     <span className="text-muted-foreground">
                       Kèo kín tuần này: <strong>{myClub.internalBounties[0]?.title}</strong>
                     </span>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] shrink-0">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-micro shrink-0">
                       Còn {myClub.internalBounties[0]?.slotsLeft} slot
                     </span>
                   </div>
@@ -1055,7 +1055,7 @@ function DongDoiContent() {
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-bold text-foreground">Khám phá CLB Chạy bộ & Gym</h2>
-                  <span className="text-[11px] text-muted-foreground">Theo khu vực</span>
+                  <span className="text-caption text-muted-foreground">Theo khu vực</span>
                 </div>
 
                 {SAMPLE_CLUBS_LIST.slice(1).map((club) => {
@@ -1077,7 +1077,7 @@ function DongDoiContent() {
                               <h3 className="text-sm font-bold text-foreground">{club.name}</h3>
                               <ShieldCheck className="h-3.5 w-3.5 text-blue-500 shrink-0" />
                             </div>
-                            <p className="text-[11px] text-muted-foreground">{club.sportName} · {club.areaName}</p>
+                            <p className="text-caption text-muted-foreground">{club.sportName} · {club.areaName}</p>
                           </div>
                         </div>
                         <span className="text-xs font-bold text-muted-foreground">
@@ -1085,7 +1085,7 @@ function DongDoiContent() {
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between pt-1 border-t border-border/50 text-[11px]">
+                      <div className="flex items-center justify-between pt-1 border-t border-border/50 text-caption">
                         <span className="text-muted-foreground">
                           {club.weeklySchedule} · Đúng hẹn {club.checkInRate}
                         </span>
@@ -1116,7 +1116,7 @@ function DongDoiContent() {
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-foreground">Gia nhập bằng mã mời CLB</span>
-                  <span className="text-[10px] text-muted-foreground">Mã do Chủ nhiệm cấp</span>
+                  <span className="text-micro text-muted-foreground">Mã do Chủ nhiệm cấp</span>
                 </div>
                 <div className="flex gap-2">
                   <input
@@ -1124,7 +1124,7 @@ function DongDoiContent() {
                     value={clubInviteCode}
                     onChange={(e) => setClubInviteCode(e.target.value)}
                     placeholder="VD: FTU2-RUN2026..."
-                    className="flex-1 px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-mono text-foreground placeholder:text-muted-foreground outline-none focus:border-brand"
+                    className="flex-1 px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-numeric text-foreground placeholder:text-muted-foreground outline-none focus:border-brand"
                   />
                   <button
                     type="submit"
@@ -1142,7 +1142,7 @@ function DongDoiContent() {
                     <Trophy className="h-4 w-4 text-amber-500" />
                     <h3 className="text-xs font-bold text-foreground">BXH Kỷ Luật CLB (Tuần này)</h3>
                   </div>
-                  <span className="text-[10px] font-semibold text-brand">Top runners</span>
+                  <span className="text-micro font-semibold text-brand">Top runners</span>
                 </div>
 
                 <div className="divide-y divide-border/60 text-xs">
@@ -1159,12 +1159,12 @@ function DongDoiContent() {
                         </span>
                         <div>
                           <p className="font-bold text-foreground leading-tight">{row.name}</p>
-                          <p className="text-[10px] text-muted-foreground">{row.tag}</p>
+                          <p className="text-micro text-muted-foreground">{row.tag}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-black text-brand font-mono">{row.km}</p>
-                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">{row.ts}</p>
+                        <p className="font-black text-brand font-numeric">{row.km}</p>
+                        <p className="text-micro text-emerald-600 dark:text-emerald-400 font-semibold">{row.ts}</p>
                       </div>
                     </div>
                   ))}
@@ -1234,7 +1234,7 @@ function DongDoiContent() {
                 <span className="font-bold text-foreground">
                   {activeDuo.weeklyCalendar.weekRange}
                 </span>
-                <span className="text-amber-600 dark:text-amber-400 font-semibold text-[11px]">
+                <span className="text-amber-600 dark:text-amber-400 font-semibold text-caption">
                   {activeDuo.weeklyCalendar.requirement}
                 </span>
               </div>
@@ -1243,7 +1243,7 @@ function DongDoiContent() {
               <div className="grid grid-cols-7 gap-1.5 text-center">
                 {activeDuo.weeklyCalendar.days.map((d) => (
                   <div key={d.day} className="flex flex-col items-center gap-1.5">
-                    <span className="text-[10px] text-muted-foreground font-semibold">
+                    <span className="text-micro text-muted-foreground font-semibold">
                       {d.day}
                     </span>
                     <div
@@ -1260,7 +1260,7 @@ function DongDoiContent() {
                       ) : d.isCompleted ? (
                         <Check className="h-3.5 w-3.5 stroke-[3]" />
                       ) : (
-                        <span className="text-[10px]">•</span>
+                        <span className="text-micro">•</span>
                       )}
                     </div>
                   </div>
@@ -1273,10 +1273,10 @@ function DongDoiContent() {
           {activeDuo.nextSession && (
             <div className="p-4 rounded-2xl bg-card border border-border shadow-xs space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="text-micro font-bold uppercase tracking-wider text-muted-foreground">
                   KÈO TIẾP THEO
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[11px]">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-caption">
                   Cả hai đã xác nhận
                 </span>
               </div>
@@ -1322,7 +1322,7 @@ function DongDoiContent() {
               <h3 className="text-xs font-bold text-foreground">
                 Lá chắn chuỗi: còn {activeDuo.shieldsRemaining}/{activeDuo.maxShields} tháng này
               </h3>
-              <p className="text-[11px] text-muted-foreground leading-relaxed">
+              <p className="text-caption text-muted-foreground leading-relaxed">
                 Tự dùng khi tuần trôi qua mà hai bạn chưa kịp hẹn. Không trừ điểm uy tín.
               </p>
             </div>
@@ -1353,7 +1353,7 @@ function DongDoiContent() {
                 <div key={m.weeks} className="flex flex-col items-center gap-1">
                   <div
                     className={cn(
-                      "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold",
+                      "w-6 h-6 rounded-full flex items-center justify-center text-micro font-bold",
                       m.completed
                         ? "bg-brand text-white"
                         : m.isCurrentTarget
@@ -1363,7 +1363,7 @@ function DongDoiContent() {
                   >
                     {m.completed ? <Check className="h-3 w-3" /> : m.weeks}
                   </div>
-                  <span className="text-[10px] text-muted-foreground font-semibold">
+                  <span className="text-micro text-muted-foreground font-semibold">
                     {m.weeks} tuần
                   </span>
                 </div>
@@ -1383,7 +1383,7 @@ function DongDoiContent() {
                 <p className="text-sm font-bold text-foreground mt-0.5">
                   {activeDuo.trustComparison.user.onTime}
                 </p>
-                <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+                <p className="text-caption text-emerald-600 dark:text-emerald-400 font-medium">
                   {activeDuo.trustComparison.user.status}
                 </p>
               </div>
@@ -1394,13 +1394,13 @@ function DongDoiContent() {
                 <p className="text-sm font-bold text-foreground mt-0.5">
                   {activeDuo.trustComparison.partner.onTime}
                 </p>
-                <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+                <p className="text-caption text-emerald-600 dark:text-emerald-400 font-medium">
                   {activeDuo.trustComparison.partner.status}
                 </p>
               </div>
             </div>
 
-            <div className="p-2.5 rounded-xl bg-muted/60 border border-border/60 text-[11px] text-muted-foreground leading-relaxed">
+            <div className="p-2.5 rounded-xl bg-muted/60 border border-border/60 text-caption text-muted-foreground leading-relaxed">
               {activeDuo.trustComparison.ruleNote}
             </div>
           </div>
@@ -1418,7 +1418,7 @@ function DongDoiContent() {
             <button
               type="button"
               onClick={() => setIsScheduleModalOpen(true)}
-              className="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:brightness-105 active:scale-[0.97] text-white font-bold text-sm transition-all shadow-sm shadow-blue-500/25"
+              className="flex-1 py-3 px-4 rounded-2xl bg-brand-gradient hover:brightness-105 active:scale-[0.97] text-white font-bold text-sm transition-all shadow-sm shadow-blue-500/25"
             >
               Hẹn buổi tiếp theo
             </button>
@@ -1508,14 +1508,14 @@ function DongDoiContent() {
                           {member.name}
                         </span>
                         {member.isLead && (
-                          <span className="px-1.5 py-0.2 rounded-md bg-brand/10 text-brand dark:text-brand-sky font-bold text-[10px]">
+                          <span className="px-1.5 py-0.2 rounded-md bg-brand/10 text-brand dark:text-brand-sky font-bold text-micro">
                             Dẫn nhóm
                           </span>
                         )}
                       </div>
                       <p
                         className={cn(
-                          "text-[11px] mt-0.5",
+                          "text-caption mt-0.5",
                           member.isWarning
                             ? "text-amber-600 dark:text-amber-400 font-semibold"
                             : "text-muted-foreground"
@@ -1538,10 +1538,10 @@ function DongDoiContent() {
           {activeGroup.nextKeo && (
             <div className="p-4 rounded-3xl bg-card border border-border shadow-xs space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="text-micro font-bold uppercase tracking-wider text-muted-foreground">
                   KÈO NHÓM TIẾP THEO
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-brand/10 text-brand dark:text-brand-sky font-bold text-[11px]">
+                <span className="px-2 py-0.5 rounded-full bg-brand/10 text-brand dark:text-brand-sky font-bold text-caption">
                   {groupWorkoutConfirmed ? "4/4 xác nhận" : `${activeGroup.nextKeo.confirmedCount}/${activeGroup.nextKeo.totalCount} xác nhận`}
                 </span>
               </div>
@@ -1588,7 +1588,7 @@ function DongDoiContent() {
           {/* Luật của nhóm nhỏ Card */}
           <div className="p-4 rounded-3xl bg-muted/40 border border-border/80 space-y-1.5">
             <h3 className="text-xs font-bold text-foreground">Luật của nhóm nhỏ</h3>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
+            <p className="text-caption text-muted-foreground leading-relaxed">
               Lập nhóm từ Hạng 2, dẫn nhóm từ Hạng 3. Thành viên ở trạng thái Hạn chế không đặt được kèo nhóm. Nhóm không có quỹ, không có sự kiện, không có công cụ quản lý thành viên. Cần những thứ đó thì dùng CLB.
             </p>
           </div>
@@ -1674,7 +1674,7 @@ function DongDoiContent() {
                           </span>
                           <div>
                             <p className="text-xs font-bold">{p.name}</p>
-                            <p className="text-[10px] text-muted-foreground">{p.activityNote}</p>
+                            <p className="text-micro text-muted-foreground">{p.activityNote}</p>
                           </div>
                         </div>
                         <input
@@ -1689,7 +1689,7 @@ function DongDoiContent() {
                 </div>
               </div>
 
-              <div className="p-3 rounded-2xl bg-brand/10 border border-brand/20 text-[11px] text-brand dark:text-brand-sky leading-relaxed">
+              <div className="p-3 rounded-2xl bg-brand/10 border border-brand/20 text-caption text-brand dark:text-brand-sky leading-relaxed">
                 Khi nhóm đạt tối thiểu 75% thành viên hoàn thành buổi tập trong tuần, mỗi người sẽ được cộng <strong>+15 EXP</strong> và duy trì chuỗi nhóm.
               </div>
 
@@ -1703,7 +1703,7 @@ function DongDoiContent() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:brightness-105 active:scale-[0.97] text-xs font-bold text-white transition-all shadow-xs shadow-blue-500/25"
+                  className="flex-1 py-2.5 px-4 rounded-xl bg-brand-gradient hover:brightness-105 active:scale-[0.97] text-xs font-bold text-white transition-all shadow-xs shadow-blue-500/25"
                 >
                   Tạo nhóm ngay
                 </button>
@@ -1776,7 +1776,7 @@ function DongDoiContent() {
                 </div>
               </div>
 
-              <div className="p-3 rounded-2xl bg-brand/10 border border-brand/20 text-[11px] text-brand dark:text-brand-sky leading-relaxed">
+              <div className="p-3 rounded-2xl bg-brand/10 border border-brand/20 text-caption text-brand dark:text-brand-sky leading-relaxed">
                 Sau khi hẹn, đối tác sẽ nhận được thông báo để xác nhận. Hai bạn hoàn thành buổi tập hợp lệ sẽ được cộng ngay <strong>+10 EXP</strong> và duy trì chuỗi tuần.
               </div>
             </div>
@@ -1795,7 +1795,7 @@ function DongDoiContent() {
                   setIsScheduleModalOpen(false);
                   showToast(`Đã gửi lời hẹn tới ${activeDuo.partnerName}!`);
                 }}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:brightness-105 active:scale-[0.97] text-xs font-bold text-white transition-all shadow-xs shadow-blue-500/25"
+                className="flex-1 py-2.5 px-4 rounded-xl bg-brand-gradient hover:brightness-105 active:scale-[0.97] text-xs font-bold text-white transition-all shadow-xs shadow-blue-500/25"
               >
                 Gửi lời hẹn
               </button>
@@ -1843,7 +1843,7 @@ function DongDoiContent() {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-foreground">{partner.name}</p>
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className="text-micro text-muted-foreground">
                         {partner.activityNote} · {partner.onTimeRecord}
                       </p>
                     </div>
@@ -1863,7 +1863,7 @@ function DongDoiContent() {
               ))}
             </div>
 
-            <div className="p-3 rounded-2xl bg-muted/60 text-[11px] text-muted-foreground leading-relaxed">
+            <div className="p-3 rounded-2xl bg-muted/60 text-caption text-muted-foreground leading-relaxed">
               Quy định chống cày: Bạn có thể duy trì tối đa 3 Duo đang hoạt động cùng lúc. Mỗi Duo được hỗ trợ 2 lá chắn mỗi tháng.
             </div>
           </div>
