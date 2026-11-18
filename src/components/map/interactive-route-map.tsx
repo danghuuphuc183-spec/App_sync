@@ -1227,9 +1227,9 @@ function PeekCard(props: {
           <span className="truncate">{props.meta}</span>
         </div>
         <div className="flex items-center justify-between gap-2 pt-0.5">
-          <p className="flex-1 min-w-0 text-caption text-muted-foreground truncate flex items-center gap-1">
+          <p className="flex-1 min-w-0 text-caption text-muted-foreground flex items-center gap-1">
             <MapPin className="h-3 w-3 shrink-0" />
-            {props.sub}
+            <span className="truncate">{props.sub}</span>
           </p>
           <StartLiveButton onClick={props.onStartLive} compact />
         </div>

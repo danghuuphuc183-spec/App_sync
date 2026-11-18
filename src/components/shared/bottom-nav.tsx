@@ -28,7 +28,7 @@ export function BottomNav() {
     <nav
       aria-label="Điều hướng 5 trang chính trên di động"
       className={cn(
-        "fixed bottom-0 left-0 right-0 z-50 border-t px-2 pt-1 safe-area-pb",
+        "fixed bottom-0 inset-x-0 mx-auto w-full max-w-[430px] z-50 border-t px-2 pt-1 safe-area-pb",
         isDark
           ? "dark bg-black border-neutral-800 text-white"
           : "border-border/70 bg-card/85 backdrop-blur-xl supports-[backdrop-filter]:bg-card/75 shadow-[0_-8px_24px_-16px_rgb(7_11_26/0.18)]"

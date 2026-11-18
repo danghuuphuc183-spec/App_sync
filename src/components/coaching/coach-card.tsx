@@ -201,9 +201,9 @@ export function CoachCard({ matchResult, onViewDetails, onBookSession }: CoachCa
 
       {/* Location and Hobbies Tag */}
       <div className="flex items-center justify-between text-micro text-muted-foreground pt-0.5">
-        <span className="flex items-center gap-1 truncate max-w-[200px]">
+        <span className="flex min-w-0 max-w-[200px] items-center gap-1">
           <MapPin className="h-3 w-3 shrink-0 text-muted-foreground" />
-          {coach.locations.slice(0, 2).join(", ")}
+          <span className="truncate">{coach.locations.slice(0, 2).join(", ")}</span>
         </span>
         <span className="truncate text-micro text-muted-foreground font-medium">
           Sở thích: {coach.hobbies.slice(0, 2).join(" • ")}

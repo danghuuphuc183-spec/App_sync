@@ -317,9 +317,9 @@ function DongDoiContent() {
             <div className="space-y-3.5 animate-in fade-in duration-200">
               {/* Guidance Info Badge */}
               <div className="px-3 py-2 rounded-xl bg-muted/50 border border-border/60 flex items-center justify-between text-caption text-muted-foreground">
-                <span className="truncate pr-2 flex items-center gap-1.5">
+                <span className="flex min-w-0 flex-1 items-center gap-1.5 pr-2">
                   <Users className="h-3.5 w-3.5 shrink-0 stroke-[2] text-foreground" />
-                  <span><strong>Nhóm:</strong> Tự tạo sau khi tập chung (3–6 người) · Giữ chuỗi tuần</span>
+                  <span className="truncate"><strong>Nhóm:</strong> Tự tạo sau khi tập chung (3–6 người) · Giữ chuỗi tuần</span>
                 </span>
                 <button
                   type="button"
@@ -635,9 +635,9 @@ function DongDoiContent() {
             <div className="space-y-3.5 animate-in fade-in duration-200">
               {/* Guidance Info Badge */}
               <div className="px-3 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between text-caption text-blue-900 dark:text-blue-300">
-                <span className="truncate pr-2 flex items-center gap-1.5">
+                <span className="flex min-w-0 flex-1 items-center gap-1.5 pr-2">
                   <Shield className="h-3.5 w-3.5 shrink-0 stroke-[2] text-blue-600 dark:text-blue-400" />
-                  <span><strong>CLB:</strong> Dành cho CLB chạy bộ & phòng gym · Thành viên, sự kiện & hoạt động</span>
+                  <span className="truncate"><strong>CLB:</strong> Dành cho CLB chạy bộ & phòng gym · Thành viên, sự kiện & hoạt động</span>
                 </span>
                 <span className="text-micro text-blue-700/80 dark:text-blue-300/80 font-medium shrink-0">
                   Phân quyền vai trò
@@ -645,9 +645,9 @@ function DongDoiContent() {
               </div>
 
               {/* BỘ CHỌN PHÂN QUYỀN (DEMO / THỰC TẾ: THÀNH VIÊN VS TRƯỞNG CLB / BQL PHÒNG GYM) */}
-              <div className="flex items-center justify-between p-2.5 rounded-2xl bg-card border border-border/80 text-xs shadow-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-2xl bg-card border border-border/80 text-xs shadow-xs">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-muted-foreground text-caption">Vai trò của bạn:</span>
+                  <span className="whitespace-nowrap text-muted-foreground text-caption">Vai trò của bạn:</span>
                   <span
                     className={cn(
                       "px-2 py-0.5 rounded-full font-bold text-caption",
@@ -672,7 +672,7 @@ function DongDoiContent() {
                 <button
                   type="button"
                   onClick={() => setUserClubRole(userClubRole === "leader" ? "member" : "leader")}
-                  className="text-caption font-semibold text-brand dark:text-brand-sky hover:underline"
+                  className="whitespace-nowrap text-caption font-semibold text-brand dark:text-brand-sky hover:underline"
                 >
                   Chuyển sang: {userClubRole === "leader" ? "Thành viên" : "Trưởng CLB"}
                 </button>

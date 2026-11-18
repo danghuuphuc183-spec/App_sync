@@ -61,6 +61,9 @@ export function useKeoStore() {
   }, []);
 
   const update = React.useCallback((fn: (s: KeoStore) => KeoStore) => {
+    // Lời nhận kèo giả lập chạy bằng setTimeout và CỐ Ý vẫn chạy sau khi rời trang (mô phỏng máy chủ),
+    // nên có thể rơi vào lúc không còn `window` (môi trường test đã dọn, hoặc render phía server) → bỏ qua.
+    if (typeof window === "undefined") return;
     const next = fn(read());
     setStore(next);
     try {
