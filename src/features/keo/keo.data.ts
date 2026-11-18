@@ -7,14 +7,14 @@ import { resolveDay, toIsoDay } from "./keo-date";
 const img = (id: string) => `https://images.unsplash.com/${id}?w=800&auto=format&fit=crop&q=80`;
 
 export const SPORT_IMAGE: Record<string, string> = {
-  running: img("photo-1552674605-db6ffd4facb5"),
-  cycling: img("photo-1485965120184-e220f721d03e"),
-  gym: img("photo-1534438327276-14e5300c3a48"),
-  pickleball: img("photo-1626224583764-f87db24ac4ea"),
-  badminton: img("photo-1626224583764-f87db24ac4ea"),
-  table_tennis: img("photo-1609710228159-0fa9bd7c0827"),
-  football: img("photo-1574629810360-7efbbe195018"),
-  basketball: img("photo-1546519638-68e109498ffc"),
+  running: "/posts/post-phuc.jpg",
+  cycling: "/posts/post-triho.jpg",
+  gym: "/posts/post-duyen.jpg",
+  pickleball: "/posts/post-cuong.jpg",
+  badminton: "/posts/post-thinh.jpg",
+  table_tennis: "/posts/post-huong.jpg",
+  football: "/posts/post-trang.jpg",
+  basketball: "/posts/post-vy.png",
 };
 
 /** 3 môn chính giai đoạn 1: Chạy bộ, Gym, Đạp xe (các môn khác dành cho giai đoạn sau) */

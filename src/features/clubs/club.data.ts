@@ -8,9 +8,9 @@ const at = (dayOffset: number, h: number, m = 0) => {
   return d.toISOString();
 };
 
-export const ME = { id: "me", name: "Minh Thư", avatar: av("photo-1534528741775-53994a69daeb") };
+export const ME = { id: "me", name: "Minh Thư", avatar: "/users/huu-phuc.jpg" };
 
-/** CLB bạn đang làm Admin (FTU2 Run Club) */
+/** CLB bạn đang làm Admin (FTU2 Run Club) - 5 thành viên thật theo chỉ định */
 export const seedClub = (): Club => ({
   id: "club-1",
   name: "FTU2 Run Club",
@@ -18,12 +18,11 @@ export const seedClub = (): Club => ({
   areaVi: "Bình Thạnh & Q.1",
   inviteDomains: ["ftu.edu.vn"],
   members: [
-    { id: "u-owner", name: "Quốc Hưng", avatar: av("photo-1507003211169-0a1dd7228f2d"), role: "owner", joinedAt: at(-400, 6), checkIns: 86, lastActiveAt: at(-1, 6) },
+    { id: "u-owner", name: "Hữu Phúc (Quốc Hưng)", avatar: "/users/huu-phuc.jpg", role: "owner", joinedAt: at(-400, 6), checkIns: 86, lastActiveAt: at(-1, 6) },
     { id: "me", name: ME.name, avatar: ME.avatar, role: "admin", joinedAt: at(-200, 6), checkIns: 41, lastActiveAt: at(0, 6) },
-    { id: "u-ma", name: "Minh Anh", avatar: av("photo-1544005313-94ddf0286df2"), role: "mentor", joinedAt: at(-160, 6), checkIns: 52, lastActiveAt: at(-2, 6) },
-    { id: "u-td", name: "Thuỳ Dung", avatar: av("photo-1438761681033-6461ffad8d80"), role: "member", joinedAt: at(-90, 6), checkIns: 17, lastActiveAt: at(-5, 18) },
-    { id: "u-dt", name: "Đức Trọng", avatar: av("photo-1500648767791-00dcc994a43e"), role: "member", joinedAt: at(-60, 6), checkIns: 9, lastActiveAt: at(-12, 18) },
-    { id: "u-yn", name: "Yến Nhi", avatar: av("photo-1517841905240-472988babdf9"), role: "member", joinedAt: at(-30, 6), checkIns: 4, lastActiveAt: at(-41, 18) },
+    { id: "u-ma", name: "Lưu Thịnh", avatar: "/users/luu-thinh.jpg", role: "mentor", joinedAt: at(-160, 6), checkIns: 52, lastActiveAt: at(-2, 6) },
+    { id: "u-td", name: "Nguyễn Cường", avatar: "/users/nguyen-cuong.jpg", role: "member", joinedAt: at(-90, 6), checkIns: 17, lastActiveAt: at(-5, 18) },
+    { id: "u-yn", name: "Hữu Tùng", avatar: "/users/huu-tung.jpg", role: "member", joinedAt: at(-30, 6), checkIns: 4, lastActiveAt: at(-41, 18) },
   ],
   invitations: [
     { id: "inv-seed-1", clubId: "club-1", clubName: "FTU2 Run Club", contact: "lan.nguyen@ftu.edu.vn", kind: "email", source: "csv", status: "sent", sentAt: at(-1, 9) },
