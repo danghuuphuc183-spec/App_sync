@@ -210,7 +210,7 @@ export function OnboardingWizard() {
       valid: p.sports.length > 0 && (workoutOptions.length === 0 || p.workoutTypes.length > 0),
       body: (
         <div className="space-y-4">
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-3 gap-2.5">
             {SPORT_OPTIONS.map((s) => (
               <Chip
                 key={s.id}
@@ -222,10 +222,10 @@ export function OnboardingWizard() {
                     return { sports, workoutTypes: x.workoutTypes.filter((w) => allowed.has(w)) };
                   })
                 }
-                className="flex flex-col items-center gap-1 px-1 py-2.5 text-[11.5px] text-center"
+                className="flex flex-col items-center gap-1.5 px-2 py-3 text-xs text-center"
               >
                 <SportIcon sport={s.id} className="h-6 w-6" />
-                <span>{s.label}</span>
+                <span className="font-bold">{s.label}</span>
               </Chip>
             ))}
           </div>

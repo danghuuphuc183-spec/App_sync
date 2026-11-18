@@ -338,7 +338,9 @@ export function benchmarkMatchingScale(userCount = 1000) {
       traits: user.habitsAndPreferences.traits,
     };
 
-    const ranked = rankCandidates(userPref, users.filter((u) => u.id !== user.id).slice(0, 200));
+    // Sample a pool of up to 200 candidates to benchmark realistic nearest-neighbor candidate retrieval
+    const candidatePool = users.slice(0, 201).filter((u) => u.id !== user.id).slice(0, 200);
+    const ranked = rankCandidates(userPref, candidatePool);
     totalComparisons += ranked.length;
     if (ranked[0] && ranked[0].matchScore >= 90) {
       topMatchesAbove90++;
