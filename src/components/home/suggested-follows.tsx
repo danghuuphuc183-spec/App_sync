@@ -106,10 +106,10 @@ export function SuggestedFollows({ viewer = DEMO_VIEWER }: { viewer?: ViewerCont
                   onClick={() => toggleFollow(c.id)}
                   aria-pressed={isFollowing}
                   className={cn(
-                    "w-full rounded-lg py-1 px-1.5 text-[11px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1 shadow-2xs",
+                    "w-full rounded-xl py-1 px-1.5 text-[11px] font-bold transition-all duration-150 active:scale-95 flex items-center justify-center gap-1 shadow-2xs select-none",
                     isFollowing
-                      ? "bg-muted text-foreground border border-border"
-                      : "bg-brand hover:bg-brand-600 text-white dark:bg-brand-sky dark:text-black"
+                      ? "bg-muted text-foreground border border-border hover:bg-muted/80"
+                      : "bg-gradient-to-r from-[#0567E1] to-[#1C8DFF] text-white shadow-xs shadow-blue-500/20 hover:brightness-105"
                   )}
                 >
                   {isFollowing && <UserCheck className="h-3 w-3" />}

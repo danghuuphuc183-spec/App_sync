@@ -83,10 +83,10 @@ export function HomeFeed({
               onClick={() => setFilter(f.id)}
               aria-pressed={filter === f.id}
               className={cn(
-                "px-3.5 py-1.5 rounded-lg text-[12.5px] font-semibold whitespace-nowrap border transition-colors",
+                "px-3.5 py-1.5 rounded-xl text-[12.5px] font-semibold whitespace-nowrap border transition-all duration-150 ease-out select-none active:scale-95 cursor-pointer",
                 filter === f.id
-                  ? "bg-brand text-white border-brand dark:bg-brand-sky dark:text-black dark:border-brand-sky"
-                  : "bg-white dark:bg-card text-foreground border-neutral-200 dark:border-neutral-800 hover:bg-muted"
+                  ? "bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white border-transparent shadow-xs shadow-blue-500/25 ring-1 ring-blue-300/30 scale-[1.02]"
+                  : "bg-card text-foreground border-border hover:bg-muted/80 hover:border-neutral-300"
               )}
             >
               {f.label}

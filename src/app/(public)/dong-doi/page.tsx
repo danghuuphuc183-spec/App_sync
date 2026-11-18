@@ -758,7 +758,7 @@ function DongDoiContent() {
                     <button
                       type="button"
                       onClick={() => setIsPaymentModalOpen(true)}
-                      className="py-2.5 px-3 rounded-xl bg-brand hover:bg-brand-600 active:scale-95 text-white text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5"
+                      className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:brightness-105 active:scale-95 text-white text-xs font-bold transition-all shadow-xs shadow-blue-500/25 flex items-center justify-center gap-1.5"
                     >
                       <QrCode className="h-4 w-4" />
                       <span>Thu quỹ qua VietQR</span>
@@ -1418,7 +1418,7 @@ function DongDoiContent() {
             <button
               type="button"
               onClick={() => setIsScheduleModalOpen(true)}
-              className="flex-1 py-3 px-4 rounded-2xl bg-brand hover:bg-brand-600 active:scale-[0.99] text-white font-bold text-sm transition-all shadow-sm"
+              className="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:brightness-105 active:scale-[0.97] text-white font-bold text-sm transition-all shadow-sm shadow-blue-500/25"
             >
               Hẹn buổi tiếp theo
             </button>
@@ -1703,7 +1703,7 @@ function DongDoiContent() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 px-4 rounded-xl bg-brand hover:bg-brand-600 text-xs font-bold text-white transition-all shadow-xs"
+                  className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:brightness-105 active:scale-[0.97] text-xs font-bold text-white transition-all shadow-xs shadow-blue-500/25"
                 >
                   Tạo nhóm ngay
                 </button>
@@ -1795,7 +1795,7 @@ function DongDoiContent() {
                   setIsScheduleModalOpen(false);
                   showToast(`Đã gửi lời hẹn tới ${activeDuo.partnerName}!`);
                 }}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-brand hover:bg-brand-600 text-xs font-bold text-white transition-all shadow-xs"
+                className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:brightness-105 active:scale-[0.97] text-xs font-bold text-white transition-all shadow-xs shadow-blue-500/25"
               >
                 Gửi lời hẹn
               </button>

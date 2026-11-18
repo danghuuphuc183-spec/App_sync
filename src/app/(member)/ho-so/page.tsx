@@ -252,7 +252,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => setIsEditModalOpen(true)}
-              className="flex-1 py-2.5 px-4 rounded-xl bg-brand hover:bg-brand-600 active:scale-[0.99] text-white font-bold text-xs transition-all shadow-xs"
+              className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] hover:brightness-105 active:scale-[0.97] text-white font-bold text-xs transition-all duration-150 shadow-sm shadow-blue-500/25 select-none"
             >
               Sửa hồ sơ
             </button>

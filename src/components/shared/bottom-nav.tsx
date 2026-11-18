@@ -47,18 +47,18 @@ export function BottomNav() {
               >
                 <div
                   className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-full shadow-md transition-all duration-200 active:scale-95",
+                    "flex h-12 w-12 items-center justify-center rounded-full shadow-md transition-all duration-200 active:scale-90",
                     isActive
-                      ? "bg-black dark:bg-brand-sky text-white dark:text-black ring-2 ring-brand/40"
-                      : "bg-brand hover:bg-brand-700 dark:bg-brand-sky text-white dark:text-black shadow-brand/25 group-hover:scale-105"
+                      ? "bg-gradient-to-tr from-[#0567E1] via-[#0A7AF6] to-[#1C8DFF] text-white shadow-lg shadow-blue-500/35 ring-2 ring-blue-400/50 scale-105"
+                      : "bg-gradient-to-tr from-[#0567E1] to-[#0A84FF] text-white shadow-blue-500/25 hover:shadow-blue-500/35 group-hover:scale-105"
                   )}
                 >
                   <Icon className="h-6 w-6 stroke-[2.2]" />
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] font-bold mt-0.5 tracking-tight",
-                    isActive ? "text-foreground" : "text-neutral-700 dark:text-neutral-300"
+                    "text-[10px] font-bold mt-0.5 tracking-tight transition-colors",
+                    isActive ? "text-brand dark:text-brand-sky" : "text-neutral-700 dark:text-neutral-300"
                   )}
                 >
                   {item.title}
