@@ -9,7 +9,7 @@ export function ReminderList({ day, from, who }: { day: string; from: string; wh
   const reminders = reminderSchedule(sessionStart(normalizeKeoDay(day), from));
   if (reminders.length === 0) return null;
   return (
-    <div className="rounded-xl border border-border p-3 text-left text-[12.5px] space-y-1" data-testid="reminders">
+    <div className="rounded-xl border border-border p-3 text-left text-xs space-y-1" data-testid="reminders">
       <p className="font-bold text-foreground flex items-center gap-1.5">
         <Bell className="h-4 w-4" /> {who} sẽ được nhắc
       </p>

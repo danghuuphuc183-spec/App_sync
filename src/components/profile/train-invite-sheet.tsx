@@ -43,15 +43,15 @@ export function TrainInviteSheet({ open, onClose, person }: { open: boolean; onC
       {sent ? (
         <div className="text-center space-y-3 py-2">
           <CalendarCheck className="h-12 w-12 text-foreground mx-auto" />
-          <p className="text-[14px] text-foreground">
+          <p className="text-sm text-foreground">
             Đã gửi lời mời <b>{SPORT_LABEL[sport]}</b> lúc <b>{time} · {day}</b> tại <b>{place}</b> tới {person.name}.
           </p>
-          <p className="text-[12.5px] text-muted-foreground">Bạn sẽ nhận thông báo khi {person.name} đồng ý.</p>
+          <p className="text-xs text-muted-foreground">Bạn sẽ nhận thông báo khi {person.name} đồng ý.</p>
           <div className="flex gap-2 pt-1">
-            <button onClick={onClose} className="flex-1 rounded-lg border border-border py-2.5 text-[13px] font-bold">
+            <button onClick={onClose} className="flex-1 rounded-lg border border-border py-2.5 text-label font-bold">
               Xong
             </button>
-            <Link href="/chat" className="flex-1 rounded-lg bg-brand text-white py-2.5 text-[13px] font-bold flex items-center justify-center gap-1.5">
+            <Link href="/chat" className="flex-1 rounded-lg bg-brand text-white py-2.5 text-label font-bold flex items-center justify-center gap-1.5">
               <MessageCircle className="h-4 w-4" /> Nhắn tin
             </Link>
           </div>
@@ -80,7 +80,7 @@ export function TrainInviteSheet({ open, onClose, person }: { open: boolean; onC
               list="train-place-options"
               required
               placeholder="Nhập hoặc chọn địa điểm"
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[13.5px] outline-none focus:ring-2 focus:ring-brand/30"
+              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-label outline-none focus:ring-2 focus:ring-brand/30"
             />
             <datalist id="train-place-options">
               {placeOptions.map((p) => (
@@ -93,16 +93,16 @@ export function TrainInviteSheet({ open, onClose, person }: { open: boolean; onC
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={2}
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-[13.5px] outline-none focus:ring-2 focus:ring-brand/30"
+              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-label outline-none focus:ring-2 focus:ring-brand/30"
             />
           </Field>
           <div className="flex items-center gap-3 rounded-xl bg-muted border border-border p-3">
             <Shield className="h-5 w-5 text-foreground shrink-0" />
-            <span className="flex-1 text-[12.5px] text-foreground">
+            <span className="flex-1 text-xs text-foreground">
               Sau khi hai bạn chốt kèo: huỷ sớm <b>−0,25 UT</b>, huỷ trong 30 phút <b>−0,5 UT</b>, vắng <b>−1 UT</b>.
             </span>
           </div>
-          <button type="submit" className="w-full rounded-lg bg-brand hover:bg-brand-700 text-white font-bold py-3 text-[14px]">
+          <button type="submit" className="w-full rounded-lg bg-brand hover:bg-brand-700 text-white font-bold py-3 text-sm">
             Gửi lời mời tập
           </button>
         </form>
@@ -114,7 +114,7 @@ export function TrainInviteSheet({ open, onClose, person }: { open: boolean; onC
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
-      <p className="text-[12px] font-semibold text-muted-foreground">{label}</p>
+      <p className="text-xs font-semibold text-muted-foreground">{label}</p>
       {children}
     </div>
   );
@@ -140,7 +140,7 @@ function Chips({
           onClick={() => onChange(o)}
           aria-pressed={value === o}
           className={cn(
-            "rounded-lg border px-3 py-1.5 text-[12.5px] font-semibold",
+            "rounded-lg border px-3 py-1.5 text-xs font-semibold",
             value === o ? "bg-brand text-white border-brand" : "border-border text-foreground hover:bg-muted"
           )}
         >

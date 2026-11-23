@@ -122,7 +122,7 @@ export default function SportProfilePage() {
                     )}
                   >
                     <span>Mới bắt đầu</span>
-                    <span className="text-[10px] font-normal text-muted-foreground">Beginner</span>
+                    <span className="text-micro font-normal text-muted-foreground">Beginner</span>
                   </button>
 
                   <button
@@ -139,7 +139,7 @@ export default function SportProfilePage() {
                   >
                     {isRookie && <Lock className="absolute top-1.5 right-1.5 h-3 w-3 text-muted-foreground" />}
                     <span>Trung bình</span>
-                    <span className="text-[10px] font-normal text-muted-foreground">Intermediate</span>
+                    <span className="text-micro font-normal text-muted-foreground">Intermediate</span>
                   </button>
 
                   <button
@@ -156,7 +156,7 @@ export default function SportProfilePage() {
                   >
                     {isRookie && <Lock className="absolute top-1.5 right-1.5 h-3 w-3 text-muted-foreground" />}
                     <span>Nâng cao</span>
-                    <span className="text-[10px] font-normal text-muted-foreground">Advanced</span>
+                    <span className="text-micro font-normal text-muted-foreground">Advanced</span>
                   </button>
                 </div>
               </div>

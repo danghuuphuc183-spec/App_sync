@@ -103,7 +103,7 @@ export default function VenuesPage() {
                   {venue.areaName}
                 </Badge>
                 {venue.isVerified && (
-                  <Badge variant="success" className="text-[10px] flex items-center gap-1">
+                  <Badge variant="success" className="text-micro flex items-center gap-1">
                     <ShieldCheck className="h-3 w-3" />
                     Điểm công cộng an toàn
                   </Badge>
@@ -117,14 +117,14 @@ export default function VenuesPage() {
             </CardHeader>
 
             <CardContent className="space-y-2 pb-4">
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+              <p className="text-caption font-semibold text-muted-foreground uppercase tracking-wider">
                 Đặc điểm thực tế (Micro-tags):
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {venue.tags.map((tag, idx) => (
                   <span
                     key={idx}
-                    className="inline-flex items-center px-2 py-0.5 rounded-md bg-secondary text-[11px] text-foreground font-medium"
+                    className="inline-flex items-center px-2 py-0.5 rounded-md bg-secondary text-caption text-foreground font-medium"
                   >
                     {tag}
                   </span>
@@ -133,7 +133,7 @@ export default function VenuesPage() {
             </CardContent>
 
             <CardFooter className="pt-2 border-t border-border/70 flex items-center justify-between">
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-caption text-muted-foreground">
                 Tọa độ: {venue.lat.toFixed(3)}, {venue.lng.toFixed(3)}
               </span>
 

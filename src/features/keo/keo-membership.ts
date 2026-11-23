@@ -44,18 +44,23 @@ export function isOnBoardFor(keo: Keo, viewerId: string): boolean {
   return keo.hostId !== viewerId && !keo.memberIds.includes(viewerId) && !isDeclined(keo, viewerId) && spotsLeft(keo) > 0 && keo.status !== "cancelled";
 }
 
-export function startOf(keo: Keo): Date {
-  return sessionStart(normalizeKeoDay(keo.time.day), keo.time.from);
+/**
+ * Giờ bắt đầu buổi tập. `now` phải là CÙNG mốc thời gian với phép tính gọi tới (lockedAtOf, canDecline…):
+ * normalizeKeoDay đẩy ngày đã qua sang "ngày mai" theo `now`, nên dùng giờ máy ở đây mà `now` khác ở nơi gọi
+ * sẽ ra hai "bây giờ" khác nhau (lỗi làm mốc chốt kèo tính sai khi ngày thật đã qua ngày của kèo).
+ */
+export function startOf(keo: Keo, now: Date = new Date()): Date {
+  return sessionStart(normalizeKeoDay(keo.time.day, now), keo.time.from);
 }
 
-export function declineDeadline(keo: Keo): Date {
-  return new Date(startOf(keo).getTime() - DECLINE_DEADLINE_HOURS * 3600_000);
+export function declineDeadline(keo: Keo, now: Date = new Date()): Date {
+  return new Date(startOf(keo, now).getTime() - DECLINE_DEADLINE_HOURS * 3600_000);
 }
 
 export type DeclineCheck = { ok: true; deadline: Date } | { ok: false; deadline: Date; reasonVi: string };
 
 export function canDecline(keo: Keo, memberId: string, hostId: string, now: Date = new Date()): DeclineCheck {
-  const deadline = declineDeadline(keo);
+  const deadline = declineDeadline(keo, now);
   if (keo.hostId !== hostId) return { ok: false, deadline, reasonVi: "Chỉ host được từ chối." };
   if (memberId === hostId || !keo.memberIds.includes(memberId)) return { ok: false, deadline, reasonVi: "Người này không ở trong kèo." };
   if (now > deadline) return { ok: false, deadline, reasonVi: `Đã quá hạn từ chối (trước giờ tập ${DECLINE_DEADLINE_HOURS} giờ).` };
@@ -76,7 +81,7 @@ export function declineMember(keo: Keo, memberId: string): Keo {
  * Trước mốc: huỷ/rút không bị trừ điểm (D23 G1). Sau mốc: áp bảng phạt UT (D24).
  */
 export function lockedAtOf(keo: Keo, now: Date = new Date()): string | undefined {
-  const d = declineDeadline(keo);
+  const d = declineDeadline(keo, now);
   return now >= d ? d.toISOString() : undefined;
 }
 
@@ -101,7 +106,7 @@ export function toCancelable(
   return {
     id: keo.id,
     title: displayTitle(keo),
-    startsAt: startOf(keo).toISOString(),
+    startsAt: startOf(keo, now).toISOString(),
     lockedAt: others.length > 0 ? lockedAtOf(keo, now) : undefined,
     acceptedBy: others,
     kind: keo.kind,

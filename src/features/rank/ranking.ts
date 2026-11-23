@@ -302,7 +302,7 @@ export const RANK_LEVELS: readonly RankLevel[] = [
       accentColor: "#c084fc",
       badgeBgGradient: "from-slate-950 via-indigo-950 to-purple-950",
       borderGlow: "border-cyan-300/80 shadow-fuchsia-500/40",
-      textColor: "text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-sky-300 to-fuchsia-400",
+      textColor: "text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-fuchsia-400",
       auraColor: "rgba(56, 189, 248, 0.45)",
     },
   },

@@ -81,7 +81,7 @@ export function SidebarNav({ role, userDisplayName, className }: SidebarNavProps
           </div>
           <div className="flex flex-col">
             <span className="font-bold text-base leading-tight">Khế Ước Thể Thao</span>
-            <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+            <span className="text-micro text-muted-foreground uppercase tracking-wider font-semibold">
               Khu vực TP.HCM
             </span>
           </div>
@@ -109,7 +109,7 @@ export function SidebarNav({ role, userDisplayName, className }: SidebarNavProps
                   <span>{item.title}</span>
                 </div>
                 {item.badge && (
-                  <span className="text-[10px] bg-tier-gold text-tier-gold-foreground font-bold px-1.5 py-0.5 rounded">
+                  <span className="text-micro bg-tier-gold text-tier-gold-foreground font-bold px-1.5 py-0.5 rounded">
                     {item.badge}
                   </span>
                 )}
@@ -125,7 +125,7 @@ export function SidebarNav({ role, userDisplayName, className }: SidebarNavProps
           <span className="truncate max-w-[140px] font-medium text-foreground">
             {userDisplayName}
           </span>
-          <span className="text-[10px] uppercase font-bold text-primary">
+          <span className="text-micro uppercase font-bold text-primary">
             {role}
           </span>
         </div>

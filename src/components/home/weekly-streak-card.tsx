@@ -30,73 +30,78 @@ export function WeeklyStreakCard() {
       ? `Còn ${streak.daysLeftInWeek} ngày để giữ chuỗi ${streak.current} tuần. Ghi 1 hoạt động ngay!`
       : "Ghi lại hoạt động để bắt đầu chuỗi liên tiếp của bạn.";
 
+  const current = log ? streak.current : null;
+
   return (
     <section
       aria-label="Chuỗi liên tiếp theo tuần"
-      className="mx-3 rounded-2xl bg-card border border-border/80 shadow-xs overflow-hidden"
+      className="surface-ink relative mx-3 rounded-3xl overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-500"
     >
-      <div className="px-3.5 pt-3 pb-0.5">
-        <h2 className="text-sm font-bold text-foreground">Chuỗi liên tiếp của bạn</h2>
+      {/* Vạch làn chạy mờ phía sau — gợi đường pista, không mang dữ liệu */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:repeating-linear-gradient(115deg,#fff_0_1px,transparent_1px_22px)]"
+      />
+
+      <div className="relative px-4 pt-3.5 flex items-center justify-between gap-2">
+        <h2 className="text-micro font-bold uppercase tracking-[0.14em] text-brand-mist/80">
+          Chuỗi liên tiếp của bạn
+        </h2>
+        <button
+          onClick={() => setIsLogOpen(true)}
+          className="shrink-0 rounded-full bg-white text-ink text-caption font-bold px-3.5 py-1.5 shadow-sm hover:bg-brand-50"
+        >
+          Ghi ngay
+        </button>
       </div>
 
-      <div className="px-3.5 py-2.5 flex items-center gap-3.5">
-        {/* CỘT TRÁI: Ngọn lửa chuỗi tuần */}
-        <div className="flex flex-col items-center justify-center shrink-0 w-12 sm:w-14">
-          <StreakFlame value={log ? streak.current : "–"} active={!!log && streak.current > 0} />
-          <span className="text-[10px] font-semibold text-muted-foreground mt-0.5">Tuần</span>
+      <div className="relative px-4 pt-1 pb-3.5 flex items-end gap-3">
+        <StreakFlame value="" active={!!log && streak.current > 0} className="h-12 w-10 mb-1" />
+        <div className="flex items-baseline gap-2 min-w-0">
+          <span className="font-numeric italic font-extrabold text-hero text-white tabular-nums">
+            {current === null ? "–" : String(current).padStart(2, "0")}
+          </span>
+          <span className="flex flex-col leading-tight">
+            <span className="text-label font-bold text-white">tuần liên tiếp</span>
+            <span className="text-caption text-brand-mist/70">
+              Tuần này · <span className="font-numeric text-xs font-bold text-white">{streak.thisWeekCount}</span> hoạt động
+            </span>
+          </span>
         </div>
+      </div>
 
-        {/* CỘT PHẢI: Trạng thái tuần này + 7 ngày T2-CN + Nút Ghi ngay + Lời nhắc */}
-        <div className="flex-1 min-w-0 flex flex-col gap-1.5">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-baseline gap-1.5 min-w-0">
-              <span className="text-xs font-semibold text-foreground">Tuần này</span>
-              <span className="text-[11px] text-muted-foreground truncate">
-                · {streak.thisWeekCount} hoạt động
-              </span>
-            </div>
-            <button
-              onClick={() => setIsLogOpen(true)}
-              className="shrink-0 rounded-full bg-brand hover:bg-brand-600 dark:bg-brand-sky dark:text-black text-white text-[11px] font-bold px-3 py-1 active:scale-95 transition-all shadow-xs"
-            >
-              Ghi ngay
-            </button>
-          </div>
-
-          <div className="grid grid-cols-7 gap-1">
-            {WEEKDAY_LABELS.map((label, i) => {
-              const active = streak.activeDaysThisWeek[i];
-              const isToday = i === 7 - streak.daysLeftInWeek;
-              return (
-                <div key={label} className="flex flex-col items-center gap-0.5">
-                  <div
-                    className={cn(
-                      "h-7 w-7 rounded-full flex items-center justify-center border transition-colors",
-                      active
-                        ? "bg-brand-600 border-brand-600 text-white"
-                        : "border-neutral-200 dark:border-neutral-700 text-transparent",
-                      isToday && !active && "border-brand dark:border-brand-sky border-2"
-                    )}
-                  >
-                    <Check className="h-3.5 w-3.5 stroke-[3]" />
-                  </div>
-                  <span
-                    className={cn(
-                      "text-[10px] font-semibold",
-                      isToday ? "text-brand dark:text-brand-sky" : "text-muted-foreground"
-                    )}
-                  >
-                    {label}
-                  </span>
+      <div className="relative px-4 pb-3.5">
+        <div className="grid grid-cols-7 gap-1.5">
+          {WEEKDAY_LABELS.map((label, i) => {
+            const active = streak.activeDaysThisWeek[i];
+            const isToday = i === 7 - streak.daysLeftInWeek;
+            return (
+              <div key={label} className="flex flex-col items-center gap-1">
+                <div
+                  className={cn(
+                    "h-8 w-full max-w-[38px] rounded-xl flex items-center justify-center transition-all duration-300 ease-out-expo",
+                    active
+                      ? "bg-brand-gradient text-white shadow-glow"
+                      : "bg-white/[0.06] ring-1 ring-inset ring-white/10 text-transparent",
+                    isToday && !active && "ring-2 ring-brand-glow/80 bg-brand-glow/10"
+                  )}
+                >
+                  <Check className="h-3.5 w-3.5 stroke-[3]" />
                 </div>
-              );
-            })}
-          </div>
-
-          <p className="text-[11px] leading-snug text-neutral-600 dark:text-neutral-400">
-            {subtitle}
-          </p>
+                <span
+                  className={cn(
+                    "text-micro font-semibold",
+                    isToday ? "text-white" : "text-brand-mist/55"
+                  )}
+                >
+                  {label}
+                </span>
+              </div>
+            );
+          })}
         </div>
+
+        <p className="mt-2.5 text-caption leading-snug text-brand-mist/75">{subtitle}</p>
       </div>
 
       <LogWorkoutSheet open={isLogOpen} onClose={() => setIsLogOpen(false)} onSave={addActivity} />

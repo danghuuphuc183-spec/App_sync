@@ -73,11 +73,11 @@ export function SportCard({
           </Badge>
 
           {isActive ? (
-            <Badge variant="success" className="text-[11px] py-0 px-2">
+            <Badge variant="success" className="text-caption py-0 px-2">
               Phase {phase}
             </Badge>
           ) : (
-            <Badge variant="secondary" className="flex items-center gap-1 text-[11px] py-0 px-2">
+            <Badge variant="secondary" className="flex items-center gap-1 text-caption py-0 px-2">
               <Lock className="h-3 w-3" />
               Sắp ra mắt
             </Badge>

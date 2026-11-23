@@ -81,12 +81,7 @@ export const GOALS = [
 export const SPORT_OPTIONS = [
   { id: "running", label: "Chạy bộ" },
   { id: "gym", label: "Gym" },
-  { id: "calisthenics", label: "Calisthenics" },
   { id: "cycling", label: "Đạp xe" },
-  { id: "pickleball", label: "Pickleball" },
-  { id: "badminton", label: "Cầu lông" },
-  { id: "football", label: "Bóng đá" },
-  { id: "swimming", label: "Bơi lội" },
 ];
 
 export const WORKOUTS_BY_SPORT: Record<string, { id: SessionType; label: string; hint: string }[]> = {

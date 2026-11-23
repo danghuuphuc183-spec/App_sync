@@ -76,11 +76,11 @@ export default function TrustWalletPage() {
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between p-3 rounded-xl bg-muted/60 border border-border">
               <span className="text-xs font-medium">Còn lại tháng này</span>
-              <span className="text-lg font-mono font-bold text-primary">
+              <span className="text-lg font-numeric font-bold text-primary">
                 {graceLeft} / {UT_CONFIG.GRACE_PASSES_PER_MONTH}
               </span>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-normal">
+            <p className="text-caption text-muted-foreground leading-normal">
               Lời xin lỗi được bạn tập chấp nhận: giảm {formatUt(UT_CONFIG.APOLOGY.REDUCE_BY)} UT mức phạt, {UT_CONFIG.APOLOGY.PER_MONTH} lần/tháng.
             </p>
           </CardContent>
@@ -117,10 +117,10 @@ export default function TrustWalletPage() {
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className={cn("text-sm font-mono font-bold", delta < 0 ? "text-destructive" : "text-foreground")}>
+                  <p className={cn("text-sm font-numeric font-bold", delta < 0 ? "text-destructive" : "text-foreground")}>
                     {delta === 0 ? "0" : formatUt(delta, { sign: true })} UT
                   </p>
-                  <p className="text-[11px] text-muted-foreground">Còn {formatUt(balance)}</p>
+                  <p className="text-caption text-muted-foreground">Còn {formatUt(balance)}</p>
                 </div>
               </div>
             ))}
@@ -139,11 +139,11 @@ export default function TrustWalletPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             {RULES.map((r) => (
               <div key={r.title} className="p-3 rounded-lg border border-border bg-muted/20 space-y-1">
-                <span className={cn("font-bold font-mono block", r.delta < 0 ? "text-destructive" : "text-foreground")}>
+                <span className={cn("font-bold font-numeric block", r.delta < 0 ? "text-destructive" : "text-foreground")}>
                   {r.delta === 0 ? "0 UT" : `${formatUt(r.delta, { sign: true })} UT`}
                 </span>
                 <p className="text-foreground font-semibold">{r.title}</p>
-                <p className="text-muted-foreground text-[11px]">{r.note}</p>
+                <p className="text-muted-foreground text-caption">{r.note}</p>
               </div>
             ))}
           </div>

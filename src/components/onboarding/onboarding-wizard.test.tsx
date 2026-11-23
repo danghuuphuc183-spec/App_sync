@@ -17,7 +17,7 @@ describe("OnboardingWizard", () => {
     push.mockReset();
   });
 
-  it("đi hết 10 bước, nút Tiếp tục khoá khi chưa đủ thông tin, cuối cùng có gợi ý bạn tập và lưu hồ sơ", async () => {
+  it("đi hết các bước tinh giản, thanh tiến độ phân đoạn từng câu, bỏ câu hỏi giao tiếp và đỡ tạ, giao diện nền sáng", async () => {
     render(<AuthProvider><OnboardingWizard /></AuthProvider>);
 
     // 1. Giới thiệu — không hỏi chiều cao / cân nặng
@@ -50,22 +50,20 @@ describe("OnboardingWizard", () => {
     expect(screen.getByText("≤ 3 km")).toBeInTheDocument();
     next();
 
-    // 6. Cách giao tiếp — chọn trực tiếp (không còn trắc nghiệm DISC)
-    expect(screen.queryByText(/DISC/)).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /Ít nói, tập trung/ }));
-    next();
-
-    // 7. Vibe & an toàn: chọn Nữ → mặc định chỉ ghép cùng giới
+    // 6. Vibe & an toàn: KHÔNG CÒN câu "Bạn thích tập cùng thế nào?", KHÔNG CÒN "đỡ tạ"
+    expect(screen.queryByText("Bạn thích tập cùng thế nào?")).not.toBeInTheDocument();
+    expect(screen.queryByText("Cần người đỡ tạ (spotter)")).not.toBeInTheDocument();
+    expect(screen.queryByText("Tôi đỡ tạ được")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Chỉ ghép cặp cùng giới/ })).toHaveAttribute("aria-pressed", "true");
     next();
 
-    // 8–9. Quyền & ứng dụng: có thể để sau
+    // 7–8. Quyền & ứng dụng: có thể để sau
     expect(screen.getByText("Vị trí (GPS)")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Để sau" }));
     expect(screen.getByText("Hevy")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Để sau" }));
 
-    // 10. Tổng kết
+    // 9. Tổng kết
     expect(screen.getByText("Sẵn sàng!")).toBeInTheDocument();
     expect(screen.getByText(/Hệ thống đã lọc giúp bạn/)).toBeInTheDocument();
     next();
@@ -74,7 +72,6 @@ describe("OnboardingWizard", () => {
     expect(saved.sports).toEqual(["running"]);
     expect(saved.workoutTypes).toEqual(["long_run"]);
     expect(saved.sameGenderOnly).toBe(true);
-    expect(saved.commStyle).toBe("quiet");
     expect(saved).not.toHaveProperty("weightKg");
     expect(saved).not.toHaveProperty("discAnswers");
     expect(saved.completedAt).toBeTruthy();

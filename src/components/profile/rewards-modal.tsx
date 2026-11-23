@@ -139,7 +139,7 @@ export function RewardsModal({
             </div>
             <div>
               <h2 className="text-base font-extrabold text-foreground tracking-tight">Đổi Thưởng EXP & Hiện Vật</h2>
-              <p className="text-[11px] text-muted-foreground">Voucher đối tác dinh dưỡng & Quà vật chất Synesis</p>
+              <p className="text-caption text-muted-foreground">Voucher đối tác dinh dưỡng & Quà vật chất Synesis</p>
             </div>
           </div>
           <button
@@ -153,15 +153,15 @@ export function RewardsModal({
         </div>
 
         {/* 2. USER BALANCE BANNER */}
-        <div className="p-4 bg-linear-to-r from-brand/10 via-brand/5 to-transparent border-b border-border/60 shrink-0 space-y-2">
+        <div className="p-4 bg-gradient-to-r from-brand/10 via-brand/5 to-transparent border-b border-border/60 shrink-0 space-y-2">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">EXP Khả Dụng Đổi Quà</span>
+              <span className="text-caption font-semibold text-muted-foreground uppercase tracking-wider">EXP Khả Dụng Đổi Quà</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-black text-brand dark:text-brand-sky tracking-tight">
                   {userExp.toLocaleString("vi-VN")} EXP
                 </span>
-                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-brand/10 text-brand dark:text-brand-sky border border-brand/20">
+                <span className="text-caption font-semibold px-2 py-0.5 rounded-full bg-brand/10 text-brand dark:text-brand-sky border border-brand/20">
                   {userRankTitle}
                 </span>
               </div>
@@ -170,14 +170,14 @@ export function RewardsModal({
             <button
               type="button"
               onClick={() => setIsRulesSheetOpen(true)}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-background border border-border/80 hover:border-brand/40 text-[11px] font-semibold text-foreground shadow-2xs hover:shadow-xs transition-all"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-background border border-border/80 hover:border-brand/40 text-caption font-semibold text-foreground shadow-2xs hover:shadow-xs transition-all"
             >
               <Info className="h-3.5 w-3.5 text-brand" />
               <span>Cách kiếm EXP</span>
             </button>
           </div>
 
-          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground bg-background/80 rounded-xl px-2.5 py-1.5 border border-border/60">
+          <div className="flex items-center gap-1.5 text-caption text-muted-foreground bg-background/80 rounded-xl px-2.5 py-1.5 border border-border/60">
             <ShieldCheck className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
             <p className="leading-tight">
               Đổi quà chỉ trừ vào EXP khả dụng. <strong className="text-foreground">Cấp Hạng trọn đời không bao giờ bị giảm</strong>.
@@ -263,15 +263,15 @@ export function RewardsModal({
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-brand dark:text-brand-sky">
+                        <span className="text-micro font-bold uppercase tracking-wider text-brand dark:text-brand-sky">
                           {item.partnerName} · Đã trừ -{item.expCost} EXP
                         </span>
                         <h4 className="text-xs font-bold text-foreground leading-snug">{item.rewardTitle}</h4>
-                        <p className="text-[10.5px] text-muted-foreground">Ngày đổi: {item.redeemedAt}</p>
+                        <p className="text-caption text-muted-foreground">Ngày đổi: {item.redeemedAt}</p>
                       </div>
                       <span
                         className={cn(
-                          "px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0",
+                          "px-2 py-0.5 rounded-full text-micro font-bold shrink-0",
                           item.status === "active"
                             ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
                             : item.status === "shipping"
@@ -290,7 +290,7 @@ export function RewardsModal({
                     {item.code && (
                       <div className="p-2.5 rounded-xl bg-background border border-border flex items-center justify-between gap-2">
                         <div>
-                          <p className="text-[10px] text-muted-foreground">Mã Voucher (Hạn dùng: {item.expiresAt}):</p>
+                          <p className="text-micro text-muted-foreground">Mã Voucher (Hạn dùng: {item.expiresAt}):</p>
                           <p className="text-xs font-mono font-bold text-foreground">{item.code}</p>
                         </div>
                         <Button
@@ -306,7 +306,7 @@ export function RewardsModal({
                     )}
 
                     {item.shippingInfo && (
-                      <div className="p-2.5 rounded-xl bg-background border border-border space-y-1 text-[11px]">
+                      <div className="p-2.5 rounded-xl bg-background border border-border space-y-1 text-caption">
                         <div className="flex items-center gap-1.5 font-semibold text-foreground">
                           <Truck className="h-3.5 w-3.5 text-brand" />
                           <span>Thông tin gửi hiện vật tận nhà (Miễn phí):</span>
@@ -351,7 +351,7 @@ export function RewardsModal({
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span
                             className={cn(
-                              "text-[10px] font-bold px-2 py-0.5 rounded-full border",
+                              "text-micro font-bold px-2 py-0.5 rounded-full border",
                               isPhysical
                                 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
                                 : "bg-brand/10 text-brand dark:text-brand-sky border-brand/20"
@@ -359,13 +359,13 @@ export function RewardsModal({
                           >
                             {item.tag}
                           </span>
-                          <span className="text-[11px] text-muted-foreground truncate">· {item.partnerName}</span>
+                          <span className="text-caption text-muted-foreground truncate">· {item.partnerName}</span>
                         </div>
 
                         <h3 className="text-xs font-bold text-foreground tracking-tight leading-snug">
                           {item.title}
                         </h3>
-                        <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">
+                        <p className="text-caption text-muted-foreground leading-relaxed line-clamp-2">
                           {item.description}
                         </p>
                       </div>
@@ -375,13 +375,13 @@ export function RewardsModal({
                         <span className="inline-block text-xs font-extrabold text-foreground px-2.5 py-1 rounded-xl bg-muted border border-border/60">
                           {item.expCost} EXP
                         </span>
-                        <p className="text-[10px] text-muted-foreground pt-0.5">{item.valueText}</p>
+                        <p className="text-micro text-muted-foreground pt-0.5">{item.valueText}</p>
                       </div>
                     </div>
 
                     {/* Action Button */}
                     <div className="flex items-center justify-between pt-1 border-t border-border/40">
-                      <div className="flex items-center gap-1 text-[10.5px] text-muted-foreground">
+                      <div className="flex items-center gap-1 text-caption text-muted-foreground">
                         {isPhysical ? (
                           <>
                             <Truck className="h-3 w-3 text-amber-500" />
@@ -420,7 +420,7 @@ export function RewardsModal({
 
         {/* 5. FOOTER */}
         <div className="p-3 bg-muted/20 border-t border-border/80 flex items-center justify-between text-xs shrink-0">
-          <span className="text-muted-foreground text-[11px]">
+          <span className="text-muted-foreground text-caption">
             Hệ thống quà được tài trợ bởi các đối tác Synesis
           </span>
           <Button variant="ghost" size="sm" onClick={onClose} className="rounded-xl font-bold text-xs h-8">
@@ -561,13 +561,13 @@ export function RewardsModal({
             </div>
 
             <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/80 space-y-2 text-left">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-brand">{lastRedeemedItem.partnerName}</p>
+              <p className="text-micro font-bold uppercase tracking-wider text-brand">{lastRedeemedItem.partnerName}</p>
               <h4 className="text-xs font-bold text-foreground">{lastRedeemedItem.rewardTitle}</h4>
 
               {lastRedeemedItem.code && (
                 <div className="p-2.5 rounded-xl bg-background border border-border flex items-center justify-between gap-2">
                   <div>
-                    <span className="text-[10px] text-muted-foreground">Mã Voucher của bạn:</span>
+                    <span className="text-micro text-muted-foreground">Mã Voucher của bạn:</span>
                     <p className="text-xs font-mono font-bold text-foreground">{lastRedeemedItem.code}</p>
                   </div>
                   <Button
@@ -583,7 +583,7 @@ export function RewardsModal({
               )}
 
               {lastRedeemedItem.shippingInfo && (
-                <div className="space-y-1 text-[11px] text-muted-foreground pt-1 border-t border-border/40">
+                <div className="space-y-1 text-caption text-muted-foreground pt-1 border-t border-border/40">
                   <p className="flex items-center gap-1 font-semibold text-foreground">
                     <Truck className="h-3.5 w-3.5 text-brand" />
                     <span>Đang đóng gói và gửi về:</span>
@@ -636,7 +636,7 @@ export function RewardsModal({
                 <p className="font-bold text-emerald-600 dark:text-emerald-400">
                   1. Giai đoạn Khởi Động (0 – 150 EXP · Cực Dễ)
                 </p>
-                <ul className="space-y-1 text-[11px] text-muted-foreground">
+                <ul className="space-y-1 text-caption text-muted-foreground">
                   <li>• Hoàn tất hồ sơ cá nhân: <strong>+20 EXP</strong></li>
                   <li>• Xác thực CCCD / eKYC: <strong>+20 EXP</strong></li>
                   <li>• Kết nối 1 bạn tập Duo đầu tiên: <strong>+20 EXP</strong></li>
@@ -652,7 +652,7 @@ export function RewardsModal({
                 <p className="font-bold text-brand dark:text-brand-sky">
                   2. Giai đoạn Giữ Nhịp (150 – 500 EXP · Vừa Sức)
                 </p>
-                <ul className="space-y-1 text-[11px] text-muted-foreground">
+                <ul className="space-y-1 text-caption text-muted-foreground">
                   <li>• Buổi tập cá nhân (GPS $\ge$ 15 phút): <strong>+5 EXP</strong> / buổi</li>
                   <li>• Buổi tập chung Duo: <strong>+10 EXP</strong> / buổi (tối đa 2 buổi/tuần)</li>
                   <li>• Nhóm nhỏ đạt $\ge 75\%$ thành viên: <strong>+15 EXP</strong> / tuần</li>
@@ -668,7 +668,7 @@ export function RewardsModal({
                 <p className="font-bold text-amber-600 dark:text-amber-400">
                   3. Giai đoạn Kỷ Luật (500 – 1.000+ EXP · Thử Thách)
                 </p>
-                <ul className="space-y-1 text-[11px] text-muted-foreground">
+                <ul className="space-y-1 text-caption text-muted-foreground">
                   <li>• Thưởng chuỗi tuần Duo 8 tuần: <strong>+120 EXP</strong></li>
                   <li>• Thưởng chuỗi tuần Duo 12 tuần: <strong>+200 EXP</strong></li>
                   <li>• Thưởng chuỗi tuần Duo 26 tuần (nửa năm): <strong>+500 EXP</strong></li>

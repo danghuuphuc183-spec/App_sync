@@ -59,7 +59,7 @@ export function CheckInSheet({
       >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-brand-700">Bắt đầu tập tại đây</p>
+            <p className="text-caption font-bold uppercase tracking-wider text-brand-700">Bắt đầu tập tại đây</p>
             <h3 className="text-base font-bold text-foreground leading-snug">{spot.name}</h3>
           </div>
           <button onClick={onClose} aria-label="Đóng" className="h-8 w-8 shrink-0 rounded-full hover:bg-muted flex items-center justify-center">
@@ -69,7 +69,7 @@ export function CheckInSheet({
 
         {(step.kind === "consent" || step.kind === "locating") && (
           <>
-            <ul className="space-y-2.5 text-[13px] text-foreground">
+            <ul className="space-y-2.5 text-label text-foreground">
               <li className="flex gap-2.5">
                 <Radio className="h-4.5 w-4.5 shrink-0 text-foreground mt-0.5" />
                 <span>
@@ -103,21 +103,21 @@ export function CheckInSheet({
           <>
             <div className="flex gap-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 p-3">
               <MapPinOff className="h-5 w-5 shrink-0 text-foreground mt-0.5" />
-              <p className="text-[13px] text-foreground leading-snug">
+              <p className="text-label text-foreground leading-snug">
                 {step.kind === "too_far"
                   ? `Bạn đang cách điểm tập ${formatDistance(step.distanceM)}. Hãy tới nơi (trong vòng ${ARRIVAL_RADIUS_M} m) rồi bật lại nhé.`
                   : "Không lấy được vị trí. Hãy cho phép trình duyệt truy cập vị trí và thử lại."}
               </p>
             </div>
             <div className="flex gap-2">
-              <button onClick={startWithGps} className="flex-1 rounded-lg border border-border py-2.5 text-[13px] font-bold text-foreground hover:bg-muted">
+              <button onClick={startWithGps} className="flex-1 rounded-lg border border-border py-2.5 text-label font-bold text-foreground hover:bg-muted">
                 Thử lại
               </button>
-              <button onClick={startDemo} className="flex-1 rounded-lg bg-brand hover:bg-brand-700 text-white py-2.5 text-[13px] font-bold">
+              <button onClick={startDemo} className="flex-1 rounded-lg bg-brand hover:bg-brand-700 text-white py-2.5 text-label font-bold">
                 Dùng vị trí mô phỏng
               </button>
             </div>
-            <p className="text-[11px] text-muted-foreground text-center">Vị trí mô phỏng chỉ dùng để trải nghiệm thử tính năng.</p>
+            <p className="text-caption text-muted-foreground text-center">Vị trí mô phỏng chỉ dùng để trải nghiệm thử tính năng.</p>
           </>
         )}
       </div>

@@ -37,7 +37,7 @@ export function TierBadge({ score, showScore = false, className }: TierBadgeProp
     >
       {ICON[band]}
       <span>{name}</span>
-      {showScore && <span className="ml-1 opacity-90 font-mono">({formatUt(score)} UT)</span>}
+      {showScore && <span className="ml-1 opacity-90 font-numeric">({formatUt(score)} UT)</span>}
     </Badge>
   );
 }
