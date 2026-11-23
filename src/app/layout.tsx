@@ -27,12 +27,44 @@ const numeric = Barlow_Condensed({
   display: "swap",
 });
 
+/**
+ * Địa chỉ gốc của site để dựng URL tuyệt đối cho og:image / og:url (LinkedIn bắt buộc URL tuyệt đối).
+ * Đặt NEXT_PUBLIC_APP_URL = tên miền thật trên Hostinger rồi build lại; thiếu thì rơi về localhost.
+ */
+function siteUrl(): URL {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000");
+  } catch {
+    return new URL("http://localhost:3000");
+  }
+}
+
+const SHARE_TITLE = "Synesis — Tìm bạn tập thể thao tại TP.HCM";
+const SHARE_DESCRIPTION =
+  "Tìm bạn chạy bộ, gym, đạp xe hợp giờ, hợp chỗ và hợp pace. Lên kèo tập, giữ chuỗi mỗi tuần, xây uy tín bằng việc đến đúng hẹn.";
+
 export const metadata: Metadata = {
-  title: "Khế Ước Kỷ Luật Thể Thao | Nền Tảng Kết Nối Bạn Tập & Cam Kết Uy Tín",
+  metadataBase: siteUrl(),
+  title: "Synesis | Khế Ước Kỷ Luật Thể Thao — Kết Nối Bạn Tập & Cam Kết Uy Tín",
+  applicationName: "Synesis",
   description:
     "Nền tảng kết nối người tập thể thao phong trào đô thị (chạy bộ & gym) theo mô hình khế ước kỷ luật, bảo chứng bằng Điểm Uy tín (UT).",
   keywords: ["chạy bộ", "gym", "bạn tập", "kỷ luật", "trust score", "thể thao đô thị", "bình thạnh", "thủ đức"],
-  authors: [{ name: "Đội ngũ phát triển Khế Ước Thể Thao" }],
+  authors: [{ name: "Đội ngũ phát triển Synesis" }],
+  // Thẻ xem trước khi chia sẻ link (LinkedIn đọc og:title, og:description, og:image, og:url)
+  openGraph: {
+    type: "website",
+    siteName: "Synesis",
+    locale: "vi_VN",
+    url: "/",
+    title: SHARE_TITLE,
+    description: SHARE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SHARE_TITLE,
+    description: SHARE_DESCRIPTION,
+  },
 };
 
 export const viewport: Viewport = {
